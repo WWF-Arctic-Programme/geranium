@@ -1,11 +1,11 @@
 */
 
-!/external2
-!/include2
-!/predefined2
+!/external
+!/include
+!/predefined
 
-predefined/**/region2
-include/*.knitted2
+predefined/**/region
+include/*.knitted
 
 devel*.*
 *.knitted
