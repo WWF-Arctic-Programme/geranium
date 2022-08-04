@@ -1,8 +1,11 @@
 */
+
 !external/
 !include/
-!predefined/
-predefined/**/region
+
+# !predefined/
+# predefined/**/region
+
 include/*.knitted
 devel*.*
 *.knitted
