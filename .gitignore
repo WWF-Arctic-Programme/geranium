@@ -1,0 +1,17 @@
+*/
+
+!/external/
+!/include/
+!/predefined/**/
+
+include/*.knitted
+predefined/**/region
+
+devel*.*
+*.knitted
+clean_before_upload.R
+deamon.bat
+deploy.R
+industry.R
+_*.*
+# .gitignore 
