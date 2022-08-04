@@ -2,7 +2,7 @@
 
 !/external/
 !/include/
-!/predefined/**/
+!**/predefined/
 
 include/*.knitted
 predefined/**/region
