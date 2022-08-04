@@ -4,7 +4,6 @@
 !/include
 !/predefined
 
-predefined/**/region
 include/*.knitted
 
 devel*.*
