@@ -1,0 +1,28 @@
+.leaflet-container {
+    background-color: #fff;
+}
+.info.legend{
+    background-color: #EEEA;
+}
+.marker-icon,
+.marker-icon:focus {
+  border: 1px solid #33ff88 !important;
+}
+.dataTables_info .form-control {
+   height: 24px;
+}
+.dataTables_filter .form-control {
+   height: 24px;
+   margin-top: -1em;
+}
+#cfmeta {
+   font-size: 150%;
+}
+.table.dataTable tbody td.active,
+.table.dataTable tbody tr.active td {
+   background-color: lightskyblue !important;
+   color: black !important;
+}
+.selectize-dropdown .optgroup-header {
+   font-size: 120%;
+}
