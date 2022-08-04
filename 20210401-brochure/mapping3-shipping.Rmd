@@ -1,8 +1,0 @@
-```{r {{cpath}}shinit}
-```
-
-.panel[.panel-name[Shipping overlapped]
-```{r {{cpath}}4, zout.width=200, out.height=600, out.extra="bound", fig.align="left"}
-knitr::include_graphics(file.path(cpath,"map4.png"))
-```
-]

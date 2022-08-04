@@ -1,9 +1,0 @@
----
-output: flexdashboard::flex_dashboard
----
-
-# &shy; {data-icon="fa-readme"}
-
-###
-
-hello
