@@ -1,11 +1,7 @@
-*/
-
-!/external/
-!/include/
-!/predefined/**/
-
-include/*.knitted
-# predefined/**/region
+2021*/
+2022*/
+devel/
+rsconnect/
 
 devel*.*
 *.knitted
