@@ -2,6 +2,7 @@
 2022*/
 devel/
 rsconnect/
+predefined/**/region.*
 
 devel*.*
 *.knitted
