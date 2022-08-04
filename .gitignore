@@ -1,12 +1,12 @@
 */
 
-!/external
-!/include
-!/predefined
+!/external2
+!/include2
+!/predefined2
 
-predefined/**/region
+predefined/**/region2
+include/*.knitted2
 
-include/*.knitted
 devel*.*
 *.knitted
 clean_before_upload.R
