@@ -1,7 +1,7 @@
 */
-!external
-!include
-!predefined
+!external/
+!include/
+!predefined/
 predefined/**/*.envi
 predefined/**/*.envigz
 predefined/**/*.idr
