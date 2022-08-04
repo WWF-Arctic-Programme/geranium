@@ -5,7 +5,7 @@
 !/predefined/
 
 include/*.knitted
-predefined2/**/region
+predefined/**/region
 
 devel*.*
 *.knitted
