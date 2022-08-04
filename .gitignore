@@ -2,9 +2,9 @@
 !external
 !include
 !predefined
-predefined/*.envi
-predefined/*.envigz
-predefined/*.idr
+predefined/*/*.envi
+predefined/*/*.envigz
+predefined/*/*.idr
 include/*.knitted
 devel*.*
 *.knitted
