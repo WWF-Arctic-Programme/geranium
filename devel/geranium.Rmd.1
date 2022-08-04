@@ -1,0 +1,634 @@
+---
+runtime: shiny
+pagetitle: Compatibility with AOIs - WWF ArcNet
+zzzpagetitle: Compatibility with AOIs
+link-citations: yes
+output1: html_document
+output:
+   flexdashboard::flex_dashboard:
+      logo: https://wwf.ru/assets/img/logo.jpg
+      favicon: https://d1diae5goewto1.cloudfront.net/_skins/favicon.png
+      mathjax: ~
+      theme: yeti
+      css:
+      - site_libs/common.css
+      - site_libs/flex_dashboard.css
+      navbar:
+         - { title: "ArcNet", icon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
+---
+
+```{css}
+   .leaflet-container {
+       background-color: #fff;
+   }
+   .info.legend{
+       background-color: #EEEA;
+   }
+   .marker-icon,
+   .marker-icon:focus {
+     border: 1px solid #33ff88 !important;
+   }
+   .dataTables_info .form-control {
+      height: 24px;
+   }
+   .dataTables_filter .form-control {
+      height: 24px;
+      margin-top: -1em;
+   }
+```
+
+```{r}
+devel <- !grepl(file.path(gsub("^\\w:/","",Sys.getenv("RAS")),"shiny"),gsub("^\\w:/","",getwd()))
+invisible(stats::runif(352))
+seed <- sample(100:999,1)
+set.seed(seed)
+# require(sf)
+require(leaflet)
+require(shinycssloaders)
+# require(ursa)
+source("colorer.R",encoding="UTF-8")
+#md <- rmarkdown::metadata
+#isShiny <- isTRUE(md$runtime=="shiny")
+isReactive <- isShiny & F
+#rules <- jsonlite::fromJSON("buffer-rules.json")
+#dist2land <- ursa_read("dist2land-f.tif")
+#blank <- (!is.na(dist2land["ID"]))-1L
+ref <- polygonize(blank,engine="sf")
+ref$ID <- seq(spatial_count(ref))
+cell <- ursa(dist2land["dist"],"cell")*1e-3
+nameInit <- "---"
+seasonList <- c("Annual maximum"
+               ,format(seq(as.Date("2020-01-15"),length.out=12,by="1 month"),"%B"))[]
+methodList <- c('overlap'=paste(sQuote(kwdRed),"colors overwrite",sQuote(kwdYellow),"colors")
+               ,'threat'=paste("Accentuated",sQuote(kwdRed),"palette")
+               ,'mix'=paste(sQuote(kwdRed),"and",sQuote(kwdYellow),"mixed colors")
+               ,'source'=paste(sQuote(kwdRed),"and","source")
+               )
+groupList <- c('\\d'=c("All Conservation Features","All Data")[1]
+              ,'1'="Walrus"
+              ,'2'="Pinnipeds"
+              ,'3'="Sea ice"
+              ,'4'="Fishes"
+              ,'5'="Cetaceans"
+              ,'6'="Birds"
+              ,'7'="Benthos"
+              ,'8'="Coastal"
+              ,'9'="Polar bears"
+              )
+activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity))
+options(spinner.color="#ECF0F5")
+nameSelector <- "Selector"
+nameEditor <- "Editor"
+nameClick <- "Click region(s) on map"
+pacList <- c(nameSelector,nameEditor,pacname)
+```
+
+```{r eval=isShiny}
+exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL
+                          ,prev=integer(),curr=integer() ## need for removing forgiven clean
+                          )
+if (T) observe({ ## update 'input$sheet'
+   cat("observe: update input$sheet:\n")
+   if (isFALSE(input$sheet %in% activity)) {
+      cat("   updated\n")
+      updateSelectInput(session,"sheet",choices=c(nameInit,activity)[-1]
+                      # ,selected="Aquaculture"
+                       ,selected=ifelse(devel,sample(activity,1),c("Fishery","Shipping")[1])
+                       )
+   }
+})
+if (T) observe({ ## update 'input$column'
+   req(input$sheet %in% activity)
+   cat("observe: update input$column:\n")
+   forcing <- grep(paste0("^",input$sheet),rules$activity,value=TRUE)
+   forcing <- gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\2",forcing)
+   updateSelectInput(session,"column",choices=forcing
+                    ,selected=ifelse(devel,sample(forcing,1),forcing[1])
+                   # ,selected=grep("Mussels",forcing,value=TRUE)
+                    )
+})
+if (T) observe({ ## update input$method
+   req(input$sheet %in% activity)
+   cat("observe: update input$coloring:\n")
+   ch <- unname(methodList)
+   if (!(input$sheet %in% "Shipping"))
+      ch <- head(ch,-1)
+   updateSelectInput(session,"coloring",choices=ch)
+})
+if (T) observe({ ## update input$region
+   req(input$sheet %in% activity)
+   cat("observe: update input$predefined:\n")
+   if (input$region %in% names(regionSF))
+      updateSelectInput(session,"predefined"
+                       ,label="Select region of interest"
+                       ,choices=c(nameClick,regionSF[[input$region]][[1]])
+                       )
+   else
+      updateSelectInput(session,"predefined"
+                       ,label="Select instrument for drawing"
+                       ,choices=c("leaflet.extras","leafpm"))
+})
+if (T) observe({ ## update 'exchange$selection'
+   cat("observe 'exchange$selection'\n")
+   selection <- rvCustomer()
+   cl <- class(selection)
+   if ("character" %in% cl) {
+      cat("   PAC\n")
+      exchange$selection <- zoomToAOI(selection)
+      exchange$overlay <- NULL
+      exchange$prev <- exchange$curr
+   }
+   else {
+      cat("   MANUAL\n")
+     # str(exchange$selection)
+      req(selection)
+      cat("      found\n")
+      gs <- selection()
+      cat("----------\n")
+      str(gs)
+      cat("----------\n")
+     # if (input$AOI %in% nameEditor) {
+      if (input$region %in% nameEditor) {
+         if (is.null(gs$finished)) {
+            s <- NULL
+         }
+         else {
+            print("0731h")
+           # s <- gs$finished["X_leaflet_id"]
+            s <- gs$finished["_leaflet_id"]
+            print("0731i")
+            cat("         finished\n")
+            if (length(ind <- which(s$'_leaflet_id' %in% exchange$prev))) {
+               str(ind)
+               s <- s[-ind,]
+            }
+            exchange$curr <- s$'_leaflet_id'
+         }
+      }
+      else if (F & input$AOI %in% nameSelector) { ## deprecated
+         cat("         selected (fixed PACs)\n")
+         ind <- as.numeric(gs[which(gs$selected==TRUE),"id"])
+         str(ind)
+         if (length(ind)) {
+            s <- pacSF[ind] ## class 'st_sfc'
+            spatial_data(s) <- data.frame(id=as.integer(ind))
+            str(s)
+         }
+         else
+            s <- NULL
+      }
+      else if (T & input$predefined %in% nameClick) {
+         cat("         selected\n")
+         str(gs)
+         cat("0731a\n")
+         print("1")
+         ind <- as.numeric(gs[which(gs$selected==TRUE),"id"])
+         print("2")
+         str(ind)
+         if (length(ind)) {
+            s <- regionSF[[input$region]][ind,] ## class 'st_sf'
+            spatial_data(s) <- data.frame(id=as.integer(ind))
+            str(s)
+         }
+         else
+            s <- NULL
+      }
+      else {
+         cat("otherwise value of 'input$AOI' is",sQuote(input$AOI),"\n")
+         cat("otherwise value of 'input$predefined' is",sQuote(input$predefined),"\n")
+         warning("Undefined 's'. This branch is false.")
+         s <- NULL
+      }
+      if (is.null(s))
+         exchange$selection <- NULL
+      else if (spatial_count(s)==0)
+         exchange$selection <- NULL
+      else {
+         cat("0731b\n")
+        # writeLines(as.character(spatial_count(s)),"tmp_finished.Rout")
+        # spatial_write(s,"tmp_editor.geojson")
+        # str(s)
+         session_grid(blank)
+         a <- c(id=ursa:::.fasterize(s))
+         a <- ursa_crop(a,border=1)
+         print(c('fasterized'=a))
+         exchange$selection <- a
+        # exchange$selection <- (!is.na(a))*99L
+         ##~ if (length(ind <- sf::st_within(spatial_transform(s,ref),ref)[[1]])) {
+            ##~ session_grid(blank)
+            ##~ spatial_write(ref[ind,],"tmp_intersected.geojson")
+            ##~ a <- ursa_crop(allocate(spatial_centroid(ref[ind,])),border=1)
+            ##~ exchange$selection <- (!is.na(a))*99L
+         ##~ }
+      }
+   }
+   print(c('exchange$selection'=exchange$selection))
+   if (is_ursa(exchange$selection))
+      print(as.table(exchange$selection))
+   exchange$selection
+})
+if (F) observe({ ## setView for Selector
+   rvAOI()
+   print("rvAOI()")
+   proxy <- leafletProxy("selector",data=NULL)
+   if (!is.null(rvAOI())) {
+      proxy %>% leaflet::addMeasure(primaryLengthUnit="meters",primaryAreaUnit="sqmeters")
+   }
+})
+rvActivity <- reactive({
+   cat("rvActivity():\n")
+   ret <- list(map=NULL,stat=NULL)
+   if (input$sheet!=nameInit) {
+      activity <- paste0(input$sheet,sepRules,input$column)
+      print(activity)
+     # ind <- grep(activity,rules$activity)
+     # str(ind)
+     # if (req(length(ind)>0)) {
+      if (T) {
+         group <- names(groupList[match(input$group,groupList)])
+         print(c(group=group))
+         aoi <- rvAOI()
+         cat("aoi:\n")
+         print(aoi)
+         a <- interim(activity,group=group,aoi=aoi,season=input$season)
+         str(a)
+        # ret$interim <- a
+         ret$map <- a$map
+         ret$stat <- a$stat
+      }
+      else
+         print("RULE NOT FOUND")
+   }
+   else
+      print("EMPTY SHEET")
+   ret
+})
+rvAOI <- reactive({
+   cat("rvAOI():\n")
+   exchange$selection
+})
+rvActivityMap <- reactive({
+   cat("rvActivityMap:\n")
+   if ((input$sheet==nameInit)||(input$column==nameInit))
+      return(NULL)
+   activity <- paste0(input$sheet,sepRules,input$column)
+   ind <- match(activity,rules$activity)
+   if (is.na(ind))
+      return(NULL)
+   print(c(activity=activity))
+   ind <- match(input$group,groupList)
+   if (!length(ind))
+      return(NULL)
+   group <- names(groupList[ind])
+   interim(activity,group=group,aoi=NULL,season=input$season,simplify="map")
+})
+rvActivityStat <- reactive({
+   cat("rvActivityStat:\n")
+   if ((input$sheet==nameInit)||(input$column==nameInit))
+      return(NULL)
+   activity <- paste0(input$sheet,sepRules,input$column)
+   group <- names(groupList[match(input$group,groupList)])
+   aoi <- rvAOI()
+   interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
+})
+rvConflictMap <- reactive({
+   cat("rvConflictMap:\n")
+   a <- rvActivityMap()
+   if (is.null(a))
+      return(conflictBasemap())
+   coloring <- names(methodList[match(input$coloring,methodList)])
+   d6 <- map3_1d(a,kind=coloring,source=input$sheet)
+   m <- conflictMap(d6)
+   m
+})
+rvCustomer <- reactive({
+   cat("rvCustomer:\n")
+   cat("str(input$AOI):\n")
+   print(c('AOI'=input$AOI,'region'=input$region,'predefined'=input$predefined))
+   if (F) {
+      if (is.null(input$AOI)) {
+         return(input$AOI)
+      }
+      if (length(grep("^PAC",input$AOI))) {
+         print("0731e")
+         return(input$AOI)
+      }
+   }
+   else {
+      if (is.null(input$region)) {
+         return(input$region)
+      }
+      if ((input$region!=nameEditor)&&(input$predefined!=nameSelector)&&
+          (input$predefined!=nameClick)) {
+         print("0731g")
+         return(input$predefined)
+      }
+   }
+   ret <- NULL
+   m <- rvConflictMap()
+   if (input$region %in% nameEditor) {
+      shp <- drawShapeOptions(color="#092",fillColor="#092")
+      ret <- callModule(editMod,"editor"
+                       ,leafmap=m
+                      # ,editor=c("leaflet.extras","leafpm")[1]
+                       ,editor=input$predefined
+                       ,editorOptions=list(NULL
+                          ,toolbarOptions=pmToolbarOptions(position="topright"
+                                                          ,drawCircle=FALSE
+                                                          ,drawPolyline=FALSE
+                                                          ,drawMarker=FALSE
+                                                          )
+                          ,position="topright"
+                          ,polygonOptions=drawPolygonOptions(shapeOptions=shp)
+                          ,rectangleOptions=if (devel) drawRectangleOptions(shapeOptions=shp) else FALSE
+                          ,circleOptions=FALSE
+                          ,circleMarkerOptions=FALSE
+                          ,markerOptions=FALSE
+                          ,polylineOptions=FALSE
+                          )
+                       )
+   }
+   else if (F & input$AOI %in% nameSelector) { ## deprecated
+      if (T) {
+         m <- addFeatures(m,sf::st_sf(pacSF)
+                         ,label=~paste("PAC",seq(spatial_count(pacSF)))
+                         ,color="#092B"
+                         ,layerId=~seq(spatial_count(pacSF))
+                         ,group="PAC overlay"
+                         )
+         m <- addLayersControl(m
+                             # ,baseGroups=c(NULL
+                             #              )
+                              ,overlayGroups=c(NULL
+                                              ,"PAC overlay"
+                                              )
+                              ,options=layersControlOptions(collapsed=FALSE)
+                              )
+      }
+      ret <- callModule(selectMod,"selector"
+                       ,leafmap=m
+                       )
+   }
+   else if (input$predefined %in% nameClick) {
+      m <- addFeatures(m,regionSF[[input$region]]
+                      ,label=regionSF[[input$region]][[1]]
+                      ,color="#092B"
+                      ,layerId=~seq(spatial_count(regionSF[[input$region]]))
+                      ,group="Region overlay"
+                      )
+      m <- addLayersControl(m
+                          # ,baseGroups=c(NULL
+                          #              )
+                           ,overlayGroups=c(NULL
+                                           ,"Region overlay"
+                                           )
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+      ret <- callModule(selectMod,"selector"
+                       ,leafmap=m
+                       )
+   }
+   else
+      cat("SKIP REGION OVERLAPPING\n")
+   ret
+})
+```
+# Input {.sidebar data-width="470"}
+
+```{r, eval=isShiny}
+width <- "350px"
+shiny::selectInput("sheet","Activity",nameInit,width=width)
+shiny::selectInput("column","Industry",nameInit,width=width)
+shiny::selectInput("region","Spatial query",c(names(regionSF),nameEditor)
+                  ,selected="PACs" # sample(names(regionSF),1)
+                  ,width=width)
+shiny::selectInput("predefined","Region from list",nameInit
+                 # ,selected=nameSelector
+                  ,width=width)
+shiny::selectInput("group","CF group",unname(groupList)
+                 # ,selected=sample(unname(groupList),1)
+                  ,selected=unname(ifelse(devel,sample(groupList,1),groupList[1]))
+                 # ,selected="Cetaceans"
+                  ,width=width)
+shiny::selectInput("season","Season",seasonList
+                 # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
+                  ,selected=seasonList[1L]
+                  ,width=width)
+shiny::selectInput("coloring","Colorization",unname(methodList)
+                 # ,selected=grep("overlap",methodList,value=TRUE)
+                  ,width=width)
+```
+
+
+```{r, eval=isShiny}
+## to deprecate
+shiny::selectInput("AOI","AOI for query (deprecated)",pacList
+                 # ,selected=sample(pacList,1)
+                  ,selected=ifelse(F & devel,sample(pacList,1),nameSelector)
+                 # ,selected=grep("^PAC 60$",pacname,value=TRUE)
+                  ,width=width)
+```
+
+# Getting started {#welcome}
+
+###
+
+
+Left sidebar is for inputs.
+   
+[Map](#map) tab is for map. Map rendering is not so fast. Please be patient.
+
+<span style="color: #A00;">
+WARNING:
+</span>
+Currently, you have to deselect yourself any AOI in query modes 'Editor' and 'Selector' before any input changing.
+
+[Table](#table) tab is for tabular output and for report genaration.
+
+Designed for use on at least 1366*768 display size or slightly less.
+
+
+> Invented by Boris Solovyev.<br><br>Developed by Nikita Platonov.<br><br>Content under CC-BY-ND. Design under CC-BY-SA.<br><br>Updated: `r format(file.mtime("geranium.Rmd"),"%Y-%m-%d %H:%M")`.
+
+
+
+# Map {#map}
+
+### 
+
+```{r, eval=T & isShiny}
+uiOutput("uiMap")
+#leafletOutput("viewer")
+#editModUI("editor")
+#selectModUI("selector")
+```
+
+```{r eval=T & isShiny}
+output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-leafletOutput
+   cat("renderUI:\n")
+   if (F & input$AOI %in% nameEditor) {
+      ret <-  editModUI("editor")
+   }
+   if (T & input$region %in% nameEditor) {
+      ret <-  editModUI("editor")
+   }
+   else if (F & input$AOI %in% nameSelector) {
+      ret <-  selectModUI("selector")
+   }
+   else if (T & input$predefined %in% nameClick) {
+      ret <-  selectModUI("selector")
+   }
+   else { ## selected from list: "PAC "
+      ret <- leafletOutput("viewer")
+     # ret <- textOutput("note")
+   }
+   ret
+})
+```
+
+```{r eval=T & isShiny}
+output$viewer <- renderLeaflet({
+   a <- rvActivity()$map
+   req(!is.null(a))
+   coloring <- names(methodList[match(input$coloring,methodList)])
+   d6 <- map3_1d(a,kind=coloring,source=input$sheet)
+   write_envi(d6,"c:/tmp/tmp_d6")
+   aoi <- rvAOI()
+   m <- conflictMap(d6,aoi=aoi)
+   m
+})
+```
+
+```{r eval=T & isShiny}
+output$note <- renderText({
+   "Please select either 'Editor' or 'Selector' items in 'AOI query' input."
+})
+```
+
+# Table {#table}
+
+##
+
+###
+
+```{r eval=isShiny}
+##~ renderTable({
+DT::renderDT({
+  # b <- rvActivity()$stat
+   b <- rvActivityStat()
+   req(!is.null(b))
+   aoi <- rvAOI()
+   isAOI <- !is.null(aoi)
+   empty <- !nrow(b)
+   if (empty) {
+      b <- data.frame('No table'=ifelse(isAOI,"Missed conflicted CFs"
+                                       ,"Please select AOI to generate table")
+                     ,check.names=FALSE)
+      return(DT::datatable(b,rownames=FALSE,escape=FALSE,extension="Scroller"
+                          ,options=list(dom="t")
+                          ))
+      ##~ ind <- integer()
+      ##~ cname <- colnames(b)
+      ##~ indC <- integer()
+   }
+   indV <- grep("^value",colnames(b))
+   indGr <- b$flag %in% kwdGreen
+   indYl <- b$flag %in% kwdYellow
+   indRd <- b$flag %in% kwdRed
+   if (F) {
+      if (length(ind <- grep("^value",colnames(b)))) {
+        # b[,ind] <- reformat("lightskyblue1")(b[,ind])
+        # if ("value1" %in% colnames(b))
+        #    b$value1 <- reformat("lavender")(b$value1)
+         for (i in ind) {
+            b[,i] <- reformat("lavender")(formattable::percent(b[,i],2))
+           # b[,i] <- reformat("lavender")(b[,i])
+           # b[,i] <- formattable::percent(b[,i],2)
+         }
+      }
+      if (length(indGr <- b$flag %in% kwdGreen))
+         b$flag[indGr] <- formattable::color_tile("palegreen","palegreen")(b$flag[indGr])
+      if (length(indYl <- b$flag %in% kwdYellow))
+         b$flag[indYl] <- formattable::color_tile("lightgoldenrod","lightgoldenrod")(b$flag[indYl])
+      if (length(indRd <- b$flag %in% kwdRed))
+         b$flag[indRd] <- formattable::color_tile("lightsalmon","lightsalmon")(b$flag[indRd])
+   }
+   cname <- colnames(b)
+   indC <- grep("flag",cname,ignore.case=TRUE)
+   cname[grep("(^CF$|^code$|CF.+code)",cname,ignore.case=TRUE)] <- "CF Code"
+   cname[grep("(^CF.+name|^name$)",cname,ignore.case=TRUE)] <- "CF Name"
+   cname[indC] <- "Conflict"
+   cname[grep("value.*1",cname,ignore.case=TRUE)] <- "Amount portion inside PAC, %"
+   cname[grep("value.*2",cname,ignore.case=TRUE)] <- "Amount portion inside PAC masked by activity, %"
+   colnames(b) <- cname
+   ##~ b <- DT::datatable(b
+                ##~ ,rownames=FALSE # is.null(dt$CF)
+                ##~ ,escape=FALSE
+                ##~ )
+   b <- DT::datatable(b,rownames=FALSE,escape=FALSE
+                       ,extensions=c("FixedColumns","Scroller","ColReorder")[2]
+                       ,options=list(NULL
+                                    ,scroller=T
+                                   # ,scrollY=T
+                                    ,scrollY="calc(100vh - 205px)"
+                                   # ,fixedColumns=list()
+                                   # ,colReorder=F
+                                    ,dom="ift"
+                                    ##~ ,columnDefs=if (!empty) list(list(className='dt-right',targets=ind-1)
+                                                                ##~ ,list(className='dt-center',targets=0))
+                                                ##~ else NULL
+                                    ) # "Bfrtip"
+                       )
+   if (T) {
+     # d <- b[,indC]
+      ##~ if (length(indGr <- b$flag %in% kwdGreen))
+         ##~ d[indGr] <- formattable::color_tile("palegreen","palegreen")(b$flag[indGr])
+      ##~ if (length(indYl <- b$flag %in% kwdYellow))
+         ##~ d[indYl] <- formattable::color_tile("lightgoldenrod","lightgoldenrod")(b$flag[indYl])
+      ##~ if (length(indRd <- b$flag %in% kwdRed))
+         ##~ d[indRd] <- formattable::color_tile("lightsalmon","lightsalmon")(b$flag[indRd])
+      b <- DT::formatStyle(b,cname[indC]
+                       # ,background=styleColorBar(dt[,cname[8]],'palegreen')
+                        ,backgroundColor=DT::styleEqual(c(kwdGreen,kwdYellow,kwdRed)
+                                              ,c("palegreen","LemonChiffon","lightsalmon"))
+                        ,backgroundSize='95% 18pt'
+                        ,backgroundRepeat='no-repeat'
+                        ,backgroundPosition='center'  
+                        )
+      if (F)
+         b <- DT::formatStyle(b,cname[indV]
+                           ,backgroundColor=DT::styleColorBar(b[,indV],'blue')
+                           ,backgroundSize='95% 18pt'
+                           ,backgroundRepeat='no-repeat'
+                           ,backgroundPosition='center'  
+                           )
+     b <- DT::formatPercentage(b,cname[indV],2)
+   }
+   # DT::formatPercentage(2,2)
+   b
+}
+#,escape=FALSE
+)
+```
+
+# \(Devel\) {#devel .zzzhidden data-orientation="rows"}
+
+## {data-height=100}
+
+
+### Verbatim {.zzzhidden}
+
+```{r eval=T & isShiny}
+renderPrint({
+   ##~ cl <- class(selector())
+   ##~ if ("character" %in% cl)
+      ##~ return("predefined")
+   ##~ s <- selector()
+   ##~ s2 <- s()$finished
+   s2 <- exchange$selection
+   if (is.ursa(s2)) {
+      print(as.table(s2))
+      print(s2)
+   }
+})
+```

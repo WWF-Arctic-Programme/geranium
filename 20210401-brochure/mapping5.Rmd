@@ -1,0 +1,75 @@
+---
+pagetitle: "ArcNet Conflicting Maps"
+author: Nikita Platonov
+date: now
+output: xaringan::moon_reader
+toc: true
+toc_depth: 3
+ratio: "16:9"
+---
+
+# `r rmarkdown::metadata$pagetitle`
+
+<!--
+.inline[![](https://wwf.ru/assets/img/logo.jpg)]
+-->
+
+<style>
+   :root{
+      --sidebar: 40%;
+      --pointsize: 16pt;
+   }
+   .sidebar {
+      background-image: linear-gradient(to right, #00728f40, #fff0) !important;
+   }
+   .sidebar.left-column h2 {padding-left: 20px ;}
+   .sidebar.left-column h3 {padding-left: 30px ;}
+   .sidebar.left-column h4 {padding-left: 40px ;}
+   .panel.hidden {display: none;}
+</style>
+
+.banner-bottom[
+
+```{r, out.width=100, out.extra="aspect",fig.align="left"}
+# knitr::include_graphics("https://arcticwwf.org/site/images/panda.png")
+```
+
+.tiny[
+<!--
+Developed by Boris Solovyev.
+
+Implemented by Nikita Platonov.
+
+Content under CC-BY-ND.
+
+Design under CC-BY-SA.
+--> 
+]
+
+ #### .condensed[[ArcNet Project](https://arcticwwf.org/work/ocean/arcnet/)]
+
+.timestamp.right[
+`r format(Sys.time(),"%Y-%m-%d %H:%M")`
+]
+
+]
+
+```{r, fig.cap="via GIPHY",extra="bound",out.height=400}
+# knitr::include_graphics("https://media.giphy.com/media/JheYnCK596u1a/source.gif")
+```
+
+```{r pre}
+dpath <- "output-overlap"
+list2 <- list.dirs(path=dpath,recursive=FALSE,full.names=TRUE)[]
+toc_depth <- rmarkdown::metadata$output[[1]]$toc_depth
+if (ursa:::.isRemark()) {
+   aspect_ratio <- rmarkdown::metadata$output[[1]]$nature$ratio
+   aspect_ratio <- as.numeric(strsplit(aspect_ratio,split="\\D")[[1]])
+   aspect_ratio <- aspect_ratio[1]/aspect_ratio[2]
+}
+src <- lapply(list2,function(fpath) knitr::knit_expand(file="mapping3-level2.Rmd"))[]
+# cat(unlist(src))
+```
+
+`r knitr::knit(text = unlist(src))`
+

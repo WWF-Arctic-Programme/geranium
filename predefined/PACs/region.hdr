@@ -1,0 +1,17 @@
+ENVI
+description = {C:/RAS/2022/ArcNet/geranium/predefined/PACs/region.envi}
+samples = 226
+lines   = 230
+bands   = 1
+header offset = 0
+file type = ENVI Standard
+data type = 1
+interleave = bsq
+byte order = 0
+data ignore value = 121
+map info = {Lambert Azimuthal Equal Area, 1, 1, -4230000, 3810000, 30000, 30000, unknown, units=meters}
+coordinate system string = {PROJCS["unknown",GEOGCS["unknown",DATUM["Unknown based on WGS84 ellipsoid",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",90],PARAMETER["longitude_of_center",0],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",SOUTH],AXIS["Northing",SOUTH]]}
+band names = {
+	region}
+classes = 83
+class names = {PAC 1,PAC 2,PAC 3,PAC 4,PAC 5,PAC 6,PAC 7,PAC 8,PAC 9,PAC 10,PAC 11,PAC 12,PAC 13,PAC 14,PAC 15,PAC 16,PAC 17,PAC 18,PAC 19,PAC 20,PAC 21,PAC 22,PAC 23,PAC 24,PAC 25,PAC 26,PAC 27,PAC 28,PAC 29,PAC 30,PAC 31,PAC 32,PAC 33,PAC 34,PAC 35,PAC 36,PAC 37,PAC 38,PAC 39,PAC 40,PAC 41,PAC 42,PAC 43,PAC 44,PAC 45,PAC 46,PAC 47,PAC 48,PAC 49,PAC 50,PAC 51,PAC 52,PAC 53,PAC 54,PAC 55,PAC 56,PAC 57,PAC 58,PAC 59,PAC 60,PAC 61,PAC 62,PAC 63,PAC 64,PAC 65,PAC 66,PAC 67,PAC 68,PAC 69,PAC 70,PAC 71,PAC 72,PAC 73,PAC 74,PAC 75,PAC 76,PAC 77,PAC 78,PAC 79,PAC 80,PAC 81,PAC 82,PAC 83}

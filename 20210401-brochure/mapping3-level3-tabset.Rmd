@@ -1,0 +1,38 @@
+```{r {{cpath}}}
+cpath <- "{{cpath}}"
+Column <- gsub(paste0(fpath,"/"),"",cpath)
+isShipping <- file.exists(file.path(cpath,"map4.png"))
+```
+
+### `r Column`
+
+.panelset[
+
+
+.panel[.panel-name[Map 2]
+```{r {{cpath}}2, zout.width=200, out.height=600, out.extra="bound", fig.align="left"}
+knitr::include_graphics(file.path(cpath,"map2.png"))
+```
+]
+
+.panel[.panel-name[Map 3]
+```{r {{cpath}}3, zout.width=200, out.height=600, out.extra="bound", fig.align="left"}
+knitr::include_graphics(file.path(cpath,"map3.png"))
+```
+]
+
+
+.panel[.panel-name[Map 1 (deprecated)]
+```{r {{cpath}}1, zout.width=200, out.height=600, out.extra="bound style=\"opacity: 0.1;\"", fig.align="left"}
+knitr::include_graphics(file.path(cpath,"map1.png"))
+```
+]
+
+```{r {{cpath}}chsh, results='asis', eval=isShipping}
+child <- "mapping3-shipping.Rmd"
+src3 <- knitr::knit_expand(file=child)
+```
+
+`r if (isShipping) knitr::knit(text=src3)`
+
+]

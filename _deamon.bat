@@ -1,0 +1,1 @@
+Rterm --slave --no-restore --encoding UTF-8 -e "rmarkdown::run(file='geranium.Rmd',default_file='geranium.Rmd',render_args=list(output_options=list(),quiet=TRUE),shiny_args=list(launch.browser=TRUE,port=NULL,quiet=TRUE))" --args

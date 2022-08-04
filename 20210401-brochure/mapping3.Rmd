@@ -1,0 +1,65 @@
+---
+ztitle: Индексы совместимости
+date: now
+output: xaringan::moon_reader
+toc: true
+toc_depth: 3
+ratio: "210:297"
+---
+
+layout: true
+
+.banner-top[
+ # Trying to put sidebar below
+
+Lorem ipsum
+
+]
+
+.banner-bottom[
+
+```{r, out.width=100, out.extra="aspect",fig.align="left"}
+# knitr::include_graphics("https://arcticwwf.org/site/images/panda.png")
+```
+
+ # .condensed[[ArcNet](https://arcticwwf.org/work/ocean/arcnet/) conflicting maps]
+
+.tiny[
+Developed by Boris Solovyev.
+
+Implemented by Nikita Platonov.
+
+Content under CC-BY-ND.
+
+Design under CC-BY-SA.
+
+]
+
+]
+
+---
+
+# Description
+
+<style>
+   :root{
+      --sidebar: 40%;
+   }
+   .sidebar {
+      background-image: linear-gradient(to right, #00728f40, #fff0) !important;
+   }
+</style>
+
+как строились индексы
+
+# Results
+
+
+```{r pre, resut}
+dpath <- "output-overlap"
+list2 <- list.dirs(path=dpath,recursive=FALSE,full.names=TRUE)[1]
+toc_depth <- rmarkdown::metadata$output[[1]]$toc_depth
+src <- lapply(list2,function(fpath) knitr::knit_expand(file="mapping3-level2.Rmd"))
+```
+
+`r toc_depth # knitr::knit(text = unlist(src))`

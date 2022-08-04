@@ -1,0 +1,20 @@
+```{r}
+fpath <- "{{fpath}}"
+Sheet <- basename(fpath)
+child <- ifelse(toc_depth==3,"mapping3-level3-tabset.Rmd","mapping3-level3.Rmd")
+```
+---
+name: `r Sheet`
+## `r Sheet`
+
+```{r}
+list3 <- dirname(dir(path=fpath,pattern="interim.tif",recursive=TRUE,full.names=TRUE))[]
+src2 <- lapply(list3,function(cpath) knitr::knit_expand(file=child))
+```
+
+`r knitr::knit(text = unlist(src2))`
+
+<!--
+background-color: `r ursa::cubehelix(1,dark=241,light=241)`
+`r # rmarkdown::metadata$output[[1]]$toc_depth # knitr::knit(text = unlist(src2))`
+-->
