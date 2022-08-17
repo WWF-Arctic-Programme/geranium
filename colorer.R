@@ -14,8 +14,7 @@ invisible(Sys.setlocale("LC_TIME","C"))
    ##~ str(src)
    ##~ q()
 ##~ }
-if (!exists("ursa"))
-   require("ursa")
+require(ursa)
 #plutil::ursula(3)
 isShiny <- ursa:::.isShiny()
 if (isShiny) {
@@ -30,6 +29,7 @@ if (isShiny) {
    require(mapedit)
    require(DT)
    require(formattable)
+   require(xml2)
    ursa:::.elapsedTime("require packages -- end")
 }
 'mapper' <- function(obj,pal) {
@@ -176,26 +176,39 @@ if (isShiny) {
    ret <- as.raster(a) ## inherits(a,"raster")
    ret
 }
-'interim' <- function(activity,group=NULL,aoi=NULL,season=NULL
+'interim' <- function(activity,group=NULL,aoi=NULL,season=list("max",NULL)[[1]]
                      ,simplify=c("none","map","stat")) {
    simplify <- match.arg(simplify)
    cat("interim():\n")
-   str(list(aoi=aoi,simplify=simplify))
+   str(list(activity=activity,group=group,aoi=aoi,simplify=simplify,season=season))
    isStat <- simplify %in% c("none","stat")
    isMap <- simplify %in% c("none","map")
    verb <- paste0("Data processing"
                  ,ifelse(!isStat," (layer)"
                  ,ifelse(!isMap," (stats)","")))
+   gr <- gsub(pattRules,"\\1",activity)
+   allUse <- gr==allActivity
+   indRule <- if (allUse) seq_len(nrow(rules)) else which(rules$activity==activity)
+   rule <- rules[indRule,] ## [25:30]
+   if ((nrow(rule)==0)&&(!allUse))
+      return(NULL)
+  # act <- gsub(pattRules,"\\2",activity)
+   act <- gsub(pattRules,"\\2",rule$activity)
+   gr <- gsub(pattRules,"\\1",rule$activity)
+   print(c('all human use'=allUse))
    if (isShiny)
       showNotification(id="interim",closeButton=FALSE,duration=120,paste0(verb,"...")
                       ,type="warning")
    ursa:::.elapsedTime(paste(verb,"-- start"))
-   gr <- gsub(pattRules,"\\1",activity)
-   act <- gsub(pattRules,"\\2",activity)
-   rule <- rules[rules$activity==activity,]
-   if (T | !isShiny)
+   if ((T | !isShiny)&&(nrow(rule)==1))
       print(rule)
-   msk <- c(msk=dist2land["dist"]>=(rule$min*cell) & dist2land["dist"]<=(rule$max*cell))
+   session_grid(dist2land)
+   mrule <- ursa(bandname=rule$activity)
+   for (i in seq_len(nrow(rule))) {
+      mrule[i] <- dist2land["dist"]>=(rule$min[i]*cell) &
+                dist2land["dist"]<=(rule$max[i]*cell)
+   }
+   mrule[is.na(mrule)] <- 0
    if (isPAC <- !is.null(aoi)) {
       if (is.character(aoi)) {
          pacvalue <- as.integer(gsub("\\D","",aoi))
@@ -223,34 +236,36 @@ if (isShiny) {
          return(stat2)
       }
    }
-   v <- readxl::read_excel(mdname,sheet=gr,.name_repair="minimal")
-   v <- v[,c("CF_code","CF_name","Limitations",act)[]]
-   v <- v[!is.na(v$CF_code),]
-   colnames(v)[length(colnames(v))] <- "value"
-   v <- as.data.frame(v)
-   if (!is.null(season)) {
-      s0 <- monther(season)
-      if (is.na(s0)) {
-         if (grepl("^max|maximum|maximal",season)) {
-            v <- aggregate(list(CF_name=v$CF_name,value=v$value)
-                          ,by=list(CF_code=v$CF_code),max)
+   vulner <- vector("list",nrow(rule))
+   for (i in seq_along(vulner)) {
+      v <- readxl::read_excel(mdname,sheet=gr[i],.name_repair="minimal")
+      v <- v[,c("CF_code","CF_name","Limitations",act[i])[]]
+      v <- v[!is.na(v$CF_code),]
+      colnames(v)[length(colnames(v))] <- "value"
+      v <- as.data.frame(v)
+      if (!is.null(season)) {
+         s0 <- monther(season)
+         if (is.na(s0)) {
+            if (grepl("^max|maximum|maximal",season)) {
+               v <- aggregate(list(CF_name=v$CF_name,value=v$value)
+                             ,by=list(CF_code=v$CF_code),max)
+            }
+         }
+         else {
+            patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
+            n <- length(v$Limitations)
+            res <- sapply(v$Limitations,function(s) {
+               s1 <- monther(gsub(patt,"\\1",s))
+               s2 <- monther(gsub(patt,"\\2",s))
+               s3 <- if (s1<s2) seq(s1,s2) else s3 <- c(seq(s1,12),seq(1,s2))
+               s0 %in% s3
+            })
+            v <- v[which(res),]
          }
       }
-      else {
-         patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
-         n <- length(v$Limitations)
-         res <- sapply(v$Limitations,function(s) {
-            s1 <- monther(gsub(patt,"\\1",s))
-            s2 <- monther(gsub(patt,"\\2",s))
-            s3 <- if (s1<s2) seq(s1,s2) else s3 <- c(seq(s1,12),seq(1,s2))
-            s0 %in% s3
-         })
-         v <- v[which(res),]
-      }
+      vulner[[i]] <- v
    }
-  # print(table(v$value))
-   value <- sort(unique(v$value))
-  # print(value)
+   cfcode <- lapply(vulner,function(v) v$CF_code) |> unlist() |> unique() |> sort()
    if (!isPAC)
       g0 <- ursa_grid(amountFile)
    session_grid(amountFile)
@@ -264,86 +279,149 @@ if (isShiny) {
    }
    sname <- c("0","1","2")
    if (isMap) {
-      a2 <- ursa(0,bandname=sname,ignorevalue=1e4)
+      a2 <- ablank <- ursa(0,bandname=sname,ignorevalue=1e4)
    }
    aname <- grep(paste0("^",group,"\\d{3}"),aname,value=TRUE)
   # print(c(gr=gr,act=act),quote=FALSE)
   # str(aname)
   # writeLines(jsonlite::toJSON(aname),"tmp_aname.json")
    n <- length(aname)
-   if (isStat) {
-      stat2 <- vector("list",length(sname))
-      names(stat2) <- sname
-   }
-   cb <- chunk_band(amount,200)
-   for (i in sname) { ## '0' '1' '2'
-      verbose <- i=="z222"
-      cf <- as.integer(v[v$value %in% i,"CF_code"])
-      ind <- na.omit(match(cf,aname))
-      if (length(ind)>0) {
-         s <- aname[ind]
-         indS <- match(s,aname)
-         if (isStat)
-            stat1 <- vector("list",length(cb))
-         for (j in seq_along(cb)) {
-            j2 <- cb[[j]]
-           # indJ <- indS[c(na.omit(match(j2,indS)))]
-           # indJ <- c(na.omit(match(indS,j2)))
-            indJ <- j2[na.omit(match(indS,j2))]
-            if (!length(indJ))
-               next
-            nameJ <- aname[indJ]
-            am <- amount[nameJ]
-            am[is.na(am)] <- 0
-            if (isMap)
-               a2[i] <- a2[i]+sum(am,cover=1e-6)
-            if (isStat) { ## if (!((!isPAC)&&(i!='zzz0'))) {
-               br <- rep(1,length(am))
-               b1 <- b2 <- b3 <- br
-               if (isPAC) {
-                  b1 <- apply(ursa_value(am[m]     ),2,sum,na.rm=TRUE)
-                  if (F)
-                     b2 <- apply(ursa_value(am[m][msk]),2,sum,na.rm=TRUE)
-                  else
-                     b2 <- br
-                  if (F)
-                     b3 <- apply(ursa_value(am[msk]   ),2,sum,na.rm=TRUE)
-                  else
-                     b3 <- br
-                  b0 <- apply(ursa_value(am        ),2,sum,na.rm=TRUE)
-                  b1 <- b1/b0
-                  b2 <- b2/b0
-                 # b9 <- b2/b1
+  # cf <- v$CF_code %/% 1000
+  # print(table(cf))
+   cb <- chunk_band(amount,1000)
+   if (F) {
+      if (isStat) {
+         stat2 <- vector("list",length(sname))
+         names(stat2) <- sname
+      }
+      msk <- mrule[1]
+      v <- vulner[[1]]
+      for (i in sname) { ## '0' '1' '2'
+         verbose <- i=="z222"
+         cf <- as.integer(v[v$value %in% i,"CF_code"])
+         ind <- na.omit(match(cf,aname))
+         if (length(ind)>0) {
+            s <- aname[ind]
+            indS <- match(s,aname)
+            if (isStat)
+               stat1 <- vector("list",length(cb))
+            for (j in seq_along(cb)) {
+               j2 <- cb[[j]]
+               indJ <- j2[na.omit(match(indS,j2))]
+               if (!length(indJ))
+                  next
+               nameJ <- aname[indJ]
+               str(nameJ)
+               am <- amount[nameJ]
+               am[is.na(am)] <- 0
+               a3 <- sum(am,cover=1e-6)
+               if (isMap)
+                  a2[i] <- a2[i]+a3
+               if (isStat) { ## if (!((!isPAC)&&(i!='zzz0'))) {
+                  br <- rep(1,length(am))
+                  b1 <- b2 <- b3 <- br
+                  if (isPAC) {
+                     b1 <- apply(ursa_value(am[m]),2,sum,na.rm=TRUE)
+                     b0 <- apply(ursa_value(am),2,sum,na.rm=TRUE)
+                     b1 <- b1/b0
+                  }
+                  b <- data.frame(code=names(am)
+                                 ,name=v$CF_name[match(names(am),v$CF_code)]
+                                 ,value1=b1#,value2=b2,value3=b3
+                                 ,flag=kwdLUT[i],row.names=NULL)
+                  ind <- grep("^value",colnames(b))[1]
+                  b <- b[!is.na(b[[ind]]) & b[[ind]]>0.001,]
+                  stat1[[j]] <- b
                }
-               b <- data.frame(code=names(am)
-                              ,name=v$CF_name[match(names(am),v$CF_code)]
-                              ,value1=b1#,value2=b2,value3=b3
-                              ,flag=kwdLUT[i],row.names=NULL)
-               ind <- grep("^value",colnames(b))[1]
-               b <- b[!is.na(b[[ind]]) & b[[ind]]>0.001,]
-               stat1[[j]] <- b
+               rm(am)
+               ursa:::.gc(F & isShiny)
             }
-            rm(am)
-            ursa:::.gc(isShiny)
+            if (isStat) {
+               stat2[[i]] <- do.call(rbind,stat1)
+            }
          }
-         if (isStat)
-            stat2[[i]] <- do.call(rbind,stat1)
+      }
+   }
+   else {
+      if (isStat) {
+         stat2 <- data.frame()
+        # stat1 <- vector("list",length(cb))
+      }
+      for (j in seq_along(cb)) {
+         j2 <- cb[[j]]
+        # j3 <- c(na.omit(match(aname[j2],v$CF_code)))
+         j2 <- j2[na.omit(match(cfcode,aname[j2]))]
+         am0 <- amount[j2]
+         pb <- ursaProgressBar(vulner,silent=length(vulner)==1)
+         for (i in seq_along(vulner)) {
+            setUrsaProgressBar(pb)
+            if (isStat) {
+               stat3 <- vector("list",length(cb))
+            }
+            v <- vulner[[i]]
+            if (isMap) {
+               msk <- mrule[i]
+               a4 <- ablank
+            }
+            for (s in sname) { ## '0' '1' '2'
+               cf <- as.integer(v[v$value %in% s,"CF_code"])
+               ind <- c(na.omit(match(cf,aname[j2])))
+               if (!length(ind))
+                  next
+               am <- am0[ind]
+               am[is.na(am)] <- 0
+               if (isMap) {
+                  a3 <- sum(am,cover=1e-6)
+                  a4[s] <- a4[s]+a3
+               }
+               if (isStat) { ## if (!((!isPAC)&&(i!='zzz0'))) {
+                  br <- rep(1,length(am))
+                  b1 <- b2 <- b3 <- br
+                  if (isPAC) {
+                     b1 <- apply(ursa_value(am[m]),2,sum,na.rm=TRUE)
+                     b0 <- apply(ursa_value(am),2,sum,na.rm=TRUE)
+                     b1 <- b1/b0
+                  }
+                  b <- data.frame(code=names(am)
+                                 ,name=v$CF_name[match(names(am),v$CF_code)]
+                                 ,value1=b1#,value2=b2,value3=b3
+                                 ,flag=kwdLUT[s],row.names=NULL)
+                  ind <- grep("^value",colnames(b))[1]
+                  b <- b[!is.na(b[[ind]]) & b[[ind]]>0.001,]
+                  stat2 <- rbind(stat2,b)
+                 # stat1[[j]] <- b
+               }
+              # if (isStat)
+              #    stat2[[s]] <- do.call(rbind,stat1)
+            }
+            if (isMap) {
+               a2 <- a2+a4*msk
+            }
+         }
+         close(pb)
+         rm(am0,am)
+         ursa:::.gc(T & isShiny)
       }
    }
    close(amount)
-   if (isMap)
-      a2 <- a2[msk][blank]
-  # write_envi(a,"tmp_a")
+   if (isMap) {
+      a2 <- a2[blank]
+   }
+   if (F & isMap)
+      write_envi(a2,"c:/tmp/tmp_a2")
+   if (F & isStat)
+      saveRDS(stat2,"c:/tmp/tmp_stat2.rds")
    session_grid(g0)
    if (isStat) {
-      stat2 <- do.call(rbind,stat2)
+      if (!is.data.frame(stat2))
+         stat2 <- do.call(rbind,stat2)
       if (is.null(stat2))
          stat2 <- data.frame()
       if (T & nrow(stat2)>1)
          stat2 <- stat2[with(stat2,order(-match(flag,kwdLUT),-value1)),]
       rownames(stat2) <- NULL
    }
-   if (!isShiny)
+   if (isStat & !isShiny)
       stat2$name <- NULL
    if (isShiny)
       removeNotification(id="interim")
@@ -568,7 +646,7 @@ if (isShiny) {
    }
    else {
       if (kind %in% "source")
-         d3 <- mapper(ursa_read(file.path("external",paste0(source,".tif"))),pal=pYl)
+         d3 <- mapper(ursa_read(file.path("requisite",paste0(source,".tif"))),pal=pYl)
       else
          d3 <- mapper(a['1'],pal=pYl)
       d4 <- mapper(a['2'],pal=pRd)
@@ -939,7 +1017,7 @@ if (isShiny) {
 }
 
 # mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
-mdname <- "external/compatibility assessment_all_2021-05-24-seasons.xlsx"
+mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
 pGrYl <- cubehelix(5,light=91,dark=221,weak=220,rich=165,hue=2)
 pYlRd <- cubehelix(5,light=91,dark=221,weak=110,rich=165,hue=2,inv=TRUE)
 pRd <- cubehelix(5,light=233,dark=91,weak=110,rotate=0,hue=2)
@@ -967,6 +1045,7 @@ retina <- 2
 kwdRed <- "Incompatible"
 kwdYellow <- c("Concessional","Conditional","Compatible under certain conditions")[2]
 kwdGreen <- c("Compatible","Compatible/not applicable")[2]
+allActivity <- "All human use"
 ##~ kwdRed <- "'2'"
 ##~ kwdYellow <- "'1'"
 ##~ kwdGreen <- "'0'"
@@ -992,10 +1071,10 @@ for (i in seq_along(listPD)) {
    regionSF[[i]] <- reg
 }
 session_grid(NULL)
-dist2land <- ursa_read("external/dist2land-f.tif")
+dist2land <- ursa_read("requisite/dist2land-f.tif")
 blank <- (!is.na(dist2land["ID"]))-1L
 cell <- ursa(dist2land["dist"],"cell")*1e-3
-rules <- jsonlite::fromJSON("external/buffer-rules.json")
+rules <- jsonlite::fromJSON("requisite/buffer-rules.json")
 sepRules <- " » "
 sepRules <- iconv(sepRules,to="UTF-8")
 pattRules <- paste0("^(.+\\S)",gsub("\\s","\\\\s",sepRules),"(\\S.+)$")
@@ -1017,7 +1096,7 @@ for (i in seq_along(listPD)) {
 #pacname
 #regionSF[["PACs"]][[1]]
 ongoing <- "This is verbatim info"
-amountFile <- "external/amount"
+amountFile <- "requisite/amount"
 cfmeta <- lapply(readxl::excel_sheets(mdname),function(sheet) {
    readxl::read_excel(mdname,sheet=sheet,.name_repair="minimal")[,1:2]
 }) |> do.call(rbind,args=_) |> unique()
@@ -1034,3 +1113,15 @@ cfmeta$label <- paste0(cfmeta[["CF_code"]]," - ",cfmeta[["CF_name"]])
    res
 }
 # options(warn=10)
+if (!isShiny) {
+   aoi <- spatial_read("predefined/PACs/PACs33_Gridded_IDs.shp")[22,]
+   aoi <- ursa:::.fasterize(aoi)
+   a2 <- interim(activity=c("All human use","Tourism » Mass tourism")[2]
+                ,aoi=aoi
+                ,group="\\d",simplify="none")
+   print(a2$map)
+   str(a2$stat)
+   print(summary(a2$stat$value1))
+   print(table(a2$stat$flag))
+  # display(a2$map)
+}

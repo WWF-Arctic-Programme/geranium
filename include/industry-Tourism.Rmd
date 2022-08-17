@@ -1,20 +1,23 @@
+---
+pagetitle: industry template
+---
 
-# Tourism
-
-
-
-## Small-ship expedition cruises and other small-scale tourism activities {#i4060474c}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Perturbationes autem nulla naturae vi commoventur, omniaque ea sunt opiniones ac iudicia levitatis. Est autem officium, quod ita factum est, ut eius facti probabilis ratio reddi possit. Quae cum praeponunt, ut sit aliqua rerum selectio, naturam videntur sequi; Quis enim est, qui non videat haec esse in natura rerum tria? Animadverti, ínquam, te isto modo paulo ante ponere, et scio ab Antiocho nostro dici sic solere; Vitae autem degendae ratio maxime quidem illis placuit quieta. Non enim hilaritate nec lascivia nec risu aut ioco, comite levitatis, saepe etiam tristes firmitate et constantia sunt beati. Ita fit ut, quanta differentia est in principiis naturalibus, tanta sit in finibus bonorum malorumque dissimilitudo. Duo Reges: constructio interrete. Sin laboramus, quis est, qui alienae modum statuat industriae? Quippe: habes enim a rhetoribus; Atque ut a corpore ordiar, videsne ut, si quae in membris prava aut debilitata aut inminuta sint, occultent homines? Effluit igitur voluptas corporis et prima quaeque avolat saepiusque relinquit causam paenitendi quam recordandi. 
-
-Moriatur, inquit. Nemo est igitur, quin hanc affectionem animi probet atque laudet, qua non modo utilitas nulla quaeritur, sed contra utilitatem etiam conservatur fides. Nescio quo modo praetervolavit oratio. Quae dici eadem de ceteris virtutibus possunt, quarum omnium fundamenta vos in voluptate tamquam in aqua ponitis. Nemo nostrum credebat, eratque veri similius hunc mentiri, cuius interesset, quam illum, qui id se rogasse scripsisset, quod debuisset rogare. Praeclare, inquit, facis, cum et eorum memoriam tenes, quorum uterque tibi testamento liberos suos commendavit, et puerum diligis. 
+## Tourism
 
 
 
+### Small-ship expedition cruises and other small-scale tourism activities {#i4060474c}
 
-## Mass tourism {#i26ff3686}
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Consequentia exquirere, quoad sit id, quod volumus, effectum. At enim, qua in vita est aliquid mali, ea beata esse non potest. Aliam vero vim voluptatis esse, aliam nihil dolendi, nisi valde pertinax fueris, concedas necesse est. Hoc autem loco tantum explicemus haec honesta, quae dico, praeterquam quod nosmet ipsos diligamus, praeterea suapte natura per se esse expetenda. Duo Reges: constructio interrete. Nam nisi hoc optineatur, id solum bonum esse, quod honestum sit, nullo modo probari possit beatam vitam virtute effici. Quod dicit Epicurus etiam de voluptate, quae minime sint voluptates, eas obscurari saepe et obrui. Propter nos enim illam, non propter eam nosmet ipsos diligimus. Maximeque eos videre possumus res gestas audire et legere velle, qui a spe gerendi absunt confecti senectute. Qui igitur convenit ab alia voluptate dicere naturam proficisci, in alia summum bonum ponere? Cum autem progrediens confirmatur animus, agnoscit ille quidem naturae vim, sed ita, ut progredi possit longius, per se sit tantum inchoata. Quid loquor de nobis, qui ad laudem et ad decus nati, suscepti, instituti sumus? 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Deprehensus omnem poenam contemnet. Quacumque enim ingredimur, in aliqua historia vestigium ponimus. Est autem officium, quod ita factum est, ut eius facti probabilis ratio reddi possit. Levatio igitur vitiorum magna fit in iis, qui habent ad virtutem progressionis aliquantum. Nam diligi et carum esse iucundum est propterea, quia tutiorem vitam et voluptatem pleniorem efficit. Hoc loco tenere se Triarius non potuit. Duo Reges: constructio interrete. Te enim iudicem aequum puto, modo quae dicat ille bene noris. Cur ipse Pythagoras et Aegyptum lustravit et Persarum magos adiit? Nihilne te delectat umquam -video, quicum loquar-, te igitur, Torquate, ipsum per se nihil delectat? 
+In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Quod maxime efficit Theophrasti de beata vita liber, in quo multum admodum fortunae datur. Non igitur potestis voluptate omnia dirigentes aut tueri aut retinere virtutem. Commoda autem et incommoda in eo genere sunt, quae praeposita et reiecta diximus; Tum, Quintus et Pomponius cum idem se velle dixissent, Piso exorsus est. Hoc est vim afferre, Torquate, sensibus, extorquere ex animis cognitiones verborum, quibus inbuti sumus. 
 
-Et quae per vim oblatum stuprum volontaria morte lueret inventa est et qui interficeret filiam, ne stupraretur. Plane idem, inquit, et maxima quidem, qua fieri nulla maior potest. Cum ageremus, inquit, vitae beatum et eundem supremum diem, scribebamus haec. Sed utrum hortandus es nobis, Luci, inquit, an etiam tua sponte propensus es? Qua igitur re ab deo vincitur, si aeternitate non vincitur? An potest, inquit ille, quicquam esse suavius quam nihil dolere? Sunt enim quasi prima elementa naturae, quibus ubertas orationis adhiberi vix potest, nec equidem eam cogito consectari. Fortitudinis quaedam praecepta sunt ac paene leges, quae effeminari virum vetant in dolore. 
+
+
+
+### Mass tourism {#i26ff3686}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Effluit igitur voluptas corporis et prima quaeque avolat saepiusque relinquit causam paenitendi quam recordandi. Atque his de rebus et splendida est eorum et illustris oratio. Nam neque virtute retinetur ille in vita, nec iis, qui sine virtute sunt, mors est oppetenda. Quis, quaeso, inquit, est, qui quid sit voluptas nesciat, aut qui, quo magis id intellegat, definitionem aliquam desideret? Et summatim quidem haec erant de corpore animoque dicenda, quibus quasi informatum est quid hominis natura postulet. Duo Reges: constructio interrete. Deinde disputat, quod cuiusque generis animantium statui deceat extremum. Et nemo nimium beatus est; 
+
+Quid, si reviviscant Platonis illi et deinceps qui eorum auditores fuerunt, et tecum ita loquantur? Audax negotium, dicerem impudens, nisi hoc institutum postea translatum ad philosophos nostros esset. Sed haec ab Antiocho, familiari nostro, dicuntur multo melius et fortius, quam a Stasea dicebantur. Concinnus deinde et elegans huius, Aristo, sed ea, quae desideratur, a magno philosopho, gravitas, in eo non fuit; Ampulla enim sit necne sit, quis non iure optimo irrideatur, si laboret? Sed in ceteris artibus cum dicitur artificiose, posterum quodam modo et consequens putandum est, quod illi §pigennhmatikÒn appellant; Voluptatem cum summum bonum diceret, primum in eo ipso parum vidit, deinde hoc quoque alienum; Itaque non discedit ab eorum curatione, quibus praeposita vitam omnem debet gubernare, ut mirari satis istorum inconstantiam non possim. Ergo ita: non posse honeste vivi, nisi honeste vivatur? 
 

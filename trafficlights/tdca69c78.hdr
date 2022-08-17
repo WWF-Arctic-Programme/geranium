@@ -1,0 +1,17 @@
+ENVI
+description = {C:/RAS/2022/ArcNet/geranium/trafficlights/tdca69c78.envi}
+samples = 226
+lines   = 230
+bands   = 3
+header offset = 0
+file type = ENVI Standard
+data type = 4
+interleave = bsq
+byte order = 0
+data ignore value = 99
+map info = {Lambert Azimuthal Equal Area, 1, 1, -4230000, 3810000, 30000, 30000, unknown, units=meters}
+projection info = {11, 6378137, 6356752.314245179, 90, 0, 0, 0, Lambert Azimuthal Equal Area, units=meters}
+band names = {
+	0,
+	1,
+	2}

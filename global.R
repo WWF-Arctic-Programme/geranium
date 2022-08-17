@@ -1,0 +1,179 @@
+invisible(Sys.setlocale("LC_TIME","C"))
+##~ if (!file.exists("requisite/inventory.rds")) {
+   ##~ list1 <- dir(path="output-overlap",pattern="interim\\.tif"
+               ##~ ,full.names=TRUE,recursive=TRUE)
+   ##~ md5 <- sapply(list1,digest::digest,"crc32")
+   ##~ da <- data.frame(ref=md5,src=list1,dst=file.path("requisite",paste0(md5,".tif")))
+   ##~ saveRDS(da,"requisite/inventory.rds")
+   ##~ file.copy(da$src,da$dst,copy.date=TRUE,overwrite=FALSE)
+##~ }
+##~ if (check <- !TRUE) {
+   ##~ inventory <- readRDS("requisite/inventory.rds")
+   ##~ str(inventory)
+   ##~ src <- unique(lapply(strsplit(inventory$src,split="/"),function(x) x[2]))
+   ##~ str(src)
+   ##~ q()
+##~ }
+require(ursa)
+#plutil::ursula(3)
+isShiny <- ursa:::.isShiny()
+if (isShiny) {
+  # showModal(modalDialog(title="Initialization"
+  #                      ,"Data preparing",size="s",easyClose = TRUE,footer = NULL))
+   ursa:::.elapsedTime("require packages -- start")
+   require(leaflet)
+   require(leaflet.extras)
+   require(leafpm)
+   require(fasterize)
+   require(leafem)
+   require(leafpop)
+  # require(mapview)
+   require(mapedit)
+   require(DT)
+   require(formattable)
+   require(xml2)
+   ursa:::.elapsedTime("require packages -- end")
+}
+
+# mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
+mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
+pGrYl <- cubehelix(5,light=91,dark=221,weak=220,rich=165,hue=2)
+pYlRd <- cubehelix(5,light=91,dark=221,weak=110,rich=165,hue=2,inv=TRUE)
+pRd <- cubehelix(5,light=233,dark=91,weak=110,rotate=0,hue=2)
+pBl <- cubehelix(5,light=233,dark=91,weak=45,rotate=0,hue=0.2)
+p4 <- cubehelix(5,light=221,dark=91,weak=110,rotate=0,hue=2)
+p6 <- cubehelix(5,light=221,dark=91,weak=45,rotate=0,hue=2)
+pRdT <- paste0(p4,format(as.hexmode(round(seq(15,255,length=length(p4)))),width=2,upper.case=TRUE))
+pBlT <- paste0(p6,format(as.hexmode(round(seq(15,255,length=length(p6)))),width=2,upper.case=TRUE))
+p5 <- cubehelix(5,light=221,dark=91,weak=165,rich=165,hue=2)
+pYlT <- paste0(p5,format(as.hexmode(round(seq(15,255,length=length(p5)))),width=2,upper.case=TRUE))
+#pGrYlRd <- c(pGrYl,tail(pYlRd,-1))
+pBase <- c('green'="#068400",'yellow'="#fdfc00",'red'="#af0401",'extra'=c("#362978","#000000")[2])
+pGrYlRd <- colorRampPalette(pBase[1:3])(9)
+pRd <- paste0(pBase[3],format(as.hexmode(round(seq(15,255,length=5))),width=2,upper.case=TRUE))
+pBl <- paste0(pBase[4],format(as.hexmode(round(seq(15,255,length=5))),width=2,upper.case=TRUE))
+pGr <- paste0(pBase[1],format(as.hexmode(round(seq(15,255,length=5))),width=2,upper.case=TRUE))
+pRd2 <- paste0(pBase[3],format(as.hexmode(round(seq(15,151,length=5))),width=2,upper.case=TRUE))
+pBl2 <- paste0(pBase[4],format(as.hexmode(round(seq(15,151,length=5))),width=2,upper.case=TRUE))
+pYlBase <- colorRampPalette(c(pBase[2],"#af9f00"))(5)
+pYl <- paste0(pYlBase,format(as.hexmode(round(seq(15,255,length=length(pYlBase))))
+                            ,width=2,upper.case=TRUE))
+pYlRd <- pGrYlRd[c(5,8)]
+height <- 600
+retina <- 2
+kwdRed <- "Incompatible"
+kwdYellow <- c("Concessional","Conditional","Compatible under certain conditions")[2]
+kwdGreen <- c("Compatible","Compatible/not applicable")[2]
+kwdGray <- "Not applicable"
+allActivity <- "All human use"
+noneActivity <- "No human use"
+##~ kwdRed <- "'2'"
+##~ kwdYellow <- "'1'"
+##~ kwdGreen <- "'0'"
+kwdLUT <- c('0'=kwdGreen,'1'=kwdYellow,'2'=kwdRed,'9'=kwdGray)
+listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
+basename(listPD)
+regionSF <- vector("list",length(listPD))
+names(regionSF) <- basename(listPD)
+regionU <- regionSF
+for (i in seq_along(listPD)) {
+   reg <- ursa:::spatialize(spatial_dir(path=listPD[i]),engine="sf",crs=4326)
+   if (length(ind <- which(sapply(as.list(spatial_data(reg)),class) %in% "character"))) {
+      reg <- reg[spatial_fields(reg)[ind[1]]]
+   }
+   else {
+      reg <- reg[spatial_fields(reg)[1]]
+      if (length(ind <- grep("^PAC",colnames(reg)))) {
+         reg[[ind]] <- paste0("PAC ",reg[[ind]])
+      }
+   }
+   spatial_fields(reg) <- "region"
+   reg <- reg[!is.na(reg$region),]
+   regionSF[[i]] <- reg
+}
+session_grid(NULL)
+dist2land <- ursa_read("requisite/dist2land-f.tif")
+blank <- (!is.na(dist2land["ID"]))-1L
+cell <- ursa(dist2land["dist"],"cell")*1e-3
+rules <- jsonlite::fromJSON("requisite/buffer-rules.json")
+sepRules <- " » "
+sepRules <- iconv(sepRules,to="UTF-8")
+pattRules <- paste0("^(.+\\S)",gsub("\\s","\\\\s",sepRules),"(\\S.+)$")
+if (F)
+   clf <- compose_coastline(spatial_transform(spatial_read("crop-coast.geojson"),6931)
+                           ,fill="grey90",col="grey70")
+# pac0 <- ursa:::.fasterize(pacSF) #"requisite/PACs33_Gridded_IDs.shp")
+# ursa:::.elapsedTime("fasterize -- start")
+for (i in seq_along(listPD)) {
+   fileout <- file.path("predefined",names(regionSF)[i],"region")
+   if (!envi_exists(fileout)) {
+      regionU[[i]] <- ursa:::.fasterize(regionSF[[i]])
+      ursa_write(regionU[[i]],fileout)
+   }
+   else
+      regionU[[i]] <- read_envi(fileout)
+}
+# ursa:::.elapsedTime("fasterize -- finish")
+#pacname
+#regionSF[["PACs"]][[1]]
+ongoing <- "This is verbatim info"
+amountFile <- "requisite/amount"
+cfmeta <- lapply(readxl::excel_sheets(mdname),function(sheet) {
+   readxl::read_excel(mdname,sheet=sheet,.name_repair="minimal")[,1:2]
+}) |> do.call(rbind,args=_) |> unique()
+cfmeta <- cfmeta[with(cfmeta,order(CF_code,CF_name)),]
+cfmeta$label <- paste0(cfmeta[["CF_code"]]," - ",cfmeta[["CF_name"]])
+ursa:::.elapsedTime("marxan inputs reading -- start")
+puvspr <- read.csv("requisite/puvspr.dat.gz")
+puvspr <- by(puvspr,puvspr$species,simplify=FALSE,function(cf) {
+   minv <- min(cf$amount)
+   maxv <- max(cf$amount)
+   if (maxv+minv==0)
+      cf$amount <- 0
+   else if (minv-maxv==0)
+      cf$amount <- 1
+   else
+      cf$amount <- (cf$amount-minv)/(maxv-minv)
+   cf
+}) |> do.call(rbind,args=_)
+spec <- by(puvspr,puvspr$species,function(x) {
+   data.frame(cf=x$species[1],amount=sum(x$amount))
+}) |> do.call(rbind,args=_)
+pu <- spatial_read("requisite/pulayer")
+sf::st_agr(pu) <- "constant"
+half <- median(spatial_area(pu))/2
+ursa:::.elapsedTime("marxan inputs reading -- finish")
+vulner <- vector("list",nrow(rules))
+names(vulner) <- rules$activity
+activity <- readxl::excel_sheets(mdname)
+industries <- vector("list",length(activity))
+names(industries) <- activity
+patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
+for (sheet in activity |> sample()) {
+   v <- readxl::read_excel(mdname,sheet=sheet,.name_repair="minimal")
+   v <- as.data.frame(v)
+   cname <- colnames(v)
+   vname <- paste0(sheet,sepRules,cname)
+   ind <- vname %in% rules$activity
+   v2 <- v[,!ind]
+   industries[[sheet]] <- cname[ind]
+   v2$industry <- NA
+   v2$value <- NA
+   ind <- which(ind)
+   for (i in seq_along(ind) |> sample()) {
+      iname <- vname[ind[i]]
+      v2$industry <- iname
+      v2$value <- v[,ind[i]][[1]]
+      val <- v[,ind[i]]
+      val[val>9] <- NA
+      v2$value <- as.integer(val)
+      vulner[[match(vname[ind[i]],rules$activity)]] <- v2
+   }
+}
+vulner <- do.call(rbind,vulner)
+vulner$CF_code <- as.integer(vulner$CF_code)
+# options(warn=10)
+if (isShiny) {
+  # removeModal()
+}
+   

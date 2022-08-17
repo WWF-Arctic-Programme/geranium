@@ -1,20 +1,34 @@
-# &shy; {#welcome data-icon="fa-info" .hidden}
+---
+output:
+   flexdashboard::flex_dashboard:
+      orientation: columns
+---
 
-###
+# &shy; {#welcome data-icon="fa-info" .hidden data-orientation="rows"}
 
+##
+
+### About {data-width=300}
+
+Short explanation of what is Geranium and how to use it, how it is related to ArcNet (2-3 paragraphs)
+
+```{r, results='asis'}
+   cat(readLines("https://loripsum.net/api/plaintext/medium/3"),sep="\n\n")
+```
+
+### How to use {data-width=300}
 
 Left sidebar is for inputs.
    
-[Map](#map) tab is for map. Map rendering is not so fast. Please be patient.
+[Spatial query](#map) tab is for map. Map rendering is not so fast. Please be patient.
 
 <span style="color: #A00;">
 WARNING:
 </span>
 Currently, you have to deselect yourself any AOI in query modes 'Editor' and 'Selector' before any input changing.
 
-[Table](#table) tab is for tabular output and for report genaration.
+[Cross-overview](#cross) tab is for tabular output and for report genaration.
 
 Designed for use on at least 1366*768 display size or slightly less.
-
 
 > Invented by Boris Solovyev.<br><br>Developed by Nikita Platonov.<br><br>Content under CC-BY-ND. Design under CC-BY-SA.<br><br>Updated: `r format(file.mtime("../geranium.Rmd"),"%Y-%m-%d %H:%M")`<!--<br><br>[Details](#devel).-->

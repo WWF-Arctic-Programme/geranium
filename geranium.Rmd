@@ -1,54 +1,49 @@
 ---
 runtime: shiny
+pagetitle1: Compatibility with AOIs
 pagetitle: Compatibility with AOIs - WWF ArcNet
+author1: "[WWF ArcNet](https://arcticwwf.org/work/ocean/arcnet/)"
 zzzpagetitle: Compatibility with AOIs
 link-citations: yes
 output1: html_document
 output:
    flexdashboard::flex_dashboard:
+      theme: yeti
+      theme2: 
+         version: 4
+         bootswatch: minty
       logo: https://wwf.ru/assets/img/logo.jpg
       favicon: https://d1diae5goewto1.cloudfront.net/_skins/favicon.png
-      orientation: columns
+      orientation: rows
+      vertical_layout: fill
+      orientation1: rows
+      vertical_layout1: scroll
       mathjax: ~
-      theme: yeti
-      css1:
+      css:
       - site_libs/common.css
       - site_libs/flex_dashboard.css
       - include/geranium.css
-      css:
+      css2:
       - https://nplatonov.github.io/site_libs/common.css
       - https://nplatonov.github.io/site_libs/flex_dashboard.css
       - include/geranium.css
       navbar:
          - { title: "ArcNet", icon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
+output3:
+   html_vignette:
+      css:
+      - https://nplatonov.github.io/site_libs/common.css
+      - https://nplatonov.github.io/site_libs/html_vignette.css
 ---
 
-```{css, eval=FALSE}
-   .leaflet-container {
-       background-color: #fff;
-   }
-   .info.legend{
-       background-color: #EEEA;
-   }
-   .marker-icon,
-   .marker-icon:focus {
-     border: 1px solid #33ff88 !important;
-   }
-   .dataTables_info .form-control {
-      height: 24px;
-   }
-   .dataTables_filter .form-control {
-      height: 24px;
-      margin-top: -1em;
-   }
-   #cfmeta {
-      font-size: 150%;
-   }
-```
+```{r init643ce921796fb94ae61005778a47b7fe, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE,message=FALSE,warning=FALSE)
+
 
 ```{r}
 devel <- !grepl(file.path(gsub("^\\w:/","",Sys.getenv("RAS")),"shiny"),gsub("^\\w:/","",getwd()))
 hlink <- FALSE
+isScroll <- TRUE
 invisible(stats::runif(352))
 seed <- sample(100:999,1)
 set.seed(seed)
@@ -85,7 +80,9 @@ groupList <- c('\\d'=c("All Conservation Features","All Data")[1]
               ,'8'="Coastal"
               ,'9'="Polar bears"
               )
-activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity))
+#activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity)) ## deprecated
+activity <- unique(gsub(pattRules,"\\1",rules$activity))
+activity <- c(allActivity,activity)
 options(spinner.color="#ECF0F5")
 nameSelector <- "Selector"
 nameEditor <- "Editor"
@@ -103,7 +100,9 @@ if (T) observe({ ## update 'input$sheet'
       cat("   updated\n")
       updateSelectInput(session,"sheet",choices=c(nameInit,activity)[-1]
                       # ,selected="Aquaculture"
-                       ,selected=ifelse(devel,sample(activity,1),c("Fishery","Shipping")[1])
+                      # ,selected=ifelse(devel,sample(activity,1),c("Fishery","Shipping")[1])
+                      # ,selected=activity[1]
+                       ,selected="Tourism"
                        )
    }
 })
@@ -111,11 +110,18 @@ if (T) observe({ ## update 'input$column'
    req(input$sheet %in% activity)
    cat("observe: update input$column:\n")
    forcing <- grep(paste0("^",input$sheet),rules$activity,value=TRUE)
-   forcing <- gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\2",forcing)
-   updateSelectInput(session,"column",choices=forcing
-                    ,selected=ifelse(devel,sample(forcing,1),forcing[1])
-                   # ,selected=grep("Mussels",forcing,value=TRUE)
-                    )
+  # forcing <- gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\2",forcing) ## deprecated
+   forcing <- gsub(pattRules,"\\2",forcing)
+   if (length(forcing))
+      updateSelectInput(session,"column",choices=c(nameInit,forcing)
+                      # ,selected=ifelse(devel,sample(forcing,1),forcing[1])
+                      # ,selected=grep("Mussels",forcing,value=TRUE)
+                       ,selected=nameInit
+                       )
+   else
+      updateSelectInput(session,"column",choices="All industries"
+                      # ,selected="All industries"
+                       )
 })
 if (T) observe({ ## update input$method
    req(input$sheet %in% activity)
@@ -228,7 +234,7 @@ if (T) observe({ ## update 'exchange$selection'
       exchange$cf <- rvActivityStat()[ind,]
   # exchange$selection
 })
-if (T) observe({
+if (F) observe({
    ind <- input$tbl_rows_selected
    if (is.integer(ind)) {
       tbl <- rvActivityStat()[ind,,drop=TRUE]
@@ -236,7 +242,7 @@ if (T) observe({
       updateSelectInput(session,"cfcode",selected=cfmeta$label[ind2])
    }
 })
-if (T) observe({
+if (F) observe({
    ind <- input$cfdata_rows_selected
    updateSelectInput(session,"industry"
       ,selected=if (is.integer(ind)) unlist(industries)[ind] else input$column)
@@ -252,6 +258,7 @@ if (F) observe({ ## setView for Selector
 rvActivity <- reactive({
    cat("rvActivity():\n")
    ret <- list(map=NULL,stat=NULL)
+  # return(ret)
    if (input$sheet!=nameInit) {
       activity <- paste0(input$sheet,sepRules,input$column)
       print(activity)
@@ -284,13 +291,19 @@ rvAOI <- reactive({
    exchange$selection
 })
 rvActivityMap <- reactive({
-   cat("rvActivityMap:\n")
+   cat("rvActivityMap():\n")
+  # return(NULL)
    if ((input$sheet==nameInit)||(input$column==nameInit))
       return(NULL)
    activity <- paste0(input$sheet,sepRules,input$column)
+  # if (activity==allActivity) {
+  #    return(interim(activity,group=NULL,aoi=NULL,season=input$season,simplify="map"))
+  # }
    ind <- match(activity,rules$activity)
-   if (is.na(ind))
+   if (F & is.na(ind)) {
+      print("activity is not found")
       return(NULL)
+   }
    print(c(activity=activity))
    ind <- match(input$group,groupList)
    if (!length(ind))
@@ -299,7 +312,8 @@ rvActivityMap <- reactive({
    interim(activity,group=group,aoi=NULL,season=input$season,simplify="map")
 })
 rvActivityStat <- reactive({
-   cat("rvActivityStat:\n")
+   cat("rvActivityStat():\n")
+  # return(NULL)
    if ((input$sheet==nameInit)||(input$column==nameInit))
       return(NULL)
    activity <- paste0(input$sheet,sepRules,input$column)
@@ -310,7 +324,7 @@ rvActivityStat <- reactive({
    interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
 })
 rvConflictMap <- reactive({
-   cat("rvConflictMap:\n")
+   cat("rvConflictMap():\n")
    a <- rvActivityMap()
    if (is.null(a))
       return(conflictBasemap())
@@ -385,16 +399,20 @@ rvCustomer <- reactive({
 ```{r, eval=T, child="include/welcome.Rmd"}
 ```
 
-# Map {#map data-icon="fa-angle-right"}
+# Request {#map data-icon="fa-angle-right"}
 
-## {.sidebar data-width=470}
+## {.sidebar data-width="470px" data-height=600}
+
+<!--
+### Inputs {data-width=200}
+-->
 
 ```{r, eval=isShiny}
 width <- c("100%","450px")[2]
-shiny::selectInput("sheet","Activity",nameInit,width=width)
+shiny::selectInput("sheet","Human use",nameInit,width=width)
 shiny::selectInput("column","Industry",nameInit,width=width)
 shiny::selectInput("region","Spatial query",c(names(regionSF),nameEditor)
-                  ,selected="LMEs" # sample(names(regionSF),1)
+                  ,selected="PACs" # sample(names(regionSF),1)
                   ,width=width)
 shiny::selectInput("predefined","Region from list",nameInit
                  # ,selected=nameSelector
@@ -413,9 +431,9 @@ shiny::selectInput("coloring","Colorization",unname(methodList)
                   ,width=width)
 ```
 
-##
+## {.mainbar}
 
-###
+### A map for query {data-width=400 data-height=800}
 
 ```{r, eval=T & isShiny}
 uiOutput("uiMap")
@@ -424,7 +442,7 @@ uiOutput("uiMap")
 #selectModUI("selector")
 ```
 
-```{r eval=T & isShiny}
+```{r eval=T & isShiny, fig.height=800}
 output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-leafletOutput
    cat("renderUI:\n")
    if (input$region %in% nameEditor) {
@@ -447,10 +465,10 @@ output$viewer <- renderLeaflet({
    req(!is.null(a))
    coloring <- names(methodList[match(input$coloring,methodList)])
    d6 <- map3_1d(a,kind=coloring,source=input$sheet)
-  # write_envi(d6,"c:/tmp/tmp_d6")
+   write_envi(d6,"c:/tmp/tmp_d6")
    aoi <- rvAOI()
-  # if (!is.null(aoi))
-  #    saveRDS(aoi,"c:/tmp/tmp_d6.rds")
+   if (!is.null(aoi))
+      saveRDS(aoi,"c:/tmp/tmp_d6.rds")
    m <- conflictMap(d6,aoi=aoi)
    m
 })
@@ -462,11 +480,11 @@ output$note <- renderText({
 })
 ```
 
-# Table {#table data-icon="fa-angle-right"}
+# Incompatibilities {#table data-icon="fa-angle-right" data-orientation="columns"}
 
-##
+## {data-width=500}
 
-###
+### Incompatibility table for chosen AOI {data-width=500}
 
 ```{r eval=isShiny}
 ##~ renderTable({
@@ -482,8 +500,9 @@ output$tbl <- DT::renderDT({
       b <- data.frame('No table'=ifelse(isAOI,"Missed conflicted CFs"
                                        ,"Please select AOI to generate table")
                      ,check.names=FALSE)
-      return(DT::datatable(b,rownames=FALSE,escape=FALSE,extension="Scroller"
-                          ,options=list(dom="t")
+      return(DT::datatable(b,rownames=FALSE,escape=FALSE
+                         # ,extension="Scroller"
+                          ,options=list(dom="t",scroller=F)
                           ))
       ##~ ind <- integer()
       ##~ cname <- colnames(b)
@@ -519,8 +538,8 @@ output$tbl <- DT::renderDT({
    cname[indCode] <- "CF Code"
    cname[grep("(^CF.+name|^name$)",cname,ignore.case=TRUE)] <- "CF Name"
    cname[indC] <- "Conflict"
-   cname[grep("value.*1",cname,ignore.case=TRUE)] <- "Amount portion inside PAC, %"
-   cname[grep("value.*2",cname,ignore.case=TRUE)] <- "Amount portion inside PAC masked by activity, %"
+   cname[grep("value.*1",cname,ignore.case=TRUE)] <- "Amount portion inside AOI, %"
+   cname[grep("value.*2",cname,ignore.case=TRUE)] <- "Amount portion inside AOI masked by activity, %"
    colnames(b) <- cname
    ##~ b <- DT::datatable(b
                 ##~ ,rownames=FALSE # is.null(dt$CF)
@@ -530,12 +549,14 @@ output$tbl <- DT::renderDT({
    b <- DT::datatable(b,rownames=FALSE,escape=FALSE,selection="single"
                        ,extensions=c("FixedColumns","Scroller","ColReorder")[2]
                        ,options=list(NULL
+                                    ,ordering=F
                                     ,scroller=T
                                    # ,scrollY=T
                                     ,scrollY="calc(100vh - 205px)"
                                    # ,fixedColumns=list()
                                    # ,colReorder=F
                                     ,dom="ift"
+                                    ,pageLength=nrow(b)
                                     ##~ ,columnDefs=if (!empty) list(list(className='dt-right',targets=ind-1)
                                                                 ##~ ,list(className='dt-center',targets=0))
                                                 ##~ else NULL
@@ -573,19 +594,105 @@ output$tbl <- DT::renderDT({
 )
 ```
 
-# CF compatibility {#cf .zzzhidden}
+## CF metadata and map {data-width=200}
 
-### 
+```{r, eval=F & isShiny}
+fillCol(flex=c(3,4)
+       ,tableOutput("tblsuppl")
+       ,imageOutput("mapcf")
+      # ,width="500px",height="600px"
+       )
+```
+
+### CF metadata {data-height=200}
+
+
+```{r, eval=T & isShiny}
+#output$tblsuppl <- 
+renderTable({
+   ind <- input$tbl_rows_selected
+   req(is.integer(ind))
+   tbl <- rvActivityStat()[ind,,drop=TRUE]
+   ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
+   req(length(ind2)>0)
+   cf <- cfmeta$label[ind2]
+   cat("0731m\n")
+   str(cf)
+   cf <- gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
+   str(cf)
+   cat("0731n\n")
+   md <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
+                     ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
+   md <- md[md$CF_code %in% cf,]
+   md <- md[md$CF_code %in% cf,grep("(^$|^File_name|groupcode)"
+                                   ,colnames(md),invert=TRUE)]
+   if (hlink)
+      md$CF_code <- paste0("<a href=#section-cf>",md$CF_code,"</a>")
+  # da <- t(as.data.frame(md,check.names=FALSE))
+   da <- data.frame(t(md))
+   if (F) {
+      ret <- DT::datatable(da,colnames=c("","")
+                          ,rownames=TRUE,selection="none",escape=FALSE
+                   ,extension="Scroller"
+                   ,options=list(dom="t",ordering=F
+                                ,scroller=T
+                               # ,scrollY="300px"
+                               # ,autoWidth=FALSE
+                               # ,columnDefs=list(list(width='300px',targets=c(1,2)))
+                                ))
+   }
+   else {
+      da <- cbind(left=rownames(da),da)
+      colnames(da) <- c("","")
+      ret <- da
+   }
+   ret
+})
+```
+
+### CF map {data-height=200}
+
+```{r eval=T & isShiny}
+#output$mapcf <-
+renderImage({
+   ind <- input$tbl_rows_selected
+   req(is.integer(ind))
+   tbl <- rvActivityStat()[ind,,drop=TRUE]
+   ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
+   req(length(ind2)>0)
+   cf <- cfmeta$label[ind2]
+   cf <- gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
+  # req(length(input$cfcode)>0)
+   ursa:::.elapsedTime("display -- start")
+   g1 <- session_grid()
+   session_grid(NULL)
+  # cf <- gsub("^(\\d{4}).*","\\1",input$cfcode)
+  # str(cf)
+   amount <- read_envi(amountFile,subset=cf,cache=TRUE)
+   amount <- ursa_crop(amount,border=11)
+   session_grid(consistent_grid(ref=c(600,600)))
+   ret <- display(amount,fileout=ursa:::.maketmp(ext=".png"),scale=1,retina=1)
+   session_grid(g1)
+   ursa:::.elapsedTime("display -- finish")
+   list(src=ret,height="ursa")
+},deleteFile=T)
+```
+
+# Conservation Features {#cf .zzzhidden data-orientation="columns"}
+
+## {data-width=500}
+
+### All compapibilities for one CF {#dummy data-width=500}
 
 ```{r eval=isShiny}
 #amount <- open_envi(amountFile,cache=T)
 #aname <- names(amount)
 #close(amount)
-fillCol(flex=c(NA,NA,1)
-       ,selectInput("cfcode","Conservation Feature",cfmeta$label
-                   ,selected=sample(cfmeta$label,1),width="680px")
-       ,htmlOutput('cfmap')
-      # ,htmlOutput('cfmeta')
+fillCol(flex=c(NA,1)
+      # ,selectInput("cfcode","Conservation Feature",cfmeta$label
+      #             ,selected=sample(cfmeta$label,1),width="680px")
+      # ,htmlOutput('cfmap')
+       ,htmlOutput('cfmeta')
        ,DT::DTOutput('cfdata')
 )
 ```
@@ -608,7 +715,8 @@ output$cfmap <- renderText({
 
 ```{r eval=isShiny}
 output$cfdata <- DT::renderDT({
-   if (F) {
+  # req(length(input$cfcode)>0)
+   if (T) {
       ind <- input$tbl_rows_selected
      # if (!is.integer(ind))
       req(is.integer(ind))
@@ -627,8 +735,10 @@ output$cfdata <- DT::renderDT({
    b <- DT::datatable(da,rownames=FALSE,escape=FALSE,selection="single"
                        ,extensions="Scroller"
                        ,options=list(NULL
+                                    ,ordering=F
                                     ,scroller=T
                                     ,scrollY="calc(100vh - 255px)"
+                                    ,pageLength=nrow(da)
                                     ,dom="ift"
                                     )
                        )
@@ -646,100 +756,94 @@ output$cfdata <- DT::renderDT({
 })
 ```
 
-# CF Map {#cfmap .zzzhidden}
+## Right column {data-width=200}
 
-```{r eval=F}
-fillRow(flex=c(1,NA)
-      # ,textOutput("mapinfo")
-       ,dataTableOutput("maptabl")
-       ,imageOutput("mapdspl")
-       )
-```
-
-```{r eval=F}
-fluidRow(column(6,dataTableOutput("maptabl")),column(6,imageOutput("mapdspl")))
-```
-
-## {.sidebar data-width="600px"}
-
-```{r}
-# output$maptabl <- 
-renderDT({
-   cf <- gsub("^(\\d{4}).*","\\1",input$cfcode)
-   md <- read.csv(dir(path="external",pattern="scenario.*\\.csv$"
-                     ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
-   md <- md[md$CF_code %in% cf,]
-   md <- md[md$CF_code %in% cf,grep("(^$|^File_name|groupcode)"
-                                   ,colnames(md),invert=TRUE)]
-   if (hlink)
-      md$CF_code <- paste0("<a href=#section-cf>",md$CF_code,"</a>")
-   da <- t(as.data.frame(md,check.names=FALSE))
-  # str(md)
-  # str(da)
-   DT::datatable(da,colnames=c("",""),rownames=TRUE,selection="none",escape=FALSE
-                ,options=list(dom="t",ordering=F
-                            # ,autoWidth=FALSE
-                            # ,columnDefs=list(list(width='300px',targets=c(1,2)))
-                             ))
-})
-```
-```{r eval=F}
-output$mapinfo <- renderPrint({
-   print(input$cfcode)
-   cf <- gsub("^(\\d{4}).*","\\1",input$cfcode)
-   print(cf)
-})
-```
-##
-
-### 
-
-```{r}
-#output$mapdspl <-
-renderImage({
-   ursa:::.elapsedTime("display -- start")
-   g1 <- session_grid()
-   session_grid(NULL)
-   cf <- gsub("^(\\d{4}).*","\\1",input$cfcode)
-   str(cf)
-   amount <- read_envi(amountFile,subset=cf,cache=TRUE)
-   amount <- ursa_crop(amount,border=11)
-   session_grid(consistent_grid(ref=c(800,600)))
-   ret <- display(amount,fileout=ursa:::.maketmp(ext=".png"))
-   session_grid(g1)
-   ursa:::.elapsedTime("display -- finish")
-   list(src=ret,height="ursa")
-},deleteFile=T)
-```
-
-# Industries {#industry .zzzhidden}
-
-### 
+### Industry description {data-height=300}
 
 ```{r eval=isShiny}
-shiny::selectInput("industry","Industry description"
-                  ,industries
-                 # ,selected=input$column
-                  ,selected=sample(unlist(industries))
-                  ,width=width)
+renderUI({
+   req(as.integer(input$cfdata_rows_selected))
+   industry <- unname(unlist(industries)[input$cfdata_rows_selected])
+  # activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
+   activity <- names(industries)[sapply(industries,function(a) industry %in% a)]
+  # activity <- names(industries)[input$cfdata_rows_selected]
+   fname <- paste0("include/industry-",activity,".Rmd")
+   print(file.exists(fname))
+   print(fname)
+   if (F) {
+      a1 <- knitr::knit(fname,quiet=FALSE)
+      a2 <- markdown::markdownToHTML(a1,fragment.only=TRUE)
+      ret <- HTML(a2)
+      str(ret)
+   }
+   else {
+     # wd <- setwd(dirname(fname))
+      fileout <- "res1.html" # "res1.html" ## tempfile()
+      rmarkdown::render(fname
+                       ,output_format=rmarkdown::html_fragment()
+                      # ,output_format=rmarkdown::html_vignette(css=NULL)
+                       ,output_file=fileout,quiet=TRUE
+                      # ,params=list(prm=analysis(),kind=1L)
+                       )
+      fileout <- file.path(dirname(fname),fileout)
+      a0 <- read_xml(fileout)
+      a1 <- as_list(a0)
+      id <- paste0("i",digest::digest(industry,"crc32"))
+      ind <- which(!sapply(a1[[1]],function(b1) isTRUE(id==attr(b1,"id"))))
+      for (i in rev(tail(ind,-1))) {
+         xml_remove(xml_child(a0,search=i))
+      }
+     # fileout <- gsub("res1","res2",fileout)
+      write_html(a0,fileout)
+      ret <- scan(fileout,what=character(),encoding="UTF-8",quiet=TRUE)
+      ret <- HTML(ret)
+     # ret <- paste0(ret,collapse="\n")
+      str(ret)
+     # ret <- fileout
+      file.remove(fileout)
+   }
+   ret
+})
 ```
+
+### Cell comment {data-height=100}
 
 ```{r eval=isShiny}
 renderText({
-   print(input$cfdata_rows_selected)
-   "Need to develop indexing for industry topics"
+   req(as.integer(input$cfdata_rows_selected))
+   ind <- input$tbl_rows_selected
+   req(is.integer(ind))
+   tbl <- rvActivityStat()[ind,,drop=TRUE]
+   ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
+   req(length(ind2)>0)
+   cf <- cfmeta$label[ind2]
+  # cf <- gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
+   industry <- unname(unlist(industries)[input$cfdata_rows_selected])
+  # activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
+   activity <- names(industries)[sapply(industries,function(a) industry %in% a)]
+   paste("A comment for",dQuote(industry),"of",dQuote(activity),"human use"
+        ,"which is placed for",dQuote(cf),"conservation feature")
 })
 ```
 
-# \(Experimental\) {#devel .nothidden data-orientation="rows"}
+# \(Experimental\) {#devel .nothidden data-orientation="columns"}
 
-## columns {.zzztabset}
+## {data-height=600}
 
+### Verbose \(only\) \(for\) \(debug\) \(purposes\) {data-width=550}
 
-### Verbose {data-width=550}
+```{r eval=isShiny}
+fillCol(flex=c(NA,1),textOutput("flex"),verbatimTextOutput("verb"))
+```
+
+```{r eval=isShiny}
+output$flex <- renderText({
+   paste("Flexdashboard version is",packageVersion("flexdashboard"))
+})
+```
 
 ```{r eval=T & isShiny}
-renderPrint({
+output$verb <- renderPrint({
    ##~ cl <- class(selector())
    ##~ if ("character" %in% cl)
       ##~ return("predefined")
@@ -753,11 +857,5 @@ renderPrint({
 })
 ```
 
-```{r, child='include/news.Rmd'}
-```
-
-#### Check scrolling
-
-```{r, results='asis'}
-cat(readLines("https://loripsum.net/api/plaintext/long/9"),sep="\n\n")
+```{r, eval=T,child='include/news.Rmd'}
 ```

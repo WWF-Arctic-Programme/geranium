@@ -1,3 +1,5 @@
+## {data-width=400}
+
 ### NEWS
 
 + 2022-08-02
@@ -14,3 +16,8 @@
 
   + Geranium is released on [wwfrussia](https://wwfrussia.shinyapps.io/geranium/) shinyapps account.
 
+### Check scrolling
+
+```{r, results='asis'}
+cat(readLines("https://loripsum.net/api/plaintext/long/4"),sep="\n\n")
+```

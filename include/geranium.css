@@ -22,7 +22,61 @@
 .table.dataTable tbody tr.active td {
    background-color: lightskyblue !important;
    color: black !important;
+   font-weight: normal;
 }
 .selectize-dropdown .optgroup-header {
    font-size: 120%;
+}
+@media print, screen and (max-width: 1268px) and (min-width: 769px) {
+   body {
+      width: 100%;
+   }
+   .navbar {
+      width: 99%;
+      padding-right: 12em;
+   }
+   .navbar-right {
+      max-width: 300px !important;
+   }
+   .dataTables_scrollBody {
+      height: 514px !important;
+      max-height: 514px !important;
+   }
+}
+table.overcontent-dev {
+   font-size: 100%
+}
+table.overcontent-dev thead th {
+   font-weight: bold !important;
+  /* color: red !important;*/
+   transform: rotate(180deg);
+   writing-mode: vertical-lr;
+   text-orientation: mixed;
+   direction: rtl;
+   vertical-align: top !important;
+   text-align: center !important;
+}
+table.overcontent thead th {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-left: 8px !important; /* 4 */
+  padding-right: 8px !important; /* 12 */
+}
+table.overcontent tbody td {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  padding-left: 8px !important; /* 10 */
+  padding-right: 8px !important; /* 6 */
+}
+.actionButton {
+   padding-top: 0.6em;
+   padding-bottom: 0.2em;
+   margin-bottom: 0.2em;
+   background-color: green;
+   color: white;
+   text-align: center;
+   width: 9em;
+}
+.actionButton a {
+   color: white;
 }
