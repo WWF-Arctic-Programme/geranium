@@ -10,4 +10,4 @@ Spatial vulnerability between marine protection and human use in the Arctic
 
 2. In interactive R session use `rmarkdown::run("soiga.Rmd")`.
 
-Note that downgradable version of `flexdashboard` is used for correct table displaying with "Scroller" extnsion.
+Note that downgradable version of `flexdashboard` (<0.6) is used for correct table displaying with "Scroller" extension.

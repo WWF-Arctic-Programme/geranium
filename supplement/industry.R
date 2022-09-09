@@ -1,5 +1,5 @@
 wd <- setwd("..")
-source("resources/process.R")
+source("resources/global.R")
 activity <- readxl::excel_sheets(mdname)
 res <- lapply(activity |> sample(),function(sheet) {
    output <- paste0("include/industry-",sheet,".Rmd")
