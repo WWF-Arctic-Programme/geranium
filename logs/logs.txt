@@ -1,0 +1,1501 @@
+2022-09-06T00:46:39.432299+00:00 shinyapps[6734578]: Container event from container-7143500: start
+2022-09-06T00:46:42.432278+00:00 shinyapps[6734578]: Running on host: c3f8e5384fd5
+2022-09-06T00:46:42.432391+00:00 shinyapps[6734578]: LANG: C.UTF-8
+2022-09-06T00:46:42.432439+00:00 shinyapps[6734578]: Working directory: /srv/connect/apps/soiga
+2022-09-06T00:46:42.432343+00:00 shinyapps[6734578]: Server version: 2022.08.0
+2022-09-06T00:46:42.432481+00:00 shinyapps[6734578]: Running content using the current R environment
+2022-09-06T00:46:42.432606+00:00 shinyapps[6734578]: httpuv version: 1.6.5
+2022-09-06T00:46:42.432522+00:00 shinyapps[6734578]: R version: 4.2.1
+2022-09-06T00:46:42.432565+00:00 shinyapps[6734578]: shiny version: 1.7.2
+2022-09-06T00:46:42.432644+00:00 shinyapps[6734578]: rmarkdown version: 2.16
+2022-09-06T00:46:42.432809+00:00 shinyapps[6734578]: reticulate version: (none)
+2022-09-06T00:46:42.432739+00:00 shinyapps[6734578]: RJSONIO version: (none)
+2022-09-06T00:46:42.432683+00:00 shinyapps[6734578]: knitr version: 1.40
+2022-09-06T00:46:42.432712+00:00 shinyapps[6734578]: jsonlite version: 1.8.0
+2022-09-06T00:46:42.432906+00:00 shinyapps[6734578]: Using jsonlite for JSON processing
+2022-09-06T00:46:42.432980+00:00 shinyapps[6734578]: Starting R with process ID: '26'
+2022-09-06T00:46:42.432774+00:00 shinyapps[6734578]: htmltools version: 0.5.3
+2022-09-06T00:46:42.432842+00:00 shinyapps[6734578]: Using pandoc: /opt/connect/ext/pandoc/2.16
+2022-09-06T00:46:42.432946+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:42.433017+00:00 shinyapps[6734578]: Shiny R Markdown document starting ...
+2022-09-06T00:46:42.433060+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:42.433094+00:00 shinyapps[6734578]: Listening on http://127.0.0.1:42441
+2022-09-06T00:46:43.432237+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.432286+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.432566+00:00 shinyapps[6734578]: label: init643ce921796fb94ae61005778a47b7fe (with options) 
+2022-09-06T00:46:44.432336+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.432745+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:44.432967+00:00 shinyapps[6734578]:  $ eval  : logi TRUE
+2022-09-06T00:46:44.432376+00:00 shinyapps[6734578]: processing file: soiga.Rmd
+2022-09-06T00:46:44.432711+00:00 shinyapps[6734578]:   |                                                                              |..                                                                    |   3%!(NOVERB)
+2022-09-06T00:46:44.433082+00:00 shinyapps[6734578]:   |                                                                              |....                                                                  |   5%!(NOVERB)
+2022-09-06T00:46:44.432502+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.433184+00:00 shinyapps[6734578]:   |                                                                              |....                                                                  |   6%!(NOVERB)
+2022-09-06T00:46:44.432467+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:44.432782+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.433220+00:00 shinyapps[6734578]: label: header (with options) 
+2022-09-06T00:46:44.432426+00:00 shinyapps[6734578]:   |                                                                              |                                                                      |   0%!(MISSING)  |                                                                              |.                                                                     |   1%!(NOVERB)
+2022-09-06T00:46:44.432822+00:00 shinyapps[6734578]:   |                                                                              |...                                                                   |   4%!(NOVERB)
+2022-09-06T00:46:44.433111+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:44.433424+00:00 shinyapps[6734578]:   |                                                                              |.....                                                                 |   7%!(NOVERB)
+2022-09-06T00:46:44.432535+00:00 shinyapps[6734578]:   |                                                                              |.                                                                     |   2%!(NOVERB)
+2022-09-06T00:46:44.433256+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:44.433568+00:00 shinyapps[6734578]: label: server (with options) 
+2022-09-06T00:46:44.432596+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:44.433043+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.433140+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.433500+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.432632+00:00 shinyapps[6734578]:  $ include: logi FALSE
+2022-09-06T00:46:44.432928+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:44.433327+00:00 shinyapps[6734578]:  $ code: chr [1:66] "devel <- !grepl(file.path(gsub(\"^\\\\w:/\",\"\",Sys.getenv(\"RAS\")),\"shiny\"),gsub(\"^\\\\w:/\",\"\",getwd()))" "hlink <- FALSE" "verboseTable <- !FALSE" "isScroll <- TRUE" ...
+2022-09-06T00:46:44.432673+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.432889+00:00 shinyapps[6734578]: label: unnamed-chunk-1 (with options) 
+2022-09-06T00:46:44.433290+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:44.433643+00:00 shinyapps[6734578]:  $ code: chr [1:1145] "source(\"resources/process.R\",encoding=\"UTF-8\")" "source(\"resources/header.R\",encoding=\"UTF-8\")" "exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL" "                          ,prev=integer(),curr=integer() ## need for removing forgiven clean" ...
+2022-09-06T00:46:44.433004+00:00 shinyapps[6734578]:  $ engine: chr "js"
+2022-09-06T00:46:44.433388+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.433673+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:44.433464+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:44.433534+00:00 shinyapps[6734578]:   |                                                                              |......                                                                |   8%!(NOVERB)
+2022-09-06T00:46:44.433601+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:45.432221+00:00 shinyapps[6734578]: Loading required package: ursa
+2022-09-06T00:46:46.434692+00:00 shinyapps[6734578]: *** run_app.R: require packages -- start: 0.91(0.91) seconds ***
+2022-09-06T00:46:46.434754+00:00 shinyapps[6734578]: Loading required package: leaflet
+2022-09-06T00:46:46.434803+00:00 shinyapps[6734578]: Loading required package: leaflet.extras
+2022-09-06T00:46:46.434878+00:00 shinyapps[6734578]: Loading required package: fasterize
+2022-09-06T00:46:46.434848+00:00 shinyapps[6734578]: Loading required package: leafpm
+2022-09-06T00:46:52.432224+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.432341+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.432291+00:00 shinyapps[6734578]: Attaching package: 'fasterize'
+2022-09-06T00:46:52.432381+00:00 shinyapps[6734578]: The following object is masked from 'package:graphics':
+2022-09-06T00:46:52.432418+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.432577+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.432623+00:00 shinyapps[6734578]:     plot
+2022-09-06T00:46:52.432658+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.432458+00:00 shinyapps[6734578]:     plot
+2022-09-06T00:46:52.432897+00:00 shinyapps[6734578]: Attaching package: 'DT'
+2022-09-06T00:46:52.432505+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.432987+00:00 shinyapps[6734578]: The following objects are masked from 'package:shiny':
+2022-09-06T00:46:52.432542+00:00 shinyapps[6734578]: The following object is masked from 'package:base':
+2022-09-06T00:46:52.433113+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.433025+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.433151+00:00 shinyapps[6734578]: Loading required package: formattable
+2022-09-06T00:46:52.432730+00:00 shinyapps[6734578]: Loading required package: leafpop
+2022-09-06T00:46:52.432944+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:52.433241+00:00 shinyapps[6734578]: *** run_app.R: require packages -- end: 7.03(6.12) seconds ***
+2022-09-06T00:46:52.433065+00:00 shinyapps[6734578]:     dataTableOutput, renderDataTable
+2022-09-06T00:46:52.432766+00:00 shinyapps[6734578]: Loading required package: mapedit
+2022-09-06T00:46:52.433201+00:00 shinyapps[6734578]: Loading required package: xml2
+2022-09-06T00:46:52.432807+00:00 shinyapps[6734578]: Loading required package: DT
+2022-09-06T00:46:52.432694+00:00 shinyapps[6734578]: Loading required package: leafem
+2022-09-06T00:46:52.432864+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.432285+00:00 shinyapps[6734578]:   |                                                                              |......                                                                |   9%!(NOVERB)
+2022-09-06T00:46:53.432405+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.432346+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.432451+00:00 shinyapps[6734578]:   |                                                                              |.......                                                               |  10%!(NOVERB)
+2022-09-06T00:46:53.432489+00:00 shinyapps[6734578]: label: client (with options) 
+2022-09-06T00:46:53.432535+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.432625+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.432656+00:00 shinyapps[6734578]:   |                                                                              |........                                                              |  11%!(NOVERB)
+2022-09-06T00:46:53.432589+00:00 shinyapps[6734578]:  $ code: chr [1:723] "'verbose' <- function() 'cat(as.character(match.call())[1],\":\\n\")'" "'selectionTables' <- function() {" "   cat(as.character(match.call())[1],\":\\n\")" "   cell <- input$cross_cells_selected" ...
+2022-09-06T00:46:53.432808+00:00 shinyapps[6734578]: label: unnamed-chunk-2 (with options) 
+2022-09-06T00:46:53.432932+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.433123+00:00 shinyapps[6734578]:   |                                                                              |..........                                                            |  14%!(NOVERB)
+2022-09-06T00:46:53.432880+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.433072+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.432686+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.433400+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.433721+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.433822+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.432724+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.432847+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.433236+00:00 shinyapps[6734578]:  $ eval      : logi TRUE
+2022-09-06T00:46:53.433480+00:00 shinyapps[6734578]:   |                                                                              |...........                                                           |  16%!(NOVERB)
+2022-09-06T00:46:53.433853+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.433154+00:00 shinyapps[6734578]: label: unnamed-chunk-3 (with options) 
+2022-09-06T00:46:53.433883+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.432770+00:00 shinyapps[6734578]:   |                                                                              |........                                                              |  12%!(NOVERB)
+2022-09-06T00:46:53.432981+00:00 shinyapps[6734578]:   |                                                                              |.........                                                             |  13%!(NOVERB)
+2022-09-06T00:46:53.433513+00:00 shinyapps[6734578]: label: unnamed-chunk-4 (with options) 
+2022-09-06T00:46:53.433922+00:00 shinyapps[6734578]:   |                                                                              |.............                                                         |  19%!(NOVERB)
+2022-09-06T00:46:53.433025+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.433275+00:00 shinyapps[6734578]:  $ fig.height: num 800
+2022-09-06T00:46:53.433579+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.433958+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.433544+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.433788+00:00 shinyapps[6734578]: label: unnamed-chunk-5 (with options) 
+2022-09-06T00:46:53.434001+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434275+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.433358+00:00 shinyapps[6734578]:   |                                                                              |..........                                                            |  15%!(NOVERB)
+2022-09-06T00:46:53.433689+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.434041+00:00 shinyapps[6734578]:   |                                                                              |..............                                                        |  20%!(NOVERB)
+2022-09-06T00:46:53.433190+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:53.433613+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434081+00:00 shinyapps[6734578]: label: unnamed-chunk-6 (with options) 
+2022-09-06T00:46:53.433433+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.433651+00:00 shinyapps[6734578]:   |                                                                              |............                                                          |  17%!(NOVERB)
+2022-09-06T00:46:53.434120+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.434469+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.434643+00:00 shinyapps[6734578]:   |                                                                              |.................                                                     |  24%!(NOVERB)
+2022-09-06T00:46:53.433315+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.433750+00:00 shinyapps[6734578]:   |                                                                              |.............                                                         |  18%!(NOVERB)
+2022-09-06T00:46:53.434192+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434503+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434392+00:00 shinyapps[6734578]: label: unnamed-chunk-7 (with options) 
+2022-09-06T00:46:53.434843+00:00 shinyapps[6734578]:   |                                                                              |..................                                                    |  25%!(NOVERB)
+2022-09-06T00:46:53.434352+00:00 shinyapps[6734578]:   |                                                                              |...............                                                       |  22%!(NOVERB)
+2022-09-06T00:46:53.434808+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434435+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.434878+00:00 shinyapps[6734578]: label: unnamed-chunk-9 (with options) 
+2022-09-06T00:46:53.434684+00:00 shinyapps[6734578]: label: unnamed-chunk-8 (with options) 
+2022-09-06T00:46:53.435117+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.434538+00:00 shinyapps[6734578]:   |                                                                              |................                                                      |  23%!(NOVERB)
+2022-09-06T00:46:53.434964+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:53.434569+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.435003+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.435042+00:00 shinyapps[6734578]:   |                                                                              |..................                                                    |  26%!(NOVERB)
+2022-09-06T00:46:53.434924+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.435394+00:00 shinyapps[6734578]: label: unnamed-chunk-11 (with options) 
+2022-09-06T00:46:53.434159+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.434311+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434725+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.435156+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.434232+00:00 shinyapps[6734578]:   |                                                                              |...............                                                       |  21%!(NOVERB)
+2022-09-06T00:46:53.434605+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.434765+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:53.435191+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.435284+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.435643+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.435238+00:00 shinyapps[6734578]:   |                                                                              |...................                                                   |  27%!(NOVERB)
+2022-09-06T00:46:53.435607+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.435359+00:00 shinyapps[6734578]:   |                                                                              |....................                                                  |  28%!(NOVERB)
+2022-09-06T00:46:53.435703+00:00 shinyapps[6734578]: label: unnamed-chunk-12 (with options) 
+2022-09-06T00:46:53.435504+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T00:46:53.435319+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.435675+00:00 shinyapps[6734578]:   |                                                                              |.....................                                                 |  30%!(NOVERB)
+2022-09-06T00:46:53.435434+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:53.435955+00:00 shinyapps[6734578]:   |                                                                              |......................                                                |  32%!(NOVERB)
+2022-09-06T00:46:53.435082+00:00 shinyapps[6734578]: label: unnamed-chunk-10 (with options) 
+2022-09-06T00:46:53.435472+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T00:46:53.436003+00:00 shinyapps[6734578]: label: unnamed-chunk-13 (with options) 
+2022-09-06T00:46:53.435571+00:00 shinyapps[6734578]:   |                                                                              |....................                                                  |  29%!(NOVERB)
+2022-09-06T00:46:53.435534+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436039+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.435807+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.435773+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.435839+00:00 shinyapps[6734578]:   |                                                                              |......................                                                |  31%!(NOVERB)
+2022-09-06T00:46:53.435886+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.435917+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436075+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:53.435739+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.436105+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436238+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.436208+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.436283+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436131+00:00 shinyapps[6734578]:   |                                                                              |.......................                                               |  33%!(NOVERB)
+2022-09-06T00:46:53.436408+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436453+00:00 shinyapps[6734578]:   |                                                                              |........................                                              |  35%!(NOVERB)
+2022-09-06T00:46:53.436322+00:00 shinyapps[6734578]:   |                                                                              |........................                                              |  34%!(NOVERB)
+2022-09-06T00:46:53.436519+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.436368+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.436171+00:00 shinyapps[6734578]: label: unnamed-chunk-14 (with options) 
+2022-09-06T00:46:53.436591+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436665+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.436548+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:53.436489+00:00 shinyapps[6734578]: label: unnamed-chunk-15 (with options) 
+2022-09-06T00:46:53.436631+00:00 shinyapps[6734578]:   |                                                                              |.........................                                             |  36%!(NOVERB)
+2022-09-06T00:46:53.436704+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436778+00:00 shinyapps[6734578]: label: unnamed-chunk-16 (with options) 
+2022-09-06T00:46:53.436743+00:00 shinyapps[6734578]:   |                                                                              |..........................                                            |  37%!(NOVERB)
+2022-09-06T00:46:53.436811+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.436863+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.436902+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.437089+00:00 shinyapps[6734578]: label: unnamed-chunk-17 (with options) 
+2022-09-06T00:46:53.436939+00:00 shinyapps[6734578]:   |                                                                              |...........................                                           |  38%!(NOVERB)
+2022-09-06T00:46:53.437024+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.436979+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.437275+00:00 shinyapps[6734578]:   |                                                                              |............................                                          |  40%!(NOVERB)
+2022-09-06T00:46:53.437556+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.437059+00:00 shinyapps[6734578]:   |                                                                              |...........................                                           |  39%!(NOVERB)
+2022-09-06T00:46:53.437241+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.437366+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.437713+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:53.437673+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.437786+00:00 shinyapps[6734578]:   |                                                                              |..............................                                        |  43%!(NOVERB)
+2022-09-06T00:46:53.437118+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:53.437200+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T00:46:53.437483+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.437863+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.437318+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.437600+00:00 shinyapps[6734578]:   |                                                                              |.............................                                         |  42%!(NOVERB)
+2022-09-06T00:46:53.437940+00:00 shinyapps[6734578]: label: unnamed-chunk-20 (with options) 
+2022-09-06T00:46:53.438262+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.437153+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T00:46:53.437522+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.437897+00:00 shinyapps[6734578]:   |                                                                              |...............................                                       |  44%!(NOVERB)
+2022-09-06T00:46:53.438411+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.437638+00:00 shinyapps[6734578]: label: unnamed-chunk-19 (with options) 
+2022-09-06T00:46:53.438012+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.438517+00:00 shinyapps[6734578]: label: unnamed-chunk-22 (with options) 
+2022-09-06T00:46:53.438631+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.437978+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.438371+00:00 shinyapps[6734578]:   |                                                                              |.................................                                     |  47%!(NOVERB)
+2022-09-06T00:46:53.438592+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.438967+00:00 shinyapps[6734578]:   |                                                                              |....................................                                  |  51%!(NOVERB)
+2022-09-06T00:46:53.438055+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438556+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.438703+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.439075+00:00 shinyapps[6734578]:   |                                                                              |....................................                                  |  52%!(NOVERB)
+2022-09-06T00:46:53.437405+00:00 shinyapps[6734578]:   |                                                                              |.............................                                         |  41%!(NOVERB)
+2022-09-06T00:46:53.437752+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438126+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.438224+00:00 shinyapps[6734578]: label: unnamed-chunk-21 (with options) 
+2022-09-06T00:46:53.438778+00:00 shinyapps[6734578]:   |                                                                              |...................................                                   |  50%!(NOVERB)
+2022-09-06T00:46:53.439148+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.438091+00:00 shinyapps[6734578]:   |                                                                              |................................                                      |  45%!(NOVERB)
+2022-09-06T00:46:53.438472+00:00 shinyapps[6734578]:   |                                                                              |..................................                                    |  48%!(NOVERB)
+2022-09-06T00:46:53.438743+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439109+00:00 shinyapps[6734578]: label: unnamed-chunk-24 (with options) 
+2022-09-06T00:46:53.439387+00:00 shinyapps[6734578]:   |                                                                              |......................................                                |  54%!(NOVERB)
+2022-09-06T00:46:53.437444+00:00 shinyapps[6734578]: label: unnamed-chunk-18 (with options) 
+2022-09-06T00:46:53.437821+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.438185+00:00 shinyapps[6734578]:   |                                                                              |................................                                      |  46%!(NOVERB)
+2022-09-06T00:46:53.438295+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:53.438863+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.439222+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438156+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438443+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438669+00:00 shinyapps[6734578]:   |                                                                              |..................................                                    |  49%!(NOVERB)
+2022-09-06T00:46:53.439036+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439460+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.438335+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438904+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.439259+00:00 shinyapps[6734578]:   |                                                                              |.....................................                                 |  53%!(NOVERB)
+2022-09-06T00:46:53.439611+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438824+00:00 shinyapps[6734578]: label: unnamed-chunk-23 (with options) 
+2022-09-06T00:46:53.439187+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.439553+00:00 shinyapps[6734578]:   |                                                                              |......................................                                |  55%!(NOVERB)
+2022-09-06T00:46:53.439850+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.438938+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439303+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.439646+00:00 shinyapps[6734578]:   |                                                                              |.......................................                               |  56%!(NOVERB)
+2022-09-06T00:46:53.438996+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.439425+00:00 shinyapps[6734578]: label: unnamed-chunk-25 (with options) 
+2022-09-06T00:46:53.439809+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T00:46:53.439339+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439723+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:53.440070+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.439518+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439954+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439489+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.439684+00:00 shinyapps[6734578]: label: unnamed-chunk-26 (with options) 
+2022-09-06T00:46:53.440109+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.439766+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T00:46:53.440148+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.439582+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.439926+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.440325+00:00 shinyapps[6734578]:   |                                                                              |..........................................                            |  60%!(NOVERB)
+2022-09-06T00:46:53.439996+00:00 shinyapps[6734578]:   |                                                                              |.........................................                             |  58%!(NOVERB)
+2022-09-06T00:46:53.440356+00:00 shinyapps[6734578]: label: unnamed-chunk-28 (with options) 
+2022-09-06T00:46:53.440219+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.440035+00:00 shinyapps[6734578]: label: unnamed-chunk-27 (with options) 
+2022-09-06T00:46:53.440182+00:00 shinyapps[6734578]:   |                                                                              |.........................................                             |  59%!(NOVERB)
+2022-09-06T00:46:53.440387+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.440495+00:00 shinyapps[6734578]:   |                                                                              |...........................................                           |  61%!(NOVERB)
+2022-09-06T00:46:53.440842+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.440426+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.440813+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.440461+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.440553+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.440918+00:00 shinyapps[6734578]: label: unnamed-chunk-30 (with options) 
+2022-09-06T00:46:53.439897+00:00 shinyapps[6734578]:   |                                                                              |........................................                              |  57%!(NOVERB)
+2022-09-06T00:46:53.440284+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.440524+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.440877+00:00 shinyapps[6734578]:   |                                                                              |.............................................                         |  64%!(NOVERB)
+2022-09-06T00:46:53.440743+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.441106+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.441510+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.440665+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.441030+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.441436+00:00 shinyapps[6734578]:   |                                                                              |...............................................                       |  67%!(NOVERB)
+2022-09-06T00:46:53.440777+00:00 shinyapps[6734578]:   |                                                                              |............................................                          |  63%!(NOVERB)
+2022-09-06T00:46:53.441144+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.441548+00:00 shinyapps[6734578]:   |                                                                              |................................................                      |  68%!(NOVERB)
+2022-09-06T00:46:53.441276+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:53.441709+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.441192+00:00 shinyapps[6734578]:   |                                                                              |..............................................                        |  66%!(NOVERB)
+2022-09-06T00:46:53.441621+00:00 shinyapps[6734578]:   |                                                                              |................................................                      |  69%!(NOVERB)
+2022-09-06T00:46:53.441396+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.441858+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.441322+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T00:46:53.441792+00:00 shinyapps[6734578]: label: unnamed-chunk-33
+2022-09-06T00:46:53.440592+00:00 shinyapps[6734578]:   |                                                                              |...........................................                           |  62%!(NOVERB)
+2022-09-06T00:46:53.440956+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.441241+00:00 shinyapps[6734578]: label: unnamed-chunk-31 (with options) 
+2022-09-06T00:46:53.441660+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.440631+00:00 shinyapps[6734578]: label: unnamed-chunk-29 (with options) 
+2022-09-06T00:46:53.440990+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.441363+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T00:46:53.441587+00:00 shinyapps[6734578]: label: unnamed-chunk-32
+2022-09-06T00:46:53.442007+00:00 shinyapps[6734578]:   |                                                                              |...................................................                   |  73%!(NOVERB)
+2022-09-06T00:46:53.440700+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.441070+00:00 shinyapps[6734578]:   |                                                                              |..............................................                        |  65%!(NOVERB)
+2022-09-06T00:46:53.441475+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.441828+00:00 shinyapps[6734578]:   |                                                                              |..................................................                    |  71%!(NOVERB)
+2022-09-06T00:46:53.442199+00:00 shinyapps[6734578]:   |                                                                              |....................................................                  |  75%!(NOVERB)
+2022-09-06T00:46:53.441891+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.442243+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.441756+00:00 shinyapps[6734578]:   |                                                                              |.................................................                     |  70%!(NOVERB)
+2022-09-06T00:46:53.442119+00:00 shinyapps[6734578]:   |                                                                              |....................................................                  |  74%!(NOVERB)
+2022-09-06T00:46:53.441930+00:00 shinyapps[6734578]:   |                                                                              |..................................................                    |  72%!(NOVERB)
+2022-09-06T00:46:53.442084+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.442282+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.442420+00:00 shinyapps[6734578]:   |                                                                              |......................................................                |  77%!(NOVERB)
+2022-09-06T00:46:53.441968+00:00 shinyapps[6734578]: label: unnamed-chunk-34
+2022-09-06T00:46:53.442325+00:00 shinyapps[6734578]:   |                                                                              |.....................................................                 |  76%!(NOVERB)
+2022-09-06T00:46:53.442158+00:00 shinyapps[6734578]: label: unnamed-chunk-35
+2022-09-06T00:46:53.442464+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.442046+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.442538+00:00 shinyapps[6734578]:   |                                                                              |.......................................................               |  78%!(NOVERB)
+2022-09-06T00:46:53.442682+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.442606+00:00 shinyapps[6734578]:   |                                                                              |.......................................................               |  79%!(NOVERB)
+2022-09-06T00:46:53.442727+00:00 shinyapps[6734578]:   |                                                                              |........................................................              |  80%!(NOVERB)
+2022-09-06T00:46:53.442778+00:00 shinyapps[6734578]: label: unnamed-chunk-38 (with options) 
+2022-09-06T00:46:53.442370+00:00 shinyapps[6734578]: label: unnamed-chunk-36
+2022-09-06T00:46:53.442502+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.442891+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.442576+00:00 shinyapps[6734578]: label: unnamed-chunk-37
+2022-09-06T00:46:53.442966+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.442641+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.443044+00:00 shinyapps[6734578]:   |                                                                              |.........................................................             |  82%!(NOVERB)
+2022-09-06T00:46:53.443079+00:00 shinyapps[6734578]: label: unnamed-chunk-39 (with options) 
+2022-09-06T00:46:53.443008+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.443108+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.443138+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.442852+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.443274+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.442813+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.443228+00:00 shinyapps[6734578]:   |                                                                              |..........................................................            |  83%!(NOVERB)
+2022-09-06T00:46:53.442930+00:00 shinyapps[6734578]:   |                                                                              |.........................................................             |  81%!(NOVERB)
+2022-09-06T00:46:53.443182+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.443503+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.443423+00:00 shinyapps[6734578]: label: unnamed-chunk-40 (with options) 
+2022-09-06T00:46:53.443534+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.443597+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.443374+00:00 shinyapps[6734578]:   |                                                                              |...........................................................           |  84%!(NOVERB)
+2022-09-06T00:46:53.443318+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.443563+00:00 shinyapps[6734578]:   |                                                                              |............................................................          |  85%!(NOVERB)
+2022-09-06T00:46:53.443467+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.443728+00:00 shinyapps[6734578]: label: unnamed-chunk-41 (with options) 
+2022-09-06T00:46:53.443770+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.443682+00:00 shinyapps[6734578]:   |                                                                              |............................................................          |  86%!(NOVERB)
+2022-09-06T00:46:53.443638+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.443913+00:00 shinyapps[6734578]:   |                                                                              |.............................................................         |  87%!(NOVERB)
+2022-09-06T00:46:53.444117+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.443947+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:53.444082+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:53.443977+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.443865+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.444146+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:53.444006+00:00 shinyapps[6734578]:   |                                                                              |..............................................................        |  88%!(NOVERB)
+2022-09-06T00:46:53.443825+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:53.444043+00:00 shinyapps[6734578]: label: unnamed-chunk-42 (with options) 
+2022-09-06T00:46:55.432263+00:00 shinyapps[6734578]:   |                                                                              |..............................................................        |  89%!(NOVERB)
+2022-09-06T00:46:55.432319+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.432355+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.432394+00:00 shinyapps[6734578]:   |                                                                              |...............................................................       |  90%!(NOVERB)
+2022-09-06T00:46:55.432475+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:55.432537+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.432434+00:00 shinyapps[6734578]: label: unnamed-chunk-43 (with options) 
+2022-09-06T00:46:55.432892+00:00 shinyapps[6734578]:   |                                                                              |.................................................................     |  93%!(NOVERB)
+2022-09-06T00:46:55.432507+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:55.432579+00:00 shinyapps[6734578]:   |                                                                              |................................................................      |  91%!(NOVERB)
+2022-09-06T00:46:55.432618+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.432968+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.432654+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.432689+00:00 shinyapps[6734578]:   |                                                                              |................................................................      |  92%!(NOVERB)
+2022-09-06T00:46:55.433110+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:55.432801+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:55.432933+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.433384+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:55.433286+00:00 shinyapps[6734578]:   |                                                                              |...................................................................   |  96%!(NOVERB)
+2022-09-06T00:46:55.432769+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:55.433146+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433538+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.433334+00:00 shinyapps[6734578]: label: unnamed-chunk-46 (with options) 
+2022-09-06T00:46:55.433608+00:00 shinyapps[6734578]:   |                                                                              |..................................................................... |  98%!(NOVERB)
+2022-09-06T00:46:55.432734+00:00 shinyapps[6734578]: label: unnamed-chunk-44 (with options) 
+2022-09-06T00:46:55.433076+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:55.433459+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433827+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433935+00:00 shinyapps[6734578]:   |                                                                              |                                                                      |   0%!(MISSING)  |                                                                              |.......................                                               |  33%!(NOVERB)
+2022-09-06T00:46:55.433785+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433001+00:00 shinyapps[6734578]:   |                                                                              |..................................................................    |  94%!(NOVERB)
+2022-09-06T00:46:55.433219+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.433686+00:00 shinyapps[6734578]: List of 2
+2022-09-06T00:46:55.434008+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433041+00:00 shinyapps[6734578]: label: unnamed-chunk-45 (with options) 
+2022-09-06T00:46:55.433423+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T00:46:55.433721+00:00 shinyapps[6734578]:  $ eval : logi TRUE
+2022-09-06T00:46:55.433502+00:00 shinyapps[6734578]:   |                                                                              |....................................................................  |  97%!(NOVERB)
+2022-09-06T00:46:55.433645+00:00 shinyapps[6734578]: label: unnamed-chunk-47 (with options) 
+2022-09-06T00:46:55.434213+00:00 shinyapps[6734578]:   |                                                                              |......................................................................| 100%!(NOVERB)
+2022-09-06T00:46:55.433185+00:00 shinyapps[6734578]:   |                                                                              |..................................................................    |  95%!(NOVERB)
+2022-09-06T00:46:55.433574+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433895+00:00 shinyapps[6734578]: processing file: ./include/welcome.Rmd
+2022-09-06T00:46:55.433862+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434245+00:00 shinyapps[6734578]:    inline R code fragments
+2022-09-06T00:46:55.432855+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433254+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.433756+00:00 shinyapps[6734578]:  $ child: chr "include/welcome.Rmd"
+2022-09-06T00:46:55.433968+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.434314+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434281+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434664+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434077+00:00 shinyapps[6734578]: label: unnamed-chunk-49 (with options) 
+2022-09-06T00:46:55.434393+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T00:46:55.434624+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434434+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434179+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434506+00:00 shinyapps[6734578]: label: unnamed-chunk-48 (with options) 
+2022-09-06T00:46:55.434542+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:55.434146+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T00:46:55.434582+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T00:46:55.434044+00:00 shinyapps[6734578]:   |                                                                              |...............................................                       |  67%!(NOVERB)
+2022-09-06T00:46:55.434364+00:00 shinyapps[6734578]:   |                                                                              |..................................................................... |  99%!(NOVERB)
+2022-09-06T00:46:55.434111+00:00 shinyapps[6734578]: List of 1
+2022-09-06T00:46:55.434472+00:00 shinyapps[6734578]:   |                                                                              |......................................................................| 100%!(NOVERB)
+2022-09-06T00:46:55.434704+00:00 shinyapps[6734578]: output file: /tmp/Rtmp3Uhr9a/file1a34c8d91b/soiga.knit.md
+2022-09-06T00:46:55.434874+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434797+00:00 shinyapps[6734578]: /opt/connect/ext/pandoc/2.16/pandoc +RTS -K512m -RTS /tmp/Rtmp3Uhr9a/file1a34c8d91b/soiga.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /tmp/Rtmp3Uhr9a/file1a34c8d91b/soiga.html --lua-filter /opt/R/4.2.1/lib/R/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /opt/R/4.2.1/lib/R/library/rmarkdown/rmarkdown/lua/latex-div.lua --variable bs3=TRUE --standalone --section-divs --template /opt/R/4.2.1/lib/R/library/flexdashboard/rmarkdown/templates/flex_dashboard/resources/default.html --include-in-header /tmp/Rtmp3Uhr9a/rmarkdown-str1ae4edb6b.html --id-prefix section- --variable theme=yeti --variable 'logo=https://wwf.ru/assets/img/logo.jpg' --variable 'favicon=https://www.arcticwwf.org/favicons/favicon-32x32.png' --include-in-header /tmp/Rtmp3Uhr9a/file1a49a43d46html --highlight-style pygments --include-before-body /tmp/Rtmp3Uhr9a/file1a37c34177.html --include-after-body /tmp/Rtmp3Uhr9a/file1a162d05cf.html --css site_libs/common.css --css site_libs/flex_dashboard.
+2022-09-06T00:46:55.435119+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T00:46:55.434836+00:00 shinyapps[6734578]: css --css include/geranium.css 
+2022-09-06T00:46:55.434744+00:00 shinyapps[6734578]: 
+2022-09-06T00:46:55.434954+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T00:46:55.435021+00:00 shinyapps[6734578]: NULL
+2022-09-06T00:46:55.434916+00:00 shinyapps[6734578]: Output created: /tmp/Rtmp3Uhr9a/file1a34c8d91b/soiga.html
+2022-09-06T00:46:55.435056+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T00:46:55.434988+00:00 shinyapps[6734578]: rvCustomer:
+2022-09-06T00:46:59.432337+00:00 shinyapps[6734578]: [1] "this observe was passed successful"
+2022-09-06T00:46:59.432382+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T00:46:59.432271+00:00 shinyapps[6734578]: observe input$refion: update input$predefined:
+2022-09-06T00:46:59.432462+00:00 shinyapps[6734578]:     region predefined 
+2022-09-06T00:46:59.432426+00:00 shinyapps[6734578]: rvCustomer:
+2022-09-06T00:46:59.432558+00:00 shinyapps[6734578]: renderUI:
+2022-09-06T00:46:59.432494+00:00 shinyapps[6734578]:     "PACs"      "---" 
+2022-09-06T00:46:59.432525+00:00 shinyapps[6734578]:    PAC
+2022-09-06T00:47:00.432269+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T00:47:00.432313+00:00 shinyapps[6734578]: rvCustomer:
+2022-09-06T00:47:00.432348+00:00 shinyapps[6734578]:                   region               predefined 
+2022-09-06T00:47:00.432393+00:00 shinyapps[6734578]:                   "PACs" "Click region(s) on map" 
+2022-09-06T00:47:00.432438+00:00 shinyapps[6734578]: rvConflictMap():
+2022-09-06T00:47:00.432478+00:00 shinyapps[6734578]: rvActivityMap():
+2022-09-06T00:47:00.432559+00:00 shinyapps[6734578]:       found
+2022-09-06T00:47:00.432522+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T00:47:00.432636+00:00 shinyapps[6734578]: mapViewer :
+2022-09-06T00:47:00.432601+00:00 shinyapps[6734578]: renderUI:
+2022-09-06T00:47:00.432677+00:00 shinyapps[6734578]: rvActivity():
+2022-09-06T00:47:13.432241+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T00:47:13.432292+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T00:47:13.432326+00:00 shinyapps[6734578]:       found
+2022-09-06T00:47:13.432357+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T00:47:14.432281+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T00:47:14.432329+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T00:47:14.432370+00:00 shinyapps[6734578]:       found
+2022-09-06T00:47:16.434646+00:00 shinyapps[6734578]: 2022-09-06 00:47:16 leafletRegion :
+2022-09-06T00:47:16.434699+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 30.89(23.86) seconds ***
+2022-09-06T00:47:17.432241+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 31.51(0.62) seconds ***
+2022-09-06T00:47:17.432301+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 31.64(0.16) seconds ***
+2022-09-06T00:47:17.432350+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 31.67(0.00) seconds ***
+2022-09-06T00:47:17.432398+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 31.67(0.00) seconds ***
+2022-09-06T00:47:18.432263+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T00:47:18.432311+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T00:48:01.434606+00:00 shinyapps[6734578]: 2022-09-06 00:48:00 leafletRegion :
+2022-09-06T00:48:01.434672+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 75.31(43.64) seconds ***
+2022-09-06T00:48:01.434708+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 75.90(0.59) seconds ***
+2022-09-06T00:48:01.434741+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 76.01(0.11) seconds ***
+2022-09-06T00:48:01.434787+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 76.01(0.00) seconds ***
+2022-09-06T00:48:03.432246+00:00 shinyapps[6734578]: *** run_app.R: 0904g: 77.78(1.76) seconds ***
+2022-09-06T00:48:03.432325+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 77.79(0.01) seconds ***
+2022-09-06T00:48:11.434701+00:00 shinyapps[6734578]: *** run_app.R: A: 85.57(7.79) seconds ***
+2022-09-06T00:48:15.432245+00:00 shinyapps[6734578]: *** run_app.R: C: 89.31(3.74) seconds ***
+2022-09-06T00:48:17.432228+00:00 shinyapps[6734578]: *** run_app.R: D: 91.67(2.36) seconds ***
+2022-09-06T01:06:43.432293+00:00 shinyapps[6734578]: Running on host: c3f8e5384fd5
+2022-09-06T01:06:43.432346+00:00 shinyapps[6734578]: Server version: 2022.08.0
+2022-09-06T01:06:43.432399+00:00 shinyapps[6734578]: LANG: C.UTF-8
+2022-09-06T01:06:43.432541+00:00 shinyapps[6734578]: R version: 4.2.1
+2022-09-06T01:06:43.432452+00:00 shinyapps[6734578]: Working directory: /srv/connect/apps/soiga
+2022-09-06T01:06:43.432497+00:00 shinyapps[6734578]: Running content using the current R environment
+2022-09-06T01:06:43.432579+00:00 shinyapps[6734578]: shiny version: 1.7.2
+2022-09-06T01:06:43.432614+00:00 shinyapps[6734578]: httpuv version: 1.6.5
+2022-09-06T01:06:43.432649+00:00 shinyapps[6734578]: rmarkdown version: 2.16
+2022-09-06T01:06:43.432756+00:00 shinyapps[6734578]: RJSONIO version: (none)
+2022-09-06T01:06:43.432721+00:00 shinyapps[6734578]: jsonlite version: 1.8.0
+2022-09-06T01:06:43.432829+00:00 shinyapps[6734578]: reticulate version: (none)
+2022-09-06T01:06:43.432686+00:00 shinyapps[6734578]: knitr version: 1.40
+2022-09-06T01:06:43.432863+00:00 shinyapps[6734578]: Using pandoc: /opt/connect/ext/pandoc/2.16
+2022-09-06T01:06:43.432925+00:00 shinyapps[6734578]: Using jsonlite for JSON processing
+2022-09-06T01:06:43.433069+00:00 shinyapps[6734578]: Shiny R Markdown document starting ...
+2022-09-06T01:06:43.432792+00:00 shinyapps[6734578]: htmltools version: 0.5.3
+2022-09-06T01:06:43.432967+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:43.433017+00:00 shinyapps[6734578]: Starting R with process ID: '398'
+2022-09-06T01:06:43.433106+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:43.433142+00:00 shinyapps[6734578]: Listening on http://127.0.0.1:41851
+2022-09-06T01:06:46.432271+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.432319+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.432550+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.433093+00:00 shinyapps[6734578]:  $ engine: chr "js"
+2022-09-06T01:06:47.432379+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.432670+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:47.433005+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:47.433353+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:47.432479+00:00 shinyapps[6734578]:   |                                                                              |                                                                      |   0%!(MISSING)  |                                                                              |.                                                                     |   1%!(NOVERB)
+2022-09-06T01:06:47.432802+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:47.433201+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:47.433710+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:47.432432+00:00 shinyapps[6734578]: processing file: soiga.Rmd
+2022-09-06T01:06:47.432737+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.433125+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.433423+00:00 shinyapps[6734578]:  $ code: chr [1:66] "devel <- !grepl(file.path(gsub(\"^\\\\w:/\",\"\",Sys.getenv(\"RAS\")),\"shiny\"),gsub(\"^\\\\w:/\",\"\",getwd()))" "hlink <- FALSE" "verboseTable <- !FALSE" "isScroll <- TRUE" ...
+2022-09-06T01:06:47.432515+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:47.433056+00:00 shinyapps[6734578]:  $ eval  : logi TRUE
+2022-09-06T01:06:47.433388+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:47.433788+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.432591+00:00 shinyapps[6734578]:   |                                                                              |.                                                                     |   2%!(NOVERB)
+2022-09-06T01:06:47.432838+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.433316+00:00 shinyapps[6734578]: label: header (with options) 
+2022-09-06T01:06:47.433602+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.432631+00:00 shinyapps[6734578]: label: init643ce921796fb94ae61005778a47b7fe (with options) 
+2022-09-06T01:06:47.432952+00:00 shinyapps[6734578]: label: unnamed-chunk-1 (with options) 
+2022-09-06T01:06:47.433487+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.432702+00:00 shinyapps[6734578]:  $ include: logi FALSE
+2022-09-06T01:06:47.433243+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:47.433674+00:00 shinyapps[6734578]: label: server (with options) 
+2022-09-06T01:06:47.432773+00:00 shinyapps[6734578]:   |                                                                              |..                                                                    |   3%!(NOVERB)
+2022-09-06T01:06:47.432879+00:00 shinyapps[6734578]:   |                                                                              |...                                                                   |   4%!(NOVERB)
+2022-09-06T01:06:47.433281+00:00 shinyapps[6734578]:   |                                                                              |....                                                                  |   6%!(NOVERB)
+2022-09-06T01:06:47.433758+00:00 shinyapps[6734578]:  $ code: chr [1:1145] "source(\"resources/process.R\",encoding=\"UTF-8\")" "source(\"resources/header.R\",encoding=\"UTF-8\")" "exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL" "                          ,prev=integer(),curr=integer() ## need for removing forgiven clean" ...
+2022-09-06T01:06:47.433159+00:00 shinyapps[6734578]:   |                                                                              |....                                                                  |   5%!(NOVERB)
+2022-09-06T01:06:47.433524+00:00 shinyapps[6734578]:   |                                                                              |.....                                                                 |   7%!(NOVERB)
+2022-09-06T01:06:47.433559+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:47.433639+00:00 shinyapps[6734578]:   |                                                                              |......                                                                |   8%!(NOVERB)
+2022-09-06T01:06:48.432275+00:00 shinyapps[6734578]: Loading required package: ursa
+2022-09-06T01:06:49.432266+00:00 shinyapps[6734578]: *** run_app.R: require packages -- start: 0.88(0.88) seconds ***
+2022-09-06T01:06:49.432315+00:00 shinyapps[6734578]: Loading required package: leaflet
+2022-09-06T01:06:49.432360+00:00 shinyapps[6734578]: Loading required package: leaflet.extras
+2022-09-06T01:06:49.432404+00:00 shinyapps[6734578]: Loading required package: leafpm
+2022-09-06T01:06:49.432450+00:00 shinyapps[6734578]: Loading required package: fasterize
+2022-09-06T01:06:55.432279+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432336+00:00 shinyapps[6734578]: Attaching package: 'fasterize'
+2022-09-06T01:06:55.432393+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432440+00:00 shinyapps[6734578]: The following object is masked from 'package:graphics':
+2022-09-06T01:06:55.432475+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432508+00:00 shinyapps[6734578]:     plot
+2022-09-06T01:06:55.432541+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432571+00:00 shinyapps[6734578]: The following object is masked from 'package:base':
+2022-09-06T01:06:55.432645+00:00 shinyapps[6734578]:     plot
+2022-09-06T01:06:55.432608+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432681+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432713+00:00 shinyapps[6734578]: Loading required package: leafem
+2022-09-06T01:06:55.432883+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432781+00:00 shinyapps[6734578]: Loading required package: mapedit
+2022-09-06T01:06:55.432824+00:00 shinyapps[6734578]: Loading required package: DT
+2022-09-06T01:06:55.432743+00:00 shinyapps[6734578]: Loading required package: leafpop
+2022-09-06T01:06:55.432962+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.432927+00:00 shinyapps[6734578]: Attaching package: 'DT'
+2022-09-06T01:06:55.433000+00:00 shinyapps[6734578]: The following objects are masked from 'package:shiny':
+2022-09-06T01:06:55.433048+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.433084+00:00 shinyapps[6734578]:     dataTableOutput, renderDataTable
+2022-09-06T01:06:55.433117+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.433169+00:00 shinyapps[6734578]: Loading required package: formattable
+2022-09-06T01:06:55.433210+00:00 shinyapps[6734578]: Loading required package: xml2
+2022-09-06T01:06:55.433248+00:00 shinyapps[6734578]: *** run_app.R: require packages -- end: 6.79(5.91) seconds ***
+2022-09-06T01:06:55.433289+00:00 shinyapps[6734578]:   |                                                                              |......                                                                |   9%!(NOVERB)
+2022-09-06T01:06:55.433320+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:55.433427+00:00 shinyapps[6734578]: label: client (with options) 
+2022-09-06T01:06:55.433460+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:55.433396+00:00 shinyapps[6734578]:   |                                                                              |.......                                                               |  10%!(NOVERB)
+2022-09-06T01:06:55.433495+00:00 shinyapps[6734578]:  $ code: chr [1:723] "'verbose' <- function() 'cat(as.character(match.call())[1],\":\\n\")'" "'selectionTables' <- function() {" "   cat(as.character(match.call())[1],\":\\n\")" "   cell <- input$cross_cells_selected" ...
+2022-09-06T01:06:55.433736+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:55.433566+00:00 shinyapps[6734578]:   |                                                                              |........                                                              |  11%!(NOVERB)
+2022-09-06T01:06:55.433803+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.433524+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.433352+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.433662+00:00 shinyapps[6734578]:   |                                                                              |........                                                              |  12%!(NOVERB)
+2022-09-06T01:06:55.433771+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:55.434095+00:00 shinyapps[6734578]:  $ fig.height: num 800
+2022-09-06T01:06:55.433699+00:00 shinyapps[6734578]: label: unnamed-chunk-2 (with options) 
+2022-09-06T01:06:55.433981+00:00 shinyapps[6734578]: label: unnamed-chunk-3 (with options) 
+2022-09-06T01:06:55.433601+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:55.433875+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:55.433909+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.434060+00:00 shinyapps[6734578]:  $ eval      : logi TRUE
+2022-09-06T01:06:55.433946+00:00 shinyapps[6734578]:   |                                                                              |..........                                                            |  14%!(NOVERB)
+2022-09-06T01:06:55.433839+00:00 shinyapps[6734578]:   |                                                                              |.........                                                             |  13%!(NOVERB)
+2022-09-06T01:06:55.434125+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.433631+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:55.434020+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:56.432376+00:00 shinyapps[6734578]:   |                                                                              |..........                                                            |  15%!(NOVERB)
+2022-09-06T01:06:56.432429+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.432483+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.432530+00:00 shinyapps[6734578]:   |                                                                              |...........                                                           |  16%!(NOVERB)
+2022-09-06T01:06:56.432575+00:00 shinyapps[6734578]: label: unnamed-chunk-4 (with options) 
+2022-09-06T01:06:56.432618+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.432658+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.432771+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.432696+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.432734+00:00 shinyapps[6734578]:   |                                                                              |............                                                          |  17%!(NOVERB)
+2022-09-06T01:06:56.432812+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.433049+00:00 shinyapps[6734578]:   |                                                                              |.............                                                         |  19%!(NOVERB)
+2022-09-06T01:06:56.432951+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.432847+00:00 shinyapps[6734578]:   |                                                                              |.............                                                         |  18%!(NOVERB)
+2022-09-06T01:06:56.432884+00:00 shinyapps[6734578]: label: unnamed-chunk-5 (with options) 
+2022-09-06T01:06:56.432918+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.433007+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.433131+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.433168+00:00 shinyapps[6734578]:   |                                                                              |..............                                                        |  20%!(NOVERB)
+2022-09-06T01:06:56.433091+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.433199+00:00 shinyapps[6734578]: label: unnamed-chunk-6 (with options) 
+2022-09-06T01:06:56.433230+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.433265+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.433300+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.433409+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.433443+00:00 shinyapps[6734578]:   |                                                                              |...............                                                       |  22%!(NOVERB)
+2022-09-06T01:06:56.433338+00:00 shinyapps[6734578]:   |                                                                              |...............                                                       |  21%!(NOVERB)
+2022-09-06T01:06:56.433530+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.433491+00:00 shinyapps[6734578]: label: unnamed-chunk-7 (with options) 
+2022-09-06T01:06:56.433573+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.433650+00:00 shinyapps[6734578]:   |                                                                              |................                                                      |  23%!(NOVERB)
+2022-09-06T01:06:56.433767+00:00 shinyapps[6734578]:   |                                                                              |.................                                                     |  24%!(NOVERB)
+2022-09-06T01:06:56.434056+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.434028+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.434311+00:00 shinyapps[6734578]:   |                                                                              |...................                                                   |  27%!(NOVERB)
+2022-09-06T01:06:56.433728+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434164+00:00 shinyapps[6734578]: label: unnamed-chunk-10 (with options) 
+2022-09-06T01:06:56.433372+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.433610+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.433842+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.434419+00:00 shinyapps[6734578]:   |                                                                              |....................                                                  |  28%!(NOVERB)
+2022-09-06T01:06:56.433803+00:00 shinyapps[6734578]: label: unnamed-chunk-8 (with options) 
+2022-09-06T01:06:56.434126+00:00 shinyapps[6734578]:   |                                                                              |..................                                                    |  26%!(NOVERB)
+2022-09-06T01:06:56.434528+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T01:06:56.434686+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.433692+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.433999+00:00 shinyapps[6734578]: label: unnamed-chunk-9 (with options) 
+2022-09-06T01:06:56.434202+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.433916+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434237+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.434490+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:56.434864+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.433877+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.434273+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434794+00:00 shinyapps[6734578]: label: unnamed-chunk-12 (with options) 
+2022-09-06T01:06:56.433952+00:00 shinyapps[6734578]:   |                                                                              |..................                                                    |  25%!(NOVERB)
+2022-09-06T01:06:56.434454+00:00 shinyapps[6734578]: label: unnamed-chunk-11 (with options) 
+2022-09-06T01:06:56.434723+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435083+00:00 shinyapps[6734578]: label: unnamed-chunk-13 (with options) 
+2022-09-06T01:06:56.434091+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434383+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434933+00:00 shinyapps[6734578]:   |                                                                              |......................                                                |  31%!(NOVERB)
+2022-09-06T01:06:56.435216+00:00 shinyapps[6734578]:   |                                                                              |.......................                                               |  33%!(NOVERB)
+2022-09-06T01:06:56.434348+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.434651+00:00 shinyapps[6734578]:   |                                                                              |....................                                                  |  29%!(NOVERB)
+2022-09-06T01:06:56.435011+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435510+00:00 shinyapps[6734578]:   |                                                                              |........................                                              |  35%!(NOVERB)
+2022-09-06T01:06:56.435808+00:00 shinyapps[6734578]:   |                                                                              |..........................                                            |  37%!(NOVERB)
+2022-09-06T01:06:56.434613+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434758+00:00 shinyapps[6734578]:   |                                                                              |.....................                                                 |  30%!(NOVERB)
+2022-09-06T01:06:56.435322+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.435841+00:00 shinyapps[6734578]: label: unnamed-chunk-16 (with options) 
+2022-09-06T01:06:56.434829+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.435182+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435891+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.435047+00:00 shinyapps[6734578]:   |                                                                              |......................                                                |  32%!(NOVERB)
+2022-09-06T01:06:56.435395+00:00 shinyapps[6734578]:   |                                                                              |........................                                              |  34%!(NOVERB)
+2022-09-06T01:06:56.435931+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.435285+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.435550+00:00 shinyapps[6734578]: label: unnamed-chunk-15 (with options) 
+2022-09-06T01:06:56.435697+00:00 shinyapps[6734578]:   |                                                                              |.........................                                             |  36%!(NOVERB)
+2022-09-06T01:06:56.435970+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.434976+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.435471+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436041+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.435142+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.435352+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435584+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.436006+00:00 shinyapps[6734578]:   |                                                                              |...........................                                           |  38%!(NOVERB)
+2022-09-06T01:06:56.435432+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.435734+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.436079+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435251+00:00 shinyapps[6734578]: label: unnamed-chunk-14 (with options) 
+2022-09-06T01:06:56.435622+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.436113+00:00 shinyapps[6734578]:   |                                                                              |...........................                                           |  39%!(NOVERB)
+2022-09-06T01:06:56.434573+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T01:06:56.434895+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435113+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.435661+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.435773+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436278+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T01:06:56.436579+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.436951+00:00 shinyapps[6734578]:   |                                                                              |...............................                                       |  44%!(NOVERB)
+2022-09-06T01:06:56.437067+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.437655+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.436352+00:00 shinyapps[6734578]:   |                                                                              |............................                                          |  40%!(NOVERB)
+2022-09-06T01:06:56.436807+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436843+00:00 shinyapps[6734578]:   |                                                                              |..............................                                        |  43%!(NOVERB)
+2022-09-06T01:06:56.437132+00:00 shinyapps[6734578]:   |                                                                              |................................                                      |  45%!(NOVERB)
+2022-09-06T01:06:56.437513+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436151+00:00 shinyapps[6734578]: label: unnamed-chunk-17 (with options) 
+2022-09-06T01:06:56.436539+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.436912+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436986+00:00 shinyapps[6734578]: label: unnamed-chunk-20 (with options) 
+2022-09-06T01:06:56.437356+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.437723+00:00 shinyapps[6734578]:   |                                                                              |..................................                                    |  49%!(NOVERB)
+2022-09-06T01:06:56.436223+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T01:06:56.436730+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.437621+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.437859+00:00 shinyapps[6734578]: label: unnamed-chunk-23 (with options) 
+2022-09-06T01:06:56.437993+00:00 shinyapps[6734578]:   |                                                                              |....................................                                  |  51%!(NOVERB)
+2022-09-06T01:06:56.438217+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436189+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:56.436651+00:00 shinyapps[6734578]:   |                                                                              |.............................                                         |  42%!(NOVERB)
+2022-09-06T01:06:56.437161+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.437270+00:00 shinyapps[6734578]: label: unnamed-chunk-21 (with options) 
+2022-09-06T01:06:56.437788+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438289+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.438415+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.436387+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.436694+00:00 shinyapps[6734578]: label: unnamed-chunk-19 (with options) 
+2022-09-06T01:06:56.437101+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.437475+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.437689+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.437896+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.438250+00:00 shinyapps[6734578]:   |                                                                              |.....................................                                 |  53%!(NOVERB)
+2022-09-06T01:06:56.438591+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438854+00:00 shinyapps[6734578]:   |                                                                              |........................................                              |  57%!(NOVERB)
+2022-09-06T01:06:56.436423+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436878+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.437028+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.437392+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.437758+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.438027+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.438316+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438631+00:00 shinyapps[6734578]:   |                                                                              |.......................................                               |  56%!(NOVERB)
+2022-09-06T01:06:56.439018+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.436501+00:00 shinyapps[6734578]: label: unnamed-chunk-18 (with options) 
+2022-09-06T01:06:56.437232+00:00 shinyapps[6734578]:   |                                                                              |................................                                      |  46%!(NOVERB)
+2022-09-06T01:06:56.437551+00:00 shinyapps[6734578]:   |                                                                              |..................................                                    |  48%!(NOVERB)
+2022-09-06T01:06:56.437586+00:00 shinyapps[6734578]: label: unnamed-chunk-22 (with options) 
+2022-09-06T01:06:56.437927+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.438344+00:00 shinyapps[6734578]:   |                                                                              |......................................                                |  54%!(NOVERB)
+2022-09-06T01:06:56.438718+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:56.438979+00:00 shinyapps[6734578]: label: unnamed-chunk-27 (with options) 
+2022-09-06T01:06:56.439379+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436461+00:00 shinyapps[6734578]:   |                                                                              |.............................                                         |  41%!(NOVERB)
+2022-09-06T01:06:56.437199+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.437435+00:00 shinyapps[6734578]:   |                                                                              |.................................                                     |  47%!(NOVERB)
+2022-09-06T01:06:56.437957+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438058+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438666+00:00 shinyapps[6734578]: label: unnamed-chunk-26 (with options) 
+2022-09-06T01:06:56.438883+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.439240+00:00 shinyapps[6734578]:   |                                                                              |..........................................                            |  60%!(NOVERB)
+2022-09-06T01:06:56.439505+00:00 shinyapps[6734578]:   |                                                                              |...........................................                           |  62%!(NOVERB)
+2022-09-06T01:06:56.439876+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.436317+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436614+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.436768+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.437305+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.437821+00:00 shinyapps[6734578]:   |                                                                              |...................................                                   |  50%!(NOVERB)
+2022-09-06T01:06:56.438087+00:00 shinyapps[6734578]:   |                                                                              |....................................                                  |  52%!(NOVERB)
+2022-09-06T01:06:56.438533+00:00 shinyapps[6734578]:   |                                                                              |......................................                                |  55%!(NOVERB)
+2022-09-06T01:06:56.438749+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T01:06:56.439128+00:00 shinyapps[6734578]:   |                                                                              |.........................................                             |  59%!(NOVERB)
+2022-09-06T01:06:56.439477+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.439805+00:00 shinyapps[6734578]: label: unnamed-chunk-30 (with options) 
+2022-09-06T01:06:56.440221+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.440510+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438125+00:00 shinyapps[6734578]: label: unnamed-chunk-24 (with options) 
+2022-09-06T01:06:56.438494+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438943+00:00 shinyapps[6734578]:   |                                                                              |.........................................                             |  58%!(NOVERB)
+2022-09-06T01:06:56.439340+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.439666+00:00 shinyapps[6734578]:   |                                                                              |............................................                          |  63%!(NOVERB)
+2022-09-06T01:06:56.439841+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.440112+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:56.440542+00:00 shinyapps[6734578]:   |                                                                              |.................................................                     |  70%!(NOVERB)
+2022-09-06T01:06:56.440954+00:00 shinyapps[6734578]: label: unnamed-chunk-35
+2022-09-06T01:06:56.438159+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.438562+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.438778+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T01:06:56.439166+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.439565+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.439944+00:00 shinyapps[6734578]:   |                                                                              |..............................................                        |  65%!(NOVERB)
+2022-09-06T01:06:56.440154+00:00 shinyapps[6734578]:  $ eval   : logi TRUE
+2022-09-06T01:06:56.440580+00:00 shinyapps[6734578]: label: unnamed-chunk-33
+2022-09-06T01:06:56.441036+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.441262+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.438188+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.438378+00:00 shinyapps[6734578]: label: unnamed-chunk-25 (with options) 
+2022-09-06T01:06:56.439060+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.439300+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.439600+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.439977+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.440188+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T01:06:56.440620+00:00 shinyapps[6734578]:   |                                                                              |..................................................                    |  71%!(NOVERB)
+2022-09-06T01:06:56.440845+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.438453+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.438909+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.439269+00:00 shinyapps[6734578]: label: unnamed-chunk-28 (with options) 
+2022-09-06T01:06:56.439737+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.440268+00:00 shinyapps[6734578]:   |                                                                              |...............................................                       |  67%!(NOVERB)
+2022-09-06T01:06:56.440412+00:00 shinyapps[6734578]: label: unnamed-chunk-32
+2022-09-06T01:06:56.440657+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.440920+00:00 shinyapps[6734578]:   |                                                                              |....................................................                  |  74%!(NOVERB)
+2022-09-06T01:06:56.441402+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.438814+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.439098+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.439439+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.439771+00:00 shinyapps[6734578]:   |                                                                              |.............................................                         |  64%!(NOVERB)
+2022-09-06T01:06:56.440053+00:00 shinyapps[6734578]:   |                                                                              |..............................................                        |  66%!(NOVERB)
+2022-09-06T01:06:56.440730+00:00 shinyapps[6734578]:   |                                                                              |..................................................                    |  72%!(NOVERB)
+2022-09-06T01:06:56.440882+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441296+00:00 shinyapps[6734578]:   |                                                                              |.......................................................               |  78%!(NOVERB)
+2022-09-06T01:06:56.441581+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.439201+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.439532+00:00 shinyapps[6734578]: label: unnamed-chunk-29 (with options) 
+2022-09-06T01:06:56.439910+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.440302+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.440695+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441073+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441330+00:00 shinyapps[6734578]: label: unnamed-chunk-37
+2022-09-06T01:06:56.441706+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.439408+00:00 shinyapps[6734578]:   |                                                                              |...........................................                           |  61%!(NOVERB)
+2022-09-06T01:06:56.439698+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.440083+00:00 shinyapps[6734578]: label: unnamed-chunk-31 (with options) 
+2022-09-06T01:06:56.440446+00:00 shinyapps[6734578]:   |                                                                              |................................................                      |  69%!(NOVERB)
+2022-09-06T01:06:56.440767+00:00 shinyapps[6734578]: label: unnamed-chunk-34
+2022-09-06T01:06:56.441111+00:00 shinyapps[6734578]:   |                                                                              |.....................................................                 |  76%!(NOVERB)
+2022-09-06T01:06:56.441510+00:00 shinyapps[6734578]: label: unnamed-chunk-38 (with options) 
+2022-09-06T01:06:56.441907+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442217+00:00 shinyapps[6734578]:   |                                                                              |............................................................          |  85%!(NOVERB)
+2022-09-06T01:06:56.439635+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.440008+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.440341+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.440805+00:00 shinyapps[6734578]:   |                                                                              |...................................................                   |  73%!(NOVERB)
+2022-09-06T01:06:56.441189+00:00 shinyapps[6734578]:   |                                                                              |......................................................                |  77%!(NOVERB)
+2022-09-06T01:06:56.441473+00:00 shinyapps[6734578]:   |                                                                              |........................................................              |  80%!(NOVERB)
+2022-09-06T01:06:56.441873+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.442147+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.442567+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.440377+00:00 shinyapps[6734578]:   |                                                                              |................................................                      |  68%!(NOVERB)
+2022-09-06T01:06:56.440476+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.441149+00:00 shinyapps[6734578]: label: unnamed-chunk-36
+2022-09-06T01:06:56.441368+00:00 shinyapps[6734578]:   |                                                                              |.......................................................               |  79%!(NOVERB)
+2022-09-06T01:06:56.441736+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442011+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442423+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.442922+00:00 shinyapps[6734578]:   |                                                                              |...............................................................       |  90%!(NOVERB)
+2022-09-06T01:06:56.443024+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.440988+00:00 shinyapps[6734578]:   |                                                                              |....................................................                  |  75%!(NOVERB)
+2022-09-06T01:06:56.441226+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.441625+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441977+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.442320+00:00 shinyapps[6734578]:   |                                                                              |............................................................          |  86%!(NOVERB)
+2022-09-06T01:06:56.442776+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443057+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441436+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441839+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.442181+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442351+00:00 shinyapps[6734578]: label: unnamed-chunk-41 (with options) 
+2022-09-06T01:06:56.442671+00:00 shinyapps[6734578]: label: unnamed-chunk-42 (with options) 
+2022-09-06T01:06:56.443092+00:00 shinyapps[6734578]:   |                                                                              |................................................................      |  91%!(NOVERB)
+2022-09-06T01:06:56.443486+00:00 shinyapps[6734578]:   |                                                                              |..................................................................    |  94%!(NOVERB)
+2022-09-06T01:06:56.441665+00:00 shinyapps[6734578]:   |                                                                              |.........................................................             |  81%!(NOVERB)
+2022-09-06T01:06:56.442080+00:00 shinyapps[6734578]: label: unnamed-chunk-40 (with options) 
+2022-09-06T01:06:56.442497+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442705+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.443125+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.443551+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.443752+00:00 shinyapps[6734578]:   |                                                                              |...................................................................   |  96%!(NOVERB)
+2022-09-06T01:06:56.441544+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.441801+00:00 shinyapps[6734578]: label: unnamed-chunk-39 (with options) 
+2022-09-06T01:06:56.442114+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.442533+00:00 shinyapps[6734578]:   |                                                                              |.............................................................         |  87%!(NOVERB)
+2022-09-06T01:06:56.442740+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.443158+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443360+00:00 shinyapps[6734578]:   |                                                                              |.................................................................     |  93%!(NOVERB)
+2022-09-06T01:06:56.444048+00:00 shinyapps[6734578]:   |                                                                              |..................................................................... |  98%!(NOVERB)
+2022-09-06T01:06:56.444436+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.441767+00:00 shinyapps[6734578]:   |                                                                              |.........................................................             |  82%!(NOVERB)
+2022-09-06T01:06:56.442252+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.442809+00:00 shinyapps[6734578]:   |                                                                              |..............................................................        |  89%!(NOVERB)
+2022-09-06T01:06:56.442956+00:00 shinyapps[6734578]: label: unnamed-chunk-43 (with options) 
+2022-09-06T01:06:56.443192+00:00 shinyapps[6734578]:   |                                                                              |................................................................      |  92%!(NOVERB)
+2022-09-06T01:06:56.443446+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443902+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444284+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.441941+00:00 shinyapps[6734578]:   |                                                                              |..........................................................            |  83%!(NOVERB)
+2022-09-06T01:06:56.442286+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442601+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443260+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.443397+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.443799+00:00 shinyapps[6734578]: label: unnamed-chunk-46 (with options) 
+2022-09-06T01:06:56.444086+00:00 shinyapps[6734578]: label: unnamed-chunk-47 (with options) 
+2022-09-06T01:06:56.444772+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444809+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442046+00:00 shinyapps[6734578]:   |                                                                              |...........................................................           |  84%!(NOVERB)
+2022-09-06T01:06:56.442462+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.442840+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.443226+00:00 shinyapps[6734578]: label: unnamed-chunk-44 (with options) 
+2022-09-06T01:06:56.443581+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.443832+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.444186+00:00 shinyapps[6734578]:  $ child: chr "include/welcome.Rmd"
+2022-09-06T01:06:56.444879+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.444914+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.442635+00:00 shinyapps[6734578]:   |                                                                              |..............................................................        |  88%!(NOVERB)
+2022-09-06T01:06:56.442990+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.443290+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.443608+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444012+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444661+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444698+00:00 shinyapps[6734578]:   |                                                                              |......................................................................| 100%!(NOVERB)
+2022-09-06T01:06:56.445187+00:00 shinyapps[6734578]: output file: /tmp/Rtmp6yg4Zi/file18e7994b6cf/soiga.knit.md
+2022-09-06T01:06:56.445567+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:06:56.442885+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443325+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443680+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.443974+00:00 shinyapps[6734578]:   ordinary text without R code
+2022-09-06T01:06:56.444318+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444473+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.445107+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.445458+00:00 shinyapps[6734578]: rvCustomer:
+2022-09-06T01:06:56.443645+00:00 shinyapps[6734578]:   |                                                                              |..................................................................    |  95%!(NOVERB)
+2022-09-06T01:06:56.443865+00:00 shinyapps[6734578]:  $ eval: logi TRUE
+2022-09-06T01:06:56.444222+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444396+00:00 shinyapps[6734578]:   |                                                                              |                                                                      |   0%!(MISSING)  |                                                                              |.......................                                               |  33%!(NOVERB)
+2022-09-06T01:06:56.444846+00:00 shinyapps[6734578]:   |                                                                              |..................................................................... |  99%!(NOVERB)
+2022-09-06T01:06:56.445498+00:00 shinyapps[6734578]: NULL
+2022-09-06T01:06:56.443521+00:00 shinyapps[6734578]: label: unnamed-chunk-45 (with options) 
+2022-09-06T01:06:56.443717+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444157+00:00 shinyapps[6734578]:  $ eval : logi TRUE
+2022-09-06T01:06:56.444357+00:00 shinyapps[6734578]: processing file: ./include/welcome.Rmd
+2022-09-06T01:06:56.444623+00:00 shinyapps[6734578]:  $ results: chr "asis"
+2022-09-06T01:06:56.445347+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.443936+00:00 shinyapps[6734578]:   |                                                                              |....................................................................  |  97%!(NOVERB)
+2022-09-06T01:06:56.444547+00:00 shinyapps[6734578]: label: unnamed-chunk-49 (with options) 
+2022-09-06T01:06:56.444585+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.444728+00:00 shinyapps[6734578]:    inline R code fragments
+2022-09-06T01:06:56.445220+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.444125+00:00 shinyapps[6734578]: List of 2
+2022-09-06T01:06:56.444953+00:00 shinyapps[6734578]:   |                                                                              |......................................................................| 100%!(NOVERB)
+2022-09-06T01:06:56.445031+00:00 shinyapps[6734578]: List of 1
+2022-09-06T01:06:56.445270+00:00 shinyapps[6734578]: /opt/connect/ext/pandoc/2.16/pandoc +RTS -K512m -RTS /tmp/Rtmp6yg4Zi/file18e7994b6cf/soiga.knit.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output /tmp/Rtmp6yg4Zi/file18e7994b6cf/soiga.html --lua-filter /opt/R/4.2.1/lib/R/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /opt/R/4.2.1/lib/R/library/rmarkdown/rmarkdown/lua/latex-div.lua --variable bs3=TRUE --standalone --section-divs --template /opt/R/4.2.1/lib/R/library/flexdashboard/rmarkdown/templates/flex_dashboard/resources/default.html --include-in-header /tmp/Rtmp6yg4Zi/rmarkdown-str18e2e3606db.html --id-prefix section- --variable theme=yeti --variable 'logo=https://wwf.ru/assets/img/logo.jpg' --variable 'favicon=https://www.arcticwwf.org/favicons/favicon-32x32.png' --include-in-header /tmp/Rtmp6yg4Zi/file18ec040f6dhtml --highlight-style pygments --include-before-body /tmp/Rtmp6yg4Zi/file18e71c56005.html --include-after-body /tmp/Rtmp6yg4Zi/file18ea24454f.html --css site_libs/common.css --css site_libs/flex_dashb
+2022-09-06T01:06:56.444511+00:00 shinyapps[6734578]:   |                                                                              |...............................................                       |  67%!(NOVERB)
+2022-09-06T01:06:56.445068+00:00 shinyapps[6734578]:  $ eval: logi FALSE
+2022-09-06T01:06:56.445310+00:00 shinyapps[6734578]: oard.css --css include/geranium.css 
+2022-09-06T01:06:56.444987+00:00 shinyapps[6734578]: label: unnamed-chunk-48 (with options) 
+2022-09-06T01:06:56.445384+00:00 shinyapps[6734578]: Output created: /tmp/Rtmp6yg4Zi/file18e7994b6cf/soiga.html
+2022-09-06T01:06:56.445533+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:06:56.445147+00:00 shinyapps[6734578]: 
+2022-09-06T01:06:56.445424+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:07:02.432243+00:00 shinyapps[6734578]: observe input$refion: update input$predefined:
+2022-09-06T01:07:02.432505+00:00 shinyapps[6734578]:    PAC
+2022-09-06T01:07:02.432352+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:07:02.432387+00:00 shinyapps[6734578]: rvCustomer:
+2022-09-06T01:07:02.432544+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:07:02.432578+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:07:02.432422+00:00 shinyapps[6734578]:     region predefined 
+2022-09-06T01:07:02.432468+00:00 shinyapps[6734578]:     "PACs"      "---" 
+2022-09-06T01:07:02.432315+00:00 shinyapps[6734578]: [1] "this observe was passed successful"
+2022-09-06T01:07:05.432232+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:07:05.432337+00:00 shinyapps[6734578]:                   region               predefined 
+2022-09-06T01:07:05.432300+00:00 shinyapps[6734578]: rvCustomer:
+2022-09-06T01:07:05.432380+00:00 shinyapps[6734578]:                   "PACs" "Click region(s) on map" 
+2022-09-06T01:07:05.432457+00:00 shinyapps[6734578]: rvActivityMap():
+2022-09-06T01:07:05.432422+00:00 shinyapps[6734578]: rvConflictMap():
+2022-09-06T01:07:05.432489+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:07:05.432525+00:00 shinyapps[6734578]:       found
+2022-09-06T01:07:16.434619+00:00 shinyapps[6734578]: renderUI:
+2022-09-06T01:09:14.432267+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:09:14.432374+00:00 shinyapps[6734578]:       found
+2022-09-06T01:09:14.432330+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:09:14.432462+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:09:14.432423+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:09:14.432502+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:09:14.432542+00:00 shinyapps[6734578]:       found
+2022-09-06T01:09:16.434592+00:00 shinyapps[6734578]: 2022-09-06 01:09:16 leafletRegion :
+2022-09-06T01:09:16.434631+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 147.85(141.06) seconds ***
+2022-09-06T01:09:17.432312+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 148.50(0.11) seconds ***
+2022-09-06T01:09:17.432270+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 148.39(0.54) seconds ***
+2022-09-06T01:09:17.432360+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 148.51(0.00) seconds ***
+2022-09-06T01:09:17.432396+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 148.51(0.00) seconds ***
+2022-09-06T01:09:17.432487+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:09:17.432443+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:18:26.447760+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:18:26.447856+00:00 shinyapps[6734578]:       found
+2022-09-06T01:18:26.447802+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:18:26.447889+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:18:29.432448+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:18:29.432298+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:18:29.432233+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:18:29.432341+00:00 shinyapps[6734578]:       found
+2022-09-06T01:18:29.432409+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:18:29.432484+00:00 shinyapps[6734578]:       found
+2022-09-06T01:18:29.432373+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:18:31.435458+00:00 shinyapps[6734578]: 2022-09-06 01:18:31 leafletRegion :
+2022-09-06T01:18:31.435510+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 703.09(554.58) seconds ***
+2022-09-06T01:18:32.432261+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 703.69(0.61) seconds ***
+2022-09-06T01:18:32.432348+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 703.81(0.00) seconds ***
+2022-09-06T01:18:32.432305+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 703.81(0.11) seconds ***
+2022-09-06T01:18:32.432402+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 703.81(0.00) seconds ***
+2022-09-06T01:18:33.432218+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:18:33.432287+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:19:01.434616+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:19:01.434574+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:01.434645+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:01.434674+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:19:03.432267+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:03.432317+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:19:03.432359+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:03.432451+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:03.432407+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:19:03.432517+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:03.432486+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:19:05.432260+00:00 shinyapps[6734578]: 2022-09-06 01:19:05 leafletRegion :
+2022-09-06T01:19:05.432319+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 737.13(33.32) seconds ***
+2022-09-06T01:19:06.434619+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 737.75(0.62) seconds ***
+2022-09-06T01:19:06.434681+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 737.86(0.11) seconds ***
+2022-09-06T01:19:06.434762+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 737.86(0.00) seconds ***
+2022-09-06T01:19:06.434724+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 737.86(0.00) seconds ***
+2022-09-06T01:19:07.432262+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:19:07.432324+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:19:41.434597+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:41.434656+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:19:41.434698+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:41.434741+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:19:43.432264+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:43.432339+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:43.432388+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:19:43.432309+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:19:43.432425+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:43.432502+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:43.432464+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:19:46.432414+00:00 shinyapps[6734578]: 2022-09-06 01:19:45 leafletRegion :
+2022-09-06T01:19:46.432471+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 777.33(39.46) seconds ***
+2022-09-06T01:19:46.432516+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 778.16(0.83) seconds ***
+2022-09-06T01:19:47.432261+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 778.27(0.11) seconds ***
+2022-09-06T01:19:47.432310+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 778.27(0.00) seconds ***
+2022-09-06T01:19:47.432348+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 778.27(0.00) seconds ***
+2022-09-06T01:19:47.432393+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:19:47.432430+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:19:55.432247+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:19:55.432349+00:00 shinyapps[6734578]:       found
+2022-09-06T01:19:55.432386+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:19:55.432308+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:21:20.432328+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:21:20.432275+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:21:20.432374+00:00 shinyapps[6734578]:       found
+2022-09-06T01:21:20.432413+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:21:20.432455+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:21:20.432505+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:21:20.432542+00:00 shinyapps[6734578]:       found
+2022-09-06T01:21:22.522768+00:00 shinyapps[6734578]: 2022-09-06 01:21:22 leafletRegion :
+2022-09-06T01:21:22.522825+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 874.05(95.78) seconds ***
+2022-09-06T01:21:23.432242+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 874.68(0.63) seconds ***
+2022-09-06T01:21:23.432323+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 874.79(0.11) seconds ***
+2022-09-06T01:21:23.432365+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 874.79(0.00) seconds ***
+2022-09-06T01:21:23.432413+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 874.79(0.00) seconds ***
+2022-09-06T01:21:24.432280+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:21:24.432331+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:22:46.434559+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:22:46.434603+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:22:46.434630+00:00 shinyapps[6734578]:       found
+2022-09-06T01:22:46.434666+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:22:49.432297+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:22:49.432231+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:22:49.432329+00:00 shinyapps[6734578]:       found
+2022-09-06T01:22:49.432370+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:22:49.432410+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:22:49.432490+00:00 shinyapps[6734578]:       found
+2022-09-06T01:22:49.432446+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:22:51.434578+00:00 shinyapps[6734578]: 2022-09-06 01:22:50 leafletRegion :
+2022-09-06T01:22:51.434631+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 962.58(87.78) seconds ***
+2022-09-06T01:22:52.432266+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 963.29(0.71) seconds ***
+2022-09-06T01:22:52.432354+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 963.41(0.00) seconds ***
+2022-09-06T01:22:52.432311+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 963.40(0.12) seconds ***
+2022-09-06T01:22:52.432419+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:22:52.432389+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 963.41(0.00) seconds ***
+2022-09-06T01:22:52.432457+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:23:51.434539+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:23:51.434583+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:23:51.434612+00:00 shinyapps[6734578]:       found
+2022-09-06T01:23:51.434647+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:23:53.432352+00:00 shinyapps[6734578]:       found
+2022-09-06T01:23:53.432237+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:23:53.432303+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:23:53.432404+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:23:53.432445+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:23:53.432485+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:23:53.432527+00:00 shinyapps[6734578]:       found
+2022-09-06T01:23:55.432265+00:00 shinyapps[6734578]: 2022-09-06 01:23:54 leafletRegion :
+2022-09-06T01:23:55.432325+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1026.53(63.12) seconds ***
+2022-09-06T01:23:55.432372+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1027.08(0.55) seconds ***
+2022-09-06T01:23:55.432427+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1027.19(0.11) seconds ***
+2022-09-06T01:23:55.432471+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1027.19(0.00) seconds ***
+2022-09-06T01:23:55.432515+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1027.19(0.00) seconds ***
+2022-09-06T01:23:56.434577+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:23:56.434625+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:25:22.432230+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:25:22.432298+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:25:22.432344+00:00 shinyapps[6734578]:       found
+2022-09-06T01:25:22.432386+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:25:26.434633+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:25:26.434687+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:25:26.434721+00:00 shinyapps[6734578]:       found
+2022-09-06T01:25:26.434753+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:25:26.434791+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:25:26.434866+00:00 shinyapps[6734578]:       found
+2022-09-06T01:25:26.434827+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:25:29.432303+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1120.66(93.47) seconds ***
+2022-09-06T01:25:29.432242+00:00 shinyapps[6734578]: 2022-09-06 01:25:28 leafletRegion :
+2022-09-06T01:25:29.432355+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1121.19(0.52) seconds ***
+2022-09-06T01:25:30.432264+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1121.30(0.11) seconds ***
+2022-09-06T01:25:30.432341+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1121.30(0.00) seconds ***
+2022-09-06T01:25:30.432306+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1121.30(0.00) seconds ***
+2022-09-06T01:25:30.432376+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:25:30.432406+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:25:55.432296+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:25:55.432229+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:25:55.432343+00:00 shinyapps[6734578]:       found
+2022-09-06T01:25:55.432388+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:25:57.432234+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:25:57.432307+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:25:57.432412+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:25:57.432366+00:00 shinyapps[6734578]:       found
+2022-09-06T01:25:57.432488+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:25:57.432456+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:25:57.432518+00:00 shinyapps[6734578]:       found
+2022-09-06T01:26:00.432270+00:00 shinyapps[6734578]: 2022-09-06 01:25:59 leafletRegion :
+2022-09-06T01:26:00.432335+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1151.70(30.40) seconds ***
+2022-09-06T01:26:01.432465+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1152.35(0.65) seconds ***
+2022-09-06T01:26:01.432523+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1152.50(0.15) seconds ***
+2022-09-06T01:26:01.432572+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1152.50(0.00) seconds ***
+2022-09-06T01:26:01.432609+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1152.50(0.00) seconds ***
+2022-09-06T01:26:01.432639+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:26:01.432682+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:26:30.432275+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:26:30.432372+00:00 shinyapps[6734578]:       found
+2022-09-06T01:26:30.432325+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:26:30.432413+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:27:03.432303+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:27:03.432245+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:27:03.432370+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:27:03.432488+00:00 shinyapps[6734578]:       found
+2022-09-06T01:27:03.432339+00:00 shinyapps[6734578]:       found
+2022-09-06T01:27:03.432406+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:27:03.432444+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:27:06.434645+00:00 shinyapps[6734578]: 2022-09-06 01:27:05 leafletRegion :
+2022-09-06T01:27:06.434692+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1217.53(65.02) seconds ***
+2022-09-06T01:27:06.434736+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1218.08(0.56) seconds ***
+2022-09-06T01:27:07.432240+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1218.25(0.17) seconds ***
+2022-09-06T01:27:07.432298+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1218.25(0.00) seconds ***
+2022-09-06T01:27:07.432342+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1218.25(0.00) seconds ***
+2022-09-06T01:27:07.432376+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:27:07.432412+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:27:27.590272+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:27:27.590329+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:27:27.590372+00:00 shinyapps[6734578]:       found
+2022-09-06T01:27:27.590401+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:27:32.515704+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:27:32.515810+00:00 shinyapps[6734578]:       found
+2022-09-06T01:27:32.515942+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:27:32.515762+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:27:32.515856+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:27:32.515900+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:27:32.515982+00:00 shinyapps[6734578]:       found
+2022-09-06T01:27:37.432222+00:00 shinyapps[6734578]: 2022-09-06 01:27:36 leafletRegion :
+2022-09-06T01:27:37.432299+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1248.69(30.43) seconds ***
+2022-09-06T01:27:38.432280+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1249.28(0.60) seconds ***
+2022-09-06T01:27:38.432343+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1249.39(0.11) seconds ***
+2022-09-06T01:27:38.432392+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1249.40(0.00) seconds ***
+2022-09-06T01:27:38.432429+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1249.40(0.00) seconds ***
+2022-09-06T01:27:38.432462+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:27:38.432502+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:29:33.432278+00:00 shinyapps[6734578]: tableCross :
+2022-09-06T01:29:33.432330+00:00 shinyapps[6734578]: switchDomain :
+2022-09-06T01:29:33.432380+00:00 shinyapps[6734578]: crosstable -> datatable
+2022-09-06T01:29:33.432432+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:29:33.432472+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:29:34.432283+00:00 shinyapps[6734578]: buttonsCross :
+2022-09-06T01:29:34.432330+00:00 shinyapps[6734578]: rvSelectCF():
+2022-09-06T01:29:34.432369+00:00 shinyapps[6734578]: rvSelectIndustry():
+2022-09-06T01:29:34.432453+00:00 shinyapps[6734578]: switchDomain :
+2022-09-06T01:29:34.432416+00:00 shinyapps[6734578]: tableCross :
+2022-09-06T01:29:34.432493+00:00 shinyapps[6734578]: crosstable -> datatable
+2022-09-06T01:29:35.432227+00:00 shinyapps[6734578]: 2022-09-06 01:29:34 synchro industry selection -- from 'cross' to 'cfdata'
+2022-09-06T01:29:35.432311+00:00 shinyapps[6734578]:    clear row
+2022-09-06T01:29:39.432266+00:00 shinyapps[6734578]: buttonsCross :
+2022-09-06T01:29:39.432321+00:00 shinyapps[6734578]: rvSelectCF():
+2022-09-06T01:29:39.432370+00:00 shinyapps[6734578]: rvSelectIndustry():
+2022-09-06T01:29:39.432419+00:00 shinyapps[6734578]: 2022-09-06 01:29:38 synchro industry selection -- from 'cross' to 'cfdata'
+2022-09-06T01:29:39.432462+00:00 shinyapps[6734578]:    clear row
+2022-09-06T01:30:14.432237+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:30:14.432295+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:30:14.432366+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:30:14.432336+00:00 shinyapps[6734578]:       found
+2022-09-06T01:30:28.432326+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:30:28.432273+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:30:28.432371+00:00 shinyapps[6734578]:       found
+2022-09-06T01:30:28.432467+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:30:28.432529+00:00 shinyapps[6734578]:       found
+2022-09-06T01:30:28.432424+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:30:28.432497+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:30:30.432284+00:00 shinyapps[6734578]: 2022-09-06 01:30:30 leafletRegion :
+2022-09-06T01:30:30.432334+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1422.05(172.65) seconds ***
+2022-09-06T01:30:31.434537+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1422.64(0.59) seconds ***
+2022-09-06T01:30:31.434595+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1422.76(0.12) seconds ***
+2022-09-06T01:30:31.434686+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1422.76(0.00) seconds ***
+2022-09-06T01:30:31.434640+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1422.76(0.00) seconds ***
+2022-09-06T01:30:32.432282+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:30:32.432339+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:30:36.434696+00:00 shinyapps[6734578]: tableCross :
+2022-09-06T01:30:36.434750+00:00 shinyapps[6734578]: switchDomain :
+2022-09-06T01:30:36.434802+00:00 shinyapps[6734578]: crosstable -> datatable
+2022-09-06T01:30:36.434857+00:00 shinyapps[6734578]: buttonsCross :
+2022-09-06T01:30:50.432305+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:30:50.432367+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:30:50.432427+00:00 shinyapps[6734578]:       found
+2022-09-06T01:30:50.432477+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:35:58.432276+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:35:58.432376+00:00 shinyapps[6734578]:       found
+2022-09-06T01:35:58.432425+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:35:58.432331+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:35:58.432467+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:35:58.432508+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:35:58.432545+00:00 shinyapps[6734578]:       found
+2022-09-06T01:36:00.432278+00:00 shinyapps[6734578]: 2022-09-06 01:36:00 leafletRegion :
+2022-09-06T01:36:00.432333+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1751.91(329.15) seconds ***
+2022-09-06T01:36:01.434637+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1752.49(0.58) seconds ***
+2022-09-06T01:36:01.434696+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1752.61(0.12) seconds ***
+2022-09-06T01:36:01.434742+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1752.62(0.03) seconds ***
+2022-09-06T01:36:01.434791+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1752.64(0.00) seconds ***
+2022-09-06T01:36:01.434831+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:36:01.434871+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:36:02.432288+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:02.432346+00:00 shinyapps[6734578]:   136: stop
+2022-09-06T01:36:02.432393+00:00 shinyapps[6734578]:   135: charToDate
+2022-09-06T01:36:02.432441+00:00 shinyapps[6734578]:   134: as.Date.character
+2022-09-06T01:36:02.432487+00:00 shinyapps[6734578]:   131: regionStats
+2022-09-06T01:36:02.432568+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:02.432605+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:02.432644+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:02.432683+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:02.432528+00:00 shinyapps[6734578]:   130: <reactive:rvRegionStats> [<text>#1143]
+2022-09-06T01:36:02.432716+00:00 shinyapps[6734578]:    98: output$out436447c11799e76b
+2022-09-06T01:36:02.432874+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:02.432936+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:02.432827+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:02.432750+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:02.432983+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:02.433030+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:02.433331+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:02.433517+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:02.433074+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:02.432786+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:02.433296+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:02.433109+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:02.433185+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:02.433396+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:02.433147+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:02.433259+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:02.433830+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:02.434064+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:02.433223+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:02.433759+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:02.434242+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:02.433651+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:02.434027+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:02.433577+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:02.433795+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:02.433918+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:02.434342+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:02.433477+00:00 shinyapps[6734578]:    98: output$outadc17291bf9c2740
+2022-09-06T01:36:02.433870+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:02.434203+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:02.433615+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:02.434132+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:02.433443+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:02.433952+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:02.434277+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:02.434099+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:02.433365+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:02.433688+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:02.433992+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:02.433549+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:02.433722+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:02.434169+00:00 shinyapps[6734578]:    98: output$out9f606210a6b4f96c
+2022-09-06T01:36:02.434522+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:02.434594+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:02.434312+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:02.434559+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:02.434804+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:02.434453+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:02.434866+00:00 shinyapps[6734578]:    98: output$outcf4e62b2e89336d5
+2022-09-06T01:36:02.434629+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:02.434383+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:02.434489+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:02.434907+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:02.434663+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:02.435017+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:02.435129+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:02.434770+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:02.434947+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:02.435346+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:02.435277+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:02.435057+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:02.435205+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:02.434419+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:02.434734+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:02.435091+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:02.435167+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:02.435513+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:02.434698+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:02.434982+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:02.435379+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:02.435307+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:02.435686+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:02.435242+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:02.435616+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:02.435582+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:02.435408+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:02.435547+00:00 shinyapps[6734578]:    98: output$out4e295b538ea3772d
+2022-09-06T01:36:02.435443+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:02.435479+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:02.435721+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:02.435652+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:02.435798+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:02.435751+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:02.435858+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:02.435829+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:02.435940+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:02.435901+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:12.432305+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:36:12.432236+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:36:12.432433+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:36:12.432354+00:00 shinyapps[6734578]:       found
+2022-09-06T01:36:12.432396+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:36:12.432498+00:00 shinyapps[6734578]:       found
+2022-09-06T01:36:12.432468+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:36:15.432271+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:36:15.432323+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:36:15.432382+00:00 shinyapps[6734578]:       found
+2022-09-06T01:36:15.432426+00:00 shinyapps[6734578]: rvAOI():
+2022-09-06T01:36:15.432492+00:00 shinyapps[6734578]: observe 'exchange$selection'
+2022-09-06T01:36:15.432532+00:00 shinyapps[6734578]:    MANUAL
+2022-09-06T01:36:15.432561+00:00 shinyapps[6734578]:       found
+2022-09-06T01:36:17.432232+00:00 shinyapps[6734578]: 2022-09-06 01:36:17 leafletRegion :
+2022-09-06T01:36:17.432301+00:00 shinyapps[6734578]: *** run_app.R: 0904a: 1768.91(16.27) seconds ***
+2022-09-06T01:36:18.559993+00:00 shinyapps[6734578]: *** run_app.R: 0904b: 1769.54(0.63) seconds ***
+2022-09-06T01:36:18.560080+00:00 shinyapps[6734578]: *** run_app.R: 0904c: 1769.65(0.11) seconds ***
+2022-09-06T01:36:18.560136+00:00 shinyapps[6734578]: *** run_app.R: 0904f: 1769.69(0.04) seconds ***
+2022-09-06T01:36:18.560194+00:00 shinyapps[6734578]: *** run_app.R: 0904h: 1769.69(0.00) seconds ***
+2022-09-06T01:36:19.432292+00:00 shinyapps[6734578]: rvActivityStat():
+2022-09-06T01:36:19.432357+00:00 shinyapps[6734578]: crosstable():
+2022-09-06T01:36:19.432462+00:00 shinyapps[6734578]:   136: stop
+2022-09-06T01:36:19.432550+00:00 shinyapps[6734578]:   134: as.Date.character
+2022-09-06T01:36:19.432590+00:00 shinyapps[6734578]:   131: regionStats
+2022-09-06T01:36:19.432417+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:19.432688+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:19.432724+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:19.432626+00:00 shinyapps[6734578]:   130: <reactive:rvRegionStats> [<text>#1143]
+2022-09-06T01:36:19.433067+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:19.432756+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:19.432787+00:00 shinyapps[6734578]:    98: output$out436447c11799e76b
+2022-09-06T01:36:19.432658+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:19.432958+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:19.432507+00:00 shinyapps[6734578]:   135: charToDate
+2022-09-06T01:36:19.432823+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:19.433027+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:19.432864+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:19.433296+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:19.433171+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:19.433236+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:19.433140+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:19.433331+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:19.433442+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:19.433201+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:19.433403+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:19.432924+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:19.433266+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:19.433591+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:19.433620+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:19.432987+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:19.433105+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:19.433480+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:19.433557+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:19.433519+00:00 shinyapps[6734578]:    98: output$outadc17291bf9c2740
+2022-09-06T01:36:19.433988+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:19.433909+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:19.433653+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:19.433687+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:19.434057+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:19.433716+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:19.433745+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:19.434024+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:19.433790+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:19.433829+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:19.433873+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:19.434096+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:19.433951+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:19.434228+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:19.434134+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:19.434168+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:19.434271+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:19.434357+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:19.434310+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:19.434428+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:19.434459+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:19.434536+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:19.434198+00:00 shinyapps[6734578]:    98: output$out9f606210a6b4f96c
+2022-09-06T01:36:19.434393+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:19.434496+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:19.434572+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:19.434602+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:19.434709+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:19.434634+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:19.434669+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:19.434747+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:19.434778+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:19.434815+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:19.434936+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:19.434855+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:19.435018+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:19.434976+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:19.434890+00:00 shinyapps[6734578]:    98: output$outcf4e62b2e89336d5
+2022-09-06T01:36:19.435055+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:19.435128+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:19.435093+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:19.435165+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:19.435201+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:36:19.435236+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:19.435306+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:19.435266+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:19.435375+00:00 shinyapps[6734578]:   116: <Anonymous>
+2022-09-06T01:36:19.435539+00:00 shinyapps[6734578]:   112: func
+2022-09-06T01:36:19.435419+00:00 shinyapps[6734578]:   115: stop
+2022-09-06T01:36:19.435458+00:00 shinyapps[6734578]:   114: rvRegionStats
+2022-09-06T01:36:19.435724+00:00 shinyapps[6734578]:    13: fn
+2022-09-06T01:36:19.435845+00:00 shinyapps[6734578]:     6: eval
+2022-09-06T01:36:19.435798+00:00 shinyapps[6734578]:     7: connect$retryingStartServer
+2022-09-06T01:36:19.435893+00:00 shinyapps[6734578]:     5: eval
+2022-09-06T01:36:19.436004+00:00 shinyapps[6734578]:     2: eval.parent
+2022-09-06T01:36:19.435339+00:00 shinyapps[6734578]: Warning: Error in charToDate: character string is not in a standard unambiguous format
+2022-09-06T01:36:19.435660+00:00 shinyapps[6734578]:    17: <Anonymous>
+2022-09-06T01:36:19.435498+00:00 shinyapps[6734578]:   113: renderTable [<text>#2]
+2022-09-06T01:36:19.435623+00:00 shinyapps[6734578]:    98: output$out4e295b538ea3772d
+2022-09-06T01:36:19.435966+00:00 shinyapps[6734578]:     3: eval
+2022-09-06T01:36:19.436039+00:00 shinyapps[6734578]:     1: local
+2022-09-06T01:36:19.435695+00:00 shinyapps[6734578]:    15: <Anonymous>
+2022-09-06T01:36:19.435756+00:00 shinyapps[6734578]:     8: retry
+2022-09-06T01:36:19.435583+00:00 shinyapps[6734578]:    99: renderFunc
+2022-09-06T01:36:19.435930+00:00 shinyapps[6734578]:     4: eval
+2022-09-06T01:42:25.432271+00:00 shinyapps[6734578]: Container event from container-7143500: stop

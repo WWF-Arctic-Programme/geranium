@@ -15,8 +15,17 @@
    height: 24px;
    margin-top: -1em;
 }
-#cfmeta {
+#cfmeta, #industrymeta {
    font-size: 150%;
+}
+#omitPercent-label {
+   display: table-cell;
+   text-align: left;
+   vertical-align: middle;
+}
+#switchCFzzz {
+   margin-top: 1.6em;
+   margin-left: -0.6em;
 }
 .table.dataTable tbody td.active,
 .table.dataTable tbody tr.active td {
@@ -27,7 +36,7 @@
 .selectize-dropdown .optgroup-header {
    font-size: 120%;
 }
-@media print, screen and (max-width: 1268px) and (min-width: 769px) {
+@media notprint, notscreen and (max-width: 1268px) and (min-width: 769px) {
    body {
       width: 100%;
    }
@@ -68,15 +77,83 @@ table.overcontent tbody td {
   padding-left: 8px !important; /* 10 */
   padding-right: 8px !important; /* 6 */
 }
-.actionButton {
+.areabutton {
+   margin-top: 1.6em;
+   margin-bottom: 1.6em;
+}
+.linkbutton {
+   background-color: orange;
+   padding-left: 0.6em;
+   padding-right: 0.6em;
    padding-top: 0.6em;
-   padding-bottom: 0.2em;
-   margin-bottom: 0.2em;
-   background-color: green;
+   padding-bottom: 0.6em;
    color: white;
    text-align: center;
-   width: 9em;
 }
-.actionButton a {
+.linkbutton.green, .linkbutton.annual {
+   background-color: green;
+}
+.linkbutton.red {
+   background-color: darkred;
+}
+.linkbutton.blue, .linkbutton.details, .linkbutton.desc {
+   background-color: darkblue;
+}
+.linkbutton.brown, .linkbutton.list {
+   background-color: brown;
+}
+.linkbutton.cross {
+   background-color: darkcyan;
+}
+.linkbutton.map {
+   background-color: darkmagenta;
+}
+.linkbutton.grey, .linkbutton.hide {
+   background-color: #ddd;
+}
+.linkbutton a {
    color: white;
+}
+img[data-width^=ursa] {
+   opacity: 0.1
+}
+@font-face {
+  font-family: 'Roboto Condensed';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/robotocondensed/v18/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7DQ.woff2) format('woff2');
+}
+@font-face {
+   font-family: 'wwf';
+   src: url(https://nplatonov.github.io/chicory/wwf.ttf) format('truetype');
+}
+body {
+   font-family: 'zzzOswald' ,'Roboto Condensed', 'Segoe UI', sans-serif;
+}
+h1, h2, h1 a, h1 a:hover, h1 a:visited {
+   font-family: wwf, 'Roboto Condensed', 'Segoe UI', sans-serif;
+   color: black;
+}
+h1 {
+   text-transform: uppercase;
+}
+.navbar-brand a {
+   color: #000;
+}
+.navbar-brand a:hover {
+   color: #000;
+}
+.wwf {
+   font-family: wwf;
+   font-size: 105%;
+}
+@media screen and (min-width: 1269px) {
+   .navbar-brand::after, .navbar-author:empty:before {
+      content: '';  /* '\3009' */
+      color: #ccc;
+      font-size: 38px;
+      display: contents;
+      position: relative;
+      top: 6px;
+   }
 }

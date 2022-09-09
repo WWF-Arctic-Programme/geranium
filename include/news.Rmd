@@ -19,5 +19,5 @@
 ### Check scrolling
 
 ```{r, results='asis'}
-cat(readLines("https://loripsum.net/api/plaintext/long/4"),sep="\n\n")
+# cat(readLines("https://loripsum.net/api/plaintext/long/4"),sep="\n\n")
 ```

@@ -6,54 +6,114 @@ pagetitle: industry template
 
 
 
-### Underwater linear infrastructure {#i06d3c89b}
+### IUC: Underwater cables {#i74bf0b06}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quoniam et advesperascit et mihi ad villam revertendum est, nunc quidem hactenus; Quos quidem dies quem ad modum agatis et in quantam hominum facetorum urbanitatem incurratis, non diconihil opus est litibus-; Quo tandem modo? Nec vero audiendus Hieronymus, cui summum bonum est idem, quod vos interdum vel potius nimium saepe dicitis, nihil dolere. Pisone in eo gymnasio, quod Ptolomaeum vocatur, unaque nobiscum Q. Qua exposita scire cupio quae causa sit, cur Zeno ab hac antiqua constitutione desciverit, quidnam horum ab eo non sit probatum; Ne tum quidem te respicies et cogitabis sibi quemque natum esse et suis voluptatibus? Et quae per vim oblatum stuprum volontaria morte lueret inventa est et qui interficeret filiam, ne stupraretur. Duo Reges: constructio interrete. Nam de summo mox, ut dixi, videbimus et ad id explicandum disputationem omnem conferemus. Color egregius, integra valitudo, summa gratia, vita denique conferta voluptatum omnium varietate. Aut haec tibi, Torquate, sunt vituperanda aut patrocinium voluptatis repudiandum. Quodsi ipsam honestatem undique pertectam atque absolutam. 
+This human use includes laying and maintenance of submarine communication cables. 
 
-Se dicere inter honestum et turpe nimium quantum, nescio quid inmensum, inter ceteras res nihil omnino interesse. Nihil enim possumus iudicare, nisi quod est nostri iudicii-in quo frustra iudices solent, cum sententiam pronuntiant, addere: si quid mei iudicii est; Confecta res esset. Quorum omnium quae sint notitiae, quae quidem significentur rerum vocabulis, quaeque cuiusque vis et natura sit mox videbimus. Deque his rebus satis multa in nostris de re publica libris sunt dicta a Laelio. Qui igitur convenit ab alia voluptate dicere naturam proficisci, in alia summum bonum ponere? 
+Associated impacts are rather minor, limited in space and in time and include noise and light pollution from laying and service ships, risks of fuel leaks and physical disturbance for seafloor communities and habitats. 
+Once a cable is laid its impact on biodiversity is minimal.
 
+Interesting to note that as Wikipedia puts it: “As a result of these cables' cost and usefulness, they are highly valued not only by the corporations building and operating them for profit, but also by national governments. For instance, the Australian government considers its submarine cable systems to be "vital to the national economy". Accordingly, the Australian Communications and Media Authority (ACMA) has created protection zones that restrict activities that could potentially damage cables linking Australia to the rest of the world. The ACMA also regulates all projects to install new submarine cables”.
 
+Examples of submarine communication cables in the Arctic include Svalbard Undersea Cable System (since 2004), Greenland Connect system connecting Greenland, Canada and Iceland since 2009 and many others. There are plans for more such cables in the Arctic including Polar Express with the aim to connect Russian Arctic settlements from Murmansk to Anadyr and further south by 2026 by laying more than 12 000 km of cables according to the Submarine Cable Map. Canada is planning to lay Kattittuq Nunavut Fibre Link from Newfoundland to Iqaluit by 2025 as well. These plans along with others should be explored as potential opportunities for conservation and also monitoring.
 
+Overview of the assessment outputs:
 
-### Underwater oil&gas pipes {#idca69c78}
+Marine mammals: 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quem quidem vos, cum improbis poenam proponitis, inpetibilem facitis, cum sapientem semper boni plus habere vultis, tolerabilem. Sed utrum hortandus es nobis, Luci, inquit, an etiam tua sponte propensus es? Reicietur etiam Carneades, nec ulla de summo bono ratio aut voluptatis non dolendive particeps aut honestatis expers probabitur. Commentarios quosdam, inquam, Aristotelios, quos hic sciebam esse, veni ut auferrem, quos legerem, dum essem otiosus; Vide ne ista sint Manliana vestra aut maiora etiam, si imperes quod facere non possim. Sin te auctoritas commovebat, nobisne omnibus et Platoni ipsi nescio quem illum anteponebas? 
+Seabirds
 
-Quaero igitur, quo modo hae tantae commendationes a natura profectae subito a sapientia relictae sint. Nec vero sum nescius esse utilitatem in historia, non modo voluptatem. Tantum dico, magis fuisse vestrum agere Epicuri diem natalem, quam illius testamento cavere ut ageretur. 
+Fishes
 
+Benthos
 
-
-
-### Windmills, windparks {#ic9838a83}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Primum non saepe, deinde quae est ista relaxatio, cum et praeteriti doloris memoria recens est et futuri atque inpendentis torquet timor? Quare obscurentur etiam haec, quae secundum naturam esse dicimus, in vita beata; Sed quia studebat laudi et dignitati, multum in virtute processerat. Res enim fortasse verae, certe graves, non ita tractantur, ut debent, sed aliquanto minutius. Ac ne plura complectar-sunt enim innumerabilia-, bene laudata virtus voluptatis aditus intercludat necesse est. Nihil acciderat ei, quod nollet, nisi quod anulum, quo delectabatur, in mari abiecerat. Duo Reges: constructio interrete. Bonum appello quicquid secundurn naturam est, quod contra malum, nec ego solus, sed tu etiam, Chrysippe, in foro, domi; Conclusum est enim contra Cyrenaicos satis acute, nihil ad Epicurum. Ab hoc autem quaedam non melius quam veteres, quaedam omnino relicta. Hosne igitur laudas et hanc eorum, inquam, sententiam sequi nos censes oportere? Quae quidem res efficit, ne necesse sit isdem de rebus semper quasi dictata decantare neque a commentariolis suis discedere. Quod maxime efficit Theophrasti de beata vita liber, in quo multum admodum fortunae datur. Tum Piso: Quoniam igitur aliquid omnes, quid Lucius noster? 
-
-Iam quae corporis sunt, ea nec auctoritatem cum animi partibus, comparandam et cognitionem habent faciliorem. Ex quo intellegitur officium medium quiddam esse, quod neque in bonis ponatur neque in contrariis. Hoc dixerit potius Ennius: Nimium boni est, cui nihil est mali. Quia, cum a Zenone, inquam, hoc magnifice tamquam ex oraculo editur: Virtus ad beate vivendum se ipsa contenta est, et Quare? Non laboro, inquit, de nomine. Habes undique expletam et perfectam, Torquate, formam honestatis, quae tota quattuor his virtutibus, quae a te quoque commemoratae sunt, continetur. At cum tuis cum disseras, multa sunt audienda etiam de obscenis voluptatibus, de quibus ab Epicuro saepissime dicitur. 
-
+Coastal features
 
 
 
-### Coastal infrastructure {#ia37a9ec4}
+### IOP: Underwater oil&gas pipes {#idca69c78}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Qui autem voluptate vitam effici beatam putabit, qui sibi is conveniet, si negabit voluptatem crescere longinquitate? Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Sic igitur in homine perfectio ista in eo potissimum, quod est optimum, id est in virtute, laudatur. Alterum significari idem, ut si diceretur, officia media omnia aut pleraque servantem vivere. Haec bene dicuntur, nec ego repugno, sed inter sese ipsa pugnant. Duo Reges: constructio interrete. 
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Illa sunt similia: hebes acies est cuipiam oculorum, corpore alius senescit; Verum tamen cum de rebus grandioribus dicas, ipsae res verba rapiunt; Quicquid enim a sapientia proficiscitur, id continuo debet expletum esse omnibus suis partibus; Sed ne, dum huic obsequor, vobis molestus sim. An dubium est, quin virtus ita maximam partem optineat in rebus humanis, ut reliquas obruat? Duo Reges: constructio interrete. Omnium enim rerum principia parva sunt, sed suis progressionibus usa augentur nec sine causa; Restatis igitur vos; Itaque homo in primis ingenuus et gravis, dignus illa familiaritate Scipionis et Laelii, Panaetius, cum ad Q. Laelius clamores sofòw ille so lebat Edere compellans gumias ex ordine nostros. Atque etiam valítudinem, vires, vacuitatem doloris non propter utilitatem solum, sed etiam ipsas propter se expetemus. Quae quo sunt excelsiores, eo dant clariora indicia naturae. Itaque et manendi in vita et migrandi ratio omnis iis rebus, quas supra dixi, metienda. 
 
-Sin tantum modo ad indicia veteris memoriae cognoscenda, curiosorum. Epicurus autem cum in prima commendatione voluptatem dixisset, si eam, quam Aristippus, idem tenere debuit ultimum bonorum, quod ille; Nemo nostrum credebat, eratque veri similius hunc mentiri, cuius interesset, quam illum, qui id se rogasse scripsisset, quod debuisset rogare. At ille pellit, qui permulcet sensum voluptate. Graecum enim hunc versum nostis omnes-: Suavis laborum est praeteritorum memoria. 
+Haec et tu ita posuisti, et verba vestra sunt. Cum id quoque, ut cupiebat, audivisset, evelli iussit eam, qua erat transfixus, hastam. Quod cum ille dixisset et satis disputatum videretur, in oppidum ad Pomponium perreximus omnes. A primo, ut opinor, animantium ortu petitur origo summi boni. His similes sunt omnes, qui virtuti student levantur vitiis, levantur erroribus, nisi forte censes Ti. Heri, inquam, ludis commissis ex urbe profectus veni ad vesperum. Familiares nostros, credo, Sironem dicis et Philodemum, cum optimos viros, tum homines doctissimos. Vidit Homerus probari fabulam non posse, si cantiunculis tantus irretitus vir teneretur; Hoc igitur quaerentes omnes, et ii, qui quodcumque in mentem veniat aut quodcumque occurrat se sequi dicent, et vos ad naturam revertemini. 
 
 
 
 
-### Oil terminals {#i71fcbdef}
+### IW: Windmills, windparks {#ic9838a83}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aufidio, praetorio, erudito homine, oculis capto, saepe audiebam, cum se lucis magis quam utilitatis desiderio moveri diceret. Cognitio autem haec est una nostri, ut vim corporis animique norimus sequamurque eam vitam, quae rebus iis ipsis perfruatur. Quid ergo hoc loco intellegit honestum? Duo Reges: constructio interrete. Vides igitur te aut ea sumere, quae non concedantur, aut ea, quae etiam concessa te nihil iuvent. Desideraret enim valitudinem, vacuitatem doloris, appeteret etiam conservationem sui earumque rerum custodiam finemque, sibi constitueret secundum naturam vivere. Hoc est non modo cor non habere, sed ne palatum quidem. Est enim effectrix multarum et magnarum voluptatum. Illorum vero ista ipsa quam exilia de virtutis vi! Quam tantam volunt esse, ut beatum per se efficere possit. Illorum vero ista ipsa quam exilia de virtutis vi! Quam tantam volunt esse, ut beatum per se efficere possit. Ita finis bonorum existit secundum naturam vivere sic affectum, ut optime is affici possit ad naturamque accommodatissime. Nec vero ut voluptatem expetat, natura movet infantem, sed tantum ut se ipse diligat, ut integrum se salvumque velit. Ista ipsa, quae tu breviter: regem, dictatorem, divitem solum esse sapientem, a te quidem apte ac rotunde; Restinguet citius, si ardentem acceperit. Commoda autem et incommoda in eo genere sunt, quae praeposita et reiecta diximus; Si autem id non concedatur, non continuo vita beata tollitur. 
+Offshore wind farms are associated with the impacts like significant noise pollution, risk of seabirds being struck by blades, and behaviour of marine mammals, fish and birds altered (with attraction or avoidance). Among the important effects of wind farms is the unintentional provision of a new habitat which can be rapidly colonized by hard substrate species including non-indigenous species.
+Turbine installation process is associated with high level of underwater noise, light pollution, alteration of benthic habitats and all the impacts from service ships which can include potential petrochemical pollution.
+More about environmental impacts of offshore windparks: https://tethys.pnnl.gov/wind-energy 
 
-Sit hoc ultimum bonorum, quod nunc a me defenditur; Sed audiamus ipsum: Compensabatur, inquit, tamen cum his omnibus animi laetitia, quam capiebam memoria rationum inventorumque nostrorum. Quae dici eadem de ceteris virtutibus possunt, quarum omnium fundamenta vos in voluptate tamquam in aqua ponitis. Vives, inquit Aristo, magnifice atque praeclare, quod erit cumque visum ages, numquam angere, numquam cupies, numquam timebis. Se dicere inter honestum et turpe nimium quantum, nescio quid inmensum, inter ceteras res nihil omnino interesse. Quippe, inquieta cum tam docuerim gradus istam rem non habere quam virtutem, in qua sit ipsum etíam beatum. Voluptatem cum summum bonum diceret, primum in eo ipso parum vidit, deinde hoc quoque alienum; Sunt enim quasi prima elementa naturae, quibus ubertas orationis adhiberi vix potest, nec equidem eam cogito consectari. Ita est quoddam commune officium sapientis et insipientis, ex quo efficitur versari in iis, quae media dicamus. Quid est, quod ab ea absolvi et perfici debeat? Quis non odit sordidos, vanos, leves, futtiles? 
+Examples: Norway? 
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
 
 
 
 
-### Dredging {#if24611aa}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Nam haec ipsa mihi erunt in promptu, quae modo audivi, nec ante aggrediar, quam te ab istis, quos dicis, instructum videro. Certe nihil nisi quod possit ipsum propter se iure laudari. Nec vero pietas adversus deos nec quanta iis gratia debeatur sine explicatione naturae intellegi potest. Quae cum ita sint, effectum est nihil esse malum, quod turpe non sit. Cur fortior sit, si illud, quod tute concedis, asperum et vix ferendum putabit? Aliud igitur esse censet gaudere, aliud non dolere. Duo Reges: constructio interrete. Habes, inquam, Cato, formam eorum, de quibus loquor, philosophorum. A villa enim, credo, et: Si ibi te esse scissem, ad te ipse venissem. At, si voluptas esset bonum, desideraret. 
+### ICI: Coastal infrastructure {#ia37a9ec4}
 
-Mihi quidem Homerus huius modi quiddam vidisse videatur in iis, quae de Sirenum cantibus finxerit. Unum nescio, quo modo possit, si luxuriosus sit, finitas cupiditates habere. Tu enim ista lenius, hic Stoicorum more nos vexat. Cuius ad naturam apta ratio vera illa et summa lex a philosophis dicitur. Reperiam multos, vel innumerabilis potius, non tam curiosos nec tam molestos, quam vos estis, quibus, quid velim, facile persuadeam. Videmus in quodam volucrium genere non nulla indicia pietatis, cognitionem, memoriam, in multis etiam desideria videmus. 
+We considered peers, ports, passenger and cargo terminals, search and rescue stations, and other infrastructure objects located in the coastal zone except oil terminals and other oil & gas infrastructure. Their construction is associated with destruction of benthic and coastal habitats as well as with increased levels of noise and other pollution including petrochemical pollution since ports normally store some amount of fuel for ships etc. Functioning of this infrastructure is associated with increased marine and air traffic meaning all the relevant impacts.
+
+Examples: Arctic ports
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
+
+
+
+### IOT: Oil terminals {#i71fcbdef}
+
+In addition to the impacts associated with other coastal infrastructure listed (hyperlink) in the respective paragraph, oil terminals and other petrochemical storing facilities are sources of regular minor leakages and potential major spills. 
+Example - Lukoil terminal in Varandey, the Pechora Sea.
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
+
+
+
+### ID: Dredging {#if24611aa}
+
+Dredging is deepening the seafloor, for example, for arranging a shipping channel. It is often associated with development of coastal infrastructure and leads to increased shipping traffic in the area. 
+Dredging causes destruction of natural benthic habitats and changes hydrology of an area. 
+In the process of dredging these impacts are complemented by petrochemical, noise and light pollution.
+Example - the Gulf of Ob’.
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
 

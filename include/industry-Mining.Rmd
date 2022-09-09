@@ -4,38 +4,96 @@ pagetitle: industry template
 
 ## Mining
 
+Oil & gas production 
+
+Offshore hydrocarbon production starts with engineering and geological surveys at the first stage and continues with well drilling, platforms installation at the next stage. Once the production is established the infrastructure requires maintenance and hydrocarbons need to be stored and transported. In case of LNG it also needs to be processed on site before transportation.
+Each stage is associated with various impacts of different scale and intensity. We assessed the entire complex of the industry-associated impacts for each Conservation Feature as there is no reason to conduct surveys without planning to drill and to start oil production, and once it is produced it needs to be stored and transported and once infrastructure is there it requires access and maintenance. 
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
 
 
-### oil production {#i2c466286}
+### MOP: oil production {#i2c466286}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aut unde est hoc contritum vetustate proverbium: quicum in tenebris? In schola desinis. Sed eum qui audiebant, quoad poterant, defendebant sententiam suam. Duo Reges: constructio interrete. Collige omnia, quae soletis: Praesidium amicorum. Odium autem et invidiam facile vitabis. Itaque non discedit ab eorum curatione, quibus praeposita vitam omnem debet gubernare, ut mirari satis istorum inconstantiam non possim. Quonam, inquit, modo? 
+Engineering and geological surveys typically include: drilling of exploratory boreholes, sampling of various geological materials; geophysical surveys (continuous seismoacoustic profiling, side-scan sonar, etc.). These surveys are associated with the following impacts: noise pollution (from ships and from seismic surveys), petrochemical pollution (leaks from ships and equipment), light pollution from ships and drilling platforms, physical disturbance and destruction of benthic habitats as well as short-term changes in the water turbidity levels. 
 
-Illis videtur, qui illud non dubitant bonum dicere -; Etenim nec iustitia nec amicitia esse omnino poterunt, nisi ipsae per se expetuntur. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. At quicum ioca seria, ut dicitur, quicum arcana, quicum occulta omnia? Nam si dicent ab illis has res esse tractatas, ne ipsos quidem Graecos est cur tam multos legant, quam legendi sunt. Eorum enim est haec querela, qui sibi cari sunt seseque diligunt. Quid affers, cur Thorius, cur Caius Postumius, cur omnium horum magister, Orata, non iucundissime vixerit? 
+Next stages of oil production are associated with high risk of oil and other petrochemicals pollution including catastrophic one, physical disturbance and destruction of habitats caused by installation of platforms and shipping, noise pollution both underwater and in the air (from helicopters), changes in the ice cover and light pollution.
 
+Examples: Prirazlomnaya in the Pechora Sea, Norway, Alaska
 
+Marine mammals
 
+Seabirds
 
-### gas production {#i3b90dd50}
+Fishes
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam haec ipsa mihi erunt in promptu, quae modo audivi, nec ante aggrediar, quam te ab istis, quos dicis, instructum videro. Praeclare enim Plato: Beatum, cui etiam in senectute contigerit, ut sapientiam verasque opiniones assequi possit. Duo Reges: constructio interrete. Cuius tanta tormenta sunt, ut in iis beata vita, si modo dolor summum malum est, esse non possit. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Quarum ambarum rerum cum medicinam pollicetur, luxuriae licentiam pollicetur. 
+Benthos
 
-Unum est sine dolore esse, alterum cum voluptate. Restat locus huic disputationi vel maxime necessarius de amicitia, quam, si voluptas summum sit bonum, affirmatis nullam omnino fore. Facit enim ille duo seiuncta ultima bonorum, quae ut essent vera, coniungi debuerunt; Inde igitur, inquit, ordiendum est. Quod dicit Epicurus etiam de voluptate, quae minime sint voluptates, eas obscurari saepe et obrui. Ita, quem ad modum in senatu semper est aliquis, qui interpretem postulet, sic, isti nobis cum interprete audiendi sunt. 
-
-
-
-
-### Other minerals production/mining {#i54e9684f}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quae quidem vel cum periculo est quaerenda vobis; Hoc positum in Phaedro a Platone probavit Epicurus sensitque in omni disputatione id fieri oportere. Et quidem illud ipsum non nimium probo et tantum patior, philosophum loqui de cupiditatibus finiendis. Et si turpitudinem fugimus in statu et motu corporis, quid est cur pulchritudinem non sequamur? Illum mallem levares, quo optimum atque humanissimum virum, Cn. Philosophi autem in suis lectulis plerumque moriuntur. Nam prius a se poterit quisque discedere quam appetitum earum rerum, quae sibi conducant, amittere. 
-
-Duo Reges: constructio interrete. At enim, qua in vita est aliquid mali, ea beata esse non potest. Pompeius in foedere Numantino infitiando fuit, nec vero omnia timente, sed primum qui animi conscientiam non curet, quam scilicet comprimere nihil est negotii. Ista similia non sunt, Cato, in quibus quamvis multum processeris tamen illud in eadem causa est, a quo abesse velis, donec evaseris; Cum autem in quo sapienter dicimus, id a primo rectissime dicitur. Et tamen ego a philosopho, si afferat eloquentiam, non asperner, si non habeat, non admodum flagitem. Primum cur ista res digna odio est, nisi quod est turpis? Ita fit cum gravior, tum etiam splendidior oratio. Nec vero intermittunt aut admirationem earum rerum, quae sunt ab antiquis repertae, aut investigationem novarum. Illum mallem levares, quo optimum atque humanissimum virum, Cn. 
+Coastal features
 
 
 
+### MGP: gas production {#i3b90dd50}
 
-### Coastal mining {#i4cfac06b}
+Engineering and geological surveys typically include: drilling of exploratory boreholes, sampling of various geological materials; geophysical surveys (continuous seismoacoustic profiling, side-scan sonar, etc.). These surveys are associated with the following impacts: noise pollution (from ships and from seismic surveys), petrochemical pollution (leaks from ships and equipment), light pollution from ships and drilling platforms, physical disturbance and destruction of benthic habitats as well as short-term changes in the water turbidity levels.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Est autem eius generis actio quoque quaedam, et quidem talis, ut ratio postulet agere aliquid et facere eorum. Ratio quidem vestra sic cogit. Totum genus hoc Zeno et qui ab eo sunt aut non potuerunt aut noluerunt, certe reliquerunt. Perfecto enim et concluso neque virtutibus neque amicitiis usquam locum esse, si ad voluptatem omnia referantur, nihil praeterea est magnopere dicendum. Non quaeritur autem quid naturae tuae consentaneum sit, sed quid disciplinae. Deinde prima illa, quae in congressu solemus: Quid tu, inquit, huc? Duo Reges: constructio interrete. Respondeat totidem verbis. Num igitur dubium est, quin, si in re ipsa nihil peccatur a superioribus, verbis illi commodius utantur? Hinc ceteri particulas arripere conati suam quisque videro voluit afferre sententiam. Quodsi ipsam honestatem undique pertectam atque absolutam. Quaesita enim virtus est, non quae relinqueret naturam, sed quae tueretur. 
+Next stages of gas production are associated with the same risks and impacts as production of oil: petrochemicals pollution, physical disturbance and destruction of habitats caused by installation of platforms and shipping, noise pollution both underwater and in the air (from helicopters), changes in the ice cover and light pollution. The difference is that there is no risk of catastrophic oil spills but there are risks of LNG and other chemical leaks and also water warming in case it is used as a cooling agent in the process of production.
 
-Sunt enim prima elementa naturae, quibus auctis vírtutis quasi germen efficitur. Nullum inveniri verbum potest quod magis idem declaret Latine, quod Graece, quam declarat voluptas. Varietates autem iniurasque fortunae facile veteres philosophorum praeceptis instituta vita superabat. Longum est enim ad omnia respondere, quae a te dicta sunt. Sed haec ab Antiocho, familiari nostro, dicuntur multo melius et fortius, quam a Stasea dicebantur. Nec vero intermittunt aut admirationem earum rerum, quae sunt ab antiquis repertae, aut investigationem novarum. Nam et a te perfici istam disputationem volo, nec tua mihi oratio longa videri potest. Persecutus est Aristoteles animantium omnium ortus, victus, figuras, Theophrastus autem stirpium naturas omniumque fere rerum, quae e terra gignerentur, causas atque rationes; Profectus in exilium Tubulus statim nec respondere ausus; At enim, qua in vita est aliquid mali, ea beata esse non potest. 
+Examples: LNG projects in the Western Siberian Arctic
 
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
+
+
+
+
+### MOM: Other minerals production/mining {#i54e9684f}
+
+Sand is already being mined from seafloor in some areas of the World Ocean. There are plans for deep seabed mining for ferromanganese nodules and rare-earth metals. Associated impacts from such off-shore mining will be similar to the ones described for off-shore gas production including engineering and geological surveys and associated ship work: noise pollution, petrochemical pollution (leaks from ships and equipment), light pollution, physical disturbance. 
+ Additionally it will lead to significant impact on benthic habitats including their complete destruction, long-term changes in the water turbidity levels and local hydrological characteristics.  
+
+Examples: ?
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
+
+
+
+### MCM: Coastal mining {#i4cfac06b}
+
+On-shore mining directly impacts coastal and marine ecosystems through pollution by drains, leaks and discharges. Also coastal mining leads to development of coastal infrastructure (ports and terminals) destroying coastal habitats. Their construction will lead to an increase in ship and air traffic with all associated impacts similar to the impacts from off-shore mining - light and noise pollution, oil and other petrochemicals pollution, plastic pollution, habitat degradation etc.
+
+Examples: LNG in Yamal, Russia, Nornikel, Russia, coal (?)
+
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features

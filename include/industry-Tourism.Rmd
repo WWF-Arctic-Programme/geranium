@@ -4,20 +4,71 @@ pagetitle: industry template
 
 ## Tourism
 
+Tourism is a growing industry in the Arctic.  
+Usually considered as a positive, a way to make conservation profitable however overtourism is a common problem around the world, and in the Arctic it can be especially harmful as its nature is fragile and slow to recover. 
+
+For the purpose of the assessment tourism was divided into 2 categories:
 
 
-### Small-ship expedition cruises and other small-scale tourism activities {#i4060474c}
+### TET: Small-ship expedition cruises and other small-scale tourism activities {#i4060474c}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Consequentia exquirere, quoad sit id, quod volumus, effectum. At enim, qua in vita est aliquid mali, ea beata esse non potest. Aliam vero vim voluptatis esse, aliam nihil dolendi, nisi valde pertinax fueris, concedas necesse est. Hoc autem loco tantum explicemus haec honesta, quae dico, praeterquam quod nosmet ipsos diligamus, praeterea suapte natura per se esse expetenda. Duo Reges: constructio interrete. Nam nisi hoc optineatur, id solum bonum esse, quod honestum sit, nullo modo probari possit beatam vitam virtute effici. Quod dicit Epicurus etiam de voluptate, quae minime sint voluptates, eas obscurari saepe et obrui. Propter nos enim illam, non propter eam nosmet ipsos diligimus. Maximeque eos videre possumus res gestas audire et legere velle, qui a spe gerendi absunt confecti senectute. Qui igitur convenit ab alia voluptate dicere naturam proficisci, in alia summum bonum ponere? Cum autem progrediens confirmatur animus, agnoscit ille quidem naturae vim, sed ita, ut progredi possit longius, per se sit tantum inchoata. Quid loquor de nobis, qui ad laudem et ad decus nati, suscepti, instituti sumus? 
+It is defined as “responsible travel to natural areas that conserves the environment, sustains the wellbeing of local people and involves interpretation and education” (International Ecotourism Society, 2015 citation by Encyclopedia of the World's Biomes, 2020) and includes small-ship expedition cruises and other small-scale tourism activities. It is characterized by a rather small number of visitors, and absence or minimal amount of infrastructure and constructions.  
+Expedition ships generally do not land more than 100 passengers in the same general area and follow industry-specific guidelines e.g. developed by AECO.  
+On one hand the impact on biodiversity and ecosystems from ecotourism is minimal because of its scale and restrictions it follows, on another hand tourists intend to see the most valuable and vulnerable areas - bird colonies, walrus and seal haul outs, whale aggregations. Real world examples show that a rise in a number of visitors can easily overcome nature’s capacity unless regulated.  
+Therefore a control and regulations for ecotourism are needed and it is not automatically compatible with conservation goals in ArcNet. Regulation should not be outsourced to the industry associations like AECO but should be done by a conservation community in partnership with other stakeholders instead.
 
-In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Quod maxime efficit Theophrasti de beata vita liber, in quo multum admodum fortunae datur. Non igitur potestis voluptate omnia dirigentes aut tueri aut retinere virtutem. Commoda autem et incommoda in eo genere sunt, quae praeposita et reiecta diximus; Tum, Quintus et Pomponius cum idem se velle dixissent, Piso exorsus est. Hoc est vim afferre, Torquate, sensibus, extorquere ex animis cognitiones verborum, quibus inbuti sumus. 
+Examples of restrictions in addition to general industry guidelines can be use of LFO instead of HFO, specific site and wildlife watching guidelines, specified seasons when visitors are not allowed in a particular area, restriction on use of motor boats etc.
+
+Associated impacts: physical disturbance, pollution (including biological pollution-introduction of invasive species and diseases); in case of ship-based tourism all ship-associated impacts including underwater noise, light pollution, risks of ship strikes for mammals and birds.
+
+Examples: expedition cruises by AECO tourist operators.
+
+Ecotourism industry is among the most obvious allies and partners in conservation and thus should be actively involved in conservation planning and decision making.
+
+Overview of the assessment outputs:
+
+Marine mammals: marine mammal conservation features are quite diverse and include small, locally restricted, stable and very well defined habitats –i.e. coastal haul out sites for walruses and eared seals, seasonal aggregation core areas for some philopatric cetaceans like beluga whales and narwhal; majority of conservation features are more widespread and dynamic though quite restricted in space seasonal key habitats - summer feeding areas, whelping and molting patches. For some species or populations these habitats are not very well studied and defined e.g. for the Barents-Kara-Laptev beluga whale stock. 
+Depending on the status of a habitat scale, importance and sensitivity the assessment outputs for marine mammals vary from “not allowed” for polar bear denning sites and steller sea lion haul outs and sea otter breeding sites to “allowed with certain restrictions” for majority of the habitats and to “allowed with no specific regulations except for the industry general requirements”. 
+As most of the habitats are seasonal the restrictions are also temporary and seasonal. Restrictions include wildlife watching guidelines, speed limitations for ships in mammal aggregation areas, marine mammal observers on board, specific site guidelines. This is best done at a regional and a local scale.
+
+Seabirds: seabird conservation features in ArcNet can be divided into three types - bird colonies and buffer zones around them (feeding areas), breeding grounds and bird aggregations during molting, migration, and wintering. 
+Almost all of these habitats are seasonal, meaning that birds use them only in certain months and leave for the rest of a year. Ecotourism is also a seasonal activity - it does not require permanent, year-round infrastructure and by definition is organized in a way not to leave lasting impact. Therefore the assessment results vary for seasons when birds are present in a habitat and when they are not. 
+In almost all habitats ecotourism should be allowed with certain restrictions when birds are using the habitat and allowed with no specific requirements when birds are not using the habitat.
+Restrictions should include wildlife watching guidelines and specific site guidelines determining no go zones and areas where visits are allowed. This is best done at a local scale. In some areas (e.g. bird concentration areas in the Bering Sea) black outs might be needed to avoid bird strikes during night time.
+
+Fishes: as the impacts of ecotourism are relatively minimal and of small scale and conservation features representing diversity of fishes are in contrast presented at a coarse scale, there are no specific fish-related regulations and restrictions for tourism other than general environmental requirements for the industry.
+
+Benthos: benthic features in the assessment are represented by distinctive deep sea objects like vents, cold corals, rifts, underwater mountains and areas of increased benthic biomass. These objects currently and in the foreseeable future are accessible only for occasional visits done predominantly by scientists not by tourists, therefore they were assigned “not applicable” status. 
+Some of the benthic features include shallow water and coastal elements like kelp forests and seagrass meadows. Ecotourism in these areas should be allowed only under condition that specific measures will be taken to ensure the activities do not damage kelp communities and seagrasses: limited use of motor boats, speed limits and specific site guidelines directing boat traffic from the most valuable and dense parts of the meadows and kelp forests. This is best done at a local scale.
+
+Coastal features: ecotourism can be allowed in the areas where coastal conservation features such as estuaries, salt marshes and intertidal zones are to be conserved. Certain restrictions should be applied in order to protect these features. Specific site guidelines, caps on a number of visitors are among these measures.
+There are no specific restrictions for ecotourism in the vicinity of glacial termini apart from general environmental requirements for the industry and safety measures.
 
 
 
 
-### Mass tourism {#i26ff3686}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Effluit igitur voluptas corporis et prima quaeque avolat saepiusque relinquit causam paenitendi quam recordandi. Atque his de rebus et splendida est eorum et illustris oratio. Nam neque virtute retinetur ille in vita, nec iis, qui sine virtute sunt, mors est oppetenda. Quis, quaeso, inquit, est, qui quid sit voluptas nesciat, aut qui, quo magis id intellegat, definitionem aliquam desideret? Et summatim quidem haec erant de corpore animoque dicenda, quibus quasi informatum est quid hominis natura postulet. Duo Reges: constructio interrete. Deinde disputat, quod cuiusque generis animantium statui deceat extremum. Et nemo nimium beatus est; 
+### TMT: Mass tourism {#i26ff3686}
 
-Quid, si reviviscant Platonis illi et deinceps qui eorum auditores fuerunt, et tecum ita loquantur? Audax negotium, dicerem impudens, nisi hoc institutum postea translatum ad philosophos nostros esset. Sed haec ab Antiocho, familiari nostro, dicuntur multo melius et fortius, quam a Stasea dicebantur. Concinnus deinde et elegans huius, Aristo, sed ea, quae desideratur, a magno philosopho, gravitas, in eo non fuit; Ampulla enim sit necne sit, quis non iure optimo irrideatur, si laboret? Sed in ceteris artibus cum dicitur artificiose, posterum quodam modo et consequens putandum est, quod illi §pigennhmatikÒn appellant; Voluptatem cum summum bonum diceret, primum in eo ipso parum vidit, deinde hoc quoque alienum; Itaque non discedit ab eorum curatione, quibus praeposita vitam omnem debet gubernare, ut mirari satis istorum inconstantiam non possim. Ergo ita: non posse honeste vivi, nisi honeste vivatur? 
+It is characterised by scale and a developed infrastructure including roads and pathways, guest houses, peers, parking lots, cafes, souvenir shops etc). Vessel based mass tourism can use large cruise ships (over 400 passengers) and also numerous small boats in coastal areas. 
+Mass tourism can be destructive, however can be allowed in some areas where key conservation features are less exposed to its impacts due to their biological characteristics, seasonal or spatial mismatch. Additional requirements and conditions can be introduced besides general environmental requirements to the industry. Speed regulations for vessels and vehicles, onboard marine mammal observers, use of electric engines or LFO (Light Fuel Oil) for ships can be among such additional requirements.
+
+Associated impacts: ship-associated (see Shipping Chapter), coastal infrastructure-associated (see Infrastructure Chapter) impacts, specific impacts - physical disturbance, pollution including noise and light, waste and biological pollution (invasive species and diseases).
+
+Examples of mass tourism in the Arctic are polar bear watching tourism in the Churchill area, the Canadian Arctic, cruise industry in waters of Alaska or Norway.
+
+Overview of the assessment outputs:
+
+Marine mammals: Almost all of marine mammal habitats considered for the assessment are seasonal meaning that animals use them only in certain months and leave for the rest of a year. Therefore the assessment status may vary for different seasons except for the general requirement to avoid construction of permanent infrastructure in key mammal habitats. Mass tourism should not be allowed in small, locally restricted, stable and very well defined habitats especially during the seasons when animals are present there. It can be allowed with general environmental requirements to the industry in other seasons primarily under conditions that it leaves no trace.
+Other restrictions for the seasons when animals are present can include HFO ban, speed limits, marine mammal observers on board, shipping routes planning, zoning etc.
+
+Seabirds: Almost all of these habitats are seasonal, meaning that birds use them only in certain months and leave for the rest of a year. Therefore the assessment status may vary for different seasons except for the general requirement to avoid construction of permanent infrastructure in key bird habitats. Among the restrictions are introduction of site specific guidelines, blackouts for cruise ships in some bird concentration areas in night time to prevent bird strikes etc.
+
+Note that the assessment is done at a coarse, global scale and in some cases it can be reconsidered once a more fine scale data is introduced, for example current assessment for yellow-billed loon (Gavia adamsii) Atlantic wintering grounds for mass tourism says “Allowed with certain restrictions, while avoiding the regular/known bird concentration areas”, meaning that at the finer scale the assessment outputs will be “not allowed” for the regular/known bird concentration areas and “allowed with certain restrictions” or “allowed with no specific regulations except for the general environmental requirements to the industry”. This applies to many seabird conservation features and is highlighted in the comments section.
+
+Fishes: conservation features representing diversity of fishes are presented at a coarse scale, and there are no specific fish-related regulations and restrictions for tourism other than general environmental requirements for the industry - measures to prevent oil spills, introduction of invasive species and waste pollution.
+
+Benthos: benthic features in the assessment are represented by distinctive deep sea objects like vents, cold corals, rifts, underwater mountains and areas of increased benthic biomass. It is not expected that mass tours to visit these objects will be organized in the foreseeable future however these areas should be considered as special areas where all measures to avoid any pollution from passing ships to be taken. Some of the benthic features include shallow water and coastal elements like kelp forests and seagrass meadows. Tourism in kelp forest areas should be allowed only at limited scale under condition that specific measures will be taken to ensure the activities do not damage kelp communities and seagrasses: no permanent infrastructure construction, limited use of motor boats, speed limits and specific site guidelines directing boat traffic from the most valuable and dense parts of kelp forests. Mass tourism cannot be allowed in seagrass meadow areas because of the high sensitivity of this habitat.
+
+Coastal features: Mass tourism should not be allowed in the salt marsh areas and intertidal zones due to their sensitivity. It can be allowed at a limited scale with certain restrictions in other coastal features. First of all, there should be no permanent infrastructure construction, individual site guidelines should be developed to direct traffic and outline no-go zones. More specific restrictions and guidelines should be introduced at regional and local scale.
 

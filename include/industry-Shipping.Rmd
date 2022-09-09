@@ -4,47 +4,89 @@ pagetitle: industry template
 
 ## Shipping
 
+All ships have similar following impacts on marine environment: underwater noise pollution, physical disturbance, biological pollution (transportation of invasive species), risks of collisions with birds and mammals, waste pollution, light pollution, ice cover destruction (especially in the port areas where permanent ice-free channels are kept), shipping channels can also be a reason for dredging with all associated consequences. 
+Apart from this the impacts from shipping to a large extent depend on the type of fuel a particular vessel uses and the type of cargo it carries. For example if a vessel carries oil or petrochemicals or uses HFO (Heavy Fuel Oil) as a fuel scale of impact and pollution can be much bigger than a pollution from a container ship running on LNG. Because of this we divided shipping into the 5 categories: tankers - ships carrying oil and petrochemicals and other cargo and passenger vessels using HFO, LFO, LNG or nuclear power as a source of power.
+More about difference between different vessel fuel types and their impact on marine environment is here: https://www.hfofreearctic.org/en/front-page/ 
 
+### ST: Tanker (oil and petrochemicals) {#if3312b50}
 
-### Tanker (oil and petrochemicals) {#if3312b50}
+In case a ship carries oil and other petrochemicals it does not matter what fuel it uses for the purposes of the assessment - in case of emergency it can be a source of ecological disaster affecting all components of biodiversity.
+Examples: tankers carrying oil from Varandey, the Pechora Sea across the Barents Sea, Alaska?
+Briefly describe distribution of tanker shipping routes in the Arctic
+Marine mammals
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Hoc dictum in una re latissime patet, ut in omnibus factis re, non teste moveamur. Hinc ceteri particulas arripere conati suam quisque videro voluit afferre sententiam. Nullis enim partitionibus, nullis definitionibus utuntur ipsique dicunt ea se modo probare, quibus natura tacita adsentiatur. Duo Reges: constructio interrete. Quod iam a me expectare noli. Atque etiam ad iustitiam colendam, ad tuendas amicitias et reliquas caritates quid natura valeat haec una cognitio potest tradere. Sin te auctoritas commovebat, nobisne omnibus et Platoni ipsi nescio quem illum anteponebas? Quae enim adhuc protulisti, popularia sunt, ego autem a te elegantiora desidero. Epicurus autem cum in prima commendatione voluptatem dixisset, si eam, quam Aristippus, idem tenere debuit ultimum bonorum, quod ille; Atqui iste locus est, Piso, tibi etiam atque etiam confirmandus, inquam; Sed tamen omne, quod de re bona dilucide dicitur, mihi praeclare dici videtur. 
+Seabirds
 
-Quis tibi ergo istud dabit praeter Pyrrhonem, Aristonem eorumve similes, quos tu non probas? -, sed ut hoc iudicaremus, non esse in iis partem maximam positam beate aut secus vivendi. Non pugnem cum homine, cur tantum habeat in natura boni; Effluit igitur voluptas corporis et prima quaeque avolat saepiusque relinquit causam paenitendi quam recordandi. Collatio igitur ista te nihil iuvat. Sed ita falsa sunt ea, quae consequuntur, ut illa, e quibus haec nata sunt, vera esse non possint. Reliqui sibi constiterunt, ut extrema cum initiis convenirent, ut Aristippo voluptas, Hieronymo doloris vacuitas, Carneadi frui principiis naturalibus esset extremum. Hoc est non modo cor non habere, sed ne palatum quidem. 
+Fishes
 
+Benthos
 
-
-
-### Cargo/Container/Passenger - Heavy Fuel Oil {#i036007f2}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quid enim de amicitia statueris utilitatis causa expetenda vides. Aliter homines, aliter philosophos loqui putas oportere? Nam si beatus umquam fuisset, beatam vitam usque ad illum a Cyro extructum rogum pertulisset. Quis suae urbis conservatorem Codrum, quis Erechthei filias non maxime laudat? Negabat igitur ullam esse artem, quae ipsa a se proficisceretur; Praetereo multos, in bis doctum hominem et suavem, Hieronymum, quem iam cur Peripateticum appellem nescio. Duo Reges: constructio interrete. 
-
-Iam argumenti ratione conclusi caput esse faciunt ea, quae perspicua dicunt, deinde ordinem sequuntur, tum, quid verum sit in singulis, extrema conclusio est. Egone non intellego, quid sit don Graece, Latine voluptas? Ille enim occurrentia nescio quae comminiscebatur; Tum, Quintus et Pomponius cum idem se velle dixissent, Piso exorsus est. Hoc est vim afferre, Torquate, sensibus, extorquere ex animis cognitiones verborum, quibus inbuti sumus. Crassus fuit, qui tamen solebat uti suo bono, ut hodie est noster Pompeius, cui recte facienti gratia est habenda; 
-
-
-
-
-### Cargo/Container/Passenger - Light Fuel Oil {#i6635f08f}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non ego tecum iam ita iocabor, ut isdem his de rebus, cum L. Ex ea difficultate illae fallaciloquae, ut ait Accius, malitiae natae sunt. Sed et illum, quem nominavi, et ceteros sophistas, ut e Platone intellegi potest, lusos videmus a Socrate. Nam diligi et carum esse iucundum est propterea, quia tutiorem vitam et voluptatem pleniorem efficit. Et quidem iure fortasse, sed tamen non gravissimum est testimonium multitudinis. Duo Reges: constructio interrete. Equidem e Cn. Cum autem assumpta ratío est, tanto in dominatu locatur, ut omnia illa prima naturae hulus tutelae subiciantur. Reicietur etiam Carneades, nec ulla de summo bono ratio aut voluptatis non dolendive particeps aut honestatis expers probabitur. 
-
-Cur id non ita fit? Quae hic rei publicae vulnera inponebat, eadem ille sanabat. Itaque et manendi in vita et migrandi ratio omnis iis rebus, quas supra dixi, metienda. In his igitur partibus duabus nihil erat, quod Zeno commutare gestiret. Nam si propter voluptatem, quae est ista laus, quae possit e macello peti? Sin te auctoritas commovebat, nobisne omnibus et Platoni ipsi nescio quem illum anteponebas? 
+Coastal features
 
 
 
+### SHF: Cargo/Container/Passenger - Heavy Fuel Oil {#i036007f2}
 
-### Cargo/Container/Passenger - LNG-powered vessel {#i2e4dc7b4}
+HFO or marine fuel oil is still the most common type of fuel for ships, it is being used in 75% percent of vessels in the Arctic. It is considered the dirtiest and cheapest type of fossil fuel, which is obtained from oil. HFO degrades very slowly in cold waters, and it is literally impossible to collect it in case of an oil spill. Also use of HFO causes big amounts of sulfur oxide and black soot emissions. It is already forbidden to use it in the Antarctic and it is going to be banned in the Arctic after 2029.
+Marine mammals
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Non quaero, quid dicat, sed quid convenienter possit rationi et sententiae suae dicere. Non quaero, quid dicat, sed quid convenienter possit rationi et sententiae suae dicere. Duo Reges: constructio interrete. Quod non subducta utilitatis ratione effici solet, sed ipsum a se oritur et sua sponte nascitur. Tum ego: Non mehercule, inquam, soleo temere contra Stoicos, non quo illis admodum assentiar, sed pudore impedior; Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Nam Metrodorum non puto ipsum professum, sed, cum appellaretur ab Epicuro, repudiare tantum beneficium noluisse; Si quicquam extra virtutem habeatur in bonis. Nihil enim arbitror esse magna laude dignum, quod te praetermissurum credam aut mortis aut doloris metu. Id quaeris, inquam, in quo, utrum respondero, verses te huc atque illuc necesse est. Longum est enim ad omnia respondere, quae a te dicta sunt. Nemo nostrum credebat, eratque veri similius hunc mentiri, cuius interesset, quam illum, qui id se rogasse scripsisset, quod debuisset rogare. 
+Seabirds
 
-Invidiosum nomen est, infame, suspectum. Nec vero alia sunt quaerenda contra Carneadeam illam sententiam. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Haeret in salebra. Qui autem esse poteris, nisi te amor ipse ceperit? Ita multa dicunt, quae vix intellegam. Quaero igitur, quo modo hae tantae commendationes a natura profectae subito a sapientia relictae sint. Non potes, nisi retexueris illa. Sin ea non neglegemus neque tamen ad finem summi boni referemus, non multum ab Erilli levitate aberrabimus. Itaque et vivere vitem et mori dicimus arboremque et novellan et vetulam et vigere et senescere. Sed nimis multa. Quodsi vultum tibi, si incessum fingeres, quo gravior viderere, non esses tui similis; Sed ego in hoc resisto; Cum sciret confestim esse moriendum eamque mortem ardentiore studio peteret, quam Epicurus voluptatem petendam putat. 
+Fishes
+
+Benthos
+
+Coastal features
 
 
 
 
-### Nuclear-powered vessel {#i884a838b}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Laelius clamores sofòw ille so lebat Edere compellans gumias ex ordine nostros. Perspicuum est enim, nisi aequitas, fides, iustitia proficiscantur a natura, et si omnia haec ad utilitatem referantur, virum bonum non posse reperiri; Sapientem locupletat ipsa natura, cuius divitias Epicurus parabiles esse docuit. Quod quidem iam fit etiam in Academia. Quamquam te quidem video minime esse deterritum. Quod cum ille dixisset et satis disputatum videretur, in oppidum ad Pomponium perreximus omnes. Duo Reges: constructio interrete. Illud dico, ea, quae dicat, praeclare inter se cohaerere. Quas enim kakaw Graeci appellant, vitia malo quam malitias nominare. Ego vero volo in virtute vim esse quam maximam; Cum ageremus, inquit, vitae beatum et eundem supremum diem, scribebamus haec. Sed quid attinet de rebus tam apertis plura requirere? 
 
-Piso, familiaris noster, et alia multa et hoc loco Stoicos irridebat: Quid enim? Sic exclusis sententiis reliquorum cum praeterea nulla esse possit, haec antiquorum valeat necesse est. Te ipsum, dignissimum maioribus tuis, voluptasne induxit, ut adolescentulus eriperes P. Octavio fuit, cum illam severitatem in eo filio adhibuit, quem in adoptionem D. Idem iste, inquam, de voluptate quid sentit? Tantum dico, magis fuisse vestrum agere Epicuri diem natalem, quam illius testamento cavere ut ageretur. Idemne, quod iucunde? Nummus in Croesi divitiis obscuratur, pars est tamen divitiarum. Ita fit beatae vitae domina fortuna, quam Epicurus ait exiguam intervenire sapienti. 
+### SLF: Cargo/Container/Passenger - Light Fuel Oil {#i6635f08f}
+
+Light Fuel Oil or marine gasoil is a ship fuel with a lower amount of sulfur oxide, and accordingly ships with this fuel emit less pollutants. In the event of a spill, light fuel covers the surface with a film, evaporating and dissolving much faster than marine fuel oil.
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
+
+
+
+
+### SLN: Cargo/Container/Passenger - LNG-powered vessel {#i2e4dc7b4}
+
+Liquified Natural Gas, LNG considered to be a relatively ecological alternative fuel. Its sulfur oxide level is 95% lower than in HFO and carbon dioxide emissions are 20-25% lower. In case of leakage gas is warming and evaporates and does not pollute marine environment.
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
+
+
+
+### SN: Nuclear-powered vessel {#i884a838b}
+
+Nuclear-powered vessels do not emit any pollutants in the atmosphere and water during regular operation. In case of an accident a vessel can be a source of radioactive pollution of the marine environment. However during the decades of operation of such ships, there was no threat to the environment.
+Marine mammals
+
+Seabirds
+
+Fishes
+
+Benthos
+
+Coastal features
+
 

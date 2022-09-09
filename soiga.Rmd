@@ -3,7 +3,14 @@ runtime: shiny
 pagetitle1: Compatibility with AOIs
 pagetitle2: Compatibility with AOIs - WWF ArcNet
 pagetitle3: Decision Support and Engagement Prioritisation
-pagetitle: 🏭🚢🎣🛢 Human use ⚔ Conservation 🐳🐻🐟🐚
+pagetitle4: Soiga
+pagetitle5: <a class="home" href="#">Geranium NG</a>
+pagetitle: Geranium NG
+author6: 
+author5: "<abbr title=\"Tab panel with subtitle have to fill one line. Subtitle: 'Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners'\">De...</abbr>"
+author4: Decision support and engagement prioritisation
+author3: Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners
+author2: 🏭🚢🎣🛢 Human use ⚔ Conservation 🐳🐻🐟🐚
 author1: "[WWF ArcNet](https://arcticwwf.org/work/ocean/arcnet/)"
 zzzpagetitle: Compatibility with AOIs
 link-citations: yes
@@ -15,7 +22,7 @@ output:
          version: 4
          bootswatch: minty
       logo: https://wwf.ru/assets/img/logo.jpg
-      favicon: https://d1diae5goewto1.cloudfront.net/_skins/favicon.png
+      favicon: https://www.arcticwwf.org/favicons/favicon-32x32.png
       orientation: columns
       vertical_layout: fill
       mathjax: ~
@@ -28,9 +35,11 @@ output:
       - https://nplatonov.github.io/site_libs/flex_dashboard.css
       - include/geranium.css
       navbar:
-         - { title: "WWF® ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
+         - { icon: "ion-home", href: "#", align: right}
+         - { icon: "ion-help", href: "#section-welcome", align: right}
+         - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
 output3:
-   html_vignette:
+   html_vignette: 
       css:
       - https://nplatonov.github.io/site_libs/common.css
       - https://nplatonov.github.io/site_libs/html_vignette.css
@@ -40,17 +49,38 @@ output3:
 knitr::opts_chunk$set(echo=FALSE,message=FALSE,warning=FALSE)
 ```
 
-```{r server, code=readLines("server.R")}
+```{js, eval=T}
+const item = document.getElementsByClassName("navbar-brand");
+const text = item[0].firstChild;
+const link = document.createElement('a');
+const cl = document.createElement('span');
+link.setAttribute("href","#");
+link.appendChild(text);
+cl.setAttribute("class","navbar-title");
+cl.appendChild(link);
+item[0].appendChild(cl);
+const item2 = document.getElementsByClassName("navbar-author");
+item[0].appendChild(item2[0]);
 ```
 
-```{r, eval=T, child="include/welcome.Rmd"}
+```{r header, eval=F, code=readLines("resources/header.R")}
 ```
 
-# Spatial query {#map}
+```{r server, code=readLines("resources/server.R")}
+```
+
+```{r client, code=readLines("resources/client.R")}
+```
+
+```{r tabs}
+hideTabs <- !is.null(rmarkdown::metadata[["author"]])
+```
+
+# Spatial query {#map data-orientation="columns" data-height=1900 `r if (hideTabs) ".hidden"`}
 
 ## {.mainbar}
 
-### A map for query {data-width=500}
+### Map to select/edit regions {data-width=500 data-height=200}
 
 ```{r, eval=T & isShiny}
 uiOutput("uiMap")
@@ -78,16 +108,7 @@ output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-l
 
 ```{r eval=T & isShiny}
 output$viewer <- renderLeaflet({
-   a <- rvActivity()$map
-   req(!is.null(a))
-   coloring <- names(methodList[match(input$coloring,methodList)])
-   d6 <- map3_1d(a,kind=coloring,source=input$sheet)
-  # write_envi(d6,"c:/tmp/tmp_d6")
-   aoi <- rvAOI()
-  # if (!is.null(aoi))
-  #    saveRDS(aoi,"c:/tmp/tmp_d6.rds")
-   m <- conflictMap(d6,aoi=aoi)
-   m
+   mapViewer()
 })
 ```
 
@@ -95,140 +116,207 @@ output$viewer <- renderLeaflet({
 https://github.com/rstudio/flexdashboard/issues/181
 -->
 
+<!--
+> [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#welcome)
+-->
+
+
 ## {#inputs .no-sidebar zzzdata-width="470px" data-width=300}
 
-### Inputs {data-height="auto"}
+### {data-height="auto"}
 
 
 ```{r, eval=isShiny}
 width <- c("100%","450px")[2]
 if (F)
+   checkboxInput("customize","Customize",value=FALSE)
+if (F)
    shiny::selectInput("sheet","Human use",nameInit,width=width)
 if (F)
    shiny::selectInput("column","Industry",nameInit,width=width)
-selectInput("region","Spatial query",c(names(regionSF),nameEditor)
-           ,selected="PACs" # sample(names(regionSF),1)
-           ,width=width)
-selectInput("predefined","Region from list",nameInit
-          # ,selected=nameSelector
-           ,width=width)
-if (F)
-   selectInput("group","CF group",unname(groupList)
+fillRow(flex=NA
+   ,selectInput("region","Spatial query",c(names(regionSF),nameEditor)
+              ,selected="PACs" # sample(names(regionSF),1)
+              ,width="272px")
+   ,HTML("&nbsp;&nbsp;")
+   ,conditionalPanel(condition=paste0("input.xxxregion==",sQuote(nameEditor)) ## nameEditor <- "Editor"
+      ,selectInput("predefined","Region from list",nameInit
+                   # ,selected=nameSelector
+                    ,width="172px")
+   )
+   ,sliderInput("omitPercent"
+             # ,list(content = "My Label", position = "left")
+              ,label="Omit small coverage"
+              ,min=0,max=5,step=0.1,value=0
+              ,width="172px"
+              )
+)
+fillRow(flex=c(NA,NA,NA,NA,NA)
+   ,selectInput("group","CF group",unname(groupList)
              # ,selected=sample(unname(groupList),1)
               ,selected=unname(ifelse(F,sample(groupList,1),groupList[1]))
+              ,multiple=T
              # ,selected="Cetaceans"
-              ,width=width)
-if (F)
-   selectInput("season","Season",seasonList
+              ,width="181px")
+   ,HTML("&nbsp;&nbsp;")
+   ,selectInput("season","Season",seasonList
              # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
               ,selected=seasonList[1L]
-              ,width=width)
+              ,width="136px")
+   ,HTML("&nbsp;&nbsp;")
+   ,selectInput("activity","Activity",c(nameAllHuman,names(industries))
+              # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
+              # ,selected=seasonList[1L]
+               ,selected=nameAllHuman
+               ,multiple=T
+               ,width="121px")
+   )
 ```
-
-:::actionButton
-[Approve Selection](#crosstable)
-:::
-
-### {data-height="auto"}
-
-[Customise my choice](#trafficlight)
-
-[Human activities in the Arctic](#seasonIndustry)
-
-[Conservation Features](#seasonCF)
-
-[Conservation Action Hotspots](#hotspots)
-
-[How the assessment was made (TBD-to be developed)](#assessment)
-
-[Dictionary (TBD-to be developed)](#dictionary)
-
-[FAQ (TBD-to be developed)](#faq)
 
 ---
 
-#### Deprecated
 
-[Industry cut](#industry)
+```{r, eval=isShiny}
+if (T)
+   shiny::selectInput("industry","Industry (only for visualization)"
+                    # ,c('No overlap'="none",'All human use'="all",industries)
+                     ,"---"
+                     ,multiple=T
+                     ,width=width)
+   conditionalPanel(condition="input.industry!='none'"
+      ,fillRow(flex=c(NA,1,NA)
+         ,selectInput("coloring","Colorization",unname(methodList)
+                   # ,selected=grep("overlap",methodList,value=TRUE)
+                    ,width="312px")
+         ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+         ,actionLink("drawIndustry","Update map")
+      )
+   )
+if (F) {
+  shiny::actionButton(inputId='ab1', label="location.href", 
+                          icon = icon("th"), 
+                          onclick ="location.href='#section-region';"
+                          )
+  shiny::actionButton(inputId='ab2', label="window.open", 
+                          icon = icon("th"), 
+                          onclick ="window.open('#section-region', '_top')"
+                         # onclick ="location.href('#section-region')"
+                          )
+}
+```
 
-### Selected region (staff only)
-
-```{r, eval=T & isShiny}
-renderPrint({
-   s2 <- exchange$selection
-   if (is.ursa(s2)) {
-      ##~ str(names(s2))
-      ##~ id <- as.integer(names(s2))
-      ##~ names(s2) <- paste(ifelse(all(id %in% seq(83)),"PAC","AOI"),names(s2))
-      ret <- as.table(s2)
-      id <- as.integer(names(ret))
-      names(ret) <- paste(ifelse(all(id %in% seq(83)),"PAC","AOI"),names(ret))
-   }
-   else if (is_spatial(s2)) {
-      ret <- spatial_data(s2)
-      ret$area <- spatial_area(s2)*1e-6
-   }
-   else if (is.null(s2))
-      ret <- "Not selected"
+```{r, eval=T}
+renderUI({
+   aoi <- rvAOI()
+   lab <- regionSF[[input$region]]$region[aoi$id]
+   if (length(lab)>1)
+      lab <- "Overview for selected regions"
    else
-      ret <- s2
-   if (is.character(ret))
-      return(invisible(NULL))
-   ret
+      lab <- paste("Overview for",dQuote(lab),"region")
+   if (is.null(aoi))
+      b2 <- navButton("Global metrics","#descRegion","desc",span=T)
+   else
+      b2 <- navButton(lab,"#descRegion","desc",span=T)
+   b1 <- navButton("Selected Area Details","#crosstable","cross",span=T)
+   b <- if (is.null(aoi)) list(b1,b2) else list(b1,b2)
+   navButton(b,border=T)
 })
 ```
 
 <!--
-https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multiple-pages-different-types-of-vertical-layout
+### {data-height="auto"}
 -->
 
-# Cross-overview {#crosstable style="position: relative;" .no-mobile .no-print data-orientation="rows"}
+```{r, eval=FALSE}
+renderUI({
+   col <- if (!is.null(rvSelectIndustry())) "grey" else "grey"
+   navButton("Customise my choice","#trafficlight",col,border=TRUE)
+})
 
-## Region metrics {data-height=300 style="height: 50pc;"}
+```{r, eval=F}
+renderUI({
+   lab0 <- "Human activity"
+   aoi <- rvAOI()
+   if (is.null(aoi))
+      lab <- paste(lab0,"in the Arctic")
+   else {
+      lab <- regionSF[[input$region]]$region[aoi$id]
+      if (length(lab)>1)
+         lab <- paste(lab0,"for selected regions")
+      else
+         lab <- paste(lab0,"for",dQuote(lab),"region")
+   }
+   col <- if (is.null(rvAOI())) "orange" else "orange"
+   b1 <- navButton(lab,"#list",col,border=T)
+  # b2 <- navButton("Conservation Features","#list",col,span=T)
+  # navButton(list(b1,b2),border=T)
+   b1
+})
+```
+```{r, eval=T}
+renderUI({
+   col <- if (is.null(rvAOI())) "list" else "list"
+  # b1 <- navButton("Human Activities in the Arctic","#list",col,span=T)
+  # b2 <- navButton("Conservation Features","#list",col,span=T)
+  # navButton(list(b1,b2),border=T)
+   navButton("Lists of Human use and Conservations","#list",col="list",border=T)
+})
+##~ renderUI({
+   ##~ col <- if (is.null(rvAOI())) "green" else "grey"
+##~ })
+```
 
-### {data-width=200}
+---
 
-![](https://nplatonov.github.io/chicory/pac/assets/r6b3105e3a.png)
+<!--
 
-### {data-width=200}
+[Industry cut (deprecated)](#industry)
+&nbsp;&nbsp;&nbsp;&nbsp;
+[Customise my choice (deprecated)](#trafficlight)
+-->
 
-![](https://nplatonov.github.io/chicory/pac/assets/r6b3105e3b.png)
+```{r,eval=F,results='asis'}
+fillRow(flex=c(1,1)
+   ,renderUI({
+      tagList(
+         a("Conservation Action Hotspots",href="#welcome"),
+         br(),
+         a("How the assessment was made",href="#welcome"),
+         br(),
+         a("Dictionary",href="#welcome"),
+         br(),
+         a("FAQ",href="#welcome")
+      )
+   })
+   ,if (F & staffOnly) renderPrint(selectionRegion()) else renderText("empty")
+)
+```
 
-### Basic statistics {data-width=300}
-
-Total area
-
-Marine Area
-
-Number of CFs
-
-% covered by existing protected areas
+[Conservation Action Hotspots](#welcome)  
+[How the assessment was made](#welcome)  
+[Dictionary](#welcome)  
+[FAQ](#welcome)  
 
 
-### Compatibility metrics {data-width=200}
+```{r eval=T & isShiny & staffOnly, results='asis'}
+cat("### {data-height=\"auto\"}\n\n")
+renderPrint({
+   selectionRegion()
+})
+```
 
-Incompatibility Index (All CFs, all industries, all seasons,
-
-normalised per PUs, TBC)
-
-CF group of concern, TBC
-
-Industry of concern, TBC
-
+# Selected Area Details {#crosstable style="position: relative;" .zzzno-mobile .zzzno-print data-orientation="rows" `r if (hideTabs) ".hidden"`}
 
 ## Row {style="height: 50pc;" data-height=300}
 
-### {zzzstyle="height: 50vh;"}
-
-```{r, eval=F}
-res <- readRDS("slide2.rds")
-```
+### {#tabcross zzzstyle="height: 50vh;" data-width=600}
 
 ```{r, eval=T}
-fillCol(flex=c(NA,NA)
+fillCol(flex=c(NA,1)
       # ,textOutput("verb")
        ,DT::DTOutput("cross") # %>% shinycssloaders::withSpinner()
       # ,tableOutput("smpl")
+       ,uiOutput("buttonsCross")
        )
 ```
 
@@ -238,203 +326,56 @@ output$verb <- renderText({
          ,as.character(packageVersion("flexdashboard")))
 })
 ```{r, eval=T}
-output$cross <- 
-DT::renderDT({
-   cat("crosstable -> datatable\n")
-   res <- rvActivityStat()
-   req(res)
-  # res <- input$industry
-  # req(res %in% unlist(industries))
-   DT::datatable(res,rownames=TRUE,escape=FALSE
-                ,class="display overcontent"
-                ,extension=c("Scroller","FixedColumns","FixedHeader","Responsive")
-                ,selection=list(mode="single",target=c("cell","row+column")[1])
-                ,options=list(NULL
-                             ,columnDefs=list(list(className='dt-right',targets=seq(1,ncol(res))))
-                            # ,scrollY="calc(93vh - 240px)"
-                             ,scrollY="calc(50vh - 240px)"
-                             ,scrollX=T
-                             ,fixedColumns=if (F) F else list(leftColumns=2)
-                             ,ordering=F
-                             ,scroller=T
-                             ,pageLength=nrow(res)
-                             ,fixedHeader=F
-                             ,responsive=F
-                             ,columnDefs=list(list(responsivePriority=1,targets=0)
-                                             ,list(responsivePriority=2,targets=3)
-                                             ,list(responsivePriority=3,targets=7)
-                                             ,list(responsivePriority=4,targets=6)
-                                             ,list(responsivePriority=5,targets=4)
-                                             ,list(responsivePriority=6,targets=5)
-                                             ,list(responsivePriority=7,targets=2)
-                                             )
-                             ,dom="ift" ## pl
-                             )
-                )
+output$cross <- DT::renderDT({
+   tableCross()
 })
 ```
+
 ```{r, eval=F}
 output$smpl <- renderTable(res,align="r",rownames=TRUE)
 ```
 
-# Industry cut {#industry data-orientation="columns" .hidden}
-
-## {data-width=500}
-
-### Incompatibility table for chosen AOI {data-width=500}
-
-```{r eval=isShiny}
-##~ renderTable({
-fillCol(flex=c(NA,NA)
-      # ,shiny::selectInput("industry2","Industry input",nameInit,width=width)
-       ,textOutput("crossCol")
-       ,DT::DTOutput("listCF")
-       )
-output$crossCol <- renderText({
-   industry <- rvSelectIndustry()
-   req(industry)
-   unname(industry)
+```{r,eval=T}
+output$buttonsCross <- renderUI({
+   if (F)
+      fillRow(flex=c(1,NA)
+         ,sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,value=0)
+         ,buttonsCross()
+      )
+   buttonsCross()
 })
-output$listCF <- DT::renderDT({
-   cat("DT::renderDT\n")
-  # b <- rvActivity()$stat
-   b <- rvActivityStat()
-   print("after rvActivityStat()")
-   req(!is.null(b))
-   aoi <- rvAOI()
-   isAOI <- !is.null(aoi)
-   empty <- !nrow(b)
-   if (empty) {
-      b <- data.frame('No table'=ifelse(isAOI,"Missed conflicted CFs"
-                                       ,"Please select AOI to generate table")
-                     ,check.names=FALSE)
-      return(DT::datatable(b,rownames=FALSE,escape=FALSE
-                         # ,extension="Scroller"
-                          ,options=list(dom="t",scroller=F)
-                          ))
-      ##~ ind <- integer()
-      ##~ cname <- colnames(b)
-      ##~ indC <- integer()
-   }
-   bname <- colnames(b)
-   bname <- c(bname[!(bname %in% unlist(industries))],input$industry)
-   b <- b[,bname]
-   colnames(b)[match(input$industry,colnames(b))] <- "flag"
-   colnames(b)[grep("cover",colnames(b),ignore.case=TRUE)] <- "value1"
-   b <- cbind('CF code'=rownames(b),b)
-   b$value1 <- as.numeric(b$value1)/100
-   b$flag <- sapply(strsplit(b$flag,split="\\D"),function(x) max(as.integer(x)))
-   b$flag <- kwdLUT[as.character(b$flag)]
-   str(b)
-   print(series(b))
-   indV <- grep("^value",colnames(b))
-   indGr <- b$flag %in% kwdGreen
-   indYl <- b$flag %in% kwdYellow
-   indRd <- b$flag %in% kwdRed
-   if (F) {
-      if (length(ind <- grep("^value",colnames(b)))) {
-        # b[,ind] <- reformat("lightskyblue1")(b[,ind])
-        # if ("value1" %in% colnames(b))
-        #    b$value1 <- reformat("lavender")(b$value1)
-         for (i in ind) {
-            b[,i] <- reformat("lavender")(formattable::percent(b[,i],2))
-           # b[,i] <- reformat("lavender")(b[,i])
-           # b[,i] <- formattable::percent(b[,i],2)
-         }
-      }
-      if (length(indGr <- b$flag %in% kwdGreen))
-         b$flag[indGr] <- formattable::color_tile("palegreen","palegreen")(b$flag[indGr])
-      if (length(indYl <- b$flag %in% kwdYellow))
-         b$flag[indYl] <- formattable::color_tile("lightgoldenrod","lightgoldenrod")(b$flag[indYl])
-      if (length(indRd <- b$flag %in% kwdRed))
-         b$flag[indRd] <- formattable::color_tile("lightsalmon","lightsalmon")(b$flag[indRd])
-   }
-   cname <- colnames(b)
-   indC <- grep("flag",cname,ignore.case=TRUE)
-   indCode <- grep("(^CF$|^code$|CF.+code)",cname,ignore.case=TRUE)
-   if (hlink) {
-     # b[[indCode]] <- paste0("<a href=#section-seasonIndustry>",b[[indCode]],"</a>")
-      b[[indCode]] <- paste0("[",b[[indCode]],"](#seasonIndustry)")
-   }
-   cname[indCode] <- "CF Code"
-   cname[grep("(^CF.+name|^name$)",cname,ignore.case=TRUE)] <- "CF Name"
-   cname[indC] <- "Conflict"
-   cname[grep("value.*1",cname,ignore.case=TRUE)] <- "Amount portion inside AOI, %"
-   cname[grep("value.*2",cname,ignore.case=TRUE)] <- "Amount portion inside AOI masked by activity, %"
-   colnames(b) <- cname
-   ##~ b <- DT::datatable(b
-                ##~ ,rownames=FALSE # is.null(dt$CF)
-                ##~ ,escape=FALSE
-                ##~ )
-   b <- DT::datatable(b,rownames=FALSE,escape=FALSE,selection="single"
-                       ,extensions=c("FixedColumns","Scroller","ColReorder")[2]
-                       ,options=list(NULL
-                                    ,ordering=T
-                                    ,scroller=T
-                                   # ,scrollY=T
-                                    ,scrollY="calc(100vh - 295px)"
-                                   # ,fixedColumns=list()
-                                   # ,colReorder=F
-                                    ,dom="ift"
-                                    ,pageLength=nrow(b)
-                                    ##~ ,columnDefs=if (!empty) list(list(className='dt-right',targets=ind-1)
-                                                                ##~ ,list(className='dt-center',targets=0))
-                                                ##~ else NULL
-                                    ) # "Bfrtip"
-                       )
-   if (T) {
-     # d <- b[,indC]
-      ##~ if (length(indGr <- b$flag %in% kwdGreen))
-         ##~ d[indGr] <- formattable::color_tile("palegreen","palegreen")(b$flag[indGr])
-      ##~ if (length(indYl <- b$flag %in% kwdYellow))
-         ##~ d[indYl] <- formattable::color_tile("lightgoldenrod","lightgoldenrod")(b$flag[indYl])
-      ##~ if (length(indRd <- b$flag %in% kwdRed))
-         ##~ d[indRd] <- formattable::color_tile("lightsalmon","lightsalmon")(b$flag[indRd])
-      b <- DT::formatStyle(b,cname[indC]
-                       # ,background=styleColorBar(dt[,cname[8]],'palegreen')
-                        ,backgroundColor=DT::styleEqual(c(kwdGreen,kwdYellow,kwdRed)
-                                              ,c("palegreen","LemonChiffon","lightsalmon"))
-                        ,backgroundSize='95% 18pt'
-                        ,backgroundRepeat='no-repeat'
-                        ,backgroundPosition='center'
-                        )
-      if (F)
-         b <- DT::formatStyle(b,cname[indV]
-                           ,backgroundColor=DT::styleColorBar(b[,indV],'blue')
-                           ,backgroundSize='95% 18pt'
-                           ,backgroundRepeat='no-repeat'
-                           ,backgroundPosition='center'  
-                           )
-     b <- DT::formatPercentage(b,cname[indV],2)
-   }
-   # DT::formatPercentage(2,2)
-   b
-}
-#,escape=FALSE
-)
 ```
 
-## Empty {data-width=200}
+```{r eval=staffOnly, results='asis'}
+cat("### verbose {data-width=200}\n\n")
+renderPrint(selectionTables())
+```
 
-# CF seasonal {#seasonCF data-orientation="columns"}
+# Conservation Feature Details {#annualCF data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
 ## {data-width=500}
 
-### All compapibilities for a single CF {#dummy data-width=500}
+<!--
+## Column {zstyle="height:100pc;" vertical_layout: scroll}
+-->
+
+### All compapibilities for a single CF
 
 ```{r eval=T & isShiny}
-fillCol(flex=c(NA,1)
+fillCol(flex=c(NA,1,NA,NA)
        ##~ ,shiny::selectInput("cfcode","CF from crosstable",nameInit,width=width)
-       ,selectInput("cfcode","Conservation Feature"
-                   ,choices=nameInit
+      # ,selectInput("cfcode","Conservation Feature"
+      #             ,choices=nameInit
                   # ,choices=cfmeta$label
                   # ,selected=sample(cfmeta$label,1)
-                   ,width="680px")
+      #             ,width="680px")
       # ,textOutput("crossCol")
       ##~ # ,htmlOutput('cflink')
-       ##~ ,htmlOutput('cfmeta')
+       ,htmlOutput('cfmeta')
       # ,verbatimTextOutput("crossSelection")
        ,DT::DTOutput("cfdata")
+       ,uiOutput("buttonsCF")
+       ,HTML("&nbsp;")
        )
 ##~ fillCol(flex=c(NA,1)
       ##~ # ,selectInput("cfcode","Conservation Feature",cfmeta$label
@@ -442,29 +383,15 @@ fillCol(flex=c(NA,1)
        ##~ ,DT::DTOutput('cfdata')
 ##~ )
 ```
-```{r eval=isShiny}
+```{r eval=F & isShiny}
 output$crossSelection <- renderPrint({
-   cell <- input$cross_cells_selected
-   isNULL <- !sum(dim(cell))
-   da <- list(cell=cell
-             ,sRow=if (isNULL) NULL else cell[1,1]
-             ,sColumn=if (isNULL) NULL else cell[1,2]
-             ,row=input$cross_rows_selected
-             ,column=input$cross_columns_selected
-             ,listCF=input$listCF_rows_selected
-             ,cfdata=input$cfdata_rows_selected
-             )
-   str(da)
+   selectionTables()
 })
 ```
 
 ```{r,eval=isShiny}
 output$cfmeta <- renderText({
-   ind <- input$tbl_rows_selected
-   req(is.integer(ind))
-   tbl <- rvActivityStat()[ind,,drop=TRUE]
-   paste0(ifelse(hlink,"<a href=#section-table>",""),tbl[[1]]
-         ,ifelse(hlink,"</a>","")," - ",tbl[[2]])
+   captionCF()
 })
 ```
 
@@ -476,349 +403,422 @@ output$cflink <- renderText({
 
 ```{r eval=isShiny}
 output$cfdata <- DT::renderDT({
-   cat("renderDT 'cfdata':\n")
-   cf <- gsub("^(\\d{4}).*","\\1",input$cfcode)
-   req(cf %in% spec$cf)
-   str(cf)
-   da <- human_use(cf)
-   str(da)
-   if (hlink) {
-     # da$Industry <- paste0("[",da$Industry,"](#seasonIndustry)")
-      da$Industry <- paste0("<a href=#section-seasonIndustry target=_top>",da$Industry,"</a>")
-   }
-  # b <- DT::datatable(b)
-   b <- DT::datatable(da,rownames=FALSE,escape=FALSE,selection="single"
-                       ,extensions="Scroller"
-                       ,options=list(NULL
-                                    ,ordering=F
-                                    ,scroller=T
-                                    ,scrollY="calc(100vh - 265px)"
-                                    ,pageLength=nrow(da)
-                                    ,dom="ift"
-                                    )
-                       )
-   b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('0','1','2'
-                                                      ,kwdGreen,kwdYellow,kwdRed
-                                                     )
-                                           ,c("palegreen","LemonChiffon","lightsalmon"
-                                             ,"palegreen","LemonChiffon","lightsalmon"))
-                     ,backgroundSize='95% 18pt'
-                     ,backgroundRepeat='no-repeat'
-                     ,backgroundPosition='center'  
-                     )
-   b
-},server=FALSE)
+   tableCFdata()
+})
 ```
+
+```{r, eval=isShiny}
+output$buttonsCF <- renderUI({
+   buttonsCF()
+})
+```
+
 
 ## CF metadata and map {data-width=200}
 
-```{r, eval=F & isShiny}
-fillCol(flex=c(3,4)
-       ,tableOutput("tblsuppl")
-       ,imageOutput("mapcf")
-      # ,width="500px",height="600px"
-       )
-```
-
-### CF metadata {data-height=200}
-
-
-```{r, eval=T & isShiny}
-#output$tblsuppl <- 
-renderTable({
-   cat("CF Metadata:\n")
-   if (F) {
-     # req(input$industry %in% unlist(industries))
-      ind <- input$listCF_rows_selected
-      if (is.integer(ind)) {
-         tbl <- rvActivityStat()[ind,,drop=FALSE]
-        # ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
-         ind2 <- ursa:::.sample(grep(rownames(tbl),cfmeta$CF_code))
-         req(length(ind2)>0)
-         cf <- cfmeta$label[ind2]
-         cf <- gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
-      }
-      else {
-         req(cf <- rvSelectCF())
-      }
-   }
-   cf <- rvSelectCF()
-   str(cf)
-   req(cf)
-   md <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
-                     ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
-   md <- md[md$CF_code %in% cf,]
-   md <- md[md$CF_code %in% cf,grep("(^$|^File_name|groupcode)"
-                                   ,colnames(md),invert=TRUE)]
-   if (T & hlink)
-      md$CF_code <- paste0("[",md$CF_code,"](#seasonCF)")
-  # da <- t(as.data.frame(md,check.names=FALSE))
-   da <- data.frame(t(md))
-   if (F) {
-      ret <- DT::datatable(da,colnames=c("","")
-                          ,rownames=TRUE,selection="none",escape=FALSE
-                   ,extension="Scroller"
-                   ,options=list(dom="t",ordering=F
-                                ,scroller=T
-                               # ,scrollY="300px"
-                               # ,autoWidth=FALSE
-                               # ,columnDefs=list(list(width='300px',targets=c(1,2)))
-                                ))
-   }
-   else {
-      da <- cbind(left=rownames(da),da)
-      colnames(da) <- c("","")
-      ret <- da
-   }
-   ret
-})
-```
-
-### CF map {data-height=200}
+### Cell Comment CF {data-height="auto"}
 
 ```{r eval=T & isShiny}
-#output$mapcf <-
-renderImage({
-   cat("CF Map:\n")
-  # req(input$industry %in% unlist(industries))
-   ind <- input$listCF_rows_selected
-   if (is.integer(ind)) {
-      tbl <- rvActivityStat()[ind,,drop=FALSE]
-     # ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
-      ind2 <- ursa:::.sample(grep(rownames(tbl),cfmeta$CF_code))
-      req(length(ind2)>0)
-      str(ind2)
-      cf <- cfmeta$label[ind2]
-      cf <- gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
-   }
-   else {
-      req(cf <- rvSelectCF())
-   }
-   str(cf)
-  # req(length(input$cfcode)>0)
-   ursa:::.elapsedTime("display -- start")
-   g1 <- session_grid()
-   sp <- puvspr[puvspr$species %in% cf,]
-   am <- pu[pu$ID %in% sp$pu,]
-   spatial_data(am) <- sp["amount"]
-   g2 <- regrid(spatial_grid(am),expand=1.5)
-   session_grid(consistent_grid(g2,ref=c(600,600)))
-   ret <- glance(am,fileout=ursa:::.maketmp(ext=".png"),scale=1,retina=1,border=11)
-   session_grid(g1)
-   ursa:::.elapsedTime("display -- finish")
-   list(src=ret,height="ursa")
-},deleteFile=T)
-```
-
-### Cell Comment {data-height=100}
-
-```{r eval=isShiny}
-renderText({
-   cat("Cell comment (CF Seasonal):\n")
-  # req(cf <- rvSelectCF())
-   ind <- as.integer(input$cfdata_rows_selected)
-   str(ind)
-   req(length(ind)>0)
-   industry <- unlist(industries)[ind]
-   str(industry)
-   activity <- gsub("\\d+","",names(industry))
-   str(activity)
-   cf <- input$cfcode
-  # cf <- da$'CF Code'[ind]
-  # req(as.integer(input$cfcode))
-  # print("
-  # ind <- input$tbl_rows_selected
-  # req(is.integer(ind))
-  # tbl <- rvActivityStat()[ind,,drop=TRUE]
-  # ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
-  # req(length(ind2)>0)
-  # cf <- cfmeta$label[ind2]
-  # cf <- input$cfcode # gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
-  # industry <- unname(unlist(industries)[input$cfdata_rows_selected])
-  #s activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
-  # activity <- names(industries)[sapply(industries,function(a) industry %in% a)]
-   paste("A comment for",dQuote(industry),"of",dQuote(activity),"human use"
-        ,"which is placed for",dQuote(cf),"conservation feature")
+renderTable({
+   cellComment()
 })
 ```
 
+### Industry Description {data-height=200}
 
-# Industry seasonal {#seasonIndustry data-orientation="columns"}
+```{r eval=T & isShiny}
+renderUI({
+   industry <- rvSelectIndustry()
+   if (is.null(industry)) {
+      renderImage(displayCF(),deleteFile=T)
+   }
+   else {
+      industryDescription()
+   }
+})
+#renderImage({
+#   displayCF()
+#},deleteFile=T)
+```
+
+```{r, eval=T & isShiny & staffOnly, results='asis'}
+cat("### staff only CF {data-height=\"auto\"}\n\n")
+renderPrint({
+   selectionTables()
+})
+```
+
+# Human Activity Details {#annualIndustry data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
 ## {data-width=500}
 
-### All compatibilities for a single Industry {#dummy data-width=500}
-
+### All compatibilities for a single Industry
 ```{r eval=T & isShiny}
-fillCol(flex=c(NA,1)
+fillCol(flex=c(NA,1,NA,NA)
        ##~ ,shiny::selectInput("cfcode","CF from crosstable",nameInit,width=width)
-       ,selectInput("industry","Industry"
-                   ,choices=nameInit
+      # ,selectInput("industry","Industry"
+      #             ,choices=nameInit
                   # ,selected=sample(cfmeta$label,1)
-                   ,width=width)
+      #             ,width=width)
       # ,textOutput("crossCol")
       ##~ # ,htmlOutput('cflink')
-       ##~ ,htmlOutput('cfmeta')
+       ,htmlOutput('industrymeta')
       # ,verbatimTextOutput("crossSelection")
        ,DT::DTOutput("industrydata")
+       ,uiOutput("buttonsIndustry")
+       ,HTML("&nbsp;")
        )
 ```
-```{r eval=isShiny}
-output$industrydata <- DT::renderDT({
-   cat("renderDT 'industrydata':\n")
-   ##~ industry <- rvSelectIndustry()
-   ##~ cat("--- industry ----\n")
-   ##~ str(industry)
-   ##~ cat("--- industry ----\n")
-   ##~ req(industry)
-   da <- rvHumanUseIndustry() # human_use(industry)
-   str(da)
-   if (hlink)
-      da$'CF Code' <- paste0("[",da$'CF Code',"](#seasonCF)")
-  # b <- DT::datatable(b)
-   b <- DT::datatable(da,rownames=FALSE,escape=FALSE,selection="single"
-                       ,extensions="Scroller"
-                       ,options=list(NULL
-                                    ,ordering=F
-                                    ,scroller=T
-                                    ,scrollY="calc(100vh - 265px)"
-                                    ,scrollX=TRUE
-                                    ,pageLength=nrow(da)
-                                    ,dom="ift"
-                                    )
-                       )
-   b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('0','1','2'
-                                                      ,kwdGreen,kwdYellow,kwdRed
-                                                     )
-                                           ,c("palegreen","LemonChiffon","lightsalmon"
-                                             ,"palegreen","LemonChiffon","lightsalmon"))
-                     ,backgroundSize='95% 18pt'
-                     ,backgroundRepeat='no-repeat'
-                     ,backgroundPosition='center'  
-                     )
-   b
-})
-```
-
-## Right column {data-width=200}
-
-### Industry description {data-height=300}
-
-```{r eval=isShiny}
-renderUI({
-   cat("Industry description:\n")
-   req(industry <- rvSelectIndustry())
-  # activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
-   activity <- names(industry)
-  # activity <- names(industries)[input$cfdata_rows_selected]
-   fname <- paste0("include/industry-",activity,".Rmd")
-   print(file.exists(fname))
-   print(fname)
-   if (F) {
-      a1 <- knitr::knit(fname,quiet=FALSE)
-      a2 <- markdown::markdownToHTML(a1,fragment.only=TRUE)
-      ret <- HTML(a2)
-      str(ret)
-   }
-   else {
-     # wd <- setwd(dirname(fname))
-      fileout <- "res1.html" # "res1.html" ## tempfile()
-      rmarkdown::render(fname
-                       ,output_format=rmarkdown::html_fragment()
-                      # ,output_format=rmarkdown::html_vignette(css=NULL)
-                       ,output_file=fileout,quiet=TRUE
-                      # ,params=list(prm=analysis(),kind=1L)
-                       )
-      fileout <- file.path(dirname(fname),fileout)
-      a0 <- read_xml(fileout)
-      a1 <- as_list(a0)
-      id <- paste0("i",digest::digest(unname(industry),"crc32"))
-      ind <- which(!sapply(a1[[1]],function(b1) isTRUE(id==attr(b1,"id"))))
-      for (i in rev(tail(ind,-1))) {
-         xml_remove(xml_child(a0,search=i))
-      }
-     # fileout <- gsub("res1","res2",fileout)
-      write_html(a0,fileout)
-      ret <- scan(fileout,what=character(),encoding="UTF-8",quiet=TRUE)
-      ret <- HTML(ret)
-     # ret <- paste0(ret,collapse="\n")
-      str(ret)
-     # ret <- fileout
-      file.remove(fileout)
-   }
-   ret
-})
-```
-
-### Cell comment {data-height=100}
-
-```{r eval=isShiny}
-renderText({
-   cat("Cell comment:\n")
-  # req(cf <- rvSelectCF())
-   req(industry <- rvSelectIndustry())
-   req(ind <- as.integer(input$industrydata_rows_selected))
-   activity <- names(industry)
-   da <- rvHumanUseIndustry()
-   cf <- da$'CF Code'[ind]
-  # req(as.integer(input$cfcode))
-  # print("
-  # ind <- input$tbl_rows_selected
-  # req(is.integer(ind))
-  # tbl <- rvActivityStat()[ind,,drop=TRUE]
-  # ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
-  # req(length(ind2)>0)
-  # cf <- cfmeta$label[ind2]
-  # cf <- input$cfcode # gsub("^(\\d{4}).*","\\1",cf) # input$cfcode
-  # industry <- unname(unlist(industries)[input$cfdata_rows_selected])
-  #s activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
-  # activity <- names(industries)[sapply(industries,function(a) industry %in% a)]
-   paste("A comment for",dQuote(industry),"of",dQuote(activity),"human use"
-        ,"which is placed for",dQuote(cf),"conservation feature")
-})
-```
-
-# Customization {#trafficlight data-orientation="columns"}
-
-## Left column {data-width=500}
-
-### Traffic light {data-width=500}
-
-```{r}
-#output$trafficMap <- 
-renderLeaflet({
-   cat("trafficMap:\n")
-   if (F)
-      return(conflictMap())
-   a <- rvActivityMap()
-   print(a)
-   req(!is.null(a))
-   coloring <- names(methodList[match(input$coloring,methodList)])
-   d6 <- map3_1d(a,kind=coloring,source=input$sheet)
-  # write_envi(d6,"c:/tmp/tmp_d6")
-   aoi <- NULL # rvAOI()
-  # if (!is.null(aoi))
-  #    saveRDS(aoi,"c:/tmp/tmp_d6.rds")
-   m <- conflictMap(d6,aoi=aoi)
-   m
-})
-
-```
-## Right column {data-width=200}
-
-```{r eval=isShiny}
-   selectInput("coloring","Colorization",unname(methodList)
-             # ,selected=grep("overlap",methodList,value=TRUE)
-              ,width=width)
-```
-
-### Dev
-
 
 ```{r, eval=isShiny}
-renderPrint({
-   rvSelectIndustry()
+output$industrymeta <- renderText({
+   captionIndustry()
 })
+output$industrydata <- DT::renderDT({
+   tableIndustryData()
+})
+output$buttonsIndustry <- renderUI({
+   buttonsIndustry()
+})
+```
+
+## Right column {data-width=200}
+
+### Cell comment Industry {data-height="auto"}
+
+```{r eval=T & isShiny}
+renderTable({
+   cellComment()
+})
+```
+
+### Display CF {data-height=200}
+
+```{r eval=T & isShiny}
+renderUI({
+   cf <- rvSelectCF()
+  if (!is.null(cf)) {
+      if (T)
+         renderLeaflet({
+            leafletCF(cf)
+         })
+      else
+         renderImage({
+            displayCF()
+         },deleteFile=F)
+   } else {
+      renderUI({
+         industryDescription()
+      })
+   }
+})
+```
+
+```{r, eval=T & isShiny & staffOnly, results='asis'}
+cat("### staff only CF {data-height=\"auto\"}\n\n")
+renderPrint({
+   selectionTables()
+})
+```
+
+
+<!--
+https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multiple-pages-different-types-of-vertical-layout
+-->
+
+# Reg desc {#descRegion data-orientation="columns" `r if (hideTabs) ".hidden"`}
+
+## Column 1 - map {data-width=300}
+
+### Region figures 
+
+```{r}
+fillCol(flex=c(1,NA,NA)
+   ,leafletOutput("regionLeaflet")
+   ,checkboxInput("regionDesc","Show Existing Protected Areas (it is not quick)",value=FALSE)
+  # ,actionLink("regionAction","Show Existing Protected Areas (it is not quick)")
+   ,renderUI({
+      b1 <- navButton("Spatial query","#map",col="map",span=T)
+      b2 <- navButton("Selected Area Details","#crosstable",col="cross",span=T)
+      navButton(list(b1,b2))
+   })
+)
+output$regionLeaflet <- renderLeaflet({
+  # req(rvAOI())
+   leafletRegion()
+})
+```
+
+## Column 2 Region Details {data-width=300}
+
+### Basic Statistics {data-height="auto"}
+
+
+```{r}
+DT::renderDT({
+   result <- rvRegionStats()
+   res <- result[grep('^[a-zE]',names(result))] |> as.data.frame()
+   cname <- colnames(res)
+   indRound <- grep("^(pu|area|ePA)",colnames(res))
+   cname[1] <- paste0("<abbr title="
+                     ,dQuote("Number of Planning Units in Selected Region(s)"),">"
+                     ,"PUs","</abbr>")
+   cname[2] <- paste0("<abbr title="
+                     ,dQuote("Number of Conservation Features"),">"
+                     ,"CFs","</abbr>")
+   cname[3] <- paste0("<abbr title="
+                     ,dQuote("Area of Selected Region(s), sq.km"),">"
+                     ,"srcArea","</abbr>")
+   cname[4] <- paste0("<abbr title="
+                     ,dQuote("Area of Planning Units in Selected Region(s), sq.km"),">"
+                     ,"puArea","</abbr>")
+   cname[5] <- paste0("<abbr title="
+                     ,dQuote("Terrestrial Area in Selected Region(s), sq.km"),">"
+                     ,"puLand","</abbr>")
+   cname[6] <- paste0("<abbr title="
+                     ,dQuote("Marine Area in Selected Region(s), sq.km"),">"
+                     ,"puMarine","</abbr>")
+   if (length(cname)>=7)
+      cname[7] <- paste0("<abbr title="
+                        ,dQuote("Existing Protected Areas in Selected Region(s), sq.km"),">"
+                        ,"EPA","</abbr>")
+   colnames(res) <- cname
+   da <- DT::datatable(res,escape=F,rownames="",selection="none"
+                      ,options=list(dom="t",ordering=F),class="compact")
+   DT::formatRound(da,indRound,1)
+})
+```
+
+### Single values  {data-height="auto"}
+
+```{r}
+DT::renderDT({
+   result <- rvRegionStats()
+   res <- result[grep('^NA',names(result))] |> as.data.frame()
+   cname <- colnames(res)
+   cname[cname=="NAO"] <- paste0("<abbr title="
+                                ,dQuote("Conservation concern, not allowed only")
+                                ,">","NAO","</abbr>")
+   cname[cname=="NAC"] <- paste0("<abbr title="
+                                ,dQuote("Conservation concern, not allowed and conditional")
+                                ,">","NAC","</abbr>")
+   cname[cname=="NAOR"] <- paste0("<abbr title="
+                                ,dQuote("Conservation concern, not allowed only relative")
+                                ,">","NAOR","</abbr>")
+   cname[cname=="NACR"] <- paste0("<abbr title="
+                                ,dQuote("Conservation concern, not allowed and conditional relative")
+                                ,">","NACR","</abbr>")
+   
+   colnames(res) <- cname
+   da <- DT::datatable(res,escape=F,rownames="",selection="none"
+                      ,options=list(dom="t",ordering=F),class="compact")
+   DT::formatRound(da,colnames(res),1)
+})
+```
+
+### <abbr title="Industries of concern">TOP IND</abbr> {data-height="auto"}
+
+```{r}
+DT::renderDT({
+   res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
+   cname <- colnames(res)
+   lname <- industryName(cname)
+   colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
+   da <- DT::datatable(res,escape=F,rownames="",selection="none"
+                      ,options=list(dom="t",ordering=F),class="compact")
+   DT::formatRound(da,colnames(res),1)
+})
+```
+
+### <abbr title="Industries of the least concern">LC IND</abbr> {data-height="auto"}
+
+```{r}
+DT::renderDT({
+   res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
+   cname <- colnames(res)
+   lname <- industryName(cname)
+   colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
+   da <- DT::datatable(res,escape=F,rownames="",selection="none"
+                      ,options=list(dom="t",ordering=F),class="compact")
+   DT::formatRound(da,colnames(res),1)
+})
+```
+
+### <abbr title="Season of concern">SC</abbr> {data-height="auto"}
+
+```{r}
+DT::renderDT({
+   res <- rvRegionStats()[['SC']] |> data.frame() |> t()
+   da <- DT::datatable(res,escape=F,rownames="",selection="none"
+                      ,options=list(dom="t",ordering=F),class="compact")
+   DT::formatRound(da,colnames(res),1)
+})
+```
+
+### {data-height=50}
+
+```{r}
+downloadLink("downloadMetrics","Download interim tables for NAO and NAC")
+output$downloadMetrics <- downloadHandler(
+   filename=function() {
+      aoi <- rvAOI()
+      if (is.null(aoi))
+         return("Global metrics.xlsx")
+      lab <- regionSF[[input$region]]$region[aoi$id]
+      paste0(lab," metrics.xlsx")
+   }
+   ,content=function(file) {
+      interim <- rvRegionMetrics()
+     # str(interim)
+      dNAO <- cbind(interim$cover,interim$NAO)
+      dNAC <- cbind(interim$cover,interim$NAC)
+     # str(res)
+     # res <- iris
+      xlsx::write.xlsx(dNAO,file,sheetName="NAO",append=FALSE)
+      xlsx::write.xlsx(dNAC,file,sheetName="NAC",append=TRUE)
+   }
+)
+```
+ 
+# CF desc {#descCF .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
+
+## {data-width=300}
+
+### Metadata
+
+```{r eval=T & isShiny}
+fillCol(flex=c(NA,1,1)
+   ,renderTable({
+      metadataCF()
+   })
+   ,renderUI({
+      b <- buttonsTemplate()
+      b <- b[grep("cf.*overview",names(b),invert=TRUE)]
+      navButton(b)
+   })
+   ,if (staffOnly) renderPrint({
+      selectionTables()
+   }) else HTML("&nbsp;")
+)
+```
+
+## {data-width=500}
+
+### Map
+
+```{r eval=T & isShiny}
+  # renderImage(displayCF(),deleteFile=T)
+   renderLeaflet(leafletCF())
+```
+
+# I desc {#descIndustry .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
+
+## {data-width=500}
+
+### Industry map 
+
+```{r eval=T & isShiny}
+if (staffOnly) {
+   fillCol(flex=c(1,NA,NA)
+      ,leafletOutput("industryMap")
+      ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
+     # ,actionLink("industryDesc","Show map (it is not quick)")
+      ,renderPrint(selectionTables())
+   )
+} else {
+   fillCol(flex=c(1,NA)
+      ,leafletOutput("industryMap")
+      ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
+     # ,actionLink("industryDesc","Show map (it is not quick)")
+   )
+}
+output$industryMap <- renderLeaflet({
+   req(input$industryDesc)
+   displayIndustry()
+})
+```
+
+
+## {data-width=300}
+
+### Industry description
+
+
+```{r eval=T & isShiny}
+fillCol(flex=c(1,NULL,NA)
+   ,renderUI({
+      industryDescription()
+   })
+   ##~ ,if (staffOnly) renderPrint(
+      ##~ selectionTables()
+   ##~ )
+   ,renderUI({
+      b <- buttonsTemplate()
+      b <- b[grep("indus.*overview",names(b),invert=TRUE)]
+      navButton(b)
+   })
+)
+```
+
+# Lists... {#list data-orientation="rows" `r if (hideTabs) ".hidden"`}
+
+## {data-height="auto"}
+
+### Conservation Features
+
+```{r, eval=T & isShiny}
+fillCol(flex=1,DT::DTOutput("onlyCF"))
+output$onlyCF <- DT::renderDT({
+   tableOnlyCF()
+})
+```
+
+```{r, eval=F & isShiny}
+output$switchCF <- renderUI({
+   switchCF()
+})
+```
+
+### Human use in the Arctic
+
+```{r, eval=T & isShiny}
+fillCol(flex=1,DT::DTOutput("onlyIndustry"))
+output$onlyIndustry <- DT::renderDT({
+   tableOnlyIndustry()
+})
+```
+
+```{r, eval=F & isShiny}
+output$switchIndustry <- renderUI({
+   switchIndustry()
+})
+```
+
+## {data-height=50}
+   
+```{r, eval=isShiny}
+fillCol(flex=1,uiOutput("buttonsList"))
+output$buttonsList <- renderUI({
+   buttonsList()
+})
+```
+
+```{r, eval=T, child="include/welcome.Rmd"}
+```
+
+### Staff only quick navigation {data-width=100}
+
+[Spatial Query](#map)  
+[Cross details](#crosstable)  
+[CF details](#annualCF)  
+[Industry details](#annualIndustry)  
+[CF overview](#descCF)     
+[Industry overview](#descIndustry)  
+[Region overview](#descRegion)  
+[Lists CF and Indutries](#list)  
+
+----
+
+```{r, eval=F}
+sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,value=0)
 ```
