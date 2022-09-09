@@ -5,11 +5,11 @@ exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL
                           ,cd=character(),domain=NULL
                           ,CF=NULL,industry=NULL,conflict=NULL
                           )
-proxyCross <- dataTableProxy("cross")
-proxyOnlyIndustry <- dataTableProxy("onlyIndustry")
-proxyOnlyCF <- dataTableProxy("onlyCF")
-proxyIndustrydata <- dataTableProxy("industrydata")
-proxyCFdata <- dataTableProxy("cfdata")
+proxyCross <- DT::dataTableProxy("cross")
+proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
+proxyOnlyCF <- DT::dataTableProxy("onlyCF")
+proxyIndustrydata <- DT::dataTableProxy("industrydata")
+proxyCFdata <- DT::dataTableProxy("cfdata")
 if (T) observe({ ## update 'input$sheet'
    req(!is.null(input$sheet))
    cat("observe: update input$sheet:\n")

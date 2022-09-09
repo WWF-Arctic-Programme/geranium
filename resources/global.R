@@ -1,4 +1,3 @@
-ursa:::.elapsedTime("qs 1")
 source("resources/process.R")
 invisible(Sys.setlocale("LC_TIME","C"))
 if (quickStart <- file.exists(sessionFile <- "quickload/session.Rdata"))
@@ -60,7 +59,6 @@ noneActivity <- "No human use"
 kwdLUT <- c('0'=kwdGreen,'1'=kwdYellow,'2'=kwdRed,'9'=kwdGray)
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
 basename(listPD)
-ursa:::.elapsedTime("qs 2")
 if (!quickStart) {
    regionSF <- vector("list",length(listPD))
    names(regionSF) <- basename(listPD)
@@ -81,7 +79,6 @@ if (!quickStart) {
       regionSF[[i]] <- reg
    }
 }
-ursa:::.elapsedTime("qs 3")
 session_grid(NULL)
 if (!quickStart) {
    dist2land <- ursa_read("requisite/dist2land-f.tif")
@@ -89,7 +86,6 @@ if (!quickStart) {
    blank <- (!is.na(dist2land["ID"]))-1L
 }
 cell <- ursa(dist2land["dist"],"cell")*1e-3
-ursa:::.elapsedTime("qs 3b")
 sepRules <- " » "
 sepRules <- iconv(sepRules,to="UTF-8")
 pattRules <- paste0("^(.+\\S)",gsub("\\s","\\\\s",sepRules),"(\\S.+)$")
@@ -109,13 +105,11 @@ if (!quickStart) {
          regionU[[i]] <- read_envi(fileout)
    }
 }
-ursa:::.elapsedTime("qs 5")
 # ursa:::.elapsedTime("fasterize -- finish")
 #pacname
 #regionSF[["PACs"]][[1]]
 ongoing <- "This is verbatim info"
 amountFile <- "requisite/amount"
-ursa:::.elapsedTime("qs 6")
 if (!quickStart) {
    cfmeta <- lapply(readxl::excel_sheets(mdname),function(sheet) {
       readxl::read_excel(mdname,sheet=sheet,.name_repair="minimal")[,1:2]
@@ -147,7 +141,6 @@ if (!quickStart) {
    ursa:::.elapsedTime("marxan inputs reading -- finish")
    half <- median(spatial_area(pu))/2
 }
-ursa:::.elapsedTime("qs 7")
 industryAbbr <- read.csv("requisite/industry.csv")
 industryAbbr <- industryAbbr[order(industryAbbr$abbr),]
 rownames(industryAbbr) <- NULL
@@ -159,7 +152,6 @@ if (!quickStart) {
    activity <- readxl::excel_sheets(mdname)
    industries <- vector("list",length(activity))
    names(industries) <- activity
-   ursa:::.elapsedTime("qs 8")
    for (sheet in activity |> sample()) {
       v <- readxl::read_excel(mdname,sheet=sheet,.name_repair="minimal")
       v <- as.data.frame(v)
@@ -200,11 +192,9 @@ if (!quickStart) {
    vulner$CF_code <- as.integer(vulner$CF_code)
    comments$CF_code <- as.integer(comments$CF_code)
 }
-ursa:::.elapsedTime("qs 9")
 scenarioCF <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
                           ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
 rownames(scenarioCF) <- NULL
-ursa:::.elapsedTime("qs 10")
 if (!quickStart) {
    ursa:::.elapsedTime("concern prepare -- start")
    concern <- lapply(seq_len(nrow(vulner)),function(i) {
@@ -222,11 +212,13 @@ if (!quickStart) {
                  unclass() |> data.frame()
    ursa:::.elapsedTime("concern prepare -- finish")
 }
-ursa:::.elapsedTime("qs 10")
-if (!quickStart)
+if (!quickStart) {
+   if (!dir.exists(dirname(sessionFile)))
+      dir.create(dirname(sessionFile))
    save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
        ,PAs,half,vulner,industries,comments,concern,concernNAO,concernNAC
        ,file=sessionFile)
+}
 if (isShiny) {
   # removeModal()
 }

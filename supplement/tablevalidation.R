@@ -1,5 +1,5 @@
 wd <- setwd("..")
-source("resources/process.R")
+source("resources/global.R")
 ursa:::.elapsedTime("ready")
 use <- unlist(industries)
 activity <- unique(gsub("\\d+$","",names(use)))[7]

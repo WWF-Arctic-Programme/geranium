@@ -106,7 +106,7 @@ output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-l
 })
 ```
 
-```{r eval=T & isShiny}
+```{r eval=F & isShiny}
 output$viewer <- renderLeaflet({
    mapViewer()
 })
