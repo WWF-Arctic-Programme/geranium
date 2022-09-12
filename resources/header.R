@@ -26,6 +26,7 @@ if (isShiny <- ursa:::.isShiny()) {
    require(DT)
    require(formattable)
    require(xml2)
+   require(plotly)
   # require(shinycssloaders)
    ursa:::.elapsedTime("require packages -- end")
 }
@@ -47,18 +48,6 @@ methodList <- c('overlap'=paste(sQuote(kwdRed),"colors overwrite",sQuote(kwdYell
                ,'source'=paste(sQuote(kwdRed),"and","source")
                )
 nameAllHuman <- "All human use"
-nameAllCF <- "All conservation features"
-groupList <- c('\\d'=nameAllCF
-              ,'1'="Walrus"
-              ,'2'="Pinnipeds"
-             # ,'3'="Sea ice"
-              ,'4'="Fishes"
-              ,'5'="Cetaceans"
-              ,'6'="Birds"
-              ,'7'="Benthos"
-              ,'8'="Coastal"
-              ,'9'="Polar bears"
-              )
 #activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity)) ## deprecated
 activity <- unique(gsub(pattRules,"\\1",rules$activity))
 activity <- c(noneActivity,allActivity,activity)

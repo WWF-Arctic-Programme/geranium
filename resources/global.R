@@ -18,6 +18,7 @@ if (quickStart <- file.exists(sessionFile <- "quickload/session.Rdata"))
    ##~ q()
 ##~ }
 require(ursa)
+requireNamespace("sf")
 #plutil::ursula(3)
 isShiny <- ursa:::.isShiny()
 # mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
@@ -53,6 +54,18 @@ kwdGreen <- c("Compatible","Compatible/not applicable")[2]
 kwdGray <- "Not applicable"
 allActivity <- "All human use"
 noneActivity <- "No human use"
+nameAllCF <- "All conservation features"
+groupList <- c('\\d'=nameAllCF
+              ,'1'="Walrus"
+              ,'2'="Pinnipeds"
+             # ,'3'="Sea ice"
+              ,'4'="Fishes"
+              ,'5'="Cetaceans"
+              ,'6'="Birds"
+              ,'7'="Benthos"
+              ,'8'="Coastal"
+              ,'9'="Polar bears"
+              )
 ##~ kwdRed <- "'2'"
 ##~ kwdYellow <- "'1'"
 ##~ kwdGreen <- "'0'"

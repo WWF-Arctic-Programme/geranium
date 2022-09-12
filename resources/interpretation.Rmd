@@ -1,0 +1,139 @@
+---
+params:
+  prm: NULL
+  kind: 0
+  dpath: "./resources"
+pagetitle: Polar Bear Demography
+title: Mockup for report based on current scenario
+author: Nikita Platonov
+date: "`r as.POSIXlt(Sys.time())`"
+bibliography: ./demography.bib
+link-citations: true
+csl: https://nplatonov.github.io/platt3.csl
+csl2: C:/platt/R/style/platt3.csl
+output:
+   bookdown::pdf_document2:
+      toc: false
+      number_sections: false
+   bookdown::html_document2:
+      base_format: rmarkdown::html_vignette
+      css: https://nplatonov.github.io/html_vignette.css
+      css2: C:/platt/R/style/html_vignette.css
+      lib_dir: "`r params$dpath`"
+      self_containded: false
+      number_sections: no
+   pdf_document:
+      fig_caption: false
+   html_fragment: #
+---
+
+<style>
+   .plotly { display: block; margin: auto;}
+   @media only screen and (max-width: 640px) {
+     .plotly {
+        max-width: 80vw;
+        max-height: 60vw;
+     }
+   }
+</style>
+
+```{r setup,include=FALSE}
+# require(ggplot2)
+res <- params$prm
+kind <- params$kind
+if (kind==0) {
+   if (file.exists("analysis.rds")) {
+      res <- readRDS("analysis.rds")
+      input <- res$input
+   }
+   else {
+      source("./main.R")
+      input <- randomize()
+      res <- analyze(do.call("simulate",input))
+   }
+   kind <- 2
+}
+input <- res$input
+knitr::opts_chunk$set(fig.align="center",fig.width=6,fig.height=4.8
+                     ,widgetframe_widgets_dir=params$dpath
+                     ,echo=F,message=F,warning=F
+                     )
+file.remove(dir(path=params$dpath,pattern="^orca.+\\.pdf$",full.names=TRUE,recursive=TRUE))
+```
+
+```{r eval=T,include=F}
+filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+'publish' <- function(p) {
+   if (inherits(p,"ggplot")) {
+      ret <- p
+   }
+   else if (inherits(p,"plotly")) {
+      if (filetype %in% "latex") {
+         if (!dir.exists(params$dpath))
+            dir.create(params$dpath,recursive=TRUE)
+         if (TRUE) {
+            fs <- 18
+            p <- plotly::layout(p
+                               ,title=list(font=list(size=fs))
+                               ,legend=list(font=list(size=round(0.9*fs)))
+                               ,xaxis=list(tickfont=list(size=fs),titlefont=list(size=fs))
+                               ,yaxis=list(tickfont=list(size=fs),titlefont=list(size=fs))
+                               )
+         }
+        # if (FALSE) { 
+        #    opW <- options(warn=-10)
+        #    ret <- plotly::export(p)
+        #    options(opW)
+        # }
+         if (nchar(Sys.which("ZZZorca"))) {
+            fileout <- file.path(params$dpath,basename(tempfile(pattern="orca",fileext=".pdf")))
+            plotly::orca(p,fileout)
+            ret <- knitr::include_graphics(fileout)
+         }
+         else {
+            fileout <- file.path(params$dpath,basename(tempfile(pattern="orca",fileext=".png")))
+            ret <- try(plotly::plotly_IMAGE(p,width=800,height=600,scale=1,out_file=fileout))
+            if (!inherits(ret,"try-error"))
+               ret <- knitr::include_graphics(fileout,dpi=150)
+            else {
+               opW <- options(warn=-10)
+               ret <- plotly::export(p)
+               options(opW)
+            }
+         }
+      }
+      else
+         ret <- p
+   }
+   ret
+}
+```
+---- 
+
+*Mockup for dynamical report. Will contain more details of 'Results' tab.*
+
+## Polar Bear Demography
+
+This is a simulator of polar bear lifespan based on certain demographical parameters.
+
+In scenario, maximal age is **`r input$max.age`** years.
+
+
+```{r p3, fig.cap="Distribuion of number of cubs during lifespan"}
+publish(res$p3$plot)
+```
+
+`r if ((kind==2)&&(!is.null(res$p3))) "Histogram of cubs during lefespan per female is presented on Fig.\\@ref(fig:p3)."`
+
+Life expectancy in the wild can be as long as 30 years. In captivity, life expectancy can reach 40 years.
+
+Females reach maturity at 4 to 6 years. Polar bears mate from late March to late May, and cubs are born between late November and early January. Litter size ranges from 1 to 3 cubs; two is most common. Cubs remain with their mothers until they are two-and-a-half years of age. (In western Hudson Bay , some females used to wean cubs at 1.5 years).
+
+
+Polar bears in the wild can live to be 30 years of age, but this is rare. Most adults die before they reach 25 years.
+
++ Every year some bears are destroyed as "problem bears" around Churchill [@Lunn_1985].
+
++ @Clarkson_1991 pointed on the case when a female and her cubs died when their den collapsed.
+
+---

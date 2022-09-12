@@ -1248,12 +1248,13 @@
       dNAC <- dNAC[match(rownames(cvr),rownames(dNAC)),]
       result$'NAC' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr))
      # result$'NAC' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr[match(rownames(dNAC),rownames(cvr)),]))
+      result$'NAOR' <- result$'NAO'/mul
+      result$'NACR' <- result$'NAC'/mul
       d <- colSums(dNAC*t(cvr),na.rm=TRUE)
+      result$'IND' <- d
       d0 <- sort(unique(d))
       thLo <- head(d0,3) |> tail(1)
       thHi <- tail(d0,3) |> head(1)
-      result$'NAOR' <- result$'NAO'/mul
-      result$'NACR' <- result$'NAC'/mul
       res <- d[d>=thHi]
       if (length(res)>3)
          res <- res[res>=quantile(res,1-3/length(res))]
@@ -1273,6 +1274,7 @@
       d <- d |> unclass() |> t() |>
          as.data.frame(x=_,check.names=F) |> unlist()
       names(d) <- format(as.Date(paste0("2021-",names(d),"-15")),"%b")
+      result$'SC0' <- d
       d0 <- sort(unique(d))
       thHi <- tail(d0,3) |> head(1)
       indSc <- which(d>=thHi)

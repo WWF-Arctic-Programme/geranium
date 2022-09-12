@@ -589,76 +589,121 @@ DT::renderDT({
 })
 ```
 
-### Single values  {data-height="auto"}
+### {data-height=250}
 
 ```{r}
-DT::renderDT({
-   result <- rvRegionStats()
-   res <- result[grep('^NA',names(result))] |> as.data.frame()
-   cname <- colnames(res)
-   cname[cname=="NAO"] <- paste0("<abbr title="
-                                ,dQuote("Conservation concern, not allowed only")
-                                ,">","NAO","</abbr>")
-   cname[cname=="NAC"] <- paste0("<abbr title="
-                                ,dQuote("Conservation concern, not allowed and conditional")
-                                ,">","NAC","</abbr>")
-   cname[cname=="NAOR"] <- paste0("<abbr title="
-                                ,dQuote("Conservation concern, not allowed only relative")
-                                ,">","NAOR","</abbr>")
-   cname[cname=="NACR"] <- paste0("<abbr title="
-                                ,dQuote("Conservation concern, not allowed and conditional relative")
-                                ,">","NACR","</abbr>")
-   
-   colnames(res) <- cname
-   da <- DT::datatable(res,escape=F,rownames="",selection="none"
-                      ,options=list(dom="t",ordering=F),class="compact")
-   DT::formatRound(da,colnames(res),1)
-})
+fillRow(flex=c(6,1)
+   ,fillCol(flex=1
+      ,renderPlotly({
+         result <- rvRegionStats()$'IND'
+         IND <- data.frame(industry=names(result),value=result)
+         IND <- IND[order(IND$value,decreasing=TRUE),]
+         IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
+         p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v") %>%
+                  layout(NULL
+                        ,xaxis=list(title=""),yaxis=list(title="IND")
+                       # ,margin=list(l=0,r=0,t=0)
+                        )
+         p
+      })
+   )
+   ,fillCol(flex=c(NA,1,NA)
+      ### <abbr title="Industries of concern">TOP IND</abbr> {data-height="auto"}
+      ,DT::renderDT({
+         res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
+         cname <- colnames(res)
+         lname <- industryName(cname)
+         colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
+         res <- t(res) |> as.data.frame(check.names=FALSE)
+         da <- DT::datatable(res,escape=F
+                            ,colnames="IND TOP"
+                            ,selection="none"
+                            ,options=list(dom="t",ordering=F),class="compact"
+                           # ,width="200px"
+                            )
+         DT::formatRound(da,colnames(res),1)
+      })
+      ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;")
+      ### <abbr title="Industries of the least concern">LC IND</abbr> {data-height="auto"}
+      ,DT::renderDT({
+         res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
+         cname <- colnames(res)
+         lname <- industryName(cname)
+         colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
+         res <- t(res) |> as.data.frame(check.names=FALSE)
+         da <- DT::datatable(res,escape=F
+                            ,colnames="LC IND"
+                            ,selection="none"
+                            ,options=list(dom="t",ordering=F),class="compact"
+                            ,width="200px"
+                            )
+         DT::formatRound(da,colnames(res),1)
+      })
+   )
+  # ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;")
+)
 ```
 
-### <abbr title="Industries of concern">TOP IND</abbr> {data-height="auto"}
+### {data-height=150}
 
 ```{r}
-DT::renderDT({
-   res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
-   cname <- colnames(res)
-   lname <- industryName(cname)
-   colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
-   da <- DT::datatable(res,escape=F,rownames="",selection="none"
-                      ,options=list(dom="t",ordering=F),class="compact")
-   DT::formatRound(da,colnames(res),1)
-})
+fillRow(flex=c(1,NA,2,1)
+   ,DT::renderDT({
+      result <- rvRegionStats()
+      res <- result[grep('^NA',names(result))] |> as.data.frame()
+      cname <- colnames(res)
+      cname[cname=="NAO"] <- paste0("<abbr title="
+                                   ,dQuote("Conservation concern, not allowed only")
+                                   ,">","NAO","</abbr>")
+      cname[cname=="NAC"] <- paste0("<abbr title="
+                                   ,dQuote("Conservation concern, not allowed and conditional")
+                                   ,">","NAC","</abbr>")
+      cname[cname=="NAOR"] <- paste0("<abbr title="
+                                   ,dQuote("Conservation concern, not allowed only relative")
+                                   ,">","NAOR","</abbr>")
+      cname[cname=="NACR"] <- paste0("<abbr title="
+                                   ,dQuote("Conservation concern, not allowed and conditional relative")
+                                   ,">","NACR","</abbr>")
+      colnames(res) <- cname
+      res <- t(res) |> as.data.frame(check.names=FALSE)
+      da <- DT::datatable(res,escape=F
+                         ,colnames=""
+                         ,selection="none"
+                         ,options=list(dom="t",ordering=F),class="compact"
+                         ,width="200px"
+                         )
+      DT::formatRound(da,colnames(res),1)
+   })
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+   ,renderPlotly({
+      sc <- rvRegionStats()[['SC0']]
+      sc <- data.frame(month=names(sc),value=sc)
+      sc$month <- factor(sc$month,levels=sc$month,ordered=TRUE)
+      p <- plot_ly(sc,x=~month,y=~value,type="bar",orientation="v") %>%
+               layout(NULL
+                     ,xaxis=list(title=""),yaxis=list(title="SC IND")
+                    # ,margin=list(l=0,r=0,t=0)
+                     )
+      p
+   })
+   ,DT::renderDT({
+      res <- rvRegionStats()[['SC']] |> data.frame() |> t()
+      res <- t(res) |> as.data.frame(check.names=FALSE)
+      da <- DT::datatable(res,escape=F
+                         ,colnames="<abbr title=\"Season of concern\">SC</abbr>"
+                         ,selection="none"
+                         ,options=list(dom="t",ordering=F),class="compact")
+      DT::formatRound(da,colnames(res),1)
+   })
+)
 ```
 
-### <abbr title="Industries of the least concern">LC IND</abbr> {data-height="auto"}
-
-```{r}
-DT::renderDT({
-   res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
-   cname <- colnames(res)
-   lname <- industryName(cname)
-   colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
-   da <- DT::datatable(res,escape=F,rownames="",selection="none"
-                      ,options=list(dom="t",ordering=F),class="compact")
-   DT::formatRound(da,colnames(res),1)
-})
-```
-
-### <abbr title="Season of concern">SC</abbr> {data-height="auto"}
-
-```{r}
-DT::renderDT({
-   res <- rvRegionStats()[['SC']] |> data.frame() |> t()
-   da <- DT::datatable(res,escape=F,rownames="",selection="none"
-                      ,options=list(dom="t",ordering=F),class="compact")
-   DT::formatRound(da,colnames(res),1)
-})
-```
-
-### {data-height=50}
+### {data-height="auto"}
 
 ```{r}
 downloadLink("downloadMetrics","Download interim tables for NAO and NAC")
+HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+downloadLink("instantReport","Instant Report")
 output$downloadMetrics <- downloadHandler(
    filename=function() {
       aoi <- rvAOI()
@@ -676,6 +721,35 @@ output$downloadMetrics <- downloadHandler(
      # res <- iris
       xlsx::write.xlsx(dNAO,file,sheetName="NAO",append=FALSE)
       xlsx::write.xlsx(dNAC,file,sheetName="NAC",append=TRUE)
+   }
+)
+output$instantReport <- downloadHandler(
+   filename=function() {
+      aoi <- rvAOI()
+      if (is.null(aoi))
+         lab <- "Global"
+      lab <- regionSF[[input$region]]$region[aoi$id]
+      paste0("metrics-",digest::digest(lab,"crc32"),".pdf")
+   }
+   ,content=function(file) {
+      cat("instantReport (content):\n")
+      interim <- rvRegionMetrics()
+      str(interim)
+      print(getwd())
+      fname <- "resources/instantReport.Rmd"
+      # tempReport <- file.path(tempdir(),fname)
+     # file.copy(fname,tempReport,overwrite=TRUE)
+      showModal(modalDialog(title = "Compiling in progress","Please wait"
+                       ,size="s",easyClose = TRUE,footer = NULL))
+      ret <- rmarkdown::render(fname
+                       ,output_file=file
+                       ,output_format=bookdown::pdf_document2(toc=FALSE
+                          ,number_sections=FALSE
+                       )
+                       ,params=list(metrics=interim,aoi=rvAOI())
+                       ,envir=new.env(parent=globalenv()))
+      removeModal()
+      ret
    }
 )
 ```
