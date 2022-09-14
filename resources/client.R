@@ -659,7 +659,7 @@
    m <- CFMap(cf)
    m
 }
-'leafletRegion' <- function(aoi) {
+'leafletRegion_deprecated' <- function(aoi) {
    cat(as.character(Sys.time()),as.character(match.call())[1],":\n")
    if (missing(aoi))
       aoi <- rvAOI()
@@ -719,4 +719,75 @@
       ret <- da
    }
    ret
+}
+'indexMap' <- function(map,index) {
+   ursa:::.elapsedTime("A")
+   g0 <- session_grid()
+   session_grid(dist2land)
+   a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
+   a <- c(name=mapper(a))
+   print(a)
+   ct <- ursa_colortable(a)
+   v <- names(ct)
+   v <- factor(v,levels=v,ordered=TRUE)
+   b <- polygonize(a) |> spatial_transform(4326)
+   session_grid(g0)
+   pal <- leaflet::colorFactor(palette=as.character(ct),levels=v)
+   if (T) {
+      ursa:::.elapsedTime("B")
+      d <- by(b,b$name,function(x) spatial_union(x)) #|> do.call(rbind,args=_)
+      b <- sf::st_sf(name=names(d),geometry=sf::st_sfc(d,crs=spatial_crs(b)))
+      rm(d)
+      ursa:::.elapsedTime("C")
+   }
+   showAOI <- !is.null(rvAOI())
+   showPAs <- isTRUE(input$initEPA>0)
+   showNAO <- isTRUE(input$actionNAO>0)
+   showNAC <- isTRUE(input$actionNAC>0)
+   if (showAOI)
+      grAOI <- as.list(args(regionAddAOI))$group
+   if (showPAs)
+      grPAs <- as.list(args(regionAddEPA))$group
+   if (showNAO)
+      grNAO <- "NAOR index"
+   if (showNAC)
+      grNAC <- "NACR index"
+   if (grepl("NAC",index))
+      gr <- grNAC
+   else if (grepl("NAO",index))
+      gr <- grNAO
+   else
+      gr <- "undefined"
+   map <- addPolygons(map,data=b
+                   ,color=~pal(name)
+                   ,weight=0
+                  # ,popup=~gsub(";\\s*","\n",name)
+                   ,label=~name
+                   ,stroke=TRUE
+                   ,fillOpacity=0.7
+                   ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.7
+                                                             # ,sendToBack=TRUE
+                                                             # ,bringToFront=TRUE
+                                                              )
+                   ,group=gr
+                   )
+   map <- addLegend(map
+                 ,position="topleft"
+                 ,pal=pal
+                 ,values=v
+                 ,opacity=0.5,title="NAC"
+                 ,group=gr
+                 )
+   ##~ map <- addLayersControl(map
+                        ##~ ,overlayGroups=c(NULL
+                                        ##~ ,"Arctic SDI"
+                                        ##~ ,if (showAOI) grAOI
+                                        ##~ ,if (showPAs) grPAs
+                                        ##~ ,if (showNAO) grNAO
+                                        ##~ ,if (showNAC) grNAC
+                                        ##~ )
+                        ##~ ,options=layersControlOptions(collapsed=FALSE)
+                        ##~ )
+   ursa:::.elapsedTime("D")
+   map
 }

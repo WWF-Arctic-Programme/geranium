@@ -487,7 +487,7 @@
 'conflictBasemap' <- function(b) {
    if (missing(b)) {
      # b <- sf::st_cast(ursa:::spatialize(c(50,45,50,135),crs=4326),"POLYGON")
-      e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=50,value=0),crs=4326)
+      e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=60,value=0),crs=4326)
       e <- spatial_transform(e,3575)
    }
    else {
@@ -841,8 +841,8 @@
                                         )
                         ,options=layersControlOptions(collapsed=FALSE)
                         )
-   if (F & showPAs)
-      m <- hideGroup(m,grPAs)
+  # if (T | showPAs)
+  #    m <- hideGroup(m,grPAs)
    ursa:::.elapsedTime("0904h")
    m
 }
@@ -1299,6 +1299,179 @@
    if (!raw)
       return(result)
    list(result=result,cover=cvr,NAO=dNAO,NAC=dNAC)
+}
+'regionAddAOI' <- function(map,aoi=NULL
+                          ,group="Selected region(s)",col="#092B",layerID="layerAOI"
+                          ,addPolygon=TRUE,addOverlay=FALSE,addLegend=TRUE) {
+   grAOI <- group
+   colAOI <- col
+   layerAOI <- layerID
+   ursa:::.elapsedTime("0904g")
+   showAOI <- (!missing(aoi))&&(is_spatial(aoi))
+   if (missing(map)) {
+      if (showAOI) {
+         ursa:::.elapsedTime("0904i1")
+         map <- conflictBasemap(aoi)
+      }
+      else {
+         ursa:::.elapsedTime("0904i2")
+         map <- conflictBasemap()
+      }
+      ursa:::.elapsedTime("0904j")
+   }
+   if (FALSE & showAOI) {
+      ursa:::.elapsedTime("0904a")
+      aoi <- aoi |> puAOI() |> spatial_union() |> spatial_transform(4326)
+      ursa:::.elapsedTime("0904b")
+     # aoi <- spatial_transform(spatial_union(aoi),4326)
+     # aoi <- spatial_transform(aoi,4326)
+   }
+   if (showAOI & addPolygon) {
+      ursa:::.elapsedTime("0904c")
+      map <- leaflet::addPolygons(map,data=aoi
+                      ,label=grAOI
+                      ,color=colAOI
+                     # ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                     # ,stroke=TRUE
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=grAOI
+                      )
+      ursa:::.elapsedTime("0904f")
+   }
+   if (showAOI & addLegend) {
+      ursa:::.elapsedTime("0904k")
+      map <- leaflet::addLegend(map
+                    ,position="bottomleft"
+                    ,colors=colAOI
+                    ,opacity=0.2
+                    ,labels=grAOI
+                    ,group=grAOI
+                    ,layerId=layerAOI
+                    )
+   }
+   if (showAOI & addOverlay) {
+      ursa:::.elapsedTime("0904l")
+      map <- addLayersControl(map
+                           ,overlayGroups=c(NULL
+                                           ,"Arctic SDI"
+                                           ,if (showAOI) grAOI
+                                           )
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+   }
+     ##~ # if (T | showPAs)
+     ##~ #    m <- hideGroup(m,grPAs)
+   ursa:::.elapsedTime("0904h")
+   map
+}
+'regionAddEPA' <- function(map,aoi
+                          ,group="Existing Protected Areas",col="#992B",layerID="layerEPA"
+                          ,addPolygon=TRUE,addOverlay=FALSE,addLegend=TRUE) {
+   prmAOI <- as.list(args(regionAddAOI))
+   grAOI <- prmAOI$group
+   grPAs <- group
+   colPAs <- col
+   layerEPA <- layerID
+   showAOI <- (!missing(aoi))&&(is_spatial(aoi))
+   showEPA <- TRUE
+   if (missing(map)) {
+      if (showAOI)
+         map <- conflictBasemap(aoi)
+      else
+         map <- conflictBasemap()
+   }
+   if (showEPA & addPolygon) {
+      ursa:::.elapsedTime("0914c")
+      map <- leaflet::addPolygons(map,data=PAs
+                      ,label=grPAs
+                      ,color=colPAs
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                 )
+                      ,group=grPAs
+                      )
+      ursa:::.elapsedTime("0914f")
+   }
+   if (showEPA & addLegend) {
+      map <- leaflet::addLegend(map
+                    ,position="bottomleft"
+                    ,colors=colPAs
+                    ,opacity=0.2
+                    ,labels=grPAs
+                    ,group=grPAs
+                    )
+   }
+   if (showEPA & addOverlay) {
+      map <- showGroup(map,grPAs)
+      map <- addLayersControl(map
+                           ,overlayGroups=c(NULL
+                                           ,"Arctic SDI"
+                                           ,if (showEPA) grPAs
+                                           ,if (showAOI) grAOI
+                                           )
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+   }
+   map
+}
+'metricsMap' <- function(industry="dummy",group=c("a")) {
+   v <- concernNAO+3*concernNAC
+   if (!length(indR <- do.call(c,lapply(group,grep,substr(rownames(v),1,1)))))
+      indR <- seq_len(nrow(v))
+   industryList <- colnames(v) |> industryName()
+  # cfList <- rownames(v)
+   if (!length(indC <- which(industryList %in% industry))) {
+      if (length(indC <- which(names(industries) %in% industry))) {
+         indC <- which(industryList %in% (industries[indC] |> unlist() |> unname()))
+      }
+   }
+   if (!length(indC))
+      indC <- seq_len(ncol(v))
+   v <- v[sort(indR),sort(indC)]
+   v <- rowSums(v,na.rm=TRUE)
+   cf <- names(v)
+   resNAO <- res <- puvspr[puvspr$species %in% cf,]
+   rownames(res) <- NULL
+   rownames(resNAO) <- NULL
+   amount <- by(res$amount,res$species,sum) |> c()
+   if (F) {
+      str(puvspr)
+      puvspr <- puvspr[puvspr$pu %in% (c(10094,21124,30953)[3]),]
+     # puvspr <- puvspr[puvspr$pu %in% sample(puvspr$pu,2),]
+      str(puvspr)
+      resNAO <- res <- puvspr[puvspr$species %in% cf,]
+      rownames(res) <- NULL
+      rownames(resNAO) <- NULL
+   }
+   indCF <- match(res$species,cf)
+   indAmount <- match(res$species,names(amount))
+   res$value <- res$amount*v[indCF]/amount[indAmount]
+   res$sumNAC <- v[indCF] ## comment it
+   res$total_amount <- amount[match(res$species,names(amount))] ## comment it
+  # print(res)
+  # q()
+   res <- by(res,res$pu,function(x) {
+      sum(x$value)
+   }) |> c()
+  # print(summary(res))
+   vNAO <- concernNAO[sort(indR),sort(indC)]
+   vNAO <- rowSums(vNAO,na.rm=TRUE)
+   resNAO$value <- resNAO$amount*vNAO[indCF]/amount[indAmount]
+   resNAO <- by(resNAO,resNAO$pu,function(x) sum(x$value)) |> c()
+   ind <- which(!is.na(match(as.character(pu$ID),names(res))))
+   res2 <- pu[ind,,drop=FALSE]
+   spatial_data(res2) <- data.frame(PU=pu$ID[ind],NAO=resNAO,NAC=res)
+   sf::st_agr(res2) <- "constant"
+  # str(res2)
+  # print(summary(res2$NAC))
+  # res3 <- res2[res2$NAC>quantile(res2$NAC,0.9999),]
+  # str(res3)
+   res2
 }
 if ((F)&&(quickload())) {
 # if (T) {

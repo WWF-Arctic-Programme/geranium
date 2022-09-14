@@ -549,23 +549,23 @@ fillCol(flex=c(1,NA,NA)
    ##~ )
    ,fixedRow(NULL
       ,column(2
+         ,conditionalPanel(condition="input.actionRegion=='0'"
+            ,actionLink("actionRegion","Show map")
+         )
       )
       ,column(6
-         ,conditionalPanel(condition="input.initEPA=='0'"
-            ,actionLink("initEPA","Show Existing Protected Areas")
-         )
-         ,conditionalPanel(condition="input.initEPA>'0'"
+         ,conditionalPanel(condition="input.actionEPA>='0' && input.actionRegion=>'0'"
            # ,actionLink("actionEPA","Show Existing Protected Areas")
-            ,checkboxInput("actionEPA","Include Existing Protected Areas")
+            ,checkboxInput("actionEPA","Show Existing Protected Areas")
          )
       )
       ,column(2
-         ,conditionalPanel(condition="input.actionNAO=='0'"
+         ,conditionalPanel(condition="input.actionRegion=>'0'"
             ,actionLink("actionNAO","Show NAO")
          )
       )
       ,column(2
-         ,conditionalPanel(condition="input.actionNAC=='0'"
+         ,conditionalPanel(condition="input.actionRegion=>'0'"
             ,actionLink("actionNAC","Show NAC")
          )
       )
@@ -582,8 +582,245 @@ output$uiRegionLeaflet <- renderUI({
    ret
 })
 output$regionLeaflet <- renderLeaflet({
+   if (FALSE)
+      return(leafletRegion())
+  # req(input$actionRegion>0)
+   cat("WHY SELECTED REGION MISSED ON THIS MAP?\n")
    aoi <- isolate(rvAOI())
-   regionAddAOI(aoi=aoi,addOverlay=TRUE)
+   str(aoi)
+   grAOI <- "Selected region(s)"
+   colAOI <- "#092B"
+   layerAOI <- "layerAOI"
+  # grPAs <- "Existing Protected Areas"
+  # outputOptions(output,"regionLeaflet",suspendWhenHidden=FALSE)
+  # aoi <- exchange$selection
+  # str(aoi)
+   isAOI <- !is.null(aoi)
+   if (isAOI) {
+      m <- conflictBasemap(aoi)
+      m <- addPolygons(m,data=aoi
+                      ,label=grAOI
+                      ,color=colAOI
+                     # ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                     # ,stroke=TRUE
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=grAOI
+                      )
+      m <- leaflet::addLegend(m
+                    ,position="bottomleft"
+                    ,colors=colAOI
+                    ,opacity=0.2
+                    ,labels=grAOI
+                    ,group=grAOI
+                    ,layerId=layerAOI
+                    )
+   }
+   else
+      m <- conflictBasemap()
+   m <- addLayersControl(m
+                        ,overlayGroups=c("Arctic SDI"
+                                        ,if (isAOI) grAOI
+                                       # ,grAOI,grPAs
+                                        )
+                        ,options=layersControlOptions(collapsed=FALSE)
+                        )
+   cat("WHY SELECTED REGION MISSED ON THIS MAP?\n")
+   m
+})
+'leafletRegion' <- function() {
+   aoi <- rvAOI()
+   showAOI <- is_spatial(aoi)
+   if (showAOI) {
+      ursa:::.elapsedTime("0904a")
+      aoi <- aoi |> puAOI() |> spatial_union() |> spatial_transform(4326)
+      ursa:::.elapsedTime("0904b")
+     # aoi <- spatial_transform(spatial_union(aoi),4326)
+     # aoi <- spatial_transform(aoi,4326)
+      m <- conflictBasemap(aoi)
+   }
+   else
+      m <- conflictBasemap()
+   ursa:::.elapsedTime("0904c")
+   grAOI <- "Selected region(s)"
+   grPAs <- "Existing Protected Areas"
+   colAOI <- "#092B"
+   colPAs <- "#992B"
+   showPAs <- FALSE
+   if (showAOI) {
+      m <- leaflet::addPolygons(m,data=aoi
+                      ,label=grAOI
+                      ,color=colAOI
+                     # ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                     # ,stroke=TRUE
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=grAOI
+                      )
+      ursa:::.elapsedTime("0904f")
+   }
+   if (showAOI)
+      m <- leaflet::addLegend(m
+                    ,position="bottomleft"
+                    ,colors=colAOI
+                    ,opacity=0.2
+                    ,labels=grAOI
+                    ,group=grAOI
+                    )
+   if (showPAs)
+      m <- leaflet::addLegend(m
+                    ,position="bottomleft"
+                    ,colors=colPAs
+                    ,opacity=0.2
+                    ,labels=grPAs
+                    ,group=grPAs
+                    )
+   m <- addLayersControl(m
+                        ,overlayGroups=c(NULL
+                                        ,"Arctic SDI"
+                                        ,if (showPAs) grPAs
+                                        ,if (showAOI) grAOI
+                                        )
+                        ,options=layersControlOptions(collapsed=FALSE)
+                        )
+  # if (T | showPAs)
+  #    m <- hideGroup(m,grPAs)
+   ursa:::.elapsedTime("0904h")
+   m
+}
+observe({
+# observeEvent(input$regionLeaflet_shape_click,{
+# observeEvent(rvAOI(),{
+  # rvAOI()
+   cat(" ************* CLICKED *************\n")
+   proxyRegion <- leafletProxy("regionLeaflet")
+   grAOI <- "Selected region(s)"
+   grPAs <- "Existing Protected Areas"
+   layerAOI <- "layerAOI"
+   colAOI <- "#092B"
+   isPAs <- rvInitEPA() #((length(input$actionRegion)>0)&&(input$actionRegion>0))
+   if (is.null(aoi <- rvAOI())) {
+      cat("remove AOI layer from region map:\n")
+      showNotification("remove AOI layer from region map",duration=2)
+     # if (file.exists("C:/tmp/aoi.sqlite"))
+     #    file.remove("C:/tmp/aoi.sqlite")
+     # proxyRegion <- removeShape(proxyRegion,grAOI)
+      proxyRegion <- clearGroup(proxyRegion,grAOI)
+     # proxyRegion <- removeShape(proxyRegion,layerAOI)
+      proxyRegion <- removeControl(proxyRegion,layerAOI)
+     # proxyRegion <- hideGroup(proxyRegion,grAOI)
+     # proxyRegion <- clearShapes(proxyRegion)
+      proxyRegion <- addLayersControl(proxyRegion
+                           ,overlayGroups=c("Arctic SDI"
+                              ,if (isPAs) grPAs)
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+      proxyRegion <- clearControls(proxyRegion)
+      e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=70,value=0),crs=4326)
+     # e <- spatial_transform(e,3575)
+      bbox <- unname(spatial_bbox(e))
+   }
+   else {
+      cat("add AOI layer to region map:\n")
+      showNotification(paste("add AOI",spatial_count(aoi),"layer(s) to region map"),duration=2)
+     # spatial_write(aoi,"C:/tmp/aoi.sqlite")
+      proxyRegion <- removeShape(proxyRegion,layerAOI)
+     # proxyRegion <- hideGroup(proxyRegion,grAOI)
+      proxyRegion <- clearGroup(proxyRegion,grAOI)
+     # proxyRegion <- showGroup(proxyRegion,grAOI)
+      proxyRegion <- addPolygons(proxyRegion,data=aoi
+                      ,label=grAOI
+                      ,color=colAOI
+                     # ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                     # ,stroke=TRUE
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=grAOI
+                     # ,layerId=layerAOI
+                      )
+      proxyRegion <- leaflet::addLegend(proxyRegion
+                    ,position="bottomleft"
+                    ,colors=colAOI
+                    ,opacity=0.2
+                    ,labels=grAOI
+                    ,group=grAOI
+                    ,layerId=layerAOI
+                    )
+      proxyRegion <- addLayersControl(proxyRegion
+                           ,overlayGroups=c("Arctic SDI"
+                                           ,grAOI
+                                           ,if (isPAs) grPAs)
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+     # proxyRegion <- showGroup(proxyRegion,grAOI)
+      if (F) proxyRegion <- addLayersControl(proxyRegion
+                           ,options=layersControlOptions(addOverlayLayer=grAOI)
+                           )
+      bbox <- unname(spatial_bbox(aoi))
+   
+   }
+   str(bbox)
+   proxyRegion <- leaflet::fitBounds(proxyRegion
+                     ,lng1=bbox[1],lat1=bbox[2],lng2=bbox[3],lat2=bbox[4]
+                     ,options=list(minZoom=2)
+                     )
+})
+# eventReactive(input$actionRegion,{
+#observeEvent(input$actionEPA,{
+observeEvent(rvInitEPA(),{
+# observe({
+   req(isTRUE(exchange$initEPA))
+   cat("'inputactionEPA' / 'exhchange$initEPA' :\n")
+  # print(c(actionEPA=input$actionEPA,initEPA=exchange$initEPA))
+   aoi <- rvAOI()
+   showAOI <- !is.null(aoi)
+   showPAs <- TRUE # isTRUE(input$actionEPA)
+   grPAs <- "Existing Protected Areas"
+   colPAs <- "#992B"
+   grAOI <- "Selected region(s)"
+  # showModal("action region",duration=2)
+   proxyRegion <- leafletProxy("regionLeaflet")
+   if (showPAs) {
+      ursa:::.elapsedTime("0912a")
+      proxyRegion <- leaflet::addPolygons(proxyRegion,data=PAs
+                      ,label=grPAs
+                      ,color=colPAs
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                 )
+                      ,group=grPAs
+                      )
+      ursa:::.elapsedTime("0912b")
+      proxyRegion <- leaflet::addLegend(proxyRegion
+                    ,position="bottomleft"
+                    ,colors=colPAs
+                    ,opacity=0.2
+                    ,labels=grPAs
+                    ,group=grPAs
+                    )
+   }
+   proxyRegion <- showGroup(proxyRegion,grPAs)
+   proxyRegion <- addLayersControl(proxyRegion
+                        ,overlayGroups=c(NULL
+                                        ,"Arctic SDI"
+                                        ,if (showPAs) grPAs
+                                        ,if (showAOI) grAOI
+                                        )
+                        ,options=layersControlOptions(collapsed=FALSE)
+                        )
+   proxyRegion
 })
 ```
 

@@ -3,7 +3,7 @@ source("resources/header.R",encoding="UTF-8")
 exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL
                           ,prev=integer(),curr=integer() ## need for removing forgiven clean
                           ,cd=character(),domain=NULL
-                          ,CF=NULL,industry=NULL,conflict=NULL
+                          ,CF=NULL,industry=NULL,conflict=NULL#,initEPA=FALSE
                           )
 proxyCross <- DT::dataTableProxy("cross")
 proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
@@ -1109,11 +1109,11 @@ if (T & useExchange)  observe({
          selectRows(proxyCFdata,NULL)
    }
 })
-observe({ ## clear chekbox not to show map on region Desc
+if (F) observe({ ## clear chekbox not to show map on region Desc
    if (is.null(rvAOI()))
       updateCheckboxInput(session,"regionDesc",value=FALSE)
 })
-observeEvent(input$regionAction,{
+if (F) observeEvent(input$regionAction,{
    cat("observe 'input$regionAction'\n")
    if (isShiny)
       showNotification(id="regionMap",closeButton=FALSE,duration=120
@@ -1152,7 +1152,7 @@ observeEvent(input$regionAction,{
 })
 'rvRegionMetrics' <- reactive({
    cat("rvRegionMetrics:\n")
-   result <- regionStats(aoi=rvAOI(),ctable=rvActivityStat(),isPA=input$regionDesc
+   result <- regionStats(aoi=rvAOI(),ctable=rvActivityStat(),isPA=input$actionEPA
                         ,raw=TRUE)
    result
 })
@@ -1229,4 +1229,120 @@ if (T) observeEvent(input$group,{ ## update 'input$group'
          }
       }
    }
+})
+'rvInitEPA' <- reactive({
+   ((length(input$initEPA)>0)&&(input$initEPA>0))
+})
+##~ observe({
+  ##~ # req(length(input$actionEPA))
+   ##~ if ((!exchange$initEPA)&&(isTRUE(input$actionEPA)))
+      ##~ exchange$initEPA <- TRUE
+##~ })
+if (T) observe({
+# observeEvent(input$regionLeaflet_shape_click,{
+# observeEvent(rvAOI(),{
+  # rvAOI()
+   cat(" ************* CLICKED *************\n")
+   proxyRegion <- leafletProxy("regionLeaflet")
+   isPAs <- rvInitEPA()
+  # isPAs <- ((length(input$initEPA)>0)&&(input$initEPA>0))
+   prmAOI <- as.list(args(regionAddAOI))
+   prmEPA <- as.list(args(regionAddEPA))
+   grAOI <- prmAOI$group
+   layerAOI <- prmAOI$layerID
+   grPAs <- prmEPA$group
+   if (is.null(aoi <- rvAOI())) {
+      cat("remove AOI layer from region map:\n")
+     # showNotification("remove AOI layer from region map",duration=2)
+     # if (file.exists("C:/tmp/aoi.sqlite"))
+     #    file.remove("C:/tmp/aoi.sqlite")
+     # proxyRegion <- removeShape(proxyRegion,grAOI)
+      proxyRegion <- clearGroup(proxyRegion,grAOI)
+     # proxyRegion <- removeShape(proxyRegion,layerAOI)
+      proxyRegion <- removeControl(proxyRegion,layerAOI)
+     # proxyRegion <- hideGroup(proxyRegion,grAOI)
+     # proxyRegion <- clearShapes(proxyRegion)
+      ##~ proxyRegion <- addLayersControl(proxyRegion
+                           ##~ ,overlayGroups=c("Arctic SDI"
+                              ##~ ,if (isPAs) grPAs)
+                           ##~ ,options=layersControlOptions(collapsed=FALSE)
+                           ##~ )
+      proxyRegion <- clearControls(proxyRegion)
+      e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=70,value=0),crs=4326)
+     # e <- spatial_transform(e,3575)
+      bbox <- unname(spatial_bbox(e))
+   }
+   else {
+      cat("add AOI layer to region map:\n")
+     # showNotification(paste("add AOI",spatial_count(aoi),"layer(s) to region map"),duration=2)
+     # spatial_write(aoi,"C:/tmp/aoi.sqlite")
+      proxyRegion <- removeShape(proxyRegion,layerAOI)
+     # proxyRegion <- hideGroup(proxyRegion,grAOI)
+      proxyRegion <- clearGroup(proxyRegion,grAOI)
+     # proxyRegion <- showGroup(proxyRegion,grAOI)
+      proxyRegion <- regionAddAOI(map=proxyRegion,aoi=aoi,addOverlay=FALSE)
+      ##~ proxyRegion <- addLayersControl(proxyRegion
+                           ##~ ,overlayGroups=c("Arctic SDI"
+                                           ##~ ,grAOI
+                                           ##~ ,if (isPAs) grPAs)
+                           ##~ ,options=layersControlOptions(collapsed=FALSE)
+                           ##~ )
+     # proxyRegion <- showGroup(proxyRegion,grAOI)
+      if (F) proxyRegion <- addLayersControl(proxyRegion
+                           ,options=layersControlOptions(addOverlayLayer=grAOI)
+                           )
+      bbox <- unname(spatial_bbox(aoi))
+   
+   }
+   proxyRegion <- leaflet::fitBounds(proxyRegion
+                     ,lng1=bbox[1],lat1=bbox[2],lng2=bbox[3],lat2=bbox[4]
+                     ,options=list(minZoom=2)
+                     )
+})
+# eventReactive(input$actionRegion,{
+observeEvent(input$initEPA,{
+#observeEvent(rvInitEPA(),{
+# observe({
+  # req(isTRUE(exchange$initEPA))
+   cat("'inputactionEPA' / 'exhchange$initEPA' :\n")
+   proxyRegion <- leafletProxy("regionLeaflet")
+   aoi <- rvAOI()
+   regionAddEPA(proxyRegion,aoi)
+})
+'rvMetricsMap' <- reactive({
+   metricsMap()
+})
+observeEvent(input$actionNAC,{
+   cat("initialice NACR map...\n")
+   indexMap(leafletProxy("regionLeaflet"),"NAC")
+})
+observeEvent(input$actionNAO,{
+   cat("initialice NAOR map...\n")
+   indexMap(leafletProxy("regionLeaflet"),"NAO")
+})
+observe({
+  # showNotification("update controls",duration=3)
+   map <- leafletProxy("regionLeaflet")
+   showAOI <- !is.null(rvAOI())
+   showPAs <- isTRUE(input$initEPA>0)
+   showNAO <- isTRUE(input$actionNAO>0)
+   showNAC <- isTRUE(input$actionNAC>0)
+   if (showAOI)
+      grAOI <- as.list(args(regionAddAOI))$group
+   if (showPAs)
+      grPAs <- as.list(args(regionAddEPA))$group
+   if (showNAO)
+      grNAO <- "NAOR index"
+   if (showNAC)
+      grNAC <- "NACR index"
+   map <- addLayersControl(map
+                        ,overlayGroups=c(NULL
+                                        ,"Arctic SDI"
+                                        ,if (showAOI) grAOI
+                                        ,if (showPAs) grPAs
+                                        ,if (showNAO) grNAO
+                                        ,if (showNAC) grNAC
+                                        )
+                        ,options=layersControlOptions(collapsed=FALSE)
+                        )
 })
