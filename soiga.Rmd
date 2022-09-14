@@ -556,7 +556,7 @@ fillCol(flex=c(1,NA,NA)
          )
          ,conditionalPanel(condition="input.initEPA>'0'"
            # ,actionLink("actionEPA","Show Existing Protected Areas")
-            ,checkboxInput("actionEPA","Include Existing Protected Areas")
+            ,checkboxInput("actionEPA","Stats for Existing Protected Areas")
          )
       )
       ,column(2
@@ -637,7 +637,14 @@ fillRow(flex=c(6,1)
          IND <- data.frame(industry=names(result),value=result)
          IND <- IND[order(IND$value,decreasing=TRUE),]
          IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
-         p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v") %>%
+         iname <- substr(IND$industry,1,1)
+         sname <- unique(iname)
+         ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
+         names(ct) <- sname
+         mcol <- ct[iname]
+         p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
+                     ,marker=list(color=mcol)
+                     ) %>%
                   layout(NULL
                         ,xaxis=list(title=""),yaxis=list(title="IND")
                        # ,margin=list(l=0,r=0,t=0)
