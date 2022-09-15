@@ -3,7 +3,7 @@ params:
   metrics: NULL
   aoi: NULL
   kind: 0
-  dpath: "./requests"
+  dpath: "../requests"
 pagetitle: Geranium instant report
 title: Geranium instant report
 author: Boris Solovyev, Nikita Platonov
