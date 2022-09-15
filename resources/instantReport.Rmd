@@ -27,18 +27,25 @@ output1:
 ---
 
 ```{r setup,include=FALSE}
+isPlotly <- FALSE
 aoi <- params$aoi
 metrics <- params$metrics
 dpath <- params$dpath
 knitr::opts_chunk$set(fig.align="center",fig.width=6,fig.height=4.8
-                     ,widgetframe_widgets_dir=params$dpath
+                     ,widgetframe_widgets_dir=dpath
                      ,echo=F,message=F,warning=F
                      )
 file.remove(dir(path=dpath,pattern="^orca.+\\.(pdf|png)$",full.names=TRUE,recursive=TRUE))
-require(plotly)
+if (isPlotly) require(plotly) else require(ggplot2)
+if (!isPlotly)
+   p0 <- theme_minimal()+
+      theme(axis.text.x = element_text(angle=90)
+           ,panel.grid.minor.x = element_blank()
+           ,panel.grid.major.x = element_blank()
+           )   
 ```
 
-```{r eval=T,include=F}
+```{r publish, eval=T,include=F}
 filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 'publish' <- function(p) {
    if (inherits(p,"ggplot")) {
@@ -46,8 +53,6 @@ filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
    }
    else if (inherits(p,"plotly")) {
       if (filetype %in% "latex") {
-         if (!dir.exists(params$dpath))
-            dir.create(params$dpath,recursive=TRUE)
          if (TRUE) {
             fs <- 18
             p <- plotly::layout(p
@@ -63,14 +68,18 @@ filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
         #    options(opW)
         # }
          if (nchar(Sys.which("ZZZorca"))) {
-            fileout <- file.path(params$dpath,basename(tempfile(pattern="orca",fileext=".pdf")))
+            if (!dir.exists(dpath))
+               dir.create(dpath,recursive=TRUE)
+            fileout <- file.path(dpath,basename(tempfile(pattern="orca",fileext=".pdf")))
             plotly::orca(p,fileout)
             ret <- knitr::include_graphics(fileout)
          }
          else {
-            fileout <- file.path(params$dpath,basename(tempfile(pattern="orca",fileext=".png")))
             ret <- NULL
             if (F) {
+               if (!dir.exists(dpath))
+                  dir.create(dpath,recursive=TRUE)
+               fileout <- file.path(dpath,basename(tempfile(pattern="orca",fileext=".png")))
                ret <- try(plotly::plotly_IMAGE(p,width=800,height=600,scale=1,out_file=fileout))
                if (!inherits(ret,"try-error"))
                   ret <- knitr::include_graphics(fileout,dpi=150)
@@ -91,18 +100,18 @@ filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 }
 ```
 
-```{r, code=readLines("instantReport.R")}
+```{r workingir, code=readLines("instantReport.R")}
 ```
 
-```{r, eval=T}
-if (is.null(aoi)) {
-   aoi <- regionSF[[c("PACs","LMEs")[2]]]
+```{r aoi, eval=T}
+if (F & is.null(aoi)) {
+   aoi <- regionSF[[c("PACs","LMEs")[1]]]
    aoi <- aoi[grep("(\\s(22)|Barents)",aoi$region),]
 }
 if (is.null(metrics)) {
    group <- c("\\d")
    ctable <- crosstable(aoi=aoi,group=group)
-   metrics <- regionStats(aoi=aoi,ctable=ctable,raw=T)
+   metrics <- regionStats(aoi=aoi,ctable=ctable,raw=T,isPA=F)
 }
 if ("result" %in% names(metrics)) {
    general <- metrics
@@ -123,20 +132,55 @@ if (isAOI) {
 }
 ```
 
-## Instant report for `r lab`.
+## Instant report for `r ifelse(isAOI,lab,"ArcNet domain")`.
 
 This is dynamically generated report based on passed parameters.
 
 
-```{r selectional, fig.cap="Selection"}
-gaoi <- ursa:::spatialize(spatial_geometry(aoi),resetGrid=TRUE)
+```{r preselectional, include=F}
+paoi <- spatial_union(puAOI(aoi))
+if (!isAOI) {
+   paoi <- ursa:::spatialize(paoi,resetGrid=TRUE,resetProj=TRUE,style=6931)
+} else {
+   paoi <- ursa:::spatialize(paoi,resetGrid=TRUE,resetProj=TRUE)
+   session_grid()
+}
+session_grid(paoi,expand=1.2)
 compose_open()
 panel_new("white")
-ct1 <- panel_plot(sf::st_cast(spatial_union(puAOI(aoi)),"MULTILINESTRING"),lwd=1)
-ct2 <- panel_plot(gaoi)
-ursa:::panel_legend(list('Gridded (PUs) selection'=ct1,'Original selection'=ct2))
+if (isAOI) {
+   ct1 <- panel_plot(sf::st_cast(paoi,"MULTILINESTRING"),lwd=1)
+   gaoi <- spatial_geometry(aoi)
+   ct2 <- panel_plot(gaoi,lwd=0.1)
+} else {
+   ct1 <- panel_plot(paoi,lwd=0.1)
+   ct2 <- NULL
+}
+if (T) {
+   ursa:::panel_legend(list('Gridded (PUs) selection'=ct1,'Original selection'=ct2))
+} else {
+   if (isAOI)
+      NULL
+   else
+      legend("bottomright",legend=c('Gridded (PUs) selection','Original selection'))
+}
 panel_decor(coast.fill="#00000010")
-knitr::include_graphics(compose_close())
+output <- knitr::include_graphics(compose_close())
+```
+
+```{r selectional, fig.cap="Selection"}
+output
+```
+
+
+```{r grouping}
+cf <- rownames(general$cover)
+gr <- sort(unique(substr(cf,1,1)))
+cfgroup <- groupList[match(gr,names(groupList))]
+icode <- names(metrics$'IND')
+iname <- industryName(icode)
+uiname <- unlist(industries)
+igroup <- unique(gsub("\\d+$","",names(uiname[match(iname,uiname)])))
 ```
 
 The area of selected region is `r format(round(metrics$area_src,-1))` km^2^.
@@ -147,7 +191,12 @@ For this gridded selection `r format(round(metrics$puMarine,-1))` km^2^ are aqua
 and `r format(round(metrics$puLand,-1))` km^2^ are territories.
 `r if (!is.null(metrics$ePA)) paste("Existing protected areas occupy",format(round(metrics$ePA,-1)),"km^2^ in selected area.")`
 
-```{r}
+There are `r metrics$nCF` conservation features (CFs) in selection.
+They represent `r paste(unname(dQuote(cfgroup)),sep=", ")` `r ifelse(length(cfgroup)==1,"group","groups")` of CFs.
+Industries represent `r paste(dQuote(igroup),sep=", ")` activity `r ifelse(length(igroup)==1,"group","groups")`.
+
+
+```{r principal}
 da <- metrics[grep("^NA",names(metrics))] |> as.data.frame() |> t() |> as.data.frame()
 rname <- dname <- rownames(da)
 dname[rname=="NAC"] <- "Conservation concern, not allowed and conditional"
@@ -158,28 +207,20 @@ da <- cbind(name=dname,da)
 knitr::kable(da,col.names=NULL,caption="Principal concern indices")
 ```
 
-
-```{r}
-cf <- rownames(general$cover)
-gr <- sort(unique(substr(cf,1,1)))
-cfgroup <- groupList[match(gr,names(groupList))]
-icode <- names(metrics$'IND')
-iname <- industryName(icode)
-uiname <- unlist(industries)
-igroup <- unique(gsub("\\d+$","",names(uiname[match(iname,uiname)])))
-```
-
-There are `r metrics$nCF` conservation features (CFs) in selection.
-They represent `r paste(unname(dQuote(cfgroup)),sep=", ")` `r ifelse(length(cfgroup)==1,"group","groups")` of CFs.
-Industries represent `r paste(dQuote(igroup),sep=", ")` activity `r ifelse(length(igroup)==1,"group","groups")`.
-
-```{r residential, fig.cap="Leading residential CFs in selection"}
+```{r residential, eval=isAOI, fig.cap="Leading residential CFs in selection"}
 da <- data.frame(cf=rownames(general$cover),value=general$cover$Cover)
 da <- da[order(da$value,decreasing=TRUE),]
 da$cf <- factor(da$cf,levels=da$cf,ordered=TRUE)
 #ind <- which(da$value==1)
 da <- head(da,32)
-p <- plot_ly(da,x=~cf,y=~value,type="bar")
+if (isPlotly) {
+   p <- plot_ly(da,x=~cf,y=~value,type="bar")
+} else {
+   p <- ggplot(da,aes(cf,value))+geom_col()+labs(x="")+
+     # scale_x_discrete(breaks=NULL)+
+      scale_y_continuous("Cover (%)",limits=c(0,max(da$value)))+
+      p0
+}
 publish(p)
 ```
 
@@ -187,22 +228,30 @@ publish(p)
 IND <- data.frame(industry=names(metrics$'IND'),value=metrics$'IND')
 IND <- IND[order(IND$value,decreasing=TRUE),]
 IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
-p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v") %>%
-         layout(NULL
-               ,xaxis=list(title=""),yaxis=list(title="IND")
-              # ,margin=list(l=0,r=0,t=0)
-               )
+if (isPlotly) {
+   p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v") %>%
+            layout(NULL
+                  ,xaxis=list(title=""),yaxis=list(title="IND")
+                 # ,margin=list(l=0,r=0,t=0)
+                  )
+} else {
+   p <- ggplot(IND,aes(industry,value))+geom_col()+labs(x="",y="IND")+p0
+}
 publish(p)
 ```
 
 ```{r seasonal, fig.cap="Seasonal concern"}
 sc <- data.frame(month=names(metrics$'SC0'),value=metrics$'SC0')
 sc$month <- factor(sc$month,levels=sc$month,ordered=TRUE)
-p <- plot_ly(sc,x=~month,y=~value,type="bar") %>%
-         layout(NULL
-               ,xaxis=list(title=""),yaxis=list(title="SC IND")
-              # ,margin=list(l=0,r=0,t=0)
-               )
+if (isPlotly) {
+   p <- plot_ly(sc,x=~month,y=~value,type="bar") %>%
+            layout(NULL
+                  ,xaxis=list(title=""),yaxis=list(title="SC IND")
+                 # ,margin=list(l=0,r=0,t=0)
+                  )
+} else {
+   p <- ggplot(sc,aes(month,value))+geom_col()+labs(x="",y="SC IND")+p0
+}
 publish(p)
 ```
 
