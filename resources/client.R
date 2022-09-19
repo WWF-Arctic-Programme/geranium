@@ -248,9 +248,9 @@
   # selectRows(proxyOnlyCF,NULL)
    ind <- match(colnames(res),industryAbbr$industry)
    ind2 <- which(!is.na(ind))
-   colnames(res)[ind2] <- paste0("<abbr title="
-                                              ,dQuote(industryAbbr$industry[na.omit(ind)]),">"
-                                              ,industryAbbr$abbr[na.omit(ind)],"</abbr>")
+   colnames(res)[ind2] <- paste0("<span title="
+                                              ,sQuote(industryAbbr$industry[na.omit(ind)]),">"
+                                              ,industryAbbr$abbr[na.omit(ind)],"</span>")
   # res$'CF name' <- substr(res$'CF name',1,12)
    res$'Cover' <- as.numeric(res$'Cover')/100
   # res <- input$industry

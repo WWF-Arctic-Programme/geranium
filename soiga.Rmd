@@ -790,7 +790,7 @@ output$instantReport <- downloadHandler(
       interim <- rvRegionMetrics()
       str(interim)
       print(getwd())
-      fname <- "resources/instantReport.Rmd"
+      fname <- "report/instantReport.Rmd"
       # tempReport <- file.path(tempdir(),fname)
      # file.copy(fname,tempReport,overwrite=TRUE)
       showModal(modalDialog(title = "Compiling in progress","Please wait"
