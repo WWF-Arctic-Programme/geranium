@@ -11,7 +11,7 @@ date: "`r as.POSIXlt(Sys.time())`"
 bibliography1: ./demography.bib
 link-citations: true
 csl: https://nplatonov.github.io/platt4.csl
-output1:
+output:
    bookdown::pdf_document2:
       toc: false
       number_sections: false
@@ -31,7 +31,7 @@ isPlotly <- FALSE
 aoi <- params$aoi
 metrics <- params$metrics
 dpath <- params$dpath
-knitr::opts_chunk$set(fig.align="center",fig.width=6,fig.height=4.8
+knitr::opts_chunk$set(fig.align="center",fig.width=6,fig.height=3.6
                      ,widgetframe_widgets_dir=dpath
                      ,echo=F,message=F,warning=F
                      )
@@ -43,6 +43,7 @@ if (!isPlotly)
            ,panel.grid.minor.x = element_blank()
            ,panel.grid.major.x = element_blank()
            )   
+ursa:::.gc(FALSE)
 ```
 
 ```{r publish, eval=T,include=F}
@@ -96,6 +97,7 @@ filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
       else
          ret <- p
    }
+   ursa:::.gc(FALSE)
    ret
 }
 ```
@@ -104,9 +106,8 @@ filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 ```
 
 ```{r aoi, eval=T}
-if (F & is.null(aoi)) {
-   aoi <- regionSF[[c("PACs","LMEs")[1]]]
-   aoi <- aoi[grep("(\\s(22)|Barents)",aoi$region),]
+if (T & is.null(aoi)) {
+   aoi <- selectRegion("PAC 22")
 }
 if (is.null(metrics)) {
    group <- c("\\d")

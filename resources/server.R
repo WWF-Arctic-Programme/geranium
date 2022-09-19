@@ -100,7 +100,13 @@ if (T) observe({ ## update 'exchange$selection'
      # str(exchange$selection)
       req(selection)
       cat("      found\n")
+      opW <- options(warn=1)
+      cat("0918a -- dplyr::select_() deprecation -- begin")
       gs <- selection()
+      cat("0918a -- dplyr::select_() deprecation -- end")
+      options(opW)
+      ##~ cat("----------\n")
+      ##~ str(selection)
       ##~ cat("----------\n")
       ##~ str(gs)
       ##~ cat("----------\n")
@@ -110,7 +116,9 @@ if (T) observe({ ## update 'exchange$selection'
          }
          else {
            # s <- gs$finished["X_leaflet_id"]
+            cat("0918a\n")
             s <- gs$finished["_leaflet_id"]
+            cat("0918b\n")
             cat("         finished\n")
             if (length(ind <- which(s$'_leaflet_id' %in% exchange$prev))) {
                str(ind)
@@ -238,10 +246,9 @@ if (T) observe({ ## update 'exchange$selection'
          exchange$selection <- s
       }   
    }
-   if (F) {
+   if (T) {
       cat("exchange$selection -- before:\n")
-      str(exchange$prev)
-      str(exchange$curr)
+      str(list(prev=exchange$prev,curr=exchange$curr))
       print(c('exchange$selection'=exchange$selection))
       cat("exchange$selection -- after:\n")
       if (is_ursa(exchange$selection))
@@ -459,6 +466,7 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
    m <- rvConflictMap()
    if (input$region %in% nameEditor) {
       shp <- drawShapeOptions(color="#092",fillColor="#092")
+     # opW <- options(warn=-10)
       ret <- callModule(editMod,"editor"
                        ,leafmap=m
                        ,editor=if (input$predefined==nameClick) c("leaflet.extras","leafpm")[1]
@@ -480,6 +488,7 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
                           ,polylineOptions=FALSE
                           )
                        )
+     # options(opW)
    }
    else if (input$predefined %in% nameClick) {
       m <- addFeatures(m,regionSF[[input$region]]

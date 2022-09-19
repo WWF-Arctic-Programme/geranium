@@ -989,6 +989,8 @@
       cat("-crosstable----------\n")
    }
    am <- puvspr[puvspr$pu %in% b$ID,]
+   cf1 <- am$species |> sort() |> unique()
+   cf2 <- concern$CF_code  |> sort() |> unique()
    am2 <- by(am,am$species,function(x) {
       data.frame(cf=x$species[1],amount=sum(x$amount))
    }) |> do.call(rbind,args=_)
@@ -1202,7 +1204,7 @@
       return(scenarioCF$CF_name)
    scenarioCF$CF_name[match(cfcode,scenarioCF$CF_code)]
 }
-'regionStats' <- function(aoi,ctable=NULL,isPA=TRUE,raw=FALSE) {
+'regionStats' <- function(aoi,ctable=NULL,isPA=FALSE,raw=FALSE) {
    puaoi <- puAOI(aoi)
    coverland <- pu$Coverland[match(puaoi$ID,pu$ID)]
    if (isPA) {
@@ -1235,15 +1237,15 @@
    listCF <- rownames(b)
    emptyCF <- !nrow(b)
    if (!emptyCF) {
-      sc <- 3
      # mul <- sum(spatial_area(aoi)*1e-6)
       cvr <- b[,"Cover",drop=FALSE]*0.01
       d <- concernNAO
+      ind <- match(rownames(d),listCF)
       dNAO <- d[rownames(d) %in% listCF,colnames(d) %in% listI]
       dNAO <- dNAO[match(rownames(cvr),rownames(dNAO)),]
       result$'NAO' <- sum(rowSums(dNAO,na.rm=TRUE)*t(cvr))
      # result$'NAO' <- sum(rowSums(dNAO,na.rm=TRUE)*t(cvr[match(rownames(dNAO),rownames(cvr)),]))
-      d <- concernNAO+concernNAC*sc
+      d <- concernNAC
       dNAC <- d[rownames(d) %in% listCF,colnames(d) %in% listI]
       dNAC <- dNAC[match(rownames(cvr),rownames(dNAC)),]
       result$'NAC' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr))
@@ -1268,7 +1270,7 @@
       d$cover <- cvr[match(d$CF_code,rownames(cvr)),]
       d$value[d$value==1] <- -1
       d$value[d$value==2] <- 1
-      d$value[d$value==-1] <- sc
+      d$value[d$value==-1] <- mulNAC
       d$score <- d$value*d$cover
       d <- by(d,d$month,function(x) sum(x$score))
       d <- d |> unclass() |> t() |>
@@ -1420,7 +1422,7 @@
    map
 }
 'metricsMap' <- function(industry="dummy",group=c("a")) {
-   v <- concernNAO+3*concernNAC
+   v <- concernNAC
    if (!length(indR <- do.call(c,lapply(group,grep,substr(rownames(v),1,1)))))
       indR <- seq_len(nrow(v))
    industryList <- colnames(v) |> industryName()
@@ -1473,10 +1475,22 @@
   # str(res3)
    res2
 }
-if ((F)&&(quickload())) {
-# if (T) {
-   load("quickload/session.Rdata")
-   require(ursa)
-  # loadNamespace("ursa")
-   loadNamespace("sf")
+# 'selectRegion' <- function(data=names(regionSF),region="(\\s(22)|Barents)") {
+'selectRegion' <- function(region="PAC 22") {
+   rname <- names(regionSF)
+   b <- lapply(strsplit(region,split="\\s")[[1]],function(y) {
+      d <- try(match.arg(y,rname),silent=TRUE)
+      if (inherits(d,"try-error")) {
+         if (ursa:::.is.numeric(y))
+            y <- paste0("\\D",y)
+         names(y) <- "reg"
+         return(y)
+      }
+      names(d) <- "data"
+      return(d)
+   }) |> do.call(c,args=_)
+   aoi <- regionSF[[b["data"]]]
+   if (!length(ind <- grep(b["reg"],aoi$region,ignore.case=TRUE)))
+      return(NULL)
+   aoi[ind,]
 }

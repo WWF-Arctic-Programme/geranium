@@ -71,6 +71,7 @@ groupList <- c('\\d'=nameAllCF
 ##~ kwdGreen <- "'0'"
 kwdLUT <- c('0'=kwdGreen,'1'=kwdYellow,'2'=kwdRed,'9'=kwdGray)
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
+mulNAC <- 3
 basename(listPD)
 if (!quickStart) {
    regionSF <- vector("list",length(listPD))
@@ -223,6 +224,7 @@ if (!quickStart) {
    concernNAC <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
                            ,function(x) length(which(x$value %in% "1"))) |>
                  unclass() |> data.frame()
+   concernNAC <- concernNAO+mulNAC*concernNAC
    ursa:::.elapsedTime("concern prepare -- finish")
 }
 if (!quickStart) {
@@ -232,10 +234,19 @@ if (!quickStart) {
        ,PAs,half,vulner,industries,comments,concern,concernNAO,concernNAC
        ,file=sessionFile)
 }
+meanNAO <- sum(colSums(concernNAO,na.rm=TRUE))/spatial_count(pu)
+meanNAC <- sum(colSums(concernNAC,na.rm=TRUE))/spatial_count(pu)
 if (isShiny) {
   # removeModal()
 }
-options(warn=10)
+options(warn=2)
 ##~ if (F)
    ##~ save(pu,puvspr,concern,concernNAO,concernNAC,industryAbbr,industries
        ##~ ,file="C:/tmp/session-soiga.Rdata")
+if ((F)&&(quickload())) {
+# if (T) {
+   load("quickload/session.Rdata")
+   require(ursa)
+  # loadNamespace("ursa")
+   loadNamespace("sf")
+}
