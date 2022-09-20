@@ -15,12 +15,19 @@ output:
    bookdown::pdf_document2:
       toc: false
       number_sections: false
+      df_print: kable
+      latex_engine: pdflatex
    bookdown::html_document2:
       base_format: rmarkdown::html_vignette
-      css: https://nplatonov.github.io/html_vignette.css
+      css: https://nplatonov.github.io/site_libs/html_vignette.css
       lib_dir: "`r params$dpath`"
       self_containded: false
       number_sections: no
+   pinp::pinp: default
+   rticles::agu_article: default
+   tint::tintPdf: default
+   tufte::tufte_handout:
+      latex_engine: xelatex
    pdf_document:
       fig_caption: false
    html_fragment: #

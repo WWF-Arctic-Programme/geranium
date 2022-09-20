@@ -601,27 +601,27 @@ DT::renderDT({
    res <- result[grep('^[a-zE]',names(result))] |> as.data.frame()
    cname <- colnames(res)
    indRound <- grep("^(pu|area|ePA)",colnames(res))
-   cname[1] <- paste0("<abbr title="
-                     ,dQuote("Number of Planning Units in Selected Region(s)"),">"
+   cname[1] <- paste0("<abbr title='"
+                     ,"Number of Planning Units in Selected Region(s)","'>"
                      ,"PUs","</abbr>")
-   cname[2] <- paste0("<abbr title="
-                     ,dQuote("Number of Conservation Features"),">"
+   cname[2] <- paste0("<abbr title='"
+                     ,"Number of Conservation Features","'>"
                      ,"CFs","</abbr>")
-   cname[3] <- paste0("<abbr title="
-                     ,dQuote("Area of Selected Region(s), sq.km"),">"
+   cname[3] <- paste0("<abbr title='"
+                     ,"Area of Selected Region(s), sq.km","'>"
                      ,"srcArea","</abbr>")
-   cname[4] <- paste0("<abbr title="
-                     ,dQuote("Area of Planning Units in Selected Region(s), sq.km"),">"
+   cname[4] <- paste0("<abbr title='"
+                     ,"Area of Planning Units in Selected Region(s), sq.km","'>"
                      ,"puArea","</abbr>")
-   cname[5] <- paste0("<abbr title="
-                     ,dQuote("Terrestrial Area in Selected Region(s), sq.km"),">"
+   cname[5] <- paste0("<abbr title='"
+                     ,"Terrestrial Area in Selected Region(s), sq.km","'>"
                      ,"puLand","</abbr>")
-   cname[6] <- paste0("<abbr title="
-                     ,dQuote("Marine Area in Selected Region(s), sq.km"),">"
+   cname[6] <- paste0("<abbr title='"
+                     ,"Marine Area in Selected Region(s), sq.km","'>"
                      ,"puMarine","</abbr>")
    if (length(cname)>=7)
-      cname[7] <- paste0("<abbr title="
-                        ,dQuote("Existing Protected Areas in Selected Region(s), sq.km"),">"
+      cname[7] <- paste0("<abbr title='"
+                        ,"Existing Protected Areas in Selected Region(s), sq.km","'>"
                         ,"EPA","</abbr>")
    colnames(res) <- cname
    da <- DT::datatable(res,escape=F,rownames="",selection="none"
@@ -662,12 +662,12 @@ fillRow(flex=c(6,1)
       })
    )
    ,fillCol(flex=c(NA,1,NA)
-      ### <abbr title="Industries of concern">TOP IND</abbr> {data-height="auto"}
+      ### <abbr title='Industries of concern'>TOP IND</abbr> {data-height="auto"}
       ,DT::renderDT({
          res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
          cname <- colnames(res)
          lname <- industryName(cname)
-         colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
+         colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
          res <- t(res) |> as.data.frame(check.names=FALSE)
          da <- DT::datatable(res,escape=F
                             ,colnames="IND TOP"
@@ -678,12 +678,12 @@ fillRow(flex=c(6,1)
          DT::formatRound(da,colnames(res),1)
       })
       ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;")
-      ### <abbr title="Industries of the least concern">LC IND</abbr> {data-height="auto"}
+      ### <abbr title='Industries of the least concern'>LC IND</abbr> {data-height="auto"}
       ,DT::renderDT({
          res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
          cname <- colnames(res)
          lname <- industryName(cname)
-         colnames(res) <- paste0("<abbr title=",dQuote(lname),">",cname,"</abbr>")
+         colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
          res <- t(res) |> as.data.frame(check.names=FALSE)
          da <- DT::datatable(res,escape=F
                             ,colnames="LC IND"
@@ -706,18 +706,18 @@ fillRow(flex=c(1,NA,2,1)
       result <- rvRegionStats()
       res <- result[grep('^NA',names(result))] |> as.data.frame()
       cname <- colnames(res)
-      cname[cname=="NAO"] <- paste0("<abbr title="
-                                   ,dQuote("Conservation concern, not allowed only")
-                                   ,">","NAO","</abbr>")
-      cname[cname=="NAC"] <- paste0("<abbr title="
-                                   ,dQuote("Conservation concern, not allowed and conditional")
-                                   ,">","NAC","</abbr>")
-      cname[cname=="NAOR"] <- paste0("<abbr title="
-                                   ,dQuote("Conservation concern, not allowed only relative")
-                                   ,">","NAOR","</abbr>")
-      cname[cname=="NACR"] <- paste0("<abbr title="
-                                   ,dQuote("Conservation concern, not allowed and conditional relative")
-                                   ,">","NACR","</abbr>")
+      cname[cname=="NAO"] <- paste0("<abbr title='"
+                                   ,"Conservation concern, not allowed only"
+                                   ,"'>","NAO","</abbr>")
+      cname[cname=="NAC"] <- paste0("<abbr title='"
+                                   ,"Conservation concern, not allowed and conditional"
+                                   ,"'>","NAC","</abbr>")
+      cname[cname=="NAOR"] <- paste0("<abbr title='"
+                                   ,"Conservation concern, not allowed only relative"
+                                   ,"'>","NAOR","</abbr>")
+      cname[cname=="NACR"] <- paste0("<abbr title='"
+                                   ,"Conservation concern, not allowed and conditional relative"
+                                   ,"'>","NACR","</abbr>")
       colnames(res) <- cname
       res <- t(res) |> as.data.frame(check.names=FALSE)
       da <- DT::datatable(res,escape=F
@@ -744,7 +744,7 @@ fillRow(flex=c(1,NA,2,1)
       res <- rvRegionStats()[['SC']] |> data.frame() |> t()
       res <- t(res) |> as.data.frame(check.names=FALSE)
       da <- DT::datatable(res,escape=F
-                         ,colnames="<abbr title=\"Season of concern\">SC</abbr>"
+                         ,colnames="<abbr title='Season of concern'>SC</abbr>"
                          ,selection="none"
                          ,options=list(dom="t",ordering=F),class="compact")
       DT::formatRound(da,colnames(res),1)

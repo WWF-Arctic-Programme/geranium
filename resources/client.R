@@ -158,25 +158,29 @@
    if (hlink)
       da$'CF Code' <- paste0("[",da$'CF Code',"](#annualCF)")
   # b <- DT::datatable(b)
+  # useJS <- TRUE
+  # colW <- ifelse(useJS,68,999)
    b <- DT::datatable(da
                        ,rownames=""
                        ,escape=FALSE
                        ,selection="single"
                        ,extensions="Scroller"
                        ,options=list(NULL
-                                    ,ordering=F
-                                    ,scroller=T
+                                    ,ordering=FALSE
+                                    ,scroller=TRUE
                                     ,scrollY="calc(100vh - 265px)"
                                     ,scrollX=TRUE
                                     ,pageLength=nrow(da)
                                     ,dom="ift"
-                                    ,columnDefs=list(list(
-                                      targets = 2,
-                                      render = JS(
+                                    ,columnDefs=list(list(targets=2
+                                       ,render = if (T) JS(
                                         "function(data, type, row, meta) {",
-                                        "return type === 'display' && data.length > 68 ?",
-                                        "'<span title=\"' + data + '\">' + data.substr(0, 68) + '...</span>' : data;",
-                                        "}")))
+                                        "return type === 'display' && data.length > 69 ?",
+                                        "'<span title=\"' + data + '\">' + data.substr(0, 69) + '...</span>' : data;",
+                                        "}") else NULL
+                                      # ,width='50px'
+                                       ))
+                                   # ,autoWidth=!FALSE
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
@@ -189,7 +193,14 @@
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
                      )
-   b
+   if (F)
+      b <- formatStyle(b,'CF Name'
+                     # ,width="150px" 
+                      ,whiteSpace="nowrap"
+                      ,overflow="hidden"
+                      ,textOverflow="ellipsis"
+        )
+  b
 }
 'tableOnlyIndustry' <- function() {
    cat(as.character(match.call())[1],":\n")
@@ -248,9 +259,9 @@
   # selectRows(proxyOnlyCF,NULL)
    ind <- match(colnames(res),industryAbbr$industry)
    ind2 <- which(!is.na(ind))
-   colnames(res)[ind2] <- paste0("<span title="
-                                              ,sQuote(industryAbbr$industry[na.omit(ind)]),">"
-                                              ,industryAbbr$abbr[na.omit(ind)],"</span>")
+   colnames(res)[ind2] <- paste0("<abbr title='"
+                                              ,industryAbbr$industry[na.omit(ind)],"'>"
+                                              ,industryAbbr$abbr[na.omit(ind)],"</abbr>")
   # res$'CF name' <- substr(res$'CF name',1,12)
    res$'Cover' <- as.numeric(res$'Cover')/100
   # res <- input$industry
