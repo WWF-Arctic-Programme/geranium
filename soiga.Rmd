@@ -37,6 +37,7 @@ output:
       navbar:
          - { icon: "ion-home", href: "#", align: right}
          - { icon: "ion-help", href: "#section-welcome", align: right}
+         - { icon: "fa-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
 output3:
    html_vignette: 
