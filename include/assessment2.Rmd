@@ -120,7 +120,7 @@ Tourism was divided into two categories:
 
 -   Ecotourism
 
-Detailed description of each activity is provided in the [[Attachment 1.]{.underline}][1]
+Detailed description of each activity is provided in the [Attachment 1](https://docs.google.com/document/d/1KZLQkFGBDsK_I-7BvsAOlyb3I7b4X9Y4Bc7BeRyDUzc/edit?usp=sharing).
 
 #### A list of conservation features representing marine biodiversity of the Arctic
 
@@ -237,5 +237,3 @@ Nmonths - a number of months when a particular commercial activity has the "not 
 #### (**not done yet**)
 
 Finally results of a in the assessments were overlapped with data on geographic distribution of existing and planned economic activities in the Arctic Seas to identify where they are actually threatening marine life sensitive to their impacts the most and prioritise these areas for urgent action.
-
-  [1]: https://docs.google.com/document/d/1KZLQkFGBDsK_I-7BvsAOlyb3I7b4X9Y4Bc7BeRyDUzc/edit?usp=sharing
