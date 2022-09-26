@@ -121,7 +121,7 @@ https://github.com/rstudio/flexdashboard/issues/181
 -->
 
 <!--
-> [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#welcome)
+> [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#assessment) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#welcome)
 -->
 
 
@@ -262,8 +262,9 @@ renderUI({
    col <- if (is.null(rvAOI())) "list" else "list"
   # b1 <- navButton("Human Activities in the Arctic","#list",col,span=T)
   # b2 <- navButton("Conservation Features","#list",col,span=T)
-  # navButton(list(b1,b2),border=T)
-   navButton("Lists of Human use and Conservations","#list",col="list",border=T)
+   b1 <- navButton("All Human Uses","#list",col="list",span=T)
+   b2 <- navButton("All Conservation Features","#list",col="list",span=T)
+   navButton(list(b1,b2),border=T)
 })
 ##~ renderUI({
    ##~ col <- if (is.null(rvAOI())) "green" else "grey"
@@ -285,7 +286,7 @@ fillRow(flex=c(1,1)
       tagList(
          a("Conservation Action Hotspots",href="#welcome"),
          br(),
-         a("How the assessment was made",href="#welcome"),
+         a("How the assessment was made",href="#assessment"),
          br(),
          a("Dictionary",href="#welcome"),
          br(),
@@ -297,7 +298,7 @@ fillRow(flex=c(1,1)
 ```
 
 [Conservation Action Hotspots](#welcome)  
-[How the assessment was made](#welcome)  
+[How the assessment was made](#assessment)  
 [Dictionary](#welcome)  
 [FAQ](#welcome)  
 
@@ -950,4 +951,7 @@ output$buttonsList <- renderUI({
 
 ```{r, eval=F}
 sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,value=0)
+```
+
+```{r, eval=T, child="include/assessment.Rmd"}
 ```

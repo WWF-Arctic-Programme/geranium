@@ -1,0 +1,260 @@
+---
+output:
+   flexdashboard::flex_dashboard:
+      orientation: columns
+---
+
+# &shy; {#assessment data-icon="fa-info" .zzzhidden data-orientation="columns"}
+
+##
+
+### Context
+
+ArcNet is a network of Priority Areas for Conservation. These areas were identified based on biological data and selected because of their biological and ecological value. It is assumed that by implementing ArcNet i.e. by conserving these ecosystems the resilience of Arctic Ocean's biodiversity will be strengthened. To do this the following steps should be done:
+
+-   Conservation needs of each PAC should identified;
+
+-   Appropriate conservation measures and management regimes based on these needs should be selected and proposed;
+
+-   Areas where conservation needs are the most urgent, should be prioritised.
+
+Biodiversity conservation needs generally depend on a set of factors which can be divided in two groups: ex situ (climate change, transboundary pollution associated with oceanic currents, ocean acidification) and in situ - human uses including commercial, military, scientific activities and activities conducted by indigenous people.
+
+Ex situ factors are best manageable on the global scale or a scale of the entire Arctic region.
+
+Human uses however vary throughout the Arctic and can and should be assessed at the regional scale by looking into the impacts they can have on each conservation feature and each PAC.
+
+As military activities and activities conducted by indigenous people require specific methodology and involvement of relevant stakeholders for assessment of their impact on PACs, and scientific research activities factor is relatively minor at the scale of the Arctic, current assessment is focused on commercial human uses and their potential impacts on Arctic marine life.
+
+### Goal
+
+To identify conservation needs of each ArcNet PAC based on the human uses impact assessment on marine biodiversity in the Arctic Seas to inform choices for their management regimes.
+
+### Tasks
+
+1.  Compile list of existing and potential economic activities in the Arctic Seas and classify them by their impacts.
+
+2.  Compile a list of conservation features representing marine biodiversity of the Arctic.
+
+3.  Assess a level of impact of each economic activity on each of the conservation features and make decisions accordingly whether an economic activity is allowed in a conservation feature area and if so what are specific requirements to ensure that an activity does not interfere with the task of conservation of a feature.
+
+4.  Overlay the outputs of the assessment to see a composition of requirements for economic activities needed for each PAC or any other selected geographic areas.
+
+5.  Based on a composition of requirements for commercial activities identify a level of conservation needs (conservation concern) for each PAC.
+
+6.  Select and propose appropriate conservation measures and management regimes based on these needs and existing or needed legislation for each PAC.
+
+7.  Overlay geographic distributions of a composition of requirements for economic activities and existing and planned economic activities in the Arctic Seas to identify where they are threatening marine life the most and prioritise these areas for urgent action.
+
+##
+
+### How the assessment was made:
+
+*List of economic activities*
+
+A list of existing and potential economic activities in the Arctic Seas was compiled. It included aquaculture, fishery, infrastructure construction and maintenance, mining, shipping, and tourism.
+
+Then each of the activities was classified by their impacts and divided into several specific activities. A brief description of each activity including such characteristics as seasonality, depths affected, associated activities and impacts was prepared.
+
+Aquaculture was divided into the following categories:
+
+-   Finfish production in cages (salmon, cod etc.),
+
+-   Shellfish production (oysters, mussels, scallops),
+
+-   Seaweed production
+
+Fishery was divided into 13 different categories by type of fishing gear defining each category's impacts:
+
+-   Bottom trawling
+
+-   Snurrevod
+
+-   Pelagic trawling
+
+-   Bottom dredging
+
+-   Seaweed moving
+
+-   Invertebrates collection by divers
+
+-   Longline fishing
+
+-   Crab traps
+
+-   Fishing rods/trolling
+
+-   Purse seine
+
+-   Bottom gillnets
+
+-   Drifters
+
+-   Steine/stationary steine
+
+Infrastructure construction and maintenance was divided into following groups:
+
+-   Underwater communication cables
+
+-   Underwater oil & gas pipelines
+
+-   Offshore windparks
+
+-   Coastal infrastructure (ports)
+
+-   Dredging
+
+Mining included:
+
+-   Offshore oil production
+
+-   Offshore gas production
+
+-   Other offshore mineral production including deep seabed mining
+
+-   Coastal mining
+
+Shipping (transport shipping as other uses of ships were included in other economic activities, e.g. tourist vessels in tourism, fishing vessels in fishery etc) was divided into categories by type of fuel as it is a major factor differentiating impacts from different ships and tankers were set as a separate category:
+
+-   Oil and petrochemicals tankers
+
+-   Non tankers on heavy fuel oil
+
+-   Non tankers on light fuel oil
+
+-   Non tankers on liquified natural gas
+
+-   Non tanker on nuclear fuel
+
+Tourism was divided into two categories:
+
+-   Mass tourism involving construction of permanent infrastructure
+
+-   Ecotourism
+
+Detailed description of each activity is provided in the [[Attachment 1.]{.underline}][1]
+
+##
+
+### How the assessment was made:
+
+
+*A list of conservation features representing marine biodiversity of the Arctic*
+
+A list of conservation features compiled for the ArcNet analysis was used as it systematically represents marine biodiversity of the Arctic and makes the assessment consistent with the priority areas for conservation identification.
+
+However only distinctive features were used for the assessment as representative features - units of zoogeographic delineation and geomorphic surrogates of benthic communities would make the assessment more speculative.
+
+*Economic activities assessment*
+
+Once the lists of economic activities and conservation features were compiled the assessment was made using a simple traffic light approach:
+
+-   an activity is absolutely incompatible with the task of conservation of a selected feature and therefore shall not be allowed in a conservation feature area -- red (2)
+
+-   an activity can be allowed (or tolerated) in a conservation feature area under certain conditions and restrictions -- yellow (1)
+
+-   an activity can be allowed without any specific restrictions apart from general environmental requirements for the industry -- green (0)
+
+-   an activity can not technically happen in a conservation feature area - NA
+
+[Full cycle considered]{.underline}
+
+When assessing whether an activity can be allowed in a conservation feature area experts considered the entire cycle and all the associated impacts of an activity. For example, shipping of cargo in the areas where ringed seals are whelping in the Chukchi sea in March - June will inevitably involve icebreaking - by icebreakers or a ship with the high ice class. Construction of ports in some shallow water parts of the Arctic will often mean dredging and its impacts were considered in the assessment of a port construction accordingly. Offshore oil mining involves various surveys including seismic surveys, ship traffic consisting of supply and tanker vessels, construction of infrastructure - platforms and terminals etc, again the entire cycle had to be considered during the assessment.
+
+[The question is about conservation]{.underline}
+
+During the assessment experts answered the question: how compatible is an economic activity with a task of conservation for a given conservation feature? Can this economic activity be allowed in an area where a biodiversity feature needs to be protected? If so, on what conditions? Therefore the experts did not assess a theoretical chance of a species or a community to survive in disturbed and altered environment. They looked at a feature sensitivity to impacts associated with economic activities and aimed to identify those activities and conditions to which a particular feature is not specifically sensitive and which is not going to alter its environment.
+
+[General environmental requirements]{.underline}
+
+Prior to the assessment it was assumed automatically that all economic activities considered for the assessment meet general existing environmental norms, requirements and standards. Therefore the assessment considered inherent and specific impacts associated with an activity. For example, the experts did not need to list requirements for a fishery to be sustainable, for fishing vessels to follow MARPOL requirements etc focusing solely on two factors: to what extent a conservation feature is sensitive to the inherent impacts of the fishery - ship noise, risks of fuel leaks, light pollution, physical disturbance and to what extent a feature is sensitive to specific impacts of this fishery e.g. bottom trawling - destruction of benthic communities, risks of entanglement etc.
+
+[Seasonality]{.underline}
+
+The seasonality factor was also taken into account: a seasonality of both a conservation feature and an activity's impact was considered. For example, if a feature is seasonal (harp seal whelping area) and an activity is of seasonal nature (fisheries) the assessment was done separately for the season and the off season months: fisheries are not allowed or can allowed with specific restrictions during whelping season and there are no specific harp seal-related restrictions for fisheries in the same areas off the season.
+
+[NA]{.underline}
+
+Not applicable status (NA) was assigned in some cases where an activity is not technically possible in a feature area, e.g. long-line fishery in the saltmarshes. In case an activity is not happening in an area at the moment, never happened there and there are no known plans for it to happen but there is a theoretical opportunity for it to happen, the assessment took place for such a case. A general principle was that in case of doubts the assessment should be done as a part of the precautionary approach.
+
+[Scale]{.underline}
+
+Very often the scale was an issue - as ArcNet data is collected at the Pan-Arctic scale sometimes there is a scale mismatch between a potential activity's impacts and a conservation feature. For example, some important seal or seabird habitats used in the analysis stretch for hundreds of kilometres, and distribution of animals within these habitats is uneven - some parts of the habitats are used by animals more often and/or regularly. The outputs of the assessment should be different then for these "core" areas and for the rest of the habitat. Since these "core" areas are often either not known to science yet either not used in the ArcNet analysis, experts would assign the "yellow" status to these habitats - "an activity can be allowed (or tolerated) in a conservation feature area under certain conditions and restrictions" under condition that these "core" areas are identified and assigned with "red" status - "an activity is not allowed" and the rest of the habitat can have "green" status then.
+
+The scale factor turned out to be a significant one since many specific and final decisions regarding conservation/planning can and should be done at a smaller scale, than one at which ArcNet operates.
+
+[Cumulative impacts]{.underline}
+
+Each assessment was done separately for each feature and for each activity without taking into account cumulative impacts at this step, i.e. tourism, fishery and infrastructure activities were assessed independently without counting how their combinations affect a habitat as this assessment should be done at smaller, finer scale at the next level of planning.
+
+[Who made the assessment]{.underline}
+
+The assessment was made independently for each taxa thematic group primarily by the taxa experts who were a part of the ArcNet thematic groups and participated in the inputs setting, conservation features identification and data collection for ArcNet.
+
+Benthos - Olga Zimina, Murmansk Marine Biological Institute of the Russian Academy of Sciences
+
+Fishes - Natalia Chernova, Zoological Institute of the Russian Academy of Sciences
+
+Birds - Maria Gavrilo, Arctic and Antarctic Research Institute
+
+Seals - Irina Trukhanova, National Marine Mammal Laboratory, NOAA
+
+Walrus - Varvara Semenova, WWF Russia
+
+Cetaceans - Olga Filatova, Lomonosov Moscow State University
+
+After the primary assessment was made, the experts met to discuss their approaches and to make sure they are uniform. Once their work was done, the assessment tables were merged together and checked for consistency again by Boris Solovyev.
+
+These tables were used as a primary source of information for the Geranium tool.
+
+*Overlay of the outputs of the assessment*
+
+Once the assessment was done for each of 500+ conservation features and for each of 33 commercial activities cartographic tools were used to put the results of the assessment on the map to show which commercial activities and under what conditions can be allowed in each geographical area: PAC, MEOW (Marine Ecosystems of the World), LME (Large Marine Ecosystems), EEZ (Exclusive Economic Zones) or any other selected by a user.
+
+This will help conservation planners to figure out what industries/commercial activities should cause a concern in each particular area of interest and what the requirements should be for these industries, and what data/information is missing in each area.
+
+*Conservation concern levels for each PAC*
+
+Based on a composition of requirements for commercial activities a level of conservation needs (conservation concern) can be identified for each PAC (or any other area of interest).
+
+This means that the assessment allows not just an industry/commercial activity regulation and related decisions but also the most suitable conservation or management regime for each area (particularly for PACs) based on the level of conservation concern in each area and existing or needed legislation in a region where a particular area is located.
+
+##
+
+### Metrics
+
+A number of metrics was developed to help conservation planners identify level of conservation concerns:
+
+**NAO - Not Allowed Only** - derivative of composition of Conservation Features (with importance of the selected area for each CF taken into account) in a selected area multiplied by a number of commercial activities not allowed (with "red" status) in this area for each CF multiplied by a number of months when these commercial activities are not allowed for each CF in the area. Overall the metric shows a level of conservation concern, the intolerance of a regional conservation features composition to all possible commercial activities.
+
+NAO = SUMM (NAOa... z),
+
+Where:
+
+a... z are commercial activities for which at least for one CF for one month the assessment assigned "red" status "not allowed";
+
+NAOa = SUMM CF1... 100 (Cover\*Nmonths), where:
+
+CF1... 100 - all CFs in a selected area for which at least for one month one industry received status "not allowed",
+
+Cover - a share of the CF's amount within a selected area,
+
+Nmonths - a number of months when a particular commercial activity has the "not allowed" status for a particular CF.
+
+**NAС - Not Allowed and Conditional -** is a metric similar to NAO with a difference that it considers "yellow" status assessments - "can be allowed under certain conditions". The formula sums "not allowed" assessments with "conditional" assessments with first having a coefficient/weight of 3 and the latter - 1.
+
+**NAOR - Not Allowed Only, Relative** - is a NAO index normalised by a size of a selected area (number of planning units within a selected area). This metric shows a conservation concern regardless of the size of a selected area.
+
+**NACR - Not Allowed and Conditional, Relative** - NAC normalised by a size of a selected area.
+
+**TOP IND - Industries of concern.** Three industries/commercial activities with the highest NAC in a selected area.
+
+**LC IND - Industries of least concern**. Three industries/commercial activities with lowest NAC in a selected area.
+
+**SC - Seasons of concern.** Three months of a year with the highest NAC in a selected area.
+
+*Overlay of the geographic distributions of a composition of requirements for economic activities and existing and planned economic activities (**not done yet**)*
+
+Finally results of a in the assessments were overlapped with data on geographic distribution of existing and planned economic activities in the Arctic Seas to identify where they are actually threatening marine life sensitive to their impacts the most and prioritise these areas for urgent action.
+
+  [1]: https://docs.google.com/document/d/1KZLQkFGBDsK_I-7BvsAOlyb3I7b4X9Y4Bc7BeRyDUzc/edit?usp=sharing

@@ -63,11 +63,16 @@
    if (isFALSE(exchange$domain)) {
       b1 <- navButton("Selected Area Details","#crosstable","cross",span=T)
    }
-   else if (isTRUE(exchange$domain)) {
-      b1 <- navButton("CF list","#list","list",span=T)
-   }
    else
       b1 <- NULL
+   if (isTRUE(exchange$domain)) {
+      b6 <- navButton("All Human Uses","#list","list",span=T)
+      b7 <- navButton("All Conservation Features","#list","list",span=T)
+   }
+   else {
+      b6 <- NULL
+      b7 <- NULL
+   }
    ref2 <- "#annualIndustry"
    cf <- rvSelectCF()
    industry <- rvSelectIndustry()
@@ -88,7 +93,7 @@
       b4 <- NULL
       b5 <- NULL
    }
-   list('domain'=b1
+   list('crosstale'=b1,'industry_list'=b6,'cf_list'=b7
        ,'cf_details'=b2,'cf_overview'=b3
        ,'industry_details'=b4,'industry_overview'=b5
        )
@@ -96,11 +101,13 @@
 'buttonsCF' <- function() {
    b <- buttonsTemplate()
    b$cf_details <- NULL
+   b$industry_list <- NULL
    navButton(b)
 }
 'buttonsIndustry' <- function() {
    b <- buttonsTemplate()
    b$industry_details <- NULL
+   b$cf_list <- NULL
    navButton(b)
 }
 'tableCFdata' <- function() {
