@@ -121,7 +121,7 @@ https://github.com/rstudio/flexdashboard/issues/181
 -->
 
 <!--
-> [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#assessment) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#welcome)
+> [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#assessment) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#manual)
 -->
 
 
@@ -290,7 +290,7 @@ fillRow(flex=c(1,1)
          br(),
          a("Dictionary",href="#welcome"),
          br(),
-         a("FAQ",href="#welcome")
+         a("FAQ",href="#manual")
       )
    })
    ,if (F & staffOnly) renderPrint(selectionRegion()) else renderText("empty")
@@ -300,7 +300,7 @@ fillRow(flex=c(1,1)
 [Conservation Action Hotspots](#welcome)  
 [How the assessment was made](#assessment)  
 [Dictionary](#welcome)  
-[FAQ](#welcome)  
+[FAQ](#manual)  
 
 
 ```{r eval=T & isShiny & staffOnly, results='asis'}
@@ -954,4 +954,7 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 ```
 
 ```{r, eval=T, child="include/assessment.Rmd"}
+```
+
+```{r, eval=T, child="include/manual.Rmd"}
 ```

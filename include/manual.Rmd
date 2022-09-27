@@ -1,0 +1,25 @@
+---
+output:
+   flexdashboard::flex_dashboard:
+      orientation: columns
+---
+
+# &shy; {#manual data-icon="fa-book" .hidden data-orientation="columns"}
+
+```{r}
+# htmltools::includeHTML('manual1.html')
+htmltools::includeMarkdown('manual1.Rmd')
+# htmltools::HTML(markdown::markdownToHTML('manual1.Tmd',fragment.only=!TRUE))
+
+```
+
+```{css}
+   #manual, #section-manual {
+      margin: 1em auto 1em auto;
+      max-width: 790px;
+   }
+   img {
+      width: 100%;
+      height: auto;
+   }
+```
