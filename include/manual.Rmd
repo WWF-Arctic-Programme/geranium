@@ -4,7 +4,7 @@ output:
       orientation: columns
 ---
 
-# &shy; {#manual data-icon="fa-book" .hidden data-orientation="columns"}
+# &shy; {#manual data-icon="ion-help" `r if (T | !is.null(rmarkdown::metadata[["author"]])) ".hidden"` data-orientation="columns"}
 
 ```{r}
 # htmltools::includeHTML('manual1.html')

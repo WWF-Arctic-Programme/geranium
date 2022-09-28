@@ -9,7 +9,7 @@ pagetitle: Geranium NG
 author6: 
 author5: "<abbr title=\"Tab panel with subtitle have to fill one line. Subtitle: 'Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners'\">De...</abbr>"
 author4: Decision support and engagement prioritisation
-author3: Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners
+author: Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners
 author2: 🏭🚢🎣🛢 Human use ⚔ Conservation 🐳🐻🐟🐚
 author1: "[WWF ArcNet](https://arcticwwf.org/work/ocean/arcnet/)"
 zzzpagetitle: Compatibility with AOIs
@@ -36,7 +36,7 @@ output:
       - include/geranium.css
       navbar:
          - { icon: "ion-home", href: "#", align: right}
-         - { icon: "ion-help", href: "#section-welcome", align: right}
+         - { icon: "ion-help", href: "#section-manual", align: right}
          - { icon: "fa-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
 output3:
@@ -121,7 +121,7 @@ https://github.com/rstudio/flexdashboard/issues/181
 -->
 
 <!--
-> [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#assessment) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#manual)
+> NEED TO UPDATE [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#assessment) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#manual)
 -->
 
 
@@ -290,7 +290,7 @@ fillRow(flex=c(1,1)
          br(),
          a("Dictionary",href="#welcome"),
          br(),
-         a("FAQ",href="#manual")
+         a("****NEED TO UPDATE**** FAQ",href="#manual")
       )
    })
    ,if (F & staffOnly) renderPrint(selectionRegion()) else renderText("empty")
@@ -300,7 +300,8 @@ fillRow(flex=c(1,1)
 [Conservation Action Hotspots](#welcome)  
 [How the assessment was made](#assessment)  
 [Dictionary](#welcome)  
-[FAQ](#manual)  
+[FAQ](#welcome)  
+[User Manual](#manual)  
 
 
 ```{r eval=T & isShiny & staffOnly, results='asis'}
@@ -640,7 +641,9 @@ fillRow(flex=c(6,1)
       ,renderPlotly({
          metrics <- rvRegionStats()
          result <- metrics$'IND'
-         IND <- data.frame(industry=names(result),value=result)
+         IND <- data.frame(industry=names(result),value=result
+                          ,ref=colSums(concernNAC,na.rm=TRUE)/spatial_count(pu)*metrics$'nPU'
+                          )
          IND <- IND[order(IND$value,decreasing=TRUE),]
          IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
          iname <- substr(IND$industry,1,1)
@@ -650,16 +653,19 @@ fillRow(flex=c(6,1)
          mcol <- ct[iname]
          mvalue <- meanNAC*metrics$nPU/length(IND$industry)
          p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
-                     ,marker=list(color=mcol)
+                     ,marker=list(color=mcol),name='Region'
                      ) %>%
-                  layout(NULL
-                        ,xaxis=list(title=""),yaxis=list(title="IND")
-                        ,showlegend=FALSE
-                        ,shapes=list(list(x0=~head(industry,1),x1=~tail(industry,1)
-                          ,y0=mvalue,y1=mvalue
-                          ,type="line",line=list(color="#888",dash="dot")))
-                       # ,margin=list(l=0,r=0,t=0)
-                        )
+              add_trace(y=~ref,name='Domain',marker=list(color='rgb(204,204,204)')
+                       ,visible="legendonly") %>%
+              layout(NULL
+                    ,xaxis=list(title=""),yaxis=list(title="IND")
+                   # ,showlegend=FALSE
+                    ,legend=list(x=0.5,y=0.9,orientation='h')
+                    ,shapes=list(list(x0=~head(industry,1),x1=~tail(industry,1)
+                      ,y0=mvalue,y1=mvalue
+                      ,type="line",line=list(color="#8888",dash="dot")))
+                   # ,margin=list(l=0,r=0,t=0)
+                    )
          p
       })
    )
