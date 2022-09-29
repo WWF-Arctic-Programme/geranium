@@ -105,6 +105,9 @@ table.overcontent tbody td {
 .linkbutton.cross {
    background-color: darkcyan;
 }
+.linkbutton.comment {
+   background-color: slategray;
+}
 .linkbutton.map {
    background-color: darkmagenta;
 }

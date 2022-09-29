@@ -93,9 +93,15 @@
       b4 <- NULL
       b5 <- NULL
    }
+   if ((!is.null(industry))&&(!is.null(cf)))
+      b8 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
+                     ,"#comment","comment",span=T)
+   else
+      b8 <- NULL
    list('crosstale'=b1,'industry_list'=b6,'cf_list'=b7
        ,'cf_details'=b2,'cf_overview'=b3
        ,'industry_details'=b4,'industry_overview'=b5
+       ,'comment'=b8
        )
 }
 'buttonsCF' <- function() {
@@ -108,6 +114,13 @@
    b <- buttonsTemplate()
    b$industry_details <- NULL
    b$cf_list <- NULL
+   navButton(b)
+}
+'buttonsComment' <- function() {
+   b <- buttonsTemplate()
+  # b$industry_details <- NULL
+  # b$cf_details <- NULL
+   b$comment <- NULL
    navButton(b)
 }
 'tableCFdata' <- function() {
@@ -474,7 +487,12 @@
    }
    b3 <- navButton(lab3,"#descRegion","desc",span=T)
    b8 <- navButton("Spatial query","#map","map",span=T)
-   navButton(list(b8,b3,b4,b7,b5,b6)) ## # ,b1,b2
+   if ((!is.null(industry))&&(!is.null(cf)))
+      b9 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
+                     ,"#comment","comment",span=T)
+   else
+      b9 <- NULL
+   navButton(list(b8,b3,b4,b7,b5,b6,b9)) ## # ,b1,b2
 }
 'switchIndustry' <- function() {
    cat(as.character(match.call())[1],":\n")
@@ -793,7 +811,8 @@
                  ,position="topleft"
                  ,pal=pal
                  ,values=v
-                 ,opacity=0.5,title="NAC"
+                 ,opacity=0.5
+                 ,title=gr
                  ,group=gr
                  )
    ##~ map <- addLayersControl(map

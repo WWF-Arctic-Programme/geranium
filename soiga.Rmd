@@ -37,7 +37,7 @@ output:
       navbar:
          - { icon: "ion-home", href: "#", align: right}
          - { icon: "ion-help", href: "#section-manual", align: right}
-         - { icon: "fa-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
+         - { icon: "ion-social-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
 output3:
    html_vignette: 
@@ -938,6 +938,28 @@ output$buttonsList <- renderUI({
    buttonsList()
 })
 ```
+
+# Comments {#comment data-orientation="columns" `r if (F & hideTabs) ".hidden"`}
+
+## {data-width=50}
+
+## {data-width=150}
+
+### Initial comments
+
+### Suggested comments
+
+### {data-height="auto"}
+
+```{r}
+uiOutput("buttonsComment")
+output$buttonsComment <- renderUI({
+   buttonsComment()
+})
+```
+
+## {data-width=50}
+
 
 ```{r, eval=T, child="include/welcome.Rmd"}
 ```
