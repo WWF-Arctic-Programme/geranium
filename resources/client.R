@@ -93,7 +93,7 @@
       b4 <- NULL
       b5 <- NULL
    }
-   if ((!is.null(industry))&&(!is.null(cf)))
+   if ((input$comment)&&(!is.null(industry))&&(!is.null(cf)))
       b8 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
                      ,"#comment","comment",span=T)
    else
@@ -487,7 +487,7 @@
    }
    b3 <- navButton(lab3,"#descRegion","desc",span=T)
    b8 <- navButton("Spatial query","#map","map",span=T)
-   if ((!is.null(industry))&&(!is.null(cf)))
+   if ((input$comment)&&(!is.null(industry))&&(!is.null(cf)))
       b9 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
                      ,"#comment","comment",span=T)
    else

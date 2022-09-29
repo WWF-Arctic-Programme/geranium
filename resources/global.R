@@ -236,6 +236,12 @@ if (!quickStart) {
 }
 meanNAO <- sum(colSums(concernNAO,na.rm=TRUE))/spatial_count(pu)
 meanNAC <- sum(colSums(concernNAC,na.rm=TRUE))/spatial_count(pu)
+configFile <- "quickload/config.json"
+if (!file.exists(configFile)) {
+  config <- list(comment=FALSE)
+  writeLines(jsonlite::toJSON(config),configFile)
+}
+config <- jsonlite::fromJSON(configFile)
 if (isShiny) {
   # removeModal()
 }

@@ -151,6 +151,9 @@ h1 {
    font-family: wwf;
    font-size: 105%;
 }
+.admin, .admin a {
+   color: transparent;
+}
 @media screen and (min-width: 1269px) {
    .navbar-brand::after, .navbar-author:empty:before {
       content: '';  /* '\3009' */

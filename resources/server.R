@@ -1355,3 +1355,8 @@ observe({
                         ,options=layersControlOptions(collapsed=FALSE)
                         )
 })
+observeEvent(input$comment,{
+   config <- jsonlite::fromJSON(configFile)
+   config$comment <- input$comment
+   writeLines(jsonlite::toJSON(config),configFile)
+})

@@ -301,7 +301,7 @@ fillRow(flex=c(1,1)
 [How the assessment was made](#assessment)  
 [Dictionary](#welcome)  
 [FAQ](#welcome)  
-[User Manual](#manual)  
+[User Manual](#manual) `r paste(rep("&nbsp;",36),collapse="")` [Admin](#admin){.admin}
 
 
 ```{r eval=T & isShiny & staffOnly, results='asis'}
@@ -808,6 +808,9 @@ output$instantReport <- downloadHandler(
                        ,output_format=bookdown::pdf_document2(toc=FALSE
                           ,number_sections=FALSE
                        )
+                       ##~ ,output_format=bookdown::html_document2(toc=FALSE
+                          ##~ ,number_sections=FALSE
+                       ##~ )
                        ,params=list(metrics=interim,aoi=rvAOI())
                        ,envir=new.env(parent=globalenv()))
       removeModal()
@@ -939,7 +942,7 @@ output$buttonsList <- renderUI({
 })
 ```
 
-# Comments {#comment data-orientation="columns" `r if (F & hideTabs) ".hidden"`}
+# Comments {#comment data-orientation="columns" `r if (T & hideTabs) ".hidden"`}
 
 ## {data-width=50}
 
@@ -986,3 +989,17 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 
 ```{r, eval=T, child="include/manual.Rmd"}
 ```
+
+# {#admin .hidden}
+
+##
+
+##
+
+### Comments
+
+```{r}
+checkboxInput("comment","Comments are available",value=config$comment)
+```
+
+##
