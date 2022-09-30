@@ -1360,3 +1360,43 @@ observeEvent(input$comment,{
    config$comment <- input$comment
    writeLines(jsonlite::toJSON(config),configFile)
 })
+'rvCommentTable' <- reactive({
+   cat("'rvCommentTable()'\n")
+   if (file.exists(commentFile)) {
+      da <- jsonlite::fromJSON(commentFile)
+   }
+   else
+      da <- NULL
+   str(da)
+   req(cf <- CFCode(rvSelectCF()))
+   req(industry <- industryCode(rvSelectIndustry()))
+   if (input$submit) {
+      isolate({
+         cat("submission!\n")
+         req(!is.null(opinion <- input$opinion))
+         da2 <- data.frame(cf=cf,industry=industry
+                          ,Time=format(Sys.time(),"%Y-%m-%d %H:%M")
+                          ,Author=if (is.null(input$author)) "" else input$author
+                          ,Comment=opinion
+                          )
+         if (nrow(da2)) {
+            da <- rbind(da,da2)
+            da <- unique(da)
+            da <- da[nchar(da$Comment)>0,]
+            if (nrow(da)>0)
+               writeLines(jsonlite::toJSON(da),commentFile)
+         }
+      })
+   }
+   da <- da[da$cf %in% cf & da$industry %in% industry,]
+   req(nrow(da)>0)
+   da$cf <- NULL
+   da$industry <- NULL
+   da <- da[order(da$Time,decreasing=TRUE),]
+   da
+})
+if (T) observeEvent(input$submit,{
+   cat("observe 'input$submit'\n")
+   req(!is.null(opinion <- input$opinion))
+   updateTextAreaInput(session,"opinion",value="")
+})

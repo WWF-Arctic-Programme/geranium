@@ -821,7 +821,7 @@ output$instantReport <- downloadHandler(
  
 # CF desc {#descCF .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## {data-width=300}
+## {data-width=460}
 
 ### Metadata
 
@@ -878,7 +878,7 @@ output$industryMap <- renderLeaflet({
 ```
 
 
-## {data-width=300}
+## {data-width=460}
 
 ### Industry description
 
@@ -944,13 +944,63 @@ output$buttonsList <- renderUI({
 
 # Comments {#comment data-orientation="columns" `r if (T & hideTabs) ".hidden"`}
 
-## {data-width=50}
+## {data-width=30}
 
 ## {data-width=150}
 
-### Initial comments
+### Initial comments {data-height="auto"}
 
-### Suggested comments
+```{r}
+renderTable({
+   cellComment()
+})
+```
+
+### {data-height="auto"}
+
+```{r}
+DT::renderDT({
+##~ renderPrint({
+   cf <- rvSelectCF()
+   industry <- rvSelectIndustry()
+   str(cf)
+   str(industry)
+   da <- rvHumanUseCF()
+   da <- da[da[[1]] %in% industry,]
+   da <- cbind(CF=paste0("<abbr title='",CFName(cf),"'>",cf,"</abbr>")
+              ,Industry=paste0("<abbr title='",industry,"'>",rownames(da),"</abbr>")
+              ,da[,-1])
+   b <- DT::datatable(da,rownames=!TRUE,escape=FALSE,selection="none"
+                      # ,extensions="Scroller"
+                       ,options=list(NULL
+                                    ,ordering=F
+                                   # ,scroller=T
+                                   # ,scrollY="calc(100vh - 265px)"
+                                    ,pageLength=nrow(da)
+                                    ,dom="t"
+                                    )
+                       )
+   b <- DT::formatStyle(b,colnames(da)
+                     ,backgroundColor=DT::styleEqual(c('0','1','2'
+                                                      ,kwdGreen,kwdYellow,kwdRed
+                                                     )
+                                           ,c("palegreen","LemonChiffon","lightsalmon"
+                                             ,"palegreen","LemonChiffon","lightsalmon"))
+                     ,backgroundSize='95% 18pt'
+                     ,backgroundRepeat='no-repeat'
+                     ,backgroundPosition='center'  
+                     )
+   b
+})
+```
+
+### Discussion
+
+```{r}
+renderTable({
+   rvCommentTable()
+})
+```
 
 ### {data-height="auto"}
 
@@ -961,7 +1011,28 @@ output$buttonsComment <- renderUI({
 })
 ```
 
-## {data-width=50}
+## {data-width=70}
+
+### Leave a comment {data-height="240"}
+
+```{r}
+# fillRow(flex=c(2,1)
+#   ,fillCol(flex=NA
+       textAreaInput("opinion","Suggestion",""
+                     ,placeholder="Your review, remarks, suggestions - any opinion"
+                     ,width="calc(100% - 0px)"
+                     ,height="200px"
+                     )
+  # )
+  # ,fillCol(flex=c(NA,NA)
+      textInput("author","Your name","",placeholder="Your name"
+                ,width="calc(100% - 0px)")
+      actionLink("submit","Submit")
+  # )
+#)
+```
+> Your name, your comment will be visible for everyone. Your comment will be moderated. It can be edited or deleted by Geranium administrator.
+
 
 
 ```{r, eval=T, child="include/welcome.Rmd"}
@@ -1000,6 +1071,22 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 
 ```{r}
 checkboxInput("comment","Comments are available",value=config$comment)
+downloadLink("downloadComment","Download comments")
+fileext <- c(".csv",".xlsx")[2]
+output$downloadComment <- downloadHandler(
+   filename=function() {
+      paste0("comments-",format(Sys.time(),"%Y%m%d-%H%M"),fileext)
+   }
+   ,content=function(file) {
+      req(file.exists(commentFile))
+      da <- jsonlite::fromJSON(commentFile)
+      req(nrow(da)>0)
+      switch(fileext
+            ,'.csv'=write.csv(da,file)
+            ,'.xlsx'=xlsx::write.xlsx(da,file,sheetName="comments",append=FALSE)
+            )
+   }
+)
 ```
 
 ##

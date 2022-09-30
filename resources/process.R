@@ -1197,6 +1197,8 @@
 'CFCode' <- function(cfname) {
    if (missing(cfname))
       return(scenarioCF$CF_code)
+   if (length(grep("\\d{4}",cfname)))
+      return(gsub(".*(\\d{4}).*","\\1",cfname))
    scenarioCF$CF_code[match(cfname,scenarioCF$CF_name)]
 }
 'CFName' <- function(cfcode) {
