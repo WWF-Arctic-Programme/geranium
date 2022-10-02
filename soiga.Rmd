@@ -1063,9 +1063,9 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 
 # {#admin .hidden}
 
-##
+## {data-width=100}
 
-##
+## {data-width=180}
 
 ### Comments
 
@@ -1087,6 +1087,16 @@ output$downloadComment <- downloadHandler(
             )
    }
 )
+br()
+br()
+DT::renderDT({
+   req(file.exists(commentFile))
+   da <- jsonlite::fromJSON(commentFile)
+   da <- da[order(da$Time,decreasing=TRUE),]
+   req(nrow(da)>0)
+   b <- DT::datatable(da,rownames="")
+   b
+})
 ```
 
-##
+## {data-width=100}

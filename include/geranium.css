@@ -12,8 +12,21 @@
    height: 24px;
 }
 .dataTables_filter .form-control {
+   font-size: 100%;
    height: 24px;
    margin-top: -1em;
+}
+.dataTables_length .custom-select {
+   height: 24px;
+   padding: 0;
+   font-size: 100%;
+}
+.dataTables_paginate {
+   margin-top: -6px !important;
+}
+.dataTables_paginate .page-link {
+   padding-top: 2px;
+   padding-bottom: 2px;
 }
 #cfmeta, #industrymeta {
    font-size: 150%;

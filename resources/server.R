@@ -1374,7 +1374,7 @@ observeEvent(input$comment,{
       isolate({
          cat("submission!\n")
          req(!is.null(opinion <- input$opinion))
-         da2 <- data.frame(cf=cf,industry=industry
+         da2 <- data.frame(CF=cf,Industry=industry
                           ,Time=format(Sys.time(),"%Y-%m-%d %H:%M")
                           ,Author=if (is.null(input$author)) "" else input$author
                           ,Comment=opinion
@@ -1388,10 +1388,10 @@ observeEvent(input$comment,{
          }
       })
    }
-   da <- da[da$cf %in% cf & da$industry %in% industry,]
+   da <- da[da$CF %in% cf & da$Industry %in% industry,]
    req(nrow(da)>0)
-   da$cf <- NULL
-   da$industry <- NULL
+   da$CF <- NULL
+   da$Industry <- NULL
    da <- da[order(da$Time,decreasing=TRUE),]
    da
 })
