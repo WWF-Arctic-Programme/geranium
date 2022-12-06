@@ -49,6 +49,9 @@
 .selectize-dropdown .optgroup-header {
    font-size: 120%;
 }
+.flexfill-item.flowing-content-shim.flowing-content-container {
+   top: 18px !important;
+}
 @media notprint, notscreen and (max-width: 1268px) and (min-width: 769px) {
    body {
       width: 100%;
@@ -159,6 +162,9 @@ h1 {
 }
 .navbar-brand a:hover {
    color: #000;
+}
+.navbar-header .navbar-logo {
+   display: inline-block;
 }
 .wwf {
    font-family: wwf;

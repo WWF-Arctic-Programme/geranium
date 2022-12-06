@@ -1,4 +1,3 @@
-source("resources/process.R")
 invisible(Sys.setlocale("LC_TIME","C"))
 if (quickStart <- file.exists(sessionFile <- "quickload/session.Rdata"))
    load(sessionFile)
@@ -24,6 +23,7 @@ isShiny <- ursa:::.isShiny()
 # mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
 mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
+# mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
 pGrYl <- cubehelix(5,light=91,dark=221,weak=220,rich=165,hue=2)
 pYlRd <- cubehelix(5,light=91,dark=221,weak=110,rich=165,hue=2,inv=TRUE)
 pRd <- cubehelix(5,light=233,dark=91,weak=110,rotate=0,hue=2)
@@ -99,10 +99,32 @@ if (!quickStart) {
    rules <- jsonlite::fromJSON("requisite/buffer-rules.json")
    blank <- (!is.na(dist2land["ID"]))-1L
 }
+#rules <- jsonlite::fromJSON("buffer-rules.json")
+#dist2land <- ursa_read("dist2land-f.tif")
+#blank <- (!is.na(dist2land["ID"]))-1L
+ref <- polygonize(blank,engine="sf")
+ref$ID <- seq(spatial_count(ref))
 cell <- ursa(dist2land["dist"],"cell")*1e-3
+nameInit <- "---"
+seasonList <- c("Annual maximum"
+               ,format(seq(as.Date("2020-01-15"),length.out=12,by="1 month"),"%B"))[]
+methodList <- c('overlap'=paste(sQuote(kwdRed),"colors overwrite",sQuote(kwdYellow),"colors")
+               ,'threat'=paste("Accentuated",sQuote(kwdRed),"palette")
+               ,'mix'=paste(sQuote(kwdRed),"and",sQuote(kwdYellow),"mixed colors")
+               ,'source'=paste(sQuote(kwdRed),"and","source")
+               )
+nameAllHuman <- "All human use"
 sepRules <- " » "
 sepRules <- iconv(sepRules,to="UTF-8")
 pattRules <- paste0("^(.+\\S)",gsub("\\s","\\\\s",sepRules),"(\\S.+)$")
+#activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity)) ## deprecated
+activity <- unique(gsub(pattRules,"\\1",rules$activity))
+activity <- c(noneActivity,allActivity,activity)
+options(spinner.color="#ECF0F5")
+nameSelector <- "Selector"
+nameEditor <- "Editor"
+nameClick <- "Click region(s) on map"
+cell <- ursa(dist2land["dist"],"cell")*1e-3
 if (F)
    clf <- compose_coastline(spatial_transform(spatial_read("crop-coast.geojson"),6931)
                            ,fill="grey90",col="grey70")

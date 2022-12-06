@@ -1,9 +1,8 @@
-source("resources/global.R",encoding="UTF-8")
-source("resources/header.R",encoding="UTF-8")
 exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL
                           ,prev=integer(),curr=integer() ## need for removing forgiven clean
                           ,cd=character(),domain=NULL
                           ,CF=NULL,industry=NULL,conflict=NULL#,initEPA=FALSE
+                          ,rebuildNAO=TRUE
                           )
 proxyCross <- DT::dataTableProxy("cross")
 proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
@@ -1251,7 +1250,7 @@ if (T) observe({
 # observeEvent(input$regionLeaflet_shape_click,{
 # observeEvent(rvAOI(),{
   # rvAOI()
-   cat(" ************* CLICKED *************\n")
+  # cat(" ************* CLICKED *************\n")
    proxyRegion <- leafletProxy("regionLeaflet")
    isPAs <- rvInitEPA()
   # isPAs <- ((length(input$initEPA)>0)&&(input$initEPA>0))
@@ -1322,12 +1321,13 @@ observeEvent(input$initEPA,{
    metricsMap()
 })
 observeEvent(input$actionNAC,{
-   cat("initialice NACR map...\n")
+   cat("initialize NACR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"NAC")
 })
 observeEvent(input$actionNAO,{
-   cat("initialice NAOR map...\n")
+   cat("initialize NAOR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"NAO")
+  # updateActionLink(input$actionNAC)
 })
 observe({
   # showNotification("update controls",duration=3)
@@ -1400,3 +1400,7 @@ if (T) observeEvent(input$submit,{
    req(!is.null(opinion <- input$opinion))
    updateTextAreaInput(session,"opinion",value="")
 })
+output$rebuildNAO <- reactive({
+   isTRUE(exchange$rebuildNAO)
+})
+outputOptions(output,"rebuildNAO",suspendWhenHidden=FALSE)

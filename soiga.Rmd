@@ -64,7 +64,7 @@ const item2 = document.getElementsByClassName("navbar-author");
 item[0].appendChild(item2[0]);
 ```
 
-```{r header, eval=F, code=readLines("resources/header.R")}
+```{r header, eval=T, code=readLines("resources/header.R")}
 ```
 
 ```{r server, code=readLines("resources/server.R")}
@@ -547,10 +547,10 @@ fillCol(flex=c(1,NA,NA)
          ##~ ,checkboxInput("regionDesc","Show Existing Protected Areas (it is not quick)")
       ##~ )
       ##~ ,column(3
-         ##~ ,checkboxInput("switchNAO","Show NAO")
+         ##~ ,checkboxInput("switchNAO","Show NAOR")
       ##~ )
       ##~ ,column(3
-         ##~ ,checkboxInput("switchNAC","Show NAC")
+         ##~ ,checkboxInput("switchNAC","Show NACR")
       ##~ )
    ##~ )
    ,fixedRow(NULL
@@ -567,12 +567,12 @@ fillCol(flex=c(1,NA,NA)
       )
       ,column(2
          ,conditionalPanel(condition="input.actionNAO=='0'"
-            ,actionLink("actionNAO","Show NAO")
+            ,actionLink("actionNAO","Show NAOR")
          )
       )
       ,column(2
          ,conditionalPanel(condition="input.actionNAC=='0'"
-            ,actionLink("actionNAC","Show NAC")
+            ,actionLink("actionNAC","Show NACR")
          )
       )
    )
@@ -640,9 +640,11 @@ fillRow(flex=c(6,1)
    ,fillCol(flex=1
       ,renderPlotly({
          metrics <- rvRegionStats()
+         saveRDS(metrics,"C:/tmp/interim.rds")
          result <- metrics$'IND'
+         localNAC <- concernNAC[,names(result)]
          IND <- data.frame(industry=names(result),value=result
-                          ,ref=colSums(concernNAC,na.rm=TRUE)/spatial_count(pu)*metrics$'nPU'
+                          ,ref=colSums(localNAC,na.rm=TRUE)/spatial_count(pu)*metrics$'nPU'
                           )
          IND <- IND[order(IND$value,decreasing=TRUE),]
          IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
@@ -651,6 +653,7 @@ fillRow(flex=c(6,1)
          ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
          names(ct) <- sname
          mcol <- ct[iname]
+         meanNAC <- sum(colSums(localNAC,na.rm=TRUE))/spatial_count(pu)
          mvalue <- meanNAC*metrics$nPU/length(IND$industry)
          p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
                      ,marker=list(color=mcol),name='Region'
@@ -772,6 +775,12 @@ output$downloadMetrics <- downloadHandler(
       if (is.null(aoi))
          return("Global metrics.xlsx")
       lab <- regionSF[[input$region]]$region[aoi$id]
+      str(aoi$id)
+      str(regionSF[[input$region]])
+      lab <- strsplit(sort(lab),split="\\s") |>
+         do.call(c,args=_) |>
+         unique() |>
+         paste(collapse=" ")
       paste0(lab," metrics.xlsx")
    }
    ,content=function(file) {

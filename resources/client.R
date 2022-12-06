@@ -22,7 +22,11 @@
    str(a)
 }
 'selectionRegion' <- function() {
-   cat(as.character(match.call())[1],":\n")
+   cat(as.character(match.call())[1]
+      ,as.character(packageVersion("flexdashboard"))
+      ,as.character(packageVersion("ursa"))
+      ,":\n"
+      )
    s2 <- rvAOI()
    if (is.ursa(s2)) {
       ##~ str(names(s2))
@@ -149,7 +153,7 @@
                        ,options=list(NULL
                                     ,ordering=F
                                     ,scroller=T
-                                    ,scrollY="calc(100vh - 265px)"
+                                    ,scrollY="calc(100vh - 275px)"
                                     ,pageLength=nrow(da)
                                     ,dom="ift"
                                     )
@@ -188,7 +192,7 @@
                        ,options=list(NULL
                                     ,ordering=FALSE
                                     ,scroller=TRUE
-                                    ,scrollY="calc(100vh - 265px)"
+                                    ,scrollY="calc(100vh - 275px)"
                                     ,scrollX=TRUE
                                     ,pageLength=nrow(da)
                                     ,dom="ift"
@@ -226,14 +230,14 @@
    cat(as.character(match.call())[1],":\n")
    switchDomain(TRUE)
   # req(res <- rvActivityStat())
-   res <- industryAbbr # read.csv("requisite/industry.csv")
+   res <- industryAbbr[,c(1,2)] # read.csv("requisite/industry.csv")
    b <- DT::datatable(res,rownames=FALSE,escape=!FALSE
                 ##~ ,class="display overcontent"
                 ,extension=c("Scroller")
                 ,selection=list(mode="single",target="row")
                 ,options=list(NULL
                              ##~ ,columnDefs=list(list(className='dt-right',targets=seq(1,ncol(res))))
-                             ,scrollY="calc(100vh - 255px)"
+                             ,scrollY="calc(100vh - 265px)"
                             # ,fixedColumns=if (F) F else list(leftColumns=2)
                              ,ordering=T
                              ,scroller=T
@@ -257,7 +261,7 @@
                 ,selection=list(mode="single",target="row")
                 ,options=list(NULL
                              ##~ ,columnDefs=list(list(className='dt-right',targets=seq(1,ncol(res))))
-                             ,scrollY="calc(100vh - 255px)"
+                             ,scrollY="calc(100vh - 265px)"
                             # ,fixedColumns=if (F) F else list(leftColumns=2)
                              ,ordering=T
                              ,scroller=T
@@ -293,7 +297,7 @@
                 ,selection=list(mode="single",target=c("cell","row+column")[2])
                 ,options=list(NULL
                              ##~ ,columnDefs=list(list(className='dt-right',targets=seq(1,ncol(res))))
-                             ,scrollY="calc(100vh - 255px)"
+                             ,scrollY="calc(100vh - 265px)"
                              ,scrollX=T
                              ,fixedColumns=if (F) F else list(leftColumns=2)
                              ,ordering=T
@@ -543,40 +547,88 @@
    activity <- rvIndustryGroup()
   # abbr <- industryCode(industry)
   # activity <- names(industries)[input$cfdata_rows_selected]
-   fname <- paste0("include/industry-",activity,".Rmd")
-   print(file.exists(fname))
-   print(fname)
    if (F) {
-      a1 <- knitr::knit(fname,quiet=FALSE)
-      a2 <- markdown::markdownToHTML(a1,fragment.only=TRUE)
-      ret <- HTML(a2)
-      str(ret)
+      fname <- paste0("include/industry-",activity,".Rmd")
+      print(file.exists(fname))
+      print(fname)
+      if (F) {
+         a1 <- knitr::knit(fname,quiet=FALSE)
+         a2 <- markdown::markdownToHTML(a1,fragment.only=TRUE)
+         ret <- HTML(a2)
+         str(ret)
+      }
+      else {
+        # wd <- setwd(dirname(fname))
+         fileout <- "res1.html" # "res1.html" ## tempfile()
+         rmarkdown::render(fname
+                          ,output_format=rmarkdown::html_fragment()
+                         # ,output_format=rmarkdown::html_vignette(css=NULL)
+                          ,output_file=fileout,quiet=TRUE
+                         # ,params=list(prm=analysis(),kind=1L)
+                          )
+         fileout <- file.path(dirname(fname),fileout)
+         a0 <- read_xml(fileout)
+         a1 <- as_list(a0)
+         id <- paste0("i",digest::digest(unname(industry),"crc32"))
+         ind <- which(!sapply(a1[[1]],function(b1) isTRUE(id==attr(b1,"id"))))
+         for (i in rev(tail(ind,-1))) {
+            xml_remove(xml_child(a0,search=i))
+         }
+        # fileout <- gsub("res1","res2",fileout)
+         write_html(a0,fileout)
+         ret <- scan(fileout,what=character(),encoding="UTF-8",quiet=TRUE)
+         ret <- HTML(ret)
+        # ret <- paste0(ret,collapse="\n")
+        # str(ret)
+        # ret <- fileout
+         file.remove(fileout)
+      }
    }
    else {
-     # wd <- setwd(dirname(fname))
       fileout <- "res1.html" # "res1.html" ## tempfile()
-      rmarkdown::render(fname
-                       ,output_format=rmarkdown::html_fragment()
-                      # ,output_format=rmarkdown::html_vignette(css=NULL)
-                       ,output_file=fileout,quiet=TRUE
-                      # ,params=list(prm=analysis(),kind=1L)
-                       )
-      fileout <- file.path(dirname(fname),fileout)
-      a0 <- read_xml(fileout)
-      a1 <- as_list(a0)
-      id <- paste0("i",digest::digest(unname(industry),"crc32"))
-      ind <- which(!sapply(a1[[1]],function(b1) isTRUE(id==attr(b1,"id"))))
-      for (i in rev(tail(ind,-1))) {
-         xml_remove(xml_child(a0,search=i))
+      lut <- read.csv("./requisite/industry.csv")
+      if (length(ind <- match(industry,lut$industry))) {
+         if (nchar(lut$manual[ind]))
+            industry <- lut$manual[ind]
       }
-     # fileout <- gsub("res1","res2",fileout)
-      write_html(a0,fileout)
-      ret <- scan(fileout,what=character(),encoding="UTF-8",quiet=TRUE)
-      ret <- HTML(ret)
-     # ret <- paste0(ret,collapse="\n")
-     # str(ret)
-     # ret <- fileout
-      file.remove(fileout)
+      a0 <- read_xml("./include/industries.html",encoding="UTF-8",as_html=TRUE)
+      a1 <- as_list(a0)[[1]][[1]]
+      a1 <- lapply(a1,function(a2) {
+         if (!is.list(a2))
+            return(NULL)
+         if (is.null(a2$h2))
+            return(NULL)
+         h2 <- a2$h2[[1]]
+         if (h2!=activity)
+            return(NULL)
+         c2 <- attributes(a2)
+         a2 <- lapply(a2,function(a3) {
+            if (!is.list(a3))
+               return(NULL)
+            if (is.null(a3$h3))
+               return(a3)
+            h3 <- a3$h3[[1]]
+            if (h3!=industry)
+               return(NULL)
+            a3
+         })
+         ind2 <- sapply(a2,function(x) !is.null(x))
+         a2 <- a2[ind2]
+         c2$names <- c2$names[ind2]
+         attributes(a2) <- c2
+         a2
+      })
+      a1 <- a1[sapply(a1,function(x) !is.null(x))]
+      if (!length(a1)) {
+         ret <- HTML("")
+      }
+      else {
+         a0 <- as_xml_document(list(a1))
+         write_html(a0,fileout)
+         ret <- scan(fileout,what=character(),encoding="UTF-8",quiet=TRUE)
+         ret <- HTML(ret)
+         file.remove(fileout)
+      }
    }
    ret
 }

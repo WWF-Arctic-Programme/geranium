@@ -6,15 +6,19 @@ useExchange <- FALSE
 # invisible(stats::runif(352))
 seed <- sample(100:999,1)
 set.seed(seed)
-# require(ursa)
-if (!("shiny" %in% loadedNamespaces()))
-   require(shiny)
-if (!("ursa" %in% loadedNamespaces()))
-   require(ursa)
+#if (!("shiny" %in% loadedNamespaces()))
+#   require(shiny)
+lib.loc <- if (staffOnly) "./packages" else NULL
+if (!("ursa" %in% loadedNamespaces())) {
+   require(ursa,lib.loc=lib.loc)
+}
 if (isShiny <- ursa:::.isShiny()) {
   # showModal(modalDialog(title="Initialization"
   #                      ,"Data preparing",size="s",easyClose = TRUE,footer = NULL))
    ursa:::.elapsedTime("require packages -- start")
+   if (!("flexdashboard" %in% loadedNamespaces())) {
+      require(flexdashboard,lib.loc=lib.loc)
+   }
    require(leaflet)
    require(leaflet.extras)
    require(leafpm)
@@ -33,25 +37,6 @@ if (isShiny <- ursa:::.isShiny()) {
 #md <- rmarkdown::metadata
 #isShiny <- isTRUE(md$runtime=="shiny")
 isReactive <- isShiny & F
-#rules <- jsonlite::fromJSON("buffer-rules.json")
-#dist2land <- ursa_read("dist2land-f.tif")
-#blank <- (!is.na(dist2land["ID"]))-1L
-ref <- polygonize(blank,engine="sf")
-ref$ID <- seq(spatial_count(ref))
-cell <- ursa(dist2land["dist"],"cell")*1e-3
-nameInit <- "---"
-seasonList <- c("Annual maximum"
-               ,format(seq(as.Date("2020-01-15"),length.out=12,by="1 month"),"%B"))[]
-methodList <- c('overlap'=paste(sQuote(kwdRed),"colors overwrite",sQuote(kwdYellow),"colors")
-               ,'threat'=paste("Accentuated",sQuote(kwdRed),"palette")
-               ,'mix'=paste(sQuote(kwdRed),"and",sQuote(kwdYellow),"mixed colors")
-               ,'source'=paste(sQuote(kwdRed),"and","source")
-               )
-nameAllHuman <- "All human use"
-#activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity)) ## deprecated
-activity <- unique(gsub(pattRules,"\\1",rules$activity))
-activity <- c(noneActivity,allActivity,activity)
-options(spinner.color="#ECF0F5")
-nameSelector <- "Selector"
-nameEditor <- "Editor"
-nameClick <- "Click region(s) on map"
+source("resources/process.R")
+source("resources/global.R",encoding="UTF-8")
+# source("resources/header.R",encoding="UTF-8")

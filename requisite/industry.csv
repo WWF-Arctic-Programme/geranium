@@ -1,34 +1,34 @@
-"industry","abbr"
-"Small-ship expedition cruises and other small-scale tourism activities","TET"
-"Mass tourism","TMT"
-"Underwater cables","IUC"
-"Underwater oil&gas pipes","IOP"
-"Windmills, windparks","IW"
-"Coastal infrastructure","ICI"
-"Oil terminals","IOT"
-"Dredging","ID"
-"oil production","MOP"
-"gas production","MGP"
-"Other minerals production/mining","MOM"
-"Coastal mining","MCM"
-"Tanker (oil and petrochemicals)","ST"
-"Cargo/Container/Passenger - Heavy Fuel Oil","SHF"
-"Cargo/Container/Passenger - Light Fuel Oil","SLF"
-"Cargo/Container/Passenger - LNG-powered vessel","SLN"
-"Nuclear-powered vessel","SN"
-"Cages (salmon, cod etc)","AC"
-"Mussels, Oysters, scallops etc","AM"
-"seaweed farming","AS"
-"bottom trawling","FBT"
-"snurrevod","FSN"
-"pelagic trawling","FPT"
-"bottom dredging","FBD"
-"seaweed mowing","FSM"
-"invertebrates collection by divers","FIC"
-"Longline fishing","FLF"
-"Crab traps","FCT"
-"fishing rods","FFR"
-"purse seiner","FPS"
-"bottom gillnets","FBG"
-"drift nets","FDN"
-"steine and stationary seine","FSE"
+"industry","abbr","manual"
+"Small-ship expedition cruises and other small-scale tourism activities","TET","Ecotourism"
+"Mass tourism","TMT","Mass tourism"
+"Underwater cables","IUC","Submarine communication cables"
+"Underwater oil&gas pipes","IOP","Underwater pipelines"
+"Windmills, windparks","IW","Offshore Wind Farms"
+"Coastal infrastructure","ICI","Coastal infrastructure (except oil & gas infrastructure)"
+"Oil terminals","IOT","Coastal oil terminals (including other petrochemical storing facilities)"
+"Dredging","ID","Dredging"
+"oil production","MOP","Oil Production"
+"gas production","MGP","Gas production"
+"Other minerals production/mining","MOM","Other off-shore mining"
+"Coastal mining","MCM","Coastal on-shore mining"
+"Tanker (oil and petrochemicals)","ST","Tankers carrying oil and other petrochemicals"
+"Cargo/Container/Passenger - Heavy Fuel Oil","SHF","Cargo/Passenger Vessel using HFO"
+"Cargo/Container/Passenger - Light Fuel Oil","SLF","Cargo/Passenger Vessel using LFO"
+"Cargo/Container/Passenger - LNG-powered vessel","SLN","Cargo/Passenger LNG-powered Vessel"
+"Nuclear-powered vessel","SN","Nuclear-powered Vessel"
+"Cages (salmon, cod etc)","AC","Cages for salmon, cod or other fish species"
+"Mussels, Oysters, scallops etc","AM","Mussels & Oysters & Scallops"
+"seaweed farming","AS","Seaweed Farming"
+"bottom trawling","FBT",
+"snurrevod","FSN",
+"pelagic trawling","FPT",
+"bottom dredging","FBD",
+"seaweed mowing","FSM",
+"invertebrates collection by divers","FIC",
+"Longline fishing","FLF",
+"Crab traps","FCT",
+"fishing rods","FFR",
+"purse seiner","FPS",
+"bottom gillnets","FBG",
+"drift nets","FDN",
+"steine and stationary seine","FSE",

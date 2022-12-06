@@ -109,7 +109,10 @@ filetype <- knitr::opts_knit$get("rmarkdown.pandoc.to")
 }
 ```
 
-```{r workingir, code=readLines("instantReport.R")}
+```{r workingir, eval=!ursa:::.isShiny()}
+wd <- setwd("..")
+source("resources/header.R")
+setwd(wd)
 ```
 
 ```{r aoi, eval=T}
@@ -136,7 +139,7 @@ if (isAOI) {
    if (is.null(lab))
       lab <- "Custom Selection"
    if (length(lab)>1)
-      lab <- paste(lab,sep=", ")
+      lab <- paste(lab,collapse=", ")
 }
 ```
 
@@ -173,7 +176,10 @@ if (T) {
       legend("bottomright",legend=c('Gridded (PUs) selection','Original selection'))
 }
 panel_decor(coast.fill="#00000010")
-output <- knitr::include_graphics(compose_close())
+ret <- compose_close()
+opW <- options(warn=0)
+output <- try(knitr::include_graphics(ret))
+options(opW)
 ```
 
 ```{r selectional, fig.cap="Selection"}
