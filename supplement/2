@@ -1,0 +1,50 @@
+Installing package into 'D:/ongoing/.arcnet/lib'
+(as 'lib' is unspecified)
+trying URL 'https://cloud.r-project.org/bin/windows/contrib/4.2/jsonlite_1.8.3.zip'
+Content type 'application/zip' length 1104927 bytes (1.1 MB)
+==================================================
+downloaded 1.1 MB
+
+Downloading package from url: https://cloud.r-project.org/src/contrib/Archive/flexdashboard/flexdashboard_0.5.2.tar.gz
+Installing 1 packages: jsonlite
+Installing package into 'D:/ongoing/.arcnet/lib'
+(as 'lib' is unspecified)
+trying URL 'https://cloud.r-project.org/src/contrib/jsonlite_1.8.4.tar.gz'
+Content type 'application/x-gzip' length 1053135 bytes (1.0 MB)
+==================================================
+downloaded 1.0 MB
+
+* installing *source* package 'jsonlite' ...
+** package 'jsonlite' successfully unpacked and MD5 sums checked
+** using staged installation
+** libs
+installing to D:/ongoing/.arcnet/lib/00LOCK-jsonlite/00new/jsonlite/libs/x64
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** installing vignettes
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (jsonlite)
+
+The downloaded source packages are in
+	'C:\temp\Rtmp0a8jfa\downloaded_packages'
+Installing package into 'D:/ongoing/.arcnet/lib'
+(as 'lib' is unspecified)
+* installing *source* package 'flexdashboard' ...
+** package 'flexdashboard' successfully unpacked and MD5 sums checked
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (flexdashboard)
