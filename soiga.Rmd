@@ -640,7 +640,7 @@ fillRow(flex=c(6,1)
    ,fillCol(flex=1
       ,renderPlotly({
          metrics <- rvRegionStats()
-         saveRDS(metrics,"C:/tmp/interim.rds")
+        # saveRDS(metrics,"C:/tmp/interim.rds")
          result <- metrics$'IND'
          localNAC <- concernNAC[,names(result)]
          IND <- data.frame(industry=names(result),value=result
@@ -830,7 +830,7 @@ output$instantReport <- downloadHandler(
  
 # CF desc {#descCF .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## {data-width=460}
+## {data-width=500}
 
 ### Metadata
 
@@ -850,7 +850,7 @@ fillCol(flex=c(NA,1,1)
 )
 ```
 
-## {data-width=500}
+## {data-width=460}
 
 ### Map
 
@@ -861,7 +861,7 @@ fillCol(flex=c(NA,1,1)
 
 # I desc {#descIndustry .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## {data-width=500}
+## {data-width=460}
 
 ### Industry map 
 
@@ -887,7 +887,7 @@ output$industryMap <- renderLeaflet({
 ```
 
 
-## {data-width=460}
+## {data-width=500}
 
 ### Industry description
 

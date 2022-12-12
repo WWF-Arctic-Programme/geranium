@@ -173,6 +173,20 @@ h1 {
 .admin, .admin a {
    color: transparent;
 }
+.flowing-content-container:not(.sbframe-commentary) {
+   padding-bottom: 12px;
+}
+/*
+.flowing-content-container {
+   overflow: hidden; 
+}
+*/
+
+.linebutton {
+   overflow: hidden;
+   padding-bottom: 12px;
+   padding-top: 12px;
+}
 @media screen and (min-width: 1269px) {
    .navbar-brand::after, .navbar-author:empty:before {
       content: '';  /* '\3009' */

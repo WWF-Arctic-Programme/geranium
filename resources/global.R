@@ -22,8 +22,8 @@ requireNamespace("sf")
 isShiny <- ursa:::.isShiny()
 # mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
-mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
-# mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
+# mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
+mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
 pGrYl <- cubehelix(5,light=91,dark=221,weak=220,rich=165,hue=2)
 pYlRd <- cubehelix(5,light=91,dark=221,weak=110,rich=165,hue=2,inv=TRUE)
 pRd <- cubehelix(5,light=233,dark=91,weak=110,rotate=0,hue=2)

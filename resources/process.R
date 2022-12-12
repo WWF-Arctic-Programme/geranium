@@ -1165,7 +1165,7 @@
       if (span)
          return(txt)
    }
-   shiny::HTML(paste0("<p",ifelse(border," class=\"areabutton\"",""),">",txt,"</p>"))
+   shiny::HTML(paste0("<p",ifelse(border," class=\"areabutton\""," class=\"linebutton\""),">",txt,"</p>"))
 }
 
 'monther' <- function(s) {
