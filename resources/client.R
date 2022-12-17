@@ -109,18 +109,21 @@
        )
 }
 'buttonsCF' <- function() {
+   cat("   ",as.character(match.call())[1],":\n")
    b <- buttonsTemplate()
    b$cf_details <- NULL
    b$industry_list <- NULL
    navButton(b)
 }
 'buttonsIndustry' <- function() {
+   cat("   ",as.character(match.call())[1],":\n")
    b <- buttonsTemplate()
    b$industry_details <- NULL
    b$cf_list <- NULL
    navButton(b)
 }
 'buttonsComment' <- function() {
+   cat("   ",as.character(match.call())[1],":\n")
    b <- buttonsTemplate()
   # b$industry_details <- NULL
   # b$cf_details <- NULL
@@ -388,6 +391,7 @@
    navButton(list(b1,b2))
 }
 'buttonsList' <- function() {
+   cat(as.character(match.call())[1],":\n")
    lab1 <- ""
    industry <- rvSelectIndustry()
    if (!is.null(industry)) {
@@ -540,7 +544,7 @@
    b3 <- navButton("Spatial query","#map",col="map",span=T)
    navButton(list(b3,b2,b1))
 }
-'industryDescription' <- function() {
+'industryDescription' <- function(simple=FALSE) {
    cat(as.character(match.call())[1],":\n")
    req(industry <- rvSelectIndustry())
   # activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
@@ -606,7 +610,7 @@
             if (!is.list(a3))
                return(NULL)
             if (is.null(a3$h3))
-               return(a3)
+               return(if (simple) NULL else a3)
             h3 <- a3$h3[[1]]
             if (h3!=industry)
                return(NULL)
@@ -616,6 +620,7 @@
          a2 <- a2[ind2]
          c2$names <- c2$names[ind2]
          attributes(a2) <- c2
+         str(a2)
          a2
       })
       a1 <- a1[sapply(a1,function(x) !is.null(x))]
@@ -685,8 +690,11 @@
    else {
       cond <- FALSE
    }
-   if (!cond)
+   if (!cond) {
+      cat("   cond is:",cond,"\n")
       return(NULL)
+   }
+   cat("   action is:",action,"\n")
    proxyOnlyCF %>% selectRows(NULL)
    proxyCross %>% selectRows(NULL)
    proxyCross %>% selectColumns(NULL)
@@ -809,7 +817,7 @@
    ret
 }
 'indexMap' <- function(map,index) {
-   ursa:::.elapsedTime("A")
+   ursa:::.elapsedTime("mapA")
    g0 <- session_grid()
    session_grid(dist2land)
    a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
@@ -822,11 +830,11 @@
    session_grid(g0)
    pal <- leaflet::colorFactor(palette=as.character(ct),levels=v)
    if (T) {
-      ursa:::.elapsedTime("B")
+      ursa:::.elapsedTime("mapB")
       d <- by(b,b$name,function(x) spatial_union(x)) #|> do.call(rbind,args=_)
       b <- sf::st_sf(name=names(d),geometry=sf::st_sfc(d,crs=spatial_crs(b)))
       rm(d)
-      ursa:::.elapsedTime("C")
+      ursa:::.elapsedTime("mapC")
    }
    showAOI <- !is.null(rvAOI())
    showPAs <- isTRUE(input$initEPA>0)
@@ -877,6 +885,6 @@
                                         ##~ )
                         ##~ ,options=layersControlOptions(collapsed=FALSE)
                         ##~ )
-   ursa:::.elapsedTime("D")
+   ursa:::.elapsedTime("mapD")
    map
 }

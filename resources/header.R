@@ -8,9 +8,9 @@ seed <- sample(100:999,1)
 set.seed(seed)
 #if (!("shiny" %in% loadedNamespaces()))
 #   require(shiny)
-lib.loc <- if (staffOnly) "./packages" else NULL
+# lib.loc <- if (staffOnly) "./packages" else NULL
 if (!("ursa" %in% loadedNamespaces())) {
-   require(ursa,lib.loc=lib.loc)
+   require(ursa)# ,lib.loc=lib.loc)
 }
 if (isShiny <- ursa:::.isShiny()) {
   # showModal(modalDialog(title="Initialization"
@@ -37,6 +37,17 @@ if (isShiny <- ursa:::.isShiny()) {
 #md <- rmarkdown::metadata
 #isShiny <- isTRUE(md$runtime=="shiny")
 isReactive <- isShiny & F
+wd <- {
+   if (file.exists("soiga.Rmd"))
+      setwd(".")
+   else if (file.exists("../soiga.Rmd"))
+      setwd("..")
+  # else if (file.exists("../../soiga.Rmd"))
+  #    setwd("../..")
+   else
+      stop("dir structure violated?")
+}
 source("resources/process.R")
 source("resources/global.R",encoding="UTF-8")
 # source("resources/header.R",encoding="UTF-8")
+setwd(wd)

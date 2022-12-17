@@ -1,0 +1,19 @@
+---
+pagetitle: Geranium chunks
+title: Test chunks for WWF ArtNet Geranium Tool
+author: Nikita Platonov
+---
+
+```{r}
+options(width=190)
+require(ursa)
+requireNamespace("sf")
+packageVersion("ursa")
+packageVersion("sf")
+sf::sf_extSoftVersion()
+load("testshiny.Rdata")
+#PAs
+spatial_crs(PAs)
+spatial_crs(PAs) <- 4326
+spatial_crs(PAs)
+```

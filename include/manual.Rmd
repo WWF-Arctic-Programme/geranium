@@ -7,9 +7,9 @@ output:
 # &shy; {#manual data-icon="ion-help" `r if (T & !is.null(rmarkdown::metadata[["author"]])) ".hidden"` data-orientation="columns"}
 
 ```{r}
-# htmltools::includeHTML('manual1.html')
-htmltools::includeMarkdown('manual1.Rmd')
-# htmltools::HTML(markdown::markdownToHTML('manual1.Tmd',fragment.only=!TRUE))
+# htmltools::includeHTML('manual2.html')
+htmltools::includeMarkdown('manual2.Rmd')
+# htmltools::HTML(markdown::markdownToHTML('manual2.Tmd',fragment.only=!TRUE))
 
 ```
 

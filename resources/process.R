@@ -311,7 +311,7 @@
       lut <- lut[ind,]
    }
    d6 <- c(name=colorize(d5,value=lut$val,pal=lut$pal,name=lut$desc))
-   if (devel <- FALSE) {
+   if (devel3 <- FALSE) {
      # str(d6)
       opW <- options(warn=1)
       if (T) {
@@ -807,6 +807,7 @@
       ursa:::.elapsedTime("0904f")
    }
    if (showPAs) {
+      opW <- options(warn=1) ## sf::sf_extSoftVersion() - old GDAL?
       m <- leaflet::addPolygons(m,data=PAs
                       ,label=grPAs
                       ,color=colPAs
@@ -815,6 +816,7 @@
                                                                  )
                       ,group=grPAs
                       )
+      options(opW)
       ursa:::.elapsedTime("0904g")
    }
    if (showAOI)
@@ -975,7 +977,7 @@
   # print(as.table(c(da)))
    ret
 }
-'crosstable' <- function(aoi=NULL,group=NULL,activity=NULL,verbose=FALSE) {
+'crossTable' <- function(aoi=NULL,group=NULL,activity=NULL,verbose=FALSE) {
    if (isShiny)
       cat("crosstable():\n")
   # if (T & is.null(aoi))
@@ -1050,7 +1052,8 @@
    if ((group[1]=="\\d")&&(grepl("max",season[1],ignore.case=TRUE))) {
       fname <- file.path("trafficlights"
                         ,paste0("t",digest::digest(unname(industry),"crc32")))
-      print(basename(fname))
+      if (isShiny)
+         print(basename(fname))
       if (envi_exists(fname)) {
          session_grid(NULL)
          return(read_envi(fname))
@@ -1212,22 +1215,28 @@
    if (isPA) {
      # str(PAs)
       if (is.null(aoi)) { ## full domain
-         ursa:::.elapsedTime("E")
+         ursa:::.elapsedTime("regE")
          aoi <- spatial_union(pu) |> spatial_transform(4326)
          spatial_data(aoi) <- data.frame(ID=0L)
       }
-      ursa:::.elapsedTime("A")
+      ursa:::.elapsedTime("regA")
      # PAs <- ursa:::.spatial_repair(PAs,verbose=TRUE)
       sf::st_agr(aoi) <- "constant"
      # PAs <- sf::st_cast(PAs,"POLYGON")
-      ind <- spatial_valid(PAs,each=TRUE)
-      ursa:::.elapsedTime("C")
-      epa <- sf::st_intersection(aoi,PAs)
-      ursa:::.elapsedTime("D")
+     # ind <- spatial_valid(PAs,each=TRUE)
+      ursa:::.elapsedTime("regC")
+      print(c(aoi=spatial_crs(aoi),PAs=spatial_crs(PAs)))
+     # if (spatial_crs(PAs)!=spatial_crs(aoi))
+     #    PAs <- spatial_transform(PAs,aoi)
+     # epa <- sf::st_intersection(aoi,PAs)
+      opW <- options(warn=1) ## old GDAL `sf::sf_extSoftVersion()`?
+      epa <- spatial_intersection(aoi,spatial_transform(PAs,aoi))
+      options(opW)
+      ursa:::.elapsedTime("regD")
    }
    if (is.null(ctable)) {
       ursa:::.elapsedTime("crosstable -- begin")
-      b <- crosstable(puaoi)
+      b <- crossTable(puaoi)
       ursa:::.elapsedTime("crosstable -- end")
    }
    else
@@ -1272,7 +1281,7 @@
       d$cover <- cvr[match(d$CF_code,rownames(cvr)),]
       d$value[d$value==1] <- -1
       d$value[d$value==2] <- 1
-      d$value[d$value==-1] <- mulNAC
+      d$value[d$value==-1] <- mulNAO
       d$score <- d$value*d$cover
       d <- by(d,d$month,function(x) sum(x$score))
       d <- d |> unclass() |> t() |>
@@ -1391,7 +1400,8 @@
    }
    if (showEPA & addPolygon) {
       ursa:::.elapsedTime("0914c")
-      map <- leaflet::addPolygons(map,data=PAs
+      opW <- options(warn=1) ## sf::sf_extSoftVersion() old GDAL?
+      map <- leaflet::addPolygons(map,data=spatial_transform(PAs,4326)
                       ,label=grPAs
                       ,color=colPAs
                       ,fillOpacity=0.2
@@ -1399,6 +1409,7 @@
                                                                  )
                       ,group=grPAs
                       )
+      options(opW)
       ursa:::.elapsedTime("0914f")
    }
    if (showEPA & addLegend) {
@@ -1495,4 +1506,11 @@
    if (!length(ind <- grep(b["reg"],aoi$region,ignore.case=TRUE)))
       return(NULL)
    aoi[ind,]
+}
+'sleeping_ext' <- function() {
+   if (isTRUE(getOption("sleepVerbose")))
+      cat("                                                               (paused)\n")
+   if (isTRUE((v <- getOption("sleepValue"))>0))
+      Sys.sleep(v)
+   return(invisible(NULL))
 }

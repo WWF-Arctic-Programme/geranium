@@ -1,5 +1,6 @@
 invisible(Sys.setlocale("LC_TIME","C"))
-if (quickStart <- file.exists(sessionFile <- "quickload/session.Rdata"))
+sessionFile <- "quickload/session.Rdata"
+if (quickStart <- (file.exists(sessionFile))&&(file.size(sessionFile)>1024))
    load(sessionFile)
 ##~ if (!file.exists("requisite/inventory.rds")) {
    ##~ list1 <- dir(path="output-overlap",pattern="interim\\.tif"
@@ -71,7 +72,7 @@ groupList <- c('\\d'=nameAllCF
 ##~ kwdGreen <- "'0'"
 kwdLUT <- c('0'=kwdGreen,'1'=kwdYellow,'2'=kwdRed,'9'=kwdGray)
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
-mulNAC <- 3
+mulNAO <- 3
 basename(listPD)
 if (!quickStart) {
    regionSF <- vector("list",length(listPD))
@@ -246,7 +247,7 @@ if (!quickStart) {
    concernNAC <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
                            ,function(x) length(which(x$value %in% "1"))) |>
                  unclass() |> data.frame()
-   concernNAC <- concernNAO+mulNAC*concernNAC
+   concernNAC <- concernNAC+mulNAO*concernNAO
    ursa:::.elapsedTime("concern prepare -- finish")
 }
 if (!quickStart) {
@@ -261,7 +262,7 @@ meanNAC <- sum(colSums(concernNAC,na.rm=TRUE))/spatial_count(pu)
 configFile <- "quickload/config.json"
 commentFile <- "quickload/comments.json"
 if (!file.exists(configFile)) {
-  config <- list(comment=FALSE)
+  config <- list(comment=TRUE,sleepValue=500)
   writeLines(jsonlite::toJSON(config),configFile)
 }
 config <- jsonlite::fromJSON(configFile)

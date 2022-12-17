@@ -1,0 +1,15 @@
+---
+title: "Test chunks for WWF ArtNet Geranium Tools"
+author: Nikita Platonov
+date: today
+format: html
+server: shiny
+---
+
+```{r}
+#| context: server
+renderPrint({
+   sf::sf_extSoftVersion()
+})
+```
+

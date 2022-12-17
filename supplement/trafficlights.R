@@ -48,7 +48,7 @@
 }
 wd <- setwd("..")
 if (T) {
-   source("resources/global.R")
+   source("resources/header.R")
 } else {
    mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
    rules <- jsonlite::fromJSON("requisite/buffer-rules.json")

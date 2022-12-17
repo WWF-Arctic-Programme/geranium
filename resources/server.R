@@ -9,9 +9,20 @@ proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
 proxyOnlyCF <- DT::dataTableProxy("onlyCF")
 proxyIndustrydata <- DT::dataTableProxy("industrydata")
 proxyCFdata <- DT::dataTableProxy("cfdata")
+if (F) ## patch for shiny 2022-12-17
+   spatial_crs(PAs) <- 4326
+'sleeping' <- function() {
+   req(input$sleepValue)
+  # if (isTRUE(input$sleepVerbose))
+   cat("                                                               (paused)\n")
+  # if (isTRUE(())
+   Sys.sleep(input$sleepValue/1000)
+   NULL
+}
 if (T) observe({ ## update 'input$sheet'
-   req(!is.null(input$sheet))
+   sleeping()
    cat("observe: update input$sheet:\n")
+   req(!is.null(input$sheet))
    if (isFALSE(input$sheet %in% activity)) {
       cat("   updated\n")
       updateSelectInput(session,"sheet",choices=c(nameInit,activity)[-1]
@@ -23,6 +34,8 @@ if (T) observe({ ## update 'input$sheet'
    }
 })
 if (T) observe({ ## update 'input$column'
+   sleeping()
+   cat("observe: `req` input$sheet and input$sheet in activity\n")
    req(!is.null(input$sheet))
    req(input$sheet %in% activity)
    cat("observe: update input$column:\n")
@@ -54,6 +67,8 @@ if (F) observe({ ## update input$method
    updateSelectInput(session,"coloring",choices=ch)
 })
 if (T) observe({ ## update input$region
+   sleeping()
+   cat("req(input$region):\n")
   # req(input$sheet %in% activity)
    req(input$region)
    ##~ cat("observe: update input$predefined:\n")
@@ -62,7 +77,7 @@ if (T) observe({ ## update input$region
    ##~ str(regionSF)
    ##~ print(input$region %in% names(regionSF))
    ##~ print("2")
-   cat("observe input$refion: update input$predefined:\n")
+   cat("observe input$region + update input$predefined:\n")
   # if (length(exchange$curr)>0)
   #    exchange$prev <- exchange$curr
   # else
@@ -83,6 +98,7 @@ if (T) observe({ ## update input$region
    print("this observe was passed successful")
 })
 if (T) observe({ ## update 'exchange$selection'
+   sleeping()
    cat("observe 'exchange$selection'\n")
    selection <- rvCustomer()
    cl <- class(selection)
@@ -100,9 +116,9 @@ if (T) observe({ ## update 'exchange$selection'
       req(selection)
       cat("      found\n")
       opW <- options(warn=1)
-      cat("0918a -- dplyr::select_() deprecation -- begin")
+      cat("0918s -- dplyr::select_() deprecation -- begin\n")
       gs <- selection()
-      cat("0918a -- dplyr::select_() deprecation -- end")
+      cat("0918s -- dplyr::select_() deprecation -- end\n")
       options(opW)
       ##~ cat("----------\n")
       ##~ str(selection)
@@ -363,10 +379,12 @@ if (F) observe({ ## setView for Selector
    }
 })
 'rvAOI' <- reactive({
+   sleeping()
    cat("rvAOI():\n")
    exchange$selection
 })
 'rvActivityMap' <- reactive({
+   sleeping()
    cat("rvActivityMap():\n")
   # conflict <- input$industry
    conflict <- exchange$conflict
@@ -399,6 +417,7 @@ if (F) observe({ ## setView for Selector
    a
 })
 'rvConflictMap' <- reactive({
+   sleeping()
    cat("rvConflictMap():\n")
   # plutil::timeHint(as.character(input$customize))
    a <- if (T) rvActivityMap() else NULL
@@ -410,15 +429,19 @@ if (F) observe({ ## setView for Selector
    m
 })
 observeEvent(input$drawIndustry,{ ## eventReactive actionlink
+   sleeping()
+   cat("observeEvent input$drawIndustry:\n")
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
    exchange$conflict <- list(industry=input$industry,group=input$group,season=input$season)
 })
 'rvActivityStat' <- reactive({
+   sleeping()
+   cat("rvActivityStat() to generate crossTable():\n")
    if (isTRUE(exchange$domain)) {
-      cat("rvActivityStat() domain is TRUE:\n")
-      return(crosstable())
+      cat("   domain is TRUE:\n")
+      return(crossTable())
    }
-   cat("rvActivityStat():\n")
+   cat("   domain is FALSE:\n")
   # return(NULL)
    if ((is.null(input$sheet))||(is.null(input$column)))
       activity <- "not applicable"
@@ -445,11 +468,12 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
   # interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
    ##~ exchange$domain <- FALSE
    ##~ plutil::timeHint(paste("domain is",exchange$domain))
-   ret <- crosstable(aoi=aoi,group=group,activity=activity)
+   ret <- crossTable(aoi=aoi,group=group,activity=activity)
    ret <- ret[ret$'Cover'>=input$omitPercent,]
    ret
 })
 'rvCustomer' <- reactive({
+   sleeping()
    cat("rvCustomer:\n")
    print(c('region'=input$region,'predefined'=input$predefined))
    if (is.null(input$region)) {
@@ -515,6 +539,7 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
 })
 if (T) { ## CFSelection
    observeEvent(input$onlyCF_row_last_clicked,{
+      sleeping()
       cat(as.character(Sys.time())
          ,"synchro CF selection -- from 'onlyCF' to 'industrydata'\n")
       ind3c <- input$onlyCF_row_last_clicked
@@ -585,6 +610,7 @@ if (T) { ## CFSelection
       }
    })
    observeEvent(input$industrydata_row_last_clicked,{
+      sleeping()
      # prev <- exchange$CF
       cat(paste0(as.character(Sys.time())
                 ," synchro CF selection -- from 'industrydata' to '"
@@ -626,6 +652,7 @@ if (T) { ## CFSelection
    })
 }
 'rvSelectCF' <- reactive({
+   sleeping()
    cat("rvSelectCF():\n")
    if (useExchange)
       return(exchange$CF)
@@ -650,6 +677,7 @@ if (T) { ## CFSelection
 })
 if (T) { ## industrySelection
    observeEvent(input$onlyIndustry_row_last_clicked,{
+      sleeping()
       cat(as.character(Sys.time())
          ,"synchro industry selection -- from 'onlyIndustry' to 'cfdata'\n")
       ind3c <- input$onlyIndustry_row_last_clicked
@@ -681,6 +709,7 @@ if (T) { ## industrySelection
    })
    observe({
       if (isFALSE(exchange$domain)) {
+         sleeping()
          cat(as.character(Sys.time())
             ,"synchro industry selection -- from 'cross' to 'cfdata'\n")
          ind1s <- input$cross_columns_selected
@@ -722,6 +751,7 @@ if (T) { ## industrySelection
       }
    })
    observeEvent(input$cfdata_row_last_clicked,{
+      sleeping()
       cat(paste0(as.character(Sys.time())
                 ," synchro industry selection -- from 'cfdata' to '"
                 ,ifelse(isFALSE(exchange$domain),"cross","onlyIndustry"),"'\n"))
@@ -779,6 +809,7 @@ if (T) { ## industrySelection
    })
 }
 'rvSelectIndustry' <- reactive({
+   sleeping()
    cat("rvSelectIndustry():\n")
    if (useExchange)
       return(exchange$industry)
@@ -817,6 +848,7 @@ if (T) { ## industrySelection
    NULL
 })
 'rvHumanUseIndustry' <- reactive({
+   sleeping()
    cat("rvHumanUseIndustry():\n")
    industry <- rvSelectIndustry()
   # industry <- exchange$industry
@@ -832,6 +864,7 @@ if (T) { ## industrySelection
    da
 })
 'rvHumanUseCF' <- reactive({
+   sleeping()
    cat("rvHumanUseCF():\n")
    cf <- rvSelectCF()
   # cf <- exchange$cf
@@ -1070,6 +1103,7 @@ if (F) observeEvent(input$cross_columns_selected,{
 })
 # if (T & useExchange) observeEvent(exchange$CF,{
 if (T & useExchange)  observe({
+   sleeping()
    cf <- exchange$CF
    cat(as.character(Sys.time()),"observe 'exchange$CF':"
       ,ifelse(is.null(cf),"NULL",cf),"\n")
@@ -1095,6 +1129,7 @@ if (T & useExchange)  observe({
    }
 })
 if (T & useExchange)  observe({
+   sleeping()
    industry <- exchange$industry
    cat(as.character(Sys.time()),"observe 'exchange$industry':"
       ,ifelse(is.null(industry),"NULL",industryCode(industry)),"\n")
@@ -1131,7 +1166,7 @@ if (F) observeEvent(input$regionAction,{
    colPAs <- "#992B"
    regionProxy <- leafletProxy("regionLeaflet")
    ursa:::.elapsedTime("add PAs -- begin")
-   regionProxy %>% leaflet::addPolygons(data=PAs
+   regionProxy %>% leaflet::addPolygons(data=PAs # spatial_transform(PAs,4326) ## PAs
                       ,label=grPAs
                       ,color=colPAs
                       ,fillOpacity=0.2
@@ -1155,17 +1190,20 @@ if (F) observeEvent(input$regionAction,{
       removeNotification(id="regionMap")
 })
 'rvRegionStats' <- reactive({
+   sleeping()
    cat("rvRegionStats:\n")
    rvRegionMetrics()$result
 })
 'rvRegionMetrics' <- reactive({
+   sleeping()
    cat("rvRegionMetrics:\n")
    result <- regionStats(aoi=rvAOI(),ctable=rvActivityStat(),isPA=input$actionEPA
                         ,raw=TRUE)
    result
 })
 if (T) observe({ ## update 'input$industry'
-   cat("observe 'input$activity', update 'input$industry'\n")
+   sleeping()
+   cat("observe 'input$activity' + update 'input$industry'\n")
   # print(input$activity)
   # req(!is.null(choice <- input$activity))
    choice <- input$activity
@@ -1180,6 +1218,7 @@ if (T) observe({ ## update 'input$industry'
    updateSelectInput(session,"industry",choices=choice2,selected=choice2[1])
 })
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
+   sleeping()
    cat("observeEvent 'input$industry':\n")
    event <- input$industry
    choice <- NULL
@@ -1203,6 +1242,7 @@ if (T) observeEvent(input$industry,{ ## update 'input$industry'
    }
 })
 if (T) observeEvent(input$activity,{ ## update 'input$activity'
+   sleeping()
    cat("observeEvent 'input$activity':\n")
    choice <- NULL
    if (is.null(input$activity))
@@ -1223,6 +1263,7 @@ if (T) observeEvent(input$activity,{ ## update 'input$activity'
    }
 })
 if (T) observeEvent(input$group,{ ## update 'input$group'
+   sleeping()
    cat("observeEvent 'input$group':\n")
    if (is.null(input$group))
       updateSelectInput(session,"group",selected=nameAllCF)
@@ -1239,6 +1280,8 @@ if (T) observeEvent(input$group,{ ## update 'input$group'
    }
 })
 'rvInitEPA' <- reactive({
+   sleeping()
+   cat("rvInitEPA:\n")
    ((length(input$initEPA)>0)&&(input$initEPA>0))
 })
 ##~ observe({
@@ -1247,6 +1290,8 @@ if (T) observeEvent(input$group,{ ## update 'input$group'
       ##~ exchange$initEPA <- TRUE
 ##~ })
 if (T) observe({
+   sleeping()
+   cat("observe for fitBounds():\n")
 # observeEvent(input$regionLeaflet_shape_click,{
 # observeEvent(rvAOI(),{
   # rvAOI()
@@ -1312,24 +1357,31 @@ observeEvent(input$initEPA,{
 #observeEvent(rvInitEPA(),{
 # observe({
   # req(isTRUE(exchange$initEPA))
+   sleeping()
    cat("'inputactionEPA' / 'exhchange$initEPA' :\n")
    proxyRegion <- leafletProxy("regionLeaflet")
    aoi <- rvAOI()
    regionAddEPA(proxyRegion,aoi)
 })
 'rvMetricsMap' <- reactive({
+   sleeping()
+   cat("rvMetricsMap:\n")
    metricsMap()
 })
 observeEvent(input$actionNAC,{
+   sleeping()
    cat("initialize NACR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"NAC")
 })
 observeEvent(input$actionNAO,{
+   sleeping()
    cat("initialize NAOR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"NAO")
   # updateActionLink(input$actionNAC)
 })
 observe({
+   sleeping()
+   cat("observe for addLayersControl():\n")
   # showNotification("update controls",duration=3)
    map <- leafletProxy("regionLeaflet")
    showAOI <- !is.null(rvAOI())
@@ -1356,11 +1408,30 @@ observe({
                         )
 })
 observeEvent(input$comment,{
-   config <- jsonlite::fromJSON(configFile)
+   sleeping()
+   cat("observeEvent 'input$comment'\n")
+  # config <- jsonlite::fromJSON(configFile)
    config$comment <- input$comment
    writeLines(jsonlite::toJSON(config),configFile)
 })
+if (FALSE) {
+   observeEvent(input$sleepVerbose,{
+      sleeping()
+      cat("observeEvent 'input$sleepVerbose'\n")
+     # config <- jsonlite::fromJSON(configFile)
+      config$sleepVerbose <- input$sleepVerbose
+      writeLines(jsonlite::toJSON(config),configFile)
+   })
+}
+observeEvent(input$sleepValue,{
+   sleeping()
+   cat("observeEvent 'input$sleepValue'\n")
+  # config <- jsonlite::fromJSON(configFile)
+   config$sleepValue <- input$sleepValue
+   writeLines(jsonlite::toJSON(config),configFile)
+})
 'rvCommentTable' <- reactive({
+   sleeping()
    cat("'rvCommentTable()'\n")
    if (file.exists(commentFile)) {
       da <- jsonlite::fromJSON(commentFile)
@@ -1396,11 +1467,14 @@ observeEvent(input$comment,{
    da
 })
 if (T) observeEvent(input$submit,{
+   sleeping()
    cat("observe 'input$submit'\n")
    req(!is.null(opinion <- input$opinion))
    updateTextAreaInput(session,"opinion",value="")
 })
-output$rebuildNAO <- reactive({
-   isTRUE(exchange$rebuildNAO)
-})
-outputOptions(output,"rebuildNAO",suspendWhenHidden=FALSE)
+if (staffOnly) {
+   output$rebuildNAO <- reactive({
+      isTRUE(exchange$rebuildNAO)
+   })
+   outputOptions(output,"rebuildNAO",suspendWhenHidden=FALSE)
+}

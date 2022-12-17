@@ -94,14 +94,17 @@ uiOutput("uiMap")
 output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-leafletOutput
    cat("renderUI -- begin:\n")
    if (input$region %in% nameEditor) {
+      cat("   editor:\n")
       Sys.sleep(1)
       ret <-  editModUI("editor")
       Sys.sleep(1)
    }
    else if (T & input$predefined %in% nameClick) {
+      cat("   selector:\n")
       ret <-  selectModUI("selector")
    }
    else { ## selected from list: "PAC "
+      cat("   viewer:\n")
       ret <- leafletOutput("viewer")
      # ret <- textOutput("note")
    }
@@ -125,7 +128,7 @@ https://github.com/rstudio/flexdashboard/issues/181
 -->
 
 
-## {#inputs .no-sidebar zzzdata-width="470px" data-width=300}
+## {#inputs .no-sidebar zzzdata-width="470px" data-width=320}
 
 ### {data-height="auto"}
 
@@ -146,13 +149,13 @@ fillRow(flex=NA
    ,conditionalPanel(condition=paste0("input.xxxregion==",sQuote(nameEditor)) ## nameEditor <- "Editor"
       ,selectInput("predefined","Region from list",nameInit
                    # ,selected=nameSelector
-                    ,width="172px")
+                    ,width="182px")
    )
    ,sliderInput("omitPercent"
              # ,list(content = "My Label", position = "left")
               ,label="Omit small coverage"
               ,min=0,max=5,step=0.1,value=0
-              ,width="172px"
+              ,width="182px"
               )
 )
 fillRow(flex=c(NA,NA,NA,NA,NA)
@@ -161,12 +164,12 @@ fillRow(flex=c(NA,NA,NA,NA,NA)
               ,selected=unname(ifelse(F,sample(groupList,1),groupList[1]))
               ,multiple=T
              # ,selected="Cetaceans"
-              ,width="181px")
+              ,width="191px")
    ,HTML("&nbsp;&nbsp;")
    ,selectInput("season","Season",seasonList
              # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
               ,selected=seasonList[1L]
-              ,width="136px")
+              ,width="146px")
    ,HTML("&nbsp;&nbsp;")
    ,selectInput("activity","Activity",c(nameAllHuman,names(industries))
               # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
@@ -191,7 +194,7 @@ if (T)
       ,fillRow(flex=c(NA,1,NA)
          ,selectInput("coloring","Colorization",unname(methodList)
                    # ,selected=grep("overlap",methodList,value=TRUE)
-                    ,width="312px")
+                    ,width="352px")
          ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
          ,actionLink("drawIndustry","Update map")
       )
@@ -439,7 +442,7 @@ renderUI({
       renderImage(displayCF(),deleteFile=T)
    }
    else {
-      industryDescription()
+      industryDescription(simple=TRUE)
    }
 })
 #renderImage({
@@ -514,7 +517,7 @@ renderUI({
          },deleteFile=F)
    } else {
       renderUI({
-         industryDescription()
+         industryDescription(simple=TRUE)
       })
    }
 })
@@ -861,7 +864,7 @@ fillCol(flex=c(NA,1,1)
 
 # I desc {#descIndustry .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## {data-width=460}
+## {data-width=420}
 
 ### Industry map 
 
@@ -895,7 +898,7 @@ output$industryMap <- renderLeaflet({
 ```{r eval=T & isShiny}
 fillCol(flex=c(1,NULL,NA)
    ,renderUI({
-      industryDescription()
+      industryDescription(simple=FALSE)
    })
    ##~ ,if (staffOnly) renderPrint(
       ##~ selectionTables()
@@ -1060,6 +1063,10 @@ output$buttonsComment <- renderUI({
 
 ----
 
+`r file.mtime(sessionFile)`  
+`r file.mtime("./quickload/comments.json")`
+
+
 ```{r, eval=F}
 sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,value=0)
 ```
@@ -1107,5 +1114,17 @@ DT::renderDT({
    b
 })
 ```
+
+### Verbosing
+
+```{r}
+fillRow(flex=c(1)
+  # ,checkboxInput("sleepVerbose","Verbose for pausing",value=config$sleepVerbose)
+   ,sliderInput("sleepValue",label="Pausing Value, ms"
+               ,min=0,max=1000,step=10,value=config$sleepValue
+               )
+)
+```
+
 
 ## {data-width=100}
