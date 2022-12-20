@@ -305,6 +305,7 @@ fillRow(flex=c(1,1)
 [Dictionary](#welcome)  
 [FAQ](#welcome)  
 [User Manual](#manual) `r paste(rep("&nbsp;",36),collapse="")` [Admin](#admin){.admin}
+`r paste(rep("&nbsp;",6),collapse="")` [TODO](https://docs.google.com/spreadsheets/d/1Sg9i8-sUEEHS_gqB83AxU9aZ32rYnLBYJwL_50wFTfE){.admin target="_blank"}
 
 
 ```{r eval=T & isShiny & staffOnly, results='asis'}
@@ -652,10 +653,10 @@ fillRow(flex=c(6,1)
          IND <- IND[order(IND$value,decreasing=TRUE),]
          IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
          iname <- substr(IND$industry,1,1)
-         sname <- unique(iname)
-         ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
-         names(ct) <- sname
-         mcol <- ct[iname]
+        # sname <- unique(iname)
+        # ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
+        # names(ct) <- sname
+         mcol <- ctIndustry[substr(IND$industry,1,1)]
          meanNAC <- sum(colSums(localNAC,na.rm=TRUE))/spatial_count(pu)
          mvalue <- meanNAC*metrics$nPU/length(IND$industry)
          p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
@@ -678,13 +679,18 @@ fillRow(flex=c(6,1)
    ,fillCol(flex=c(NA,1,NA)
       ### <abbr title='Industries of concern'>TOP IND</abbr> {data-height="auto"}
       ,DT::renderDT({
-         res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
+        # res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
+         res <- rvRegionStats()[['IND']]
+         LH <- quantile(res,probs=max(input$levelNAC)*1e-2)
+         res <- sort(res[res>=LH],decreasing=TRUE) |> data.frame() |> t()
          cname <- colnames(res)
          lname <- industryName(cname)
          colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
          res <- t(res) |> as.data.frame(check.names=FALSE)
          da <- DT::datatable(res,escape=F
-                            ,colnames="IND TOP"
+                            ,colnames=paste0("IND TOP"
+                                            ," (",max(input$levelNAC),")"
+                                            )
                             ,selection="none"
                             ,options=list(dom="t",ordering=F),class="compact"
                            # ,width="200px"
@@ -694,13 +700,18 @@ fillRow(flex=c(6,1)
       ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;")
       ### <abbr title='Industries of the least concern'>LC IND</abbr> {data-height="auto"}
       ,DT::renderDT({
-         res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
+        # res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
+         res <- rvRegionStats()[['IND']]
+         LH <- quantile(res,probs=min(input$levelNAC)*1e-2)
+         res <- sort(res[res<=LH],decreasing=TRUE) |> data.frame() |> t()
          cname <- colnames(res)
          lname <- industryName(cname)
          colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
          res <- t(res) |> as.data.frame(check.names=FALSE)
          da <- DT::datatable(res,escape=F
-                            ,colnames="LC IND"
+                            ,colnames=paste0("LC IND"
+                                            ," (",min(input$levelNAC),")"
+                                            )
                             ,selection="none"
                             ,options=list(dom="t",ordering=F),class="compact"
                             ,width="200px"
@@ -715,7 +726,7 @@ fillRow(flex=c(6,1)
 ### {data-height=150}
 
 ```{r}
-fillRow(flex=c(1,NA,2,1)
+fillRow(flex=c(8,NA,24,NA,8)
    ,DT::renderDT({
       result <- rvRegionStats()
       res <- result[grep('^NA',names(result))] |> as.data.frame()
@@ -754,6 +765,7 @@ fillRow(flex=c(1,NA,2,1)
                      )
       p
    })
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
    ,DT::renderDT({
       res <- rvRegionStats()[['SC']] |> data.frame() |> t()
       res <- t(res) |> as.data.frame(check.names=FALSE)
@@ -1081,6 +1093,17 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 
 ## {data-width=100}
 
+###
+
+### Verbosing {data-height="auto"}
+
+```{r}
+   sliderInput("sleepValue",label="Pausing Value, ms"
+               ,min=0,max=1000,step=10,value=config$sleepValue
+               )
+```
+
+
 ## {data-width=180}
 
 ### Comments
@@ -1115,16 +1138,29 @@ DT::renderDT({
 })
 ```
 
-### Verbosing
+## {data-width=100}
+
+### NAC Multipliers
 
 ```{r}
-fillRow(flex=c(1)
-  # ,checkboxInput("sleepVerbose","Verbose for pausing",value=config$sleepVerbose)
-   ,sliderInput("sleepValue",label="Pausing Value, ms"
-               ,min=0,max=1000,step=10,value=config$sleepValue
-               )
-)
+sliderInput("mulNAR",label="Multiplyer for red cells"
+           ,min=0,max=100,step=1,value=config$concern[1]
+           )
+sliderInput("mulNAY",label="Multiplyer for yellow cells"
+           ,min=0,max=100,step=1,value=config$concern[2]
+           )
+sliderInput("mulNAG",label="Multiplyer for green cells"
+           ,min=0,max=100,step=1,value=config$concern[3]
+           )
+actionLink("rebuildNAC","Apply changes")
 ```
 
+Application will be restarted with initialization during 1-2 mins.
 
-## {data-width=100}
+### Quantilies for Top and Least levels of indices {data-height="auto"}
+
+```{r}
+sliderInput("levelNAC",label="Quantilies, %"
+           ,min=0,max=100,step=1,value=config$quantile
+           )
+```

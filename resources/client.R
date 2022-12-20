@@ -330,7 +330,7 @@
                 )
   # b <- DT::formatStyle(b,ind2
   #                     ,'background-image'="linear-gradient(to right,red,blue)")
-   if (F)
+   if (T)
       b <- DT::formatStyle(b,ind2
                      ,backgroundImage=DT::styleEqual(c('0','1','2','2/0','2/1','1/0')
                            ,c("linear-gradient(to right,palegreen,palegreen)"

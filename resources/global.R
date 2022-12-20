@@ -72,7 +72,6 @@ groupList <- c('\\d'=nameAllCF
 ##~ kwdGreen <- "'0'"
 kwdLUT <- c('0'=kwdGreen,'1'=kwdYellow,'2'=kwdRed,'9'=kwdGray)
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
-mulNAO <- 3
 basename(listPD)
 if (!quickStart) {
    regionSF <- vector("list",length(listPD))
@@ -181,6 +180,20 @@ if (!quickStart) {
 industryAbbr <- read.csv("requisite/industry.csv")
 industryAbbr <- industryAbbr[order(industryAbbr$abbr),]
 rownames(industryAbbr) <- NULL
+configFile <- "quickload/config.json"
+commentFile <- "quickload/comments.json"
+config <- list(comment=TRUE,sleepValue=0,concern=c(100,10,1),quantile=c(10,90))
+if (file.exists(configFile)) {
+   configPrev <- jsonlite::fromJSON(configFile)
+   if (identical(sort(names(configPrev)),sort(names(config))))
+      config <- configPrev
+   else
+      writeLines(jsonlite::toJSON(config),configFile)
+} else {
+   writeLines(jsonlite::toJSON(config),configFile)
+}
+# config <- jsonlite::fromJSON(configFile)
+mulNA <- config$concern
 patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
 if (!quickStart) {
    vulner <- vector("list",nrow(rules))
@@ -241,13 +254,17 @@ if (!quickStart) {
       v
    }) |> do.call(rbind,args=_)
    concern$industry <- factor(industryCode(concern$industry))
-   concernNAO <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
+   concernNAR <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
                            ,function(x) length(which(x$value %in% "2"))) |>
                  unclass() |> data.frame()
-   concernNAC <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
+   concernNAY <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
                            ,function(x) length(which(x$value %in% "1"))) |>
                  unclass() |> data.frame()
-   concernNAC <- concernNAC+mulNAO*concernNAO
+   concernNAG <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
+                           ,function(x) length(which(x$value %in% "0"))) |>
+                 unclass() |> data.frame()
+   concernNAO <- mulNA[1]*concernNAR
+   concernNAC <- mulNA[1]*concernNAR+mulNA[2]*concernNAY+mulNA[3]*concernNAG
    ursa:::.elapsedTime("concern prepare -- finish")
 }
 if (!quickStart) {
@@ -259,13 +276,9 @@ if (!quickStart) {
 }
 meanNAO <- sum(colSums(concernNAO,na.rm=TRUE))/spatial_count(pu)
 meanNAC <- sum(colSums(concernNAC,na.rm=TRUE))/spatial_count(pu)
-configFile <- "quickload/config.json"
-commentFile <- "quickload/comments.json"
-if (!file.exists(configFile)) {
-  config <- list(comment=TRUE,sleepValue=500)
-  writeLines(jsonlite::toJSON(config),configFile)
-}
-config <- jsonlite::fromJSON(configFile)
+sname <- unique(substr(industryAbbr$abbr,1,1))
+ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
+names(ctIndustry) <- sname
 if (isShiny) {
   # removeModal()
 }

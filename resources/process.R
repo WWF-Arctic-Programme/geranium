@@ -1279,9 +1279,11 @@
       d <- concern[concern$CF_code %in% listCF & concern$industry %in% listI &
                    concern$value %in% c(1,2),]
       d$cover <- cvr[match(d$CF_code,rownames(cvr)),]
-      d$value[d$value==1] <- -1
-      d$value[d$value==2] <- 1
-      d$value[d$value==-1] <- mulNAO
+      d$value[d$value==0] <- mulNA[3]+1000
+      d$value[d$value==1] <- mulNA[2]+1000
+      d$value[d$value==2] <- mulNA[1]+1000
+      ind <- d$value>1000
+      d$value[ind] <- d$value[ind]-1000
       d$score <- d$value*d$cover
       d <- by(d,d$month,function(x) sum(x$score))
       d <- d |> unclass() |> t() |>

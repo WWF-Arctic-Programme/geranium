@@ -14,7 +14,8 @@ if (F) ## patch for shiny 2022-12-17
 'sleeping' <- function() {
    req(input$sleepValue)
   # if (isTRUE(input$sleepVerbose))
-   cat("                                                               (paused)\n")
+   if (input$sleepValue>0)
+      cat("                                                               (paused)\n")
   # if (isTRUE(())
    Sys.sleep(input$sleepValue/1000)
    NULL
@@ -1358,7 +1359,7 @@ observeEvent(input$initEPA,{
 # observe({
   # req(isTRUE(exchange$initEPA))
    sleeping()
-   cat("'inputactionEPA' / 'exhchange$initEPA' :\n")
+   cat("'input$initEPA' / 'exhchange$initEPA' :\n")
    proxyRegion <- leafletProxy("regionLeaflet")
    aoi <- rvAOI()
    regionAddEPA(proxyRegion,aoi)
@@ -1430,6 +1431,13 @@ observeEvent(input$sleepValue,{
    config$sleepValue <- input$sleepValue
    writeLines(jsonlite::toJSON(config),configFile)
 })
+observeEvent(input$levelNAC,{
+   sleeping()
+   cat("observeEvent 'input$levelNAC'\n")
+  # config <- jsonlite::fromJSON(configFile)
+   config$quantile <- input$levelNAC
+   writeLines(jsonlite::toJSON(config),configFile)
+})
 'rvCommentTable' <- reactive({
    sleeping()
    cat("'rvCommentTable()'\n")
@@ -1478,3 +1486,16 @@ if (staffOnly) {
    })
    outputOptions(output,"rebuildNAO",suspendWhenHidden=FALSE)
 }
+if (T) observeEvent(input$rebuildNAC,{ ## eventReactive actionlink
+   sleeping()
+   cat("observe 'input$rebuildNAC'\n")
+   concern <- c(input$mulNAR,input$mulNAY,input$mulNAG)
+   if (!identical(as.numeric(concern),as.numeric(config$concern))) {
+     # config <- jsonlite::fromJSON(configFile)
+      config$concern <- concern
+      writeLines(jsonlite::toJSON(config),configFile)
+      dummy <- "restart is required"
+      save(dummy,file=sessionFile)
+      session$reload()
+   }
+})
