@@ -25,6 +25,9 @@
    cat(as.character(match.call())[1]
       ,as.character(packageVersion("flexdashboard"))
       ,as.character(packageVersion("ursa"))
+      ,shinybrowser::get_browser()
+      ,shinybrowser::get_width()
+      ,shinybrowser::get_height()
       ,":\n"
       )
    s2 <- rvAOI()
@@ -156,17 +159,16 @@
                        ,options=list(NULL
                                     ,ordering=F
                                     ,scroller=T
-                                    ,scrollY="calc(100vh - 275px)"
+                                    ,scrollY="calc(100vh - 280px)"
                                     ,pageLength=nrow(da)
                                     ,dom="ift"
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('0','1','2'
+                     ,backgroundColor=DT::styleEqual(c('1','2','3'
                                                       ,kwdGreen,kwdYellow,kwdRed
                                                      )
-                                           ,c("palegreen","LemonChiffon","lightsalmon"
-                                             ,"palegreen","LemonChiffon","lightsalmon"))
+                                           ,c(clrLUT,clrLUT))
                      ,backgroundSize='95% 18pt'
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
@@ -182,6 +184,9 @@
    ##~ req(industry)
    da <- rvHumanUseIndustry() # human_use(industry)
    str(da)
+   if (!nrow(da)) {
+      return(DT::datatable(da))
+   }
    if (hlink)
       da$'CF Code' <- paste0("[",da$'CF Code',"](#annualCF)")
   # b <- DT::datatable(b)
@@ -195,7 +200,7 @@
                        ,options=list(NULL
                                     ,ordering=FALSE
                                     ,scroller=TRUE
-                                    ,scrollY="calc(100vh - 275px)"
+                                    ,scrollY="calc(100vh - 280px)"
                                     ,scrollX=TRUE
                                     ,pageLength=nrow(da)
                                     ,dom="ift"
@@ -211,11 +216,10 @@
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('0','1','2'
+                     ,backgroundColor=DT::styleEqual(c('1','2','3'
                                                       ,kwdGreen,kwdYellow,kwdRed
                                                      )
-                                           ,c("palegreen","LemonChiffon","lightsalmon"
-                                             ,"palegreen","LemonChiffon","lightsalmon"))
+                                                     ,c(clrLUT,clrLUT))
                      ,backgroundSize='95% 18pt'
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
@@ -227,7 +231,7 @@
                       ,overflow="hidden"
                       ,textOverflow="ellipsis"
         )
-  b
+   b
 }
 'tableOnlyIndustry' <- function() {
    cat(as.character(match.call())[1],":\n")
@@ -282,15 +286,23 @@
    cat("crosstable -> datatable\n")
    res <- rvActivityStat()
    req(res)
+  # rname - colnames(res)
   # selectRows(proxyOnlyIndustry,NULL)
   # selectRows(proxyOnlyCF,NULL)
    ind <- match(colnames(res),industryAbbr$industry)
    ind2 <- which(!is.na(ind))
+   res$'Cover' <- as.numeric(res$'Cover')/100
+   hasNAI <- length(indNAI <- grep('^NA[CO]',colnames(res)))==2
+   if (hasNAI) {
+      res$'NAC' <- as.numeric(res$'NAC')/100
+      res$'NAO' <- as.numeric(res$'NAO')/100
+      colnames(res)[indNAI] <- paste0("<abbr title='",colnames(res)[indNAI]
+                                     ," index achievement'>",colnames(res)[indNAI],"</abbr>")
+   }
    colnames(res)[ind2] <- paste0("<abbr title='"
                                               ,industryAbbr$industry[na.omit(ind)],"'>"
                                               ,industryAbbr$abbr[na.omit(ind)],"</abbr>")
   # res$'CF name' <- substr(res$'CF name',1,12)
-   res$'Cover' <- as.numeric(res$'Cover')/100
   # res <- input$industry
   # req(res %in% unlist(industries))
    b <- DT::datatable(res,rownames=TRUE,escape=FALSE
@@ -332,19 +344,21 @@
   #                     ,'background-image'="linear-gradient(to right,red,blue)")
    if (T)
       b <- DT::formatStyle(b,ind2
-                     ,backgroundImage=DT::styleEqual(c('0','1','2','2/0','2/1','1/0')
-                           ,c("linear-gradient(to right,palegreen,palegreen)"
-                             ,"linear-gradient(to right,LemonChiffon,LemonChiffon)"
-                             ,"linear-gradient(to right,lightsalmon,lightsalmon)"
-                             ,"linear-gradient(to right,lightsalmon,palegreen)"
-                             ,"linear-gradient(to right,lightsalmon,LemonChiffon)"
-                             ,"linear-gradient(to right,LemonChiffon,palegreen)"
+                     ,backgroundImage=DT::styleEqual(c('1','2','3','3/1','3/2','2/1')
+                           ,c(paste0("linear-gradient(to right,",clrLUT['1'],",",clrLUT['1'],")")
+                             ,paste0("linear-gradient(to right,",clrLUT['2'],",",clrLUT['2'],")")
+                             ,paste0("linear-gradient(to right,",clrLUT['3'],",",clrLUT['3'],")")
+                             ,paste0("linear-gradient(to right,",clrLUT['3'],",",clrLUT['1'],")")
+                             ,paste0("linear-gradient(to right,",clrLUT['3'],",",clrLUT['2'],")")
+                             ,paste0("linear-gradient(to right,",clrLUT['2'],",",clrLUT['1'],")")
                              ))
                     # ,backgroundSize='95% 18pt'
                     # ,backgroundRepeat='no-repeat'
                     # ,backgroundPosition='center'
                      )
    b <- DT::formatPercentage(b,'Cover',1)
+   if (hasNAI)
+      b <- DT::formatPercentage(b,indNAI,1)
    b
 }
 'buttonsIndustry_deprecated' <- function() {
@@ -419,8 +433,13 @@
       b5 <- navButton(paste(lab2,"Overview"),"#descCF","desc",span=T)
    }
   # b2 <- navButton("Conservation Features","#list","list",span=T)
+   if ((nchar(lab1))&&(nchar(lab2)))
+      b8 <- navButton(paste(lab1,"/",lab2,"Comments")
+                     ,"#comment","comment",span=T)
+   else
+      b8 <- NULL
    b3 <- navButton("Spatial query","#map",col="map",span=T)
-   navButton(list(b3,b2,b5,b1,b4),border=T)
+   navButton(list(b3,b2,b5,b1,b4,b8),border=T)
 }
 'buttonsCross' <- function() {
    cat(as.character(match.call())[1],":\n")

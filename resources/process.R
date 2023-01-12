@@ -1,4 +1,4 @@
-'quickload' <- function() {
+'quickload' <- function() { ## DEPRECATED
    home <- "."
    if (T) {
       source(file.path(home,"resources/global.R"))
@@ -19,7 +19,7 @@
    }
    if (toWrite) {
       source(file.path(home,"resources/global.R"))
-      save.image(file="quickload/session.Rdata")
+      save.image(file=dummy_session_File)
       write.csv(new,md5fname,quote=FALSE,row.names=FALSE)
 
    }
@@ -208,11 +208,18 @@
    b <- pu[pu$ID %in% b$ID,"ID"]
    b
 }
-'map1' <- function(a) {
-   NULL
+'map1_1d' <- function(a,grid=NULL,kind="devel") {
+   kind <- match.arg(kind)
+   if (!is.null(grid))
+      session_grid(grid)
+   g0 <- session_grid()
+   session_grid(a)
+   d6 <- mapper(a)
+   session_grid(g0)
+   d6
 }
 'map2' <- function(a,grid=NULL,pac=NULL) {
-   b3 <- a["2"]
+   b3 <- a["3"]
    d2 <- mapper(b3[b3>=0.5],pal=pRd)
   # print(band_blank(d2))
    d5 <- mapper(b3<0.5,pal="#2f5faf3f")
@@ -239,8 +246,8 @@
 'map3' <- function(a,grid=NULL,pac=NULL) {
    if (!is.null(grid))
       session_grid(grid)
-   d3 <- mapper(a['1'],pal=pYl)
-   d4 <- mapper(a['2'],pal=pRd)
+   d3 <- mapper(a['2'],pal=pYl)
+   d4 <- mapper(a['3'],pal=pRd)
    blank3 <- band_blank(d3>0)
    blank4 <- band_blank(d4>0)
    compose_open(height=height*retina,retina=retina,legend=NULL)
@@ -264,12 +271,12 @@
       session_grid(grid)
    g0 <- session_grid()
    session_grid(a)
-   d3 <- mapper(a['1'])
-   d4 <- mapper(a['2'])
+   d3 <- mapper(a['2'])
+   d4 <- mapper(a['3'])
    if (F & !isShiny) {
       print(d4)
       display(d4)
-      display(a['2'])
+      display(a['3'])
       q()
    }
    dima <- c(length(ursa_colortable(d4)),length(ursa_colortable(d3)))
@@ -293,8 +300,8 @@
    lut <- data.frame(d3=c(row(cb3))-1L,d4=c(col(cb3))-1L,pal=c(cb2),ind=seq_along(c(cb2))
                     ,val=-1,desc="")
    lut$val <- lut$d3*nrow(cb)+lut$d4
-  # d3 <- mapper(a['1'],pal=cb[nrow(cb),])
-  # d4 <- mapper(a['2'],pal=rev(cb[,1]))
+  # d3 <- mapper(a['2'],pal=cb[nrow(cb),])
+  # d4 <- mapper(a['3'],pal=rev(cb[,1]))
    ##~ str(ursa_colortable(d3))
    ##~ str(ursa_colortable(d4))
    ##~ q()
@@ -389,7 +396,7 @@
    session_grid(a)
    if (kind %in% "threat") {
       th <- 0.5
-      b3 <- a['2']
+      b3 <- a['3']
      # b3 <- b3[b3>=th]-th-1e-6
       d2 <- mapper(b3,pal=pRd)
      # d5 <- mapper(b3<0.5,pal="#2f5faf3f")
@@ -409,8 +416,8 @@
       if (kind %in% "source")
          d3 <- mapper(ursa_read(file.path("requisite",paste0(source,".tif"))),pal=pYl)
       else
-         d3 <- mapper(a['1'],pal=pYl)
-      d4 <- mapper(a['2'],pal=pRd)
+         d3 <- mapper(a['2'],pal=pYl)
+      d4 <- mapper(a['3'],pal=pRd)
    }
    dima <- c(length(ursa_colortable(d4)),length(ursa_colortable(d3)))
    cb <- colorbar2d(ifelse(kind %in% "source","RdBu","RdYl"),dim=dima)
@@ -939,6 +946,7 @@
                d2 <- as.character(d)
             else
                d2 <- kwdLUT[as.character(d)]
+            d2[is.na(d2)] <- "N/A"
             dim(d2) <- dim(d)
             if (isCF)
                da[j,m] <- d2
@@ -1019,7 +1027,9 @@
       if (!nrow(vuln3))
          return(NULL)
       b <- by(vuln3$value,vuln3$CF_code,function(x) {
-         paste(sort(unique(x),decreasing=TRUE),collapse="/")
+         ret <- paste(sort(unique(x),decreasing=TRUE),collapse="/")
+         ret[!nchar(ret)] <- "N/A"
+         ret
         # max(x)
       }) |> c()
       ret <- rep(NA,length(am2$cf))
@@ -1037,7 +1047,12 @@
    cname <- cname[ind]
    res <- res[,ind]
    colnames(res) <- cname
-   res <- cbind('Cover'=am2$amount[match(rownames(res),as.character(am2$cf))],res)
+   indCF <- match(rownames(res),as.character(am2$cf))
+   indNAI <- match(rownames(res),names(sumNAC))
+   res <- cbind('Cover'=am2$amount[indCF]
+               ,'NAO'=sumNAO[indNAI]*100
+               ,'NAC'=sumNAC[indNAI]*100
+               ,res)
   # res[,1] <- sprintf("%.1f",as.numeric(res[,1]))
    res[is.na(res)] <- ""
    if (T) {
@@ -1046,10 +1061,10 @@
    }
    res
 }
-'interimMap' <- function(industry="Mass tourism",group="\\d",season="max") {
+'interimMap' <- function(industry="Mass tourism",group="\\d",season="max",economy=NULL) {
    sname <- format(as.Date(paste0("2021-",seq(12),"-15")),"%B")
    byMonths <- all(season %in% sname)
-   if ((group[1]=="\\d")&&(grepl("max",season[1],ignore.case=TRUE))) {
+   if ((group[1]=="\\d")&&(grepl("max",season[1],ignore.case=TRUE))&&(is.null(economy))) {
       fname <- file.path("trafficlights"
                         ,paste0("t",digest::digest(unname(industry),"crc32")))
       if (isShiny)
@@ -1059,10 +1074,11 @@
          return(read_envi(fname))
       }
    }
-   cat("-- interimMap ----------------\n")
+   cat("-- interimMap -- begin --------------\n")
    prm <- list(industry=sort(unname(industry))
               ,group=sort(unname(group))
-              ,season=sort(unname(season)))
+              ,season=sort(unname(season))
+              ,economy=sort(unname(economy)))
    str(prm)
    fname <- file.path("requests",paste0("t",digest::digest(prm,"crc32")))
    if (envi_exists(fname)) {
@@ -1070,7 +1086,7 @@
       session_grid(NULL)
       return(read_envi(fname))
    }
-   cat("-- interimMap ----------------\n")
+   cat("-- interimMap -- end ----------------\n")
    if (isShiny)
       shiny::showNotification(id="trafficMap",closeButton=FALSE,duration=120
                       ,paste("Your request is at first time."
@@ -1082,24 +1098,30 @@
       v <- v[lapply(group,grep,substr(as.character(v$CF_code),1,1)) |>
          do.call(c,args=_) |> sort(),]
       v <- v[industryName(v$industry) %in% industry,]
-      if (byMonths) {
-         v <- v[v$month %in% match(season,sname),]
+      if (nrow(v)) {
+         if (byMonths) {
+            v <- v[v$month %in% match(season,sname),]
+         }
+         else {
+            str(v)
+            print("before")
+            v <- aggregate(list(value=v$value)
+                          ,by=list(CF_code=v$CF_code
+                                  ,industry=v$industry
+                                 # ,value=v$value
+                                 # ,month=v$month
+                                  )
+                          ,function(x) {
+               x <- na.omit(x)
+               if (!length(x))
+                  return(NA)
+               max(x)
+            })
+         }
+         s <- aggregate(list(count=v$CF_code),by=list(CF_code=v$CF_code,value=v$value),length)
       }
-      else {
-         v <- aggregate(list(value=v$value)
-                       ,by=list(CF_code=v$CF_code
-                               ,industry=v$industry
-                              # ,value=v$value
-                              # ,month=v$month
-                               )
-                       ,function(x) {
-            x <- na.omit(x)
-            if (!length(x))
-               return(NA)
-            max(x)
-         })
-      }
-      s <- aggregate(list(count=v$CF_code),by=list(CF_code=v$CF_code,value=v$value),length)
+      else
+         s <- NULL
    }
    else {
       cat("via vulner:\n")
@@ -1114,36 +1136,47 @@
                     ,by=list(CF_code=v$CF_code,industry=v$industry),max)
       s <- aggregate(list(count=v$CF_code),by=list(CF_code=v$CF_code,value=v$value),length)
    }
-   ursa:::.elapsedTime("incompatibility -- start")
-   res <- by(puvspr,puvspr$pu,function(x) {
-      ret <- c('0'=0,'1'=0,'2'=0)
-      ind <- match(s$CF_code,x$species)
-      if (!length(na.omit(ind)))
-         return(ret)
-      s2 <- s[!is.na(ind),]
-      s2$amount <- x$amount[na.omit(ind)]
-      y <- by(s2,s2$value,simplify=!FALSE,function(x) sum(x$count*x$amount))
-      ret[names(y)] <- y
-      ret
-   }) |> do.call(rbind,args=_) |> data.frame(check.names=FALSE)
-   ursa:::.elapsedTime("incompatibility -- finish")
-  # session_grid("requisite/amount")
-  # pu <- spatial_read("requisite/pulayer")
-   if (F) {
-      res2 <- pu
-      spatial_data(res2) <- data.frame('0'=0,'1'=0,'2'=0,check.names=FALSE)
-      ind1 <- match(rownames(res),pu$ID)
-      print(summary(ind1))
-      ind2 <- match(pu$ID,rownames(res))
-      print(summary(ind2))
-      spatial_data(res2[ind1,]) <- res
+   g0 <- session_grid("requisite/amount")
+   if (is.null(s)) {
+      ind <- match(economy,spatial_basename(economyList))
+      if (is.na(ind))
+         stop(paste("cannot identify file name for",economy))
+      feconomy <- economyList[ind]
+      print(feconomy)
+      res2 <- spatial_read(file.path(".",feconomy))
    }
    else {
-      res2 <- pu[which(!is.na(match(as.character(pu$ID),rownames(res)))),]
-      spatial_data(res2) <- res
+      ursa:::.elapsedTime("incompatibility -- start")
+      res <- by(puvspr,puvspr$pu,function(x) {
+         ret <- c('1'=0,'2'=0,'3'=0)
+         ind <- match(s$CF_code,x$species)
+         if (!length(na.omit(ind)))
+            return(ret)
+         s2 <- s[!is.na(ind),]
+         s2$amount <- x$amount[na.omit(ind)]
+         y <- by(s2,s2$value,simplify=!FALSE,function(x) sum(x$count*x$amount))
+         ret[names(y)] <- y
+         ret
+      }) |> do.call(rbind,args=_) |> data.frame(check.names=FALSE)
+      ursa:::.elapsedTime("incompatibility -- finish")
+     # session_grid("requisite/amount")
+     # pu <- spatial_read("requisite/pulayer")
+      if (F) {
+         res2 <- pu
+         spatial_data(res2) <- data.frame('1'=0,'2'=0,'3'=0,check.names=FALSE)
+         ind1 <- match(rownames(res),pu$ID)
+         print(summary(ind1))
+         ind2 <- match(pu$ID,rownames(res))
+         print(summary(ind2))
+         spatial_data(res2[ind1,]) <- res
+      }
+      else {
+         res2 <- pu[which(!is.na(match(as.character(pu$ID),rownames(res)))),]
+         spatial_data(res2) <- res
+      }
    }
-   session_grid("requisite/amount")
    ret <- allocate(spatial_centroid(res2))
+  # display(ret,decor=FALSE,stretch="eq")
    write_envi(ret,fname)
    if (isShiny)
       removeNotification(id="trafficMap")
@@ -1219,20 +1252,17 @@
          aoi <- spatial_union(pu) |> spatial_transform(4326)
          spatial_data(aoi) <- data.frame(ID=0L)
       }
-      ursa:::.elapsedTime("regA")
      # PAs <- ursa:::.spatial_repair(PAs,verbose=TRUE)
       sf::st_agr(aoi) <- "constant"
      # PAs <- sf::st_cast(PAs,"POLYGON")
      # ind <- spatial_valid(PAs,each=TRUE)
-      ursa:::.elapsedTime("regC")
-      print(c(aoi=spatial_crs(aoi),PAs=spatial_crs(PAs)))
+     # print(c(aoi=spatial_crs(aoi),PAs=spatial_crs(PAs)))
      # if (spatial_crs(PAs)!=spatial_crs(aoi))
      #    PAs <- spatial_transform(PAs,aoi)
      # epa <- sf::st_intersection(aoi,PAs)
       opW <- options(warn=1) ## old GDAL `sf::sf_extSoftVersion()`?
       epa <- spatial_intersection(aoi,spatial_transform(PAs,aoi))
       options(opW)
-      ursa:::.elapsedTime("regD")
    }
    if (is.null(ctable)) {
       ursa:::.elapsedTime("crosstable -- begin")
@@ -1250,20 +1280,25 @@
    if (!emptyCF) {
      # mul <- sum(spatial_area(aoi)*1e-6)
       cvr <- b[,"Cover",drop=FALSE]*0.01
+     # result$'cover' <- cvr
       d <- concernNAO
       ind <- match(rownames(d),listCF)
       dNAO <- d[rownames(d) %in% listCF,colnames(d) %in% listI]
       dNAO <- dNAO[match(rownames(cvr),rownames(dNAO)),]
-      result$'NAO' <- sum(rowSums(dNAO,na.rm=TRUE)*t(cvr))
+      result$'NAOR' <- sum(rowSums(dNAO,na.rm=TRUE)*t(cvr))/mul
      # result$'NAO' <- sum(rowSums(dNAO,na.rm=TRUE)*t(cvr[match(rownames(dNAO),rownames(cvr)),]))
       d <- concernNAC
+      result$'maxNAC' <- max(d,na.rm=TRUE)/mul*sum(cvr)
       dNAC <- d[rownames(d) %in% listCF,colnames(d) %in% listI]
       dNAC <- dNAC[match(rownames(cvr),rownames(dNAC)),]
-      result$'NAC' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr))
+      if (F) {
+         dNAC <- dNAC/result$'maxNAC'*100
+      }
+      result$'NACR' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr))/mul
      # result$'NAC' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr[match(rownames(dNAC),rownames(cvr)),]))
-      result$'NAOR' <- result$'NAO'/mul
-      result$'NACR' <- result$'NAC'/mul
-      d <- colSums(dNAC*t(cvr),na.rm=TRUE)
+      result$'NAO' <- result$'NAOR'*mul
+      result$'NAC' <- result$'NACR'*mul
+      d <- colSums(dNAC*t(cvr),na.rm=TRUE)/mul
       result$'IND' <- d
       d0 <- sort(unique(d))
       thLo <- head(d0,3) |> tail(1)
@@ -1285,7 +1320,7 @@
       ind <- d$value>1000
       d$value[ind] <- d$value[ind]-1000
       d$score <- d$value*d$cover
-      d <- by(d,d$month,function(x) sum(x$score))
+      d <- by(d,d$month,function(x) sum(x$score))/mul
       d <- d |> unclass() |> t() |>
          as.data.frame(x=_,check.names=F) |> unlist()
       names(d) <- format(as.Date(paste0("2021-",names(d),"-15")),"%b")
@@ -1298,6 +1333,11 @@
       if (length(res)>3)
          res <- res[res>=quantile(res,1-3/length(res))]
       result$'SC' <- res
+   }
+   else {
+      cvr <- NULL
+      dNAO <- NULL
+      dNAC <- NULL
    }
    result$'nPU' <- mul
    result$'nCF' <- nrow(b)
@@ -1515,4 +1555,69 @@
    if (isTRUE((v <- getOption("sleepValue"))>0))
       Sys.sleep(v)
    return(invisible(NULL))
+}
+'config_init' <- function() {
+   config <- list(comment=TRUE,relative=FALSE,sleepValue=0
+                 ,concern=c(100,10,1),quantile=c(10,90))
+   prm_init(config,configFile)
+}
+'config_exists' <- function() {
+   prm_exists(configFile)
+}
+'comment_exists' <- function() {
+   prm_exists(commentFile)
+}
+'config_read' <- function() {
+   prm_read(configFile)
+}
+'comment_read' <- function() {
+   prm_read(commentFile)
+}
+'config_write' <- function(config) {
+   prm_write(config,configFile)
+}
+'comment_write' <- function(comment) {
+   prm_write(comment,commentFile)
+}
+'prm_exists' <- function(file) {
+   file.exists(file)
+}
+'prm_init' <- function(prm,file) {
+   if ((isRemote)||(prm_exists(file))) {
+      prmPrev <- prm_read(file)
+      if (identical(sort(names(prmPrev)),sort(names(prm))))
+         prm <- prmPrev
+      else
+         prm_write(prm,file)
+   } else {
+      prm_write(prm,file)
+   }
+   prm
+}
+'prm_upload' <- function(file) {
+   if (isRemote) {
+      db <- rdrop2::drop_auth(rdstoken=rdstoken)
+      wd_ <- setwd(dirname(file))
+      rdrop2::drop_upload(basename(file),verbose=F)
+      setwd(wd_)
+   }
+   0L
+}
+'prm_download' <- function(file) {
+   if ((isRemote)&&(!prm_exists(file))) {
+      db <- rdrop2::drop_auth(rdstoken=rdstoken)
+      wd_ <- setwd(dirname(file))
+      rdrop2::drop_download(file,overwrite=TRUE)
+      setwd(wd_)
+   }
+   0L
+}
+'prm_read' <- function(file) {
+   prm_download(file)
+   ret <- jsonlite::fromJSON(file)
+   ret
+}
+'prm_write' <- function(prm,file) {
+   writeLines(jsonlite::toJSON(prm),file)
+   prm_upload(file)
 }

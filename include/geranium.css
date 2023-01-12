@@ -40,7 +40,7 @@
    margin-top: 1.6em;
    margin-left: -0.6em;
 }
-/*.table.dataTable tbody td.active,*/
+.table.dataTable tbody td.active,
 .table.dataTable tbody tr.active td {
    background-color: white !important;
    color: black !important;
@@ -60,6 +60,14 @@ table.dataTable > tbody > tr > * {
 }
 .flexfill-item.flowing-content-shim.flowing-content-container {
    top: 18px !important;
+   overflow-y: hidden;
+}
+.flowing-content-container:not(.sbframe-commentary) {
+   padding-bottom: 4px;
+   overflow-y: hidden;
+}
+.dataTable tfoot tr th {
+   background-color: white;
 }
 @media notprint, notscreen and (max-width: 1268px) and (min-width: 769px) {
    body {
@@ -182,19 +190,34 @@ h1 {
 .admin, .admin a {
    color: transparent;
 }
-.flowing-content-container:not(.sbframe-commentary) {
-   padding-bottom: 12px;
-}
 /*
 .flowing-content-container {
    overflow: hidden; 
 }
 */
-
 .linebutton {
    overflow: hidden;
    padding-bottom: 12px;
    padding-top: 12px;
+}
+.form-group {
+   margin-bottom: 0px;
+}
+@media screen and (max-width: 1269px) {
+   .navbar::before {
+      content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';
+      display: block;
+      position: relative;
+      padding-top: 0px;
+      top: -13px;
+      color: #A00;
+      font-size: 1.4em;
+      margin: 10px;
+      background-color: #FFC;
+   }
+   .failured {
+      display: none;
+   }
 }
 @media screen and (min-width: 1269px) {
    .navbar-brand::after, .navbar-author:empty:before {

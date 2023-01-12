@@ -1,7 +1,50 @@
 invisible(Sys.setlocale("LC_TIME","C"))
+staffOnly <- F & nchar(Sys.getenv("MSOFFICE"))>0
 sessionFile <- "quickload/session.Rdata"
-if (quickStart <- (file.exists(sessionFile))&&(file.size(sessionFile)>1024))
-   load(sessionFile)
+rdstoken <- file.path("quickload/dropbox-token.rds")
+isRemote <- ((!staffOnly)&&(file.exists(rdstoken)))
+# isRemote <- file.exists(rdstoken)
+quickStart <- FALSE
+if ((!file.exists(sessionFile))||(file.size(sessionFile)<1024))
+   prm_download(sessionFile)
+if (file.exists(sessionFile)) {
+   a <- load(sessionFile)
+   if (("dummy" %in% a)&&(dummy=="rebuild")) {
+      quickStart <- FALSE
+   } else {
+      quickStart <- file.size(sessionFile)>=1024
+   }
+}
+# mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
+# mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
+# mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
+mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
+require(ursa)
+requireNamespace("sf")
+#plutil::ursula(3)
+isShiny <- ursa:::.isShiny()
+if (dropboxBoris <- F & isShiny) {
+   if (file.exists(mdname)) {
+     # md5a <- unname(tools::md5sum(mdname))
+      md5a <- digest::digest(readBin(mdname,"raw",10e6))
+   } else {
+      md5a <- digest::digest(Sys.time())
+   }
+   if (isRemote | !file.exists(mdname)) {
+      mdtemp <- tempfile() # "c:/tmp/mdfile.xlsx" # tempfile()
+      download.file("https://www.dropbox.com/scl/fi/v2tg3cfhyoyermj0ebcdq/compatibility-assessment_all_2022-11-18.xlsx?dl=1&rlkey=gtq0rcg9b458v5hapsilkzu00"
+                   ,mdtemp,mode="wb")
+     # md5b <- unname(tools::md5sum(mdtemp))
+      md5b <- digest::digest(readBin(mdtemp,"raw",10e6))
+      if (FALSE)
+         print(data.frame(md5a=md5a,md5b=md5b,eq=md5a==md5b))
+      if (md5a!=md5b) {
+         file.rename(mdtemp,mdname)
+         if (quickStart)
+            quickStart <- FALSE
+      }
+   }
+}
 ##~ if (!file.exists("requisite/inventory.rds")) {
    ##~ list1 <- dir(path="output-overlap",pattern="interim\\.tif"
                ##~ ,full.names=TRUE,recursive=TRUE)
@@ -17,14 +60,6 @@ if (quickStart <- (file.exists(sessionFile))&&(file.size(sessionFile)>1024))
    ##~ str(src)
    ##~ q()
 ##~ }
-require(ursa)
-requireNamespace("sf")
-#plutil::ursula(3)
-isShiny <- ursa:::.isShiny()
-# mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
-# mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
-# mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
-mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
 pGrYl <- cubehelix(5,light=91,dark=221,weak=220,rich=165,hue=2)
 pYlRd <- cubehelix(5,light=91,dark=221,weak=110,rich=165,hue=2,inv=TRUE)
 pRd <- cubehelix(5,light=233,dark=91,weak=110,rotate=0,hue=2)
@@ -70,7 +105,12 @@ groupList <- c('\\d'=nameAllCF
 ##~ kwdRed <- "'2'"
 ##~ kwdYellow <- "'1'"
 ##~ kwdGreen <- "'0'"
-kwdLUT <- c('0'=kwdGreen,'1'=kwdYellow,'2'=kwdRed,'9'=kwdGray)
+kwdLUT <- c('0'=kwdGray,'1'=kwdGreen,'2'=kwdYellow,'3'=kwdRed,'9'=kwdGray)
+# clrLUT <- c('0'="grey70",'1'="palegreen",'2'="LemonChiffon",'3'="lightsalmon",'9'="grey70")
+# clrLUT <- c('0'="grey70",'1'="LemonChiffon",'2'="BurlyWood",'3'="Salmon",'9'="grey70")
+#clrLUT <- c('0'="grey70",'1'="PaleGoldenrod",'2'="BurlyWood",'3'="Salmon",'9'="grey70")
+#clrLUT <- c('0'="grey70",'1'="yellow",'2'="orange",'3'="red",'9'="grey70")
+clrLUT <- c('0'="grey70",'1'="Khaki",'2'="BurlyWood",'3'="Salmon",'9'="grey70")[c('1','2','3')]
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
 basename(listPD)
 if (!quickStart) {
@@ -182,17 +222,8 @@ industryAbbr <- industryAbbr[order(industryAbbr$abbr),]
 rownames(industryAbbr) <- NULL
 configFile <- "quickload/config.json"
 commentFile <- "quickload/comments.json"
-config <- list(comment=TRUE,sleepValue=0,concern=c(100,10,1),quantile=c(10,90))
-if (file.exists(configFile)) {
-   configPrev <- jsonlite::fromJSON(configFile)
-   if (identical(sort(names(configPrev)),sort(names(config))))
-      config <- configPrev
-   else
-      writeLines(jsonlite::toJSON(config),configFile)
-} else {
-   writeLines(jsonlite::toJSON(config),configFile)
-}
-# config <- jsonlite::fromJSON(configFile)
+configCloud <- FALSE
+config <- config_init()
 mulNA <- config$concern
 patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
 if (!quickStart) {
@@ -255,14 +286,25 @@ if (!quickStart) {
    }) |> do.call(rbind,args=_)
    concern$industry <- factor(industryCode(concern$industry))
    concernNAR <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                           ,function(x) length(which(x$value %in% "2"))) |>
+                           ,function(x) length(which(x$value %in% '3'))) |>
                  unclass() |> data.frame()
    concernNAY <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                           ,function(x) length(which(x$value %in% "1"))) |>
+                           ,function(x) length(which(x$value %in% '2'))) |>
                  unclass() |> data.frame()
    concernNAG <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                           ,function(x) length(which(x$value %in% "0"))) |>
+                           ,function(x) length(which(x$value %in% '1'))) |>
                  unclass() |> data.frame()
+   if (T) {
+      concernMissed <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
+                                 ,function(x) {
+         y <- length(which(!is.na(x$value)))
+         y[y==0] <- NA
+         y
+      }) |> unclass() |> data.frame()
+      concernNAR <- concernNAR/concernMissed*12
+      concernNAY <- concernNAY/concernMissed*12
+      concernNAG <- concernNAG/concernMissed*12
+   }
    concernNAO <- mulNA[1]*concernNAR
    concernNAC <- mulNA[1]*concernNAR+mulNA[2]*concernNAY+mulNA[3]*concernNAG
    ursa:::.elapsedTime("concern prepare -- finish")
@@ -273,12 +315,31 @@ if (!quickStart) {
    save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
        ,PAs,half,vulner,industries,comments,concern,concernNAO,concernNAC
        ,file=sessionFile)
+   if (isRemote)
+      prm_upload(sessionFile)
 }
 meanNAO <- sum(colSums(concernNAO,na.rm=TRUE))/spatial_count(pu)
 meanNAC <- sum(colSums(concernNAC,na.rm=TRUE))/spatial_count(pu)
+if (F) {
+   sumNAC <- rowSums(concernNAC,na.rm=TRUE)/ncol(concernNAC)/max(concernNAC,na.rm=TRUE)
+   sumNAO <- rowSums(concernNAO,na.rm=TRUE)/ncol(concernNAO)/max(concernNAO,na.rm=TRUE)
+} else {
+   d <- max(config$concern)*12
+   sumNAC <- apply(concernNAC,1,\(v) sum(v,na.rm=TRUE)/sum(!is.na(v))/d)
+   sumNAO <- apply(concernNAO,1,\(v) sum(v,na.rm=TRUE)/sum(!is.na(v))/d)
+   rm(d)
+}
 sname <- unique(substr(industryAbbr$abbr,1,1))
 ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
 names(ctIndustry) <- sname
+economyList <- spatial_dir(path="humanuse",recursive=TRUE)
+hu <- readxl::read_excel("requisite/Gaps in Human Use data from WWF SIGHT.xlsx"
+                        ,skip=2)
+colnames(hu)[grep("human.*use.*index",colnames(hu),ignore.case=TRUE)] <- "abbr"
+colnames(hu)[grep("human.*use.*name",colnames(hu),ignore.case=TRUE)] <- "industry"
+colnames(hu)[grep("sight.*dataset",colnames(hu),ignore.case=TRUE)] <- "economy"
+sight <- strsplit(hu$economy,split="\\s*,\\s*")
+names(sight) <- hu$abbr
 if (isShiny) {
   # removeModal()
 }
@@ -286,9 +347,9 @@ options(warn=2)
 ##~ if (F)
    ##~ save(pu,puvspr,concern,concernNAO,concernNAC,industryAbbr,industries
        ##~ ,file="C:/tmp/session-soiga.Rdata")
-if ((F)&&(quickload())) {
+if ((F)&&(quickload())) { ## DEPRECATED
 # if (T) {
-   load("quickload/session.Rdata")
+   load(sessionFile)
    require(ursa)
   # loadNamespace("ursa")
    loadNamespace("sf")

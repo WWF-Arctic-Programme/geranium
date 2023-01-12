@@ -121,7 +121,7 @@ table {
    height: initial !important;
 }
 .chart-wrapper-flex[data-height^=auto] .chart-stage {
-   padding: initial !important;
+  /* padding: initial !important;*/
 }
 .chart-wrapper-flex[data-height^=auto] .chart-shim.bootstrap-table {
    position: initial;

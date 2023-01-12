@@ -35,6 +35,7 @@ output:
       - https://nplatonov.github.io/site_libs/flex_dashboard.css
       - include/geranium.css
       navbar:
+         - { title: "&nbsp;", href: "#section-admin", align: right}
          - { icon: "ion-home", href: "#", align: right}
          - { icon: "ion-help", href: "#section-manual", align: right}
          - { icon: "ion-social-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
@@ -154,7 +155,7 @@ fillRow(flex=NA
    ,sliderInput("omitPercent"
              # ,list(content = "My Label", position = "left")
               ,label="Omit small coverage"
-              ,min=0,max=5,step=0.1,value=0
+              ,min=0,max=5,step=0.1,value=3
               ,width="182px"
               )
 )
@@ -184,21 +185,28 @@ fillRow(flex=c(NA,NA,NA,NA,NA)
 
 
 ```{r, eval=isShiny}
-if (T)
-   shiny::selectInput("industry","Industry (only for visualization)"
-                    # ,c('No overlap'="none",'All human use'="all",industries)
-                     ,"---"
-                     ,multiple=T
-                     ,width=width)
-   conditionalPanel(condition="input.industry!='none'"
-      ,fillRow(flex=c(NA,1,NA)
-         ,selectInput("coloring","Colorization",unname(methodList)
-                   # ,selected=grep("overlap",methodList,value=TRUE)
-                    ,width="352px")
-         ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-         ,actionLink("drawIndustry","Update map")
-      )
-   )
+fillRow(flex=c(NA,1,NA)
+   ,shiny::selectInput("industry","Commercial activity acceptability (only for visualization)"
+                 # ,c('No overlap'="none",'All human use'="all",industries)
+                  ,"---"
+                  ,multiple=T
+                  ,width="382px")
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+   ,actionLink("drawIndustry","Update map")
+)
+fillRow(flex=c(NA,1)
+   ,shiny::selectInput("economy","Activity maps (only for visualization)"
+                  ,"---"
+                  ,multiple=F
+                  ,width="382px")
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+  # ,actionLink("drawEconomy","Update map")
+)
+conditionalPanel(condition="input.industry!='none' || input.economy!='none'"
+      ,selectInput("coloring","Colorization",unname(methodList)
+                # ,selected=grep("overlap",methodList,value=TRUE)
+                 ,width="382px")
+)
 if (F) {
   shiny::actionButton(inputId='ab1', label="location.href", 
                           icon = icon("th"), 
@@ -212,20 +220,33 @@ if (F) {
 }
 ```
 
+```{r, eval=F}
+conditionalPanel(condition="input.economy!='none'"
+      ,selectInput("economyColor","Industry colorization",unname(methodList)
+                # ,selected=grep("overlap",methodList,value=TRUE)
+                 ,width="352px")
+)
+```
+
+----
+
 ```{r, eval=T}
 renderUI({
+   if (file.exists(sessionFile))
+      showNotification(paste("session:",format(file.mtime(sessionFile))),duration=2)
    aoi <- rvAOI()
    lab <- regionSF[[input$region]]$region[aoi$id]
    if (length(lab)>1)
       lab <- "Overview for selected regions"
    else
-      lab <- paste("Overview for",dQuote(lab),"region")
+      lab <- substr(paste("Overview for",dQuote(lab),"region"),1,49)
    if (is.null(aoi))
       b2 <- navButton("Global metrics","#descRegion","desc",span=T)
    else
       b2 <- navButton(lab,"#descRegion","desc",span=T)
    b1 <- navButton("Selected Area Details","#crosstable","cross",span=T)
-   b <- if (is.null(aoi)) list(b1,b2) else list(b1,b2)
+   b3 <- navButton("ArcNet Domain Details","#crosstable","cross",span=T)
+   b <- if (is.null(aoi)) list(b3,b2) else list(b1,b2)
    navButton(b,border=T)
 })
 ```
@@ -300,10 +321,8 @@ fillRow(flex=c(1,1)
 )
 ```
 
-[Conservation Action Hotspots](#welcome)  
+[Conservation Action Hotspots / Dictionary / FAQ](#welcome)  
 [How the assessment was made](#assessment)  
-[Dictionary](#welcome)  
-[FAQ](#welcome)  
 [User Manual](#manual) `r paste(rep("&nbsp;",36),collapse="")` [Admin](#admin){.admin}
 `r paste(rep("&nbsp;",6),collapse="")` [TODO](https://docs.google.com/spreadsheets/d/1Sg9i8-sUEEHS_gqB83AxU9aZ32rYnLBYJwL_50wFTfE){.admin target="_blank"}
 
@@ -369,10 +388,10 @@ renderPrint(selectionTables())
 ## Column {zstyle="height:100pc;" vertical_layout: scroll}
 -->
 
-### All compapibilities for a single CF
+### All compatibilities for a single CF
 
 ```{r eval=T & isShiny}
-fillCol(flex=c(NA,1,NA,NA)
+fillCol(flex=c(NA,1,NA)
        ##~ ,shiny::selectInput("cfcode","CF from crosstable",nameInit,width=width)
       # ,selectInput("cfcode","Conservation Feature"
       #             ,choices=nameInit
@@ -385,7 +404,7 @@ fillCol(flex=c(NA,1,NA,NA)
       # ,verbatimTextOutput("crossSelection")
        ,DT::DTOutput("cfdata")
        ,uiOutput("buttonsCF")
-       ,HTML("&nbsp;")
+      # ,HTML("&nbsp;")
        )
 ##~ fillCol(flex=c(NA,1)
       ##~ # ,selectInput("cfcode","Conservation Feature",cfmeta$label
@@ -464,7 +483,7 @@ renderPrint({
 
 ### All compatibilities for a single Industry
 ```{r eval=T & isShiny}
-fillCol(flex=c(NA,1,NA,NA)
+fillCol(flex=c(NA,1,NA)
        ##~ ,shiny::selectInput("cfcode","CF from crosstable",nameInit,width=width)
       # ,selectInput("industry","Industry"
       #             ,choices=nameInit
@@ -476,7 +495,7 @@ fillCol(flex=c(NA,1,NA,NA)
       # ,verbatimTextOutput("crossSelection")
        ,DT::DTOutput("industrydata")
        ,uiOutput("buttonsIndustry")
-       ,HTML("&nbsp;")
+      # ,HTML("&nbsp;")
        )
 ```
 
@@ -502,7 +521,7 @@ renderTable({
 })
 ```
 
-### Display CF {data-height=200}
+### Display CF {data-height=220}
 
 ```{r eval=T & isShiny}
 renderUI({
@@ -538,9 +557,21 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
 
 # Reg desc {#descRegion data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## Column 1 - map {data-width=300}
+## Column 1 - map {data-width=220}
 
-### Region figures 
+### `r renderText({
+   aoi <- rvAOI()
+   if (is.null(aoi))
+      "Entire area"
+   else {
+      lab <- regionSF[[input$region]]$region[aoi$id]
+      if (length(lab))
+         paste(lab,collapse=", ")
+      else
+         "Selected area"
+   }
+})`
+
 
 ```{r}
 fillCol(flex=c(1,NA,NA)
@@ -599,57 +630,65 @@ output$regionLeaflet <- renderLeaflet({
 
 ## Column 2 Region Details {data-width=300}
 
-### Basic Statistics {data-height="auto"}
+### {data-header="Basic Statistics" data-height="auto"}
 
 
 ```{r}
 DT::renderDT({
    result <- rvRegionStats()
-   res <- result[grep('^[a-zE]',names(result))] |> as.data.frame()
+   if (result$nCF==0)
+      return(DT::datatable(data.frame('Missed CFs'="bar",check.names=FALSE)[integer(),,drop=FALSE]
+                          ,options=list(dom="t",ordering=F),class="compact"
+                          ))
+   res <- result[grep("(nPU|nCF|ePA|^(area|pu))",names(result))] |> as.data.frame()
    cname <- colnames(res)
    indRound <- grep("^(pu|area|ePA)",colnames(res))
-   cname[1] <- paste0("<abbr title='"
-                     ,"Number of Planning Units in Selected Region(s)","'>"
-                     ,"PUs","</abbr>")
-   cname[2] <- paste0("<abbr title='"
-                     ,"Number of Conservation Features","'>"
-                     ,"CFs","</abbr>")
-   cname[3] <- paste0("<abbr title='"
-                     ,"Area of Selected Region(s), sq.km","'>"
-                     ,"srcArea","</abbr>")
-   cname[4] <- paste0("<abbr title='"
-                     ,"Area of Planning Units in Selected Region(s), sq.km","'>"
-                     ,"puArea","</abbr>")
-   cname[5] <- paste0("<abbr title='"
-                     ,"Terrestrial Area in Selected Region(s), sq.km","'>"
-                     ,"puLand","</abbr>")
-   cname[6] <- paste0("<abbr title='"
-                     ,"Marine Area in Selected Region(s), sq.km","'>"
-                     ,"puMarine","</abbr>")
+   dname <- rep("",ncol(res))
+   ver <- 2
+   dname[1] <- c("Number of Planning Units in Selected Region(s)"
+                ,"No of PUs")[ver]
+   dname[2] <- c("Number of Conservation Features"
+                ,"No of CFs")[ver]
+   dname[3] <- c("Area of Selected Region(s), sq.km"
+                ,"Total Area, km<sup>2</sup>")[ver]
+   dname[4] <- c("Area of Planning Units in Selected Region(s), sq.km"
+                ,"Total Area, PUs, km<sup>2</sup>")[ver]
+   dname[5] <- c("Terrestrial Area in Selected Region(s), sq.km"
+                ,"Terrestrial Area, PUs, km<sup>2</sup>")[ver]
+   dname[6] <- c("Marine Area in Selected Region(s), sq.km"
+                ,"Marine Area, PUs, km<sup>2</sup>")[ver]
+   if (length(dname)>=7)
+      dname[7] <- c("Existing Protected Areas in Selected Region(s)
+                   , sq.km","Existing Protected Areas, PUs, km<sup>2</sup>")[ver]
+   cname[1] <- paste0("<abbr title='",dname[1],"'>","PUs","</abbr>")
+   cname[2] <- paste0("<abbr title='",dname[2],"'>","CFs","</abbr>")
+   cname[3] <- paste0("<abbr title='",dname[2],"'>","srcArea","</abbr>")
+   cname[4] <- paste0("<abbr title='",dname[4],"'>","puArea","</abbr>")
+   cname[5] <- paste0("<abbr title='",dname[5],"'>","puLand","</abbr>")
+   cname[6] <- paste0("<abbr title='",dname[6],"'>","puMarine","</abbr>")
    if (length(cname)>=7)
-      cname[7] <- paste0("<abbr title='"
-                        ,"Existing Protected Areas in Selected Region(s), sq.km","'>"
-                        ,"EPA","</abbr>")
-   colnames(res) <- cname
+      cname[7] <- paste0("<abbr title='",dname[7],"'>","EPA","</abbr>")
+   colnames(res) <- dname
    da <- DT::datatable(res,escape=F,rownames="",selection="none"
                       ,options=list(dom="t",ordering=F),class="compact")
    DT::formatRound(da,indRound,1)
 })
 ```
 
-### {data-height=250}
+### {data-header="Conservation Concern Level by Activity" data-height=200}
 
 ```{r}
-fillRow(flex=c(6,1)
-   ,fillCol(flex=1
+fillRow(flex=c(1,NA)
+   ,fillCol(flex=c(NA,1)
+      ,HTML("Conservation Concern Level by Activity")
       ,renderPlotly({
          metrics <- rvRegionStats()
+         req(metrics$nCF>0)
         # saveRDS(metrics,"C:/tmp/interim.rds")
          result <- metrics$'IND'
-         localNAC <- concernNAC[,names(result)]
-         IND <- data.frame(industry=names(result),value=result
-                          ,ref=colSums(localNAC,na.rm=TRUE)/spatial_count(pu)*metrics$'nPU'
-                          )
+         localNAC <- concernNAC[,names(result)]/spatial_count(pu)
+         ref <- colSums(localNAC,na.rm=TRUE)#/spatial_count(pu)*metrics$'nPU'
+         IND <- data.frame(industry=names(result),value=result,ref=ref)
          IND <- IND[order(IND$value,decreasing=TRUE),]
          IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
          iname <- substr(IND$industry,1,1)
@@ -657,15 +696,21 @@ fillRow(flex=c(6,1)
         # ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
         # names(ct) <- sname
          mcol <- ctIndustry[substr(IND$industry,1,1)]
-         meanNAC <- sum(colSums(localNAC,na.rm=TRUE))/spatial_count(pu)
-         mvalue <- meanNAC*metrics$nPU/length(IND$industry)
+         meanNAC <- sum(colSums(localNAC,na.rm=TRUE))#/spatial_count(pu)
+         mvalue <- meanNAC/length(IND$industry) # *metrics$nPU
+         if (isTRUE(input$relative)) {
+            IND$value <- 100*IND$value/metrics$'maxNAC'
+            IND$ref <- 100*IND$ref/metrics$'maxNAC'
+            mvalue <- 100*mvalue/metrics$'maxNAC'
+         }
          p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
                      ,marker=list(color=mcol),name='Region'
                      ) %>%
               add_trace(y=~ref,name='Domain',marker=list(color='rgb(204,204,204)')
                        ,visible="legendonly") %>%
               layout(NULL
-                    ,xaxis=list(title=""),yaxis=list(title="IND")
+                    ,xaxis=list(title=""),yaxis=list(title=c("IND","NACR")[2])
+                   # ,title="Conservation Concern Level by Activity"
                    # ,showlegend=FALSE
                     ,legend=list(x=0.5,y=0.9,orientation='h')
                     ,shapes=list(list(x0=~head(industry,1),x1=~tail(industry,1)
@@ -676,42 +721,63 @@ fillRow(flex=c(6,1)
          p
       })
    )
-   ,fillCol(flex=c(NA,1,NA)
-      ### <abbr title='Industries of concern'>TOP IND</abbr> {data-height="auto"}
+   ,fillCol(flex=c(NA,1)
+     # ,HTML("Top NACR CF")
+      ,HTML(paste0("<abbr title='Proportion of maximal NAC'>Top NACR CF</abbr>"))
       ,DT::renderDT({
-        # res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
-         res <- rvRegionStats()[['IND']]
-         LH <- quantile(res,probs=max(input$levelNAC)*1e-2)
-         res <- sort(res[res>=LH],decreasing=TRUE) |> data.frame() |> t()
-         cname <- colnames(res)
-         lname <- industryName(cname)
-         colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
-         res <- t(res) |> as.data.frame(check.names=FALSE)
-         da <- DT::datatable(res,escape=F
-                            ,colnames=paste0("IND TOP"
-                                            ," (",max(input$levelNAC),")"
-                                            )
+         ctable <- rvActivityStat()
+         ntable <- ctable[order(ctable$NAC,decreasing=TRUE),c("CF name","NAC"),drop=FALSE]
+         rownames(ntable) <- paste0("<abbr title='",ntable$'CF name',"'>",rownames(ntable),"</abbr>")
+         ntable <- ntable[,"NAC",drop=FALSE]
+         colnames(ntable) <- paste0("<abbr title='Proportion of maximal NAC'>NAC</abbr>")
+         res <- data.frame(cf=rownames(ntable))
+         cat("0112a\n")
+         print(ntable)
+         print(res)
+         cat("0112b\n")
+         da <- DT::datatable(ntable,escape=F
+                            ,colnames=NULL
                             ,selection="none"
-                            ,options=list(dom="t",ordering=F),class="compact"
-                           # ,width="200px"
+                           # ,extension=c("Scroller")
+                            ,options=list(dom="t",ordering=F,pageLength=50
+                                        # ,scroller=T,scrollY="calc(50vh - 105px)"
+                                         )
+                            ,class="compact"
                             )
-         DT::formatRound(da,colnames(res),1)
+         da <- DT::formatRound(da,colnames(ntable),0)
+         da
       })
-      ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;")
-      ### <abbr title='Industries of the least concern'>LC IND</abbr> {data-height="auto"}
+   )
+)
+```
+
+### {data-header="Seasonal histogram" data-height=150}
+
+```{r}
+fillRow(flex=c(16,NA,24,NA,8)
+   ,fillCol(flex=c(NA,1)
+      ,HTML("Indexes for the region")
       ,DT::renderDT({
-        # res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
-         res <- rvRegionStats()[['IND']]
-         LH <- quantile(res,probs=min(input$levelNAC)*1e-2)
-         res <- sort(res[res<=LH],decreasing=TRUE) |> data.frame() |> t()
+         result <- rvRegionStats()
+         req(result$nCF>0)
+         res <- result[grep('^NA',names(result))] |> as.data.frame()
          cname <- colnames(res)
-         lname <- industryName(cname)
-         colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
+         cname[cname=="NAO"] <- paste0("<abbr title='"
+                                      ,"Conservation concern, not allowed only"
+                                      ,"'>","NAO","</abbr>")
+         cname[cname=="NAC"] <- paste0("<abbr title='"
+                                      ,"Conservation concern, not allowed and conditional"
+                                      ,"'>","NAC","</abbr>")
+         cname[cname=="NAOR"] <- paste0("<abbr title='"
+                                      ,"Conservation concern, not allowed only relative"
+                                      ,"'>","NAOR","</abbr>")
+         cname[cname=="NACR"] <- paste0("<abbr title='"
+                                      ,"Conservation concern, not allowed and conditional relative"
+                                      ,"'>","NACR","</abbr>")
+         colnames(res) <- cname
          res <- t(res) |> as.data.frame(check.names=FALSE)
          da <- DT::datatable(res,escape=F
-                            ,colnames=paste0("LC IND"
-                                            ," (",min(input$levelNAC),")"
-                                            )
+                            ,colnames=""
                             ,selection="none"
                             ,options=list(dom="t",ordering=F),class="compact"
                             ,width="200px"
@@ -719,62 +785,38 @@ fillRow(flex=c(6,1)
          DT::formatRound(da,colnames(res),1)
       })
    )
-  # ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;")
-)
-```
-
-### {data-height=150}
-
-```{r}
-fillRow(flex=c(8,NA,24,NA,8)
-   ,DT::renderDT({
-      result <- rvRegionStats()
-      res <- result[grep('^NA',names(result))] |> as.data.frame()
-      cname <- colnames(res)
-      cname[cname=="NAO"] <- paste0("<abbr title='"
-                                   ,"Conservation concern, not allowed only"
-                                   ,"'>","NAO","</abbr>")
-      cname[cname=="NAC"] <- paste0("<abbr title='"
-                                   ,"Conservation concern, not allowed and conditional"
-                                   ,"'>","NAC","</abbr>")
-      cname[cname=="NAOR"] <- paste0("<abbr title='"
-                                   ,"Conservation concern, not allowed only relative"
-                                   ,"'>","NAOR","</abbr>")
-      cname[cname=="NACR"] <- paste0("<abbr title='"
-                                   ,"Conservation concern, not allowed and conditional relative"
-                                   ,"'>","NACR","</abbr>")
-      colnames(res) <- cname
-      res <- t(res) |> as.data.frame(check.names=FALSE)
-      da <- DT::datatable(res,escape=F
-                         ,colnames=""
-                         ,selection="none"
-                         ,options=list(dom="t",ordering=F),class="compact"
-                         ,width="200px"
-                         )
-      DT::formatRound(da,colnames(res),1)
-   })
    ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-   ,renderPlotly({
-      sc <- rvRegionStats()[['SC0']]
-      sc <- data.frame(month=names(sc),value=sc)
-      sc$month <- factor(sc$month,levels=sc$month,ordered=TRUE)
-      p <- plot_ly(sc,x=~month,y=~value,type="bar",orientation="v") %>%
-               layout(NULL
-                     ,xaxis=list(title=""),yaxis=list(title="SC IND")
-                    # ,margin=list(l=0,r=0,t=0)
-                     )
-      p
-   })
+   ,fillCol(flex=c(NA,1)
+      ,HTML("Conservation Concern Level by Month")
+      ,renderPlotly({
+         sc <- rvRegionStats()
+         req(sc$nCF>0)
+         sc <- sc[['SC0']]
+         sc <- data.frame(month=names(sc),value=sc)
+         sc$month <- factor(sc$month,levels=sc$month,ordered=TRUE)
+         p <- plot_ly(sc,x=~month,y=~value,type="bar",orientation="v") %>%
+                  layout(NULL
+                        ,xaxis=list(title=""),yaxis=list(title=c("SC IND","NACR")[2])
+                       # ,margin=list(l=0,r=0,t=0)
+                        )
+         p
+      })
+   )
    ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-   ,DT::renderDT({
-      res <- rvRegionStats()[['SC']] |> data.frame() |> t()
-      res <- t(res) |> as.data.frame(check.names=FALSE)
-      da <- DT::datatable(res,escape=F
-                         ,colnames="<abbr title='Season of concern'>SC</abbr>"
-                         ,selection="none"
-                         ,options=list(dom="t",ordering=F),class="compact")
-      DT::formatRound(da,colnames(res),1)
-   })
+   ,fillCol(flex=c(NA,1)
+      ,HTML("Most Critical Months")
+      ,DT::renderDT({
+         res <- rvRegionStats()
+         req(res$nCF>0)
+         res <- res[['SC']] |> data.frame() |> t()
+         res <- t(res) |> as.data.frame(check.names=FALSE)
+         da <- DT::datatable(res,escape=F
+                            ,colnames="" # "<abbr title='Season of concern'>SC</abbr>"
+                            ,selection="none"
+                            ,options=list(dom="t",ordering=F),class="compact")
+         DT::formatRound(da,colnames(res),1)
+      })
+   )
 )
 ```
 
@@ -800,6 +842,7 @@ output$downloadMetrics <- downloadHandler(
    }
    ,content=function(file) {
       interim <- rvRegionMetrics()
+      req(!is.null(interim$cover))
      # str(interim)
       dNAO <- cbind(interim$cover,interim$NAO)
       dNAC <- cbind(interim$cover,interim$NAC)
@@ -820,6 +863,7 @@ output$instantReport <- downloadHandler(
    ,content=function(file) {
       cat("instantReport (content):\n")
       interim <- rvRegionMetrics()
+      req(!is.null(interim$cover))
       str(interim)
       print(getwd())
       fname <- "report/instantReport.Rmd"
@@ -842,7 +886,77 @@ output$instantReport <- downloadHandler(
    }
 )
 ```
- 
+
+## quantilies {data-width=50}
+
+### {data-header="TOP IND"}
+
+```{r}
+fillCol(flex=c(NA,1)
+   ,HTML("Activities of Concern")
+   ,DT::renderDT({
+     # res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
+      res <- rvRegionStats()
+      req(res$nCF>0)
+      res <- res[['IND']]
+      LH <- quantile(res,probs=max(input$levelNAC)*1e-2)
+      res <- sort(res[res>=LH],decreasing=TRUE) |> data.frame() |> t()
+      cname <- colnames(res)
+      lname <- industryName(cname)
+      colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
+      res <- t(res) |> as.data.frame(check.names=FALSE)
+      da <- DT::datatable(res,escape=F
+                        # ,colnames=paste0("Activities of Concern"
+                        #                 ," (",max(input$levelNAC),")"
+                        #                 )
+                         ,colnames=NULL
+                         ,selection="none"
+                         ,extension=c("Scroller")
+                         ,options=list(dom="t",ordering=F,pageLength=50
+                                      ,scroller=T,scrollY="calc(50vh - 105px)"
+                                      )
+                         ,class="compact"
+                         )
+      da <- DT::formatRound(da,colnames(res),1)
+      da
+   })
+)
+```
+
+### {data-header="IND LC"}
+
+```{r}
+fillCol(flex=c(NA,1)
+   ,HTML("Activities of Least Concern")
+   ,DT::renderDT({
+     # res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
+      res <- rvRegionStats()
+      req(res$nCF>0)
+      res <- res[['IND']]
+      LH <- quantile(res,probs=min(input$levelNAC)*1e-2)
+      res <- sort(res[res<=LH],decreasing=FALSE) |> data.frame() |> t()
+      cname <- colnames(res)
+      lname <- industryName(cname)
+      colnames(res) <- paste0("<abbr title='",lname,"'>",cname,"</abbr>")
+      res <- t(res) |> as.data.frame(check.names=FALSE)
+      da <- DT::datatable(res,escape=F
+                        # ,colnames=paste0("Activities of Least Concern"
+                        #               #  ," (",min(input$levelNAC),")"
+                        #                 )
+                         ,colnames=NULL
+                         ,selection="none"
+                         ,extension=c("Scroller")
+                         ,options=list(dom="t",ordering=F,pageLength=50
+                                      ,scroller=T,scrollY="calc(50vh - 105px)"
+                                      )
+                         ,class="compact"
+                         )
+      da <- DT::formatRound(da,colnames(res),1)
+      da
+   })
+)
+```
+
 # CF desc {#descCF .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
 ## {data-width=500}
@@ -856,7 +970,7 @@ fillCol(flex=c(NA,1,1)
    })
    ,renderUI({
       b <- buttonsTemplate()
-      b <- b[grep("cf.*overview",names(b),invert=TRUE)]
+      b <- b[grep("(cf.*overview|industry.*list)",names(b),invert=TRUE)]
       navButton(b)
    })
    ,if (staffOnly) renderPrint({
@@ -865,7 +979,7 @@ fillCol(flex=c(NA,1,1)
 )
 ```
 
-## {data-width=460}
+## {data-width=400}
 
 ### Map
 
@@ -876,7 +990,7 @@ fillCol(flex=c(NA,1,1)
 
 # I desc {#descIndustry .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## {data-width=420}
+## {data-width=300}
 
 ### Industry map 
 
@@ -902,7 +1016,7 @@ output$industryMap <- renderLeaflet({
 ```
 
 
-## {data-width=500}
+## {data-width=360}
 
 ### Industry description
 
@@ -917,7 +1031,7 @@ fillCol(flex=c(1,NULL,NA)
    ##~ )
    ,renderUI({
       b <- buttonsTemplate()
-      b <- b[grep("indus.*overview",names(b),invert=TRUE)]
+      b <- b[grep("(indus.*overview|cf.*list)",names(b),invert=TRUE)]
       navButton(b)
    })
 )
@@ -925,7 +1039,7 @@ fillCol(flex=c(1,NULL,NA)
 
 # Lists... {#list data-orientation="rows" `r if (hideTabs) ".hidden"`}
 
-## {data-height="auto"}
+## {.failured data-height="auto"}
 
 ### Conservation Features
 
@@ -959,8 +1073,8 @@ output$switchIndustry <- renderUI({
 
 ## {data-height=50}
    
-```{r, eval=isShiny}
-fillCol(flex=1,uiOutput("buttonsList"))
+```{r, eval=T & isShiny}
+fillCol(flex=NA,uiOutput("buttonsList"))
 output$buttonsList <- renderUI({
    buttonsList()
 })
@@ -968,7 +1082,7 @@ output$buttonsList <- renderUI({
 
 # Comments {#comment data-orientation="columns" `r if (T & hideTabs) ".hidden"`}
 
-## {data-width=30}
+## {data-width=20}
 
 ## {data-width=150}
 
@@ -1005,7 +1119,7 @@ DT::renderDT({
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('0','1','2'
+                     ,backgroundColor=DT::styleEqual(c('1','2','3'
                                                       ,kwdGreen,kwdYellow,kwdRed
                                                      )
                                            ,c("palegreen","LemonChiffon","lightsalmon"
@@ -1048,9 +1162,10 @@ output$buttonsComment <- renderUI({
                      ,height="200px"
                      )
   # )
-  # ,fillCol(flex=c(NA,NA)
+  # ,fillCol(flex=c(NA,1,NA)
       textInput("author","Your name","",placeholder="Your name"
                 ,width="calc(100% - 0px)")
+      br()
       actionLink("submit","Submit")
   # )
 #)
@@ -1089,7 +1204,7 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 ```{r, eval=T, child="include/manual.Rmd"}
 ```
 
-# {#admin .hidden}
+# {#admin .hidden .failured}
 
 ## {data-width=100}
 
@@ -1117,8 +1232,8 @@ output$downloadComment <- downloadHandler(
       paste0("comments-",format(Sys.time(),"%Y%m%d-%H%M"),fileext)
    }
    ,content=function(file) {
-      req(file.exists(commentFile))
-      da <- jsonlite::fromJSON(commentFile)
+      req(comment_exists())
+      da <- comment_read()
       req(nrow(da)>0)
       switch(fileext
             ,'.csv'=write.csv(da,file)
@@ -1129,8 +1244,8 @@ output$downloadComment <- downloadHandler(
 br()
 br()
 DT::renderDT({
-   req(file.exists(commentFile))
-   da <- jsonlite::fromJSON(commentFile)
+   req(comment_exists())
+   da <- comment_read()
    da <- da[order(da$Time,decreasing=TRUE),]
    req(nrow(da)>0)
    b <- DT::datatable(da,rownames="")
@@ -1153,14 +1268,15 @@ sliderInput("mulNAG",label="Multiplyer for green cells"
            ,min=0,max=100,step=1,value=config$concern[3]
            )
 actionLink("rebuildNAC","Apply changes")
+br()
+HTML("Application will be restarted with initialization during 1-2 mins.")
 ```
 
-Application will be restarted with initialization during 1-2 mins.
-
-### Quantilies for Top and Least levels of indices {data-height="auto"}
+### Misc {data-height="auto"}
 
 ```{r}
-sliderInput("levelNAC",label="Quantilies, %"
+checkboxInput("relative","Relative NAC",value=config$relative)
+sliderInput("levelNAC",label="Quantilies (%) for IND LC (low) and TOP IND (high)"
            ,min=0,max=100,step=1,value=config$quantile
            )
 ```

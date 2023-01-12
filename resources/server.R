@@ -117,9 +117,7 @@ if (T) observe({ ## update 'exchange$selection'
       req(selection)
       cat("      found\n")
       opW <- options(warn=1)
-      cat("0918s -- dplyr::select_() deprecation -- begin\n")
       gs <- selection()
-      cat("0918s -- dplyr::select_() deprecation -- end\n")
       options(opW)
       ##~ cat("----------\n")
       ##~ str(selection)
@@ -390,9 +388,12 @@ if (F) observe({ ## setView for Selector
   # conflict <- input$industry
    conflict <- exchange$conflict
    str(conflict)
-   if (is.null(conflict))
+   if (is.null(conflict)) {
+      cat("confict is NULL\n")
       return(NULL)
+   }
    industry <- conflict$industry
+   economy <- conflict$economy
    if ((length(industry)==1)&&(industry=="all")) {
       if (nameAllHuman %in% input$activity)
          industry <- industries |> unlist() |> unname()
@@ -400,21 +401,28 @@ if (F) observe({ ## setView for Selector
          industry <- industries[input$activity] |> unlist() |> unname()
    }
    industry <- industry[industry %in% unname(unlist(industries))]
-   if (!length(industry))
+   str(list(industry=industry,economy=economy))
+   if ((!length(industry))&&(economy=="none"))
       return(NULL)
-   season <- conflict$season
-   group <- conflict$group
-   group <- groupList[na.omit(match(group,groupList))]
-   str(group)
-   if (!length(group))
-      return(NULL)
-   group <- names(group)
-  # a <- rvActivity()$map
-  # print(industry)
-  # iname <- unname(industry)
-   str(list(industry=industry,season=season,group=group))
+   if (!length(economy)) {
+      season <- conflict$season
+      group <- conflict$group
+      group <- groupList[na.omit(match(group,groupList))]
+      str(group)
+      if (!length(group))
+         return(NULL)
+      group <- names(group)
+     # a <- rvActivity()$map
+     # print(industry)
+     # iname <- unname(industry)
+   }
+   else {
+      season <- "max"
+      group <- "\\d"
+   }
+   str(list(industry=industry,season=season,group=group,economy=economy))
    print("next to 'interimMap'")
-   a <- interimMap(industry=industry,season=season,group=group)
+   a <- interimMap(industry=industry,season=season,group=group,economy=economy)
    a
 })
 'rvConflictMap' <- reactive({
@@ -425,7 +433,15 @@ if (F) observe({ ## setView for Selector
    if (is.null(a))
       return(conflictBasemap())
    coloring <- names(methodList[match(input$coloring,methodList)])
-   d6 <- map3_1d(a,kind=coloring,source=input$sheet)
+   print("1226a")
+   print(a)
+   print(coloring)
+  # print(input$sheet)
+   print("1226b")
+   if (length(a)==3)
+      d6 <- map3_1d(a,kind=coloring,source=input$sheet)
+   else
+      d6 <- map1_1d(a,kind="devel")
    m <- conflictMap(d6)
    m
 })
@@ -433,7 +449,15 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
    sleeping()
    cat("observeEvent input$drawIndustry:\n")
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
-   exchange$conflict <- list(industry=input$industry,group=input$group,season=input$season)
+   exchange$conflict <- list(industry=input$industry,group=input$group
+                            ,season=input$season,economy=input$economy)
+})
+observeEvent(input$drawEconomy,{ ## eventReactive actionlink
+   sleeping()
+   cat("observeEvent input$drawEconomy:\n")
+  # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
+   exchange$conflict <- list(industry=input$industry,group=input$group
+                            ,season=input$season,economy=input$economy)
 })
 'rvActivityStat' <- reactive({
    sleeping()
@@ -1218,6 +1242,36 @@ if (T) observe({ ## update 'input$industry'
    exchange$conflict <- NULL
    updateSelectInput(session,"industry",choices=choice2,selected=choice2[1])
 })
+if (T) observe({ ## update 'input$economy'
+   sleeping()
+   cat("observe 'input$economy'\n")
+   industry <- input$industry
+   print(c(industry=industry))
+   print(industry %in% industryAbbr$industry)
+   if ((length(industry)==1)&&(industry %in% industryAbbr$industry)) {
+      choice <- "SIGHT list is expected here"
+      cvalue <- sight[[industryCode(industry)]]
+      print(c(cvalue=cvalue))
+      print(c(cond1=!is.na(cvalue[1])))
+      print(c(cond2=isTRUE(cvalue[1]!="NA")))
+      if (!is.na(cvalue[1])) {
+         if (isTRUE(cvalue[1]=="NA"))
+            choice <- c('Not applicable for show'="none")
+         else
+            choice <- c('Do not show'="none",cvalue)
+      }
+      ##~ if ((!is.na(cvalue[1]))||(isTRUE(cvalue[1]!="NA"))) {
+         ##~ choice <- c('Do not show'="none",cvalue)
+      ##~ }
+   }
+   else if ((length(industry)==1)&&(isTRUE(industry=="all")))
+      choice <- c('Not applicable for show'="none")
+   else if (length(industry)>1)
+      choice <- c('Not applicable for show'="none")
+   else
+      choice <- c('Do not show'="none",spatial_basename(economyList))
+   updateSelectInput(session,"economy",choices=choice,selected=choice[1])
+})
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
    sleeping()
    cat("observeEvent 'input$industry':\n")
@@ -1240,6 +1294,12 @@ if (T) observeEvent(input$industry,{ ## update 'input$industry'
    }
    if (length(choice)) {
       updateSelectInput(session,"industry",selected=choice)
+   }
+   if (F & isTRUE(choice=="none"))
+      showNotification("Remove layer from map",duration=3)
+   if ((FALSE)&&(length(choice)==1)&&(choice!="none")) {
+      economy <- choice
+      updateSelectInput(session,"economy",choice=economy,selected=economy[1])
    }
 })
 if (T) observeEvent(input$activity,{ ## update 'input$activity'
@@ -1285,11 +1345,11 @@ if (T) observeEvent(input$group,{ ## update 'input$group'
    cat("rvInitEPA:\n")
    ((length(input$initEPA)>0)&&(input$initEPA>0))
 })
-##~ observe({
-  ##~ # req(length(input$actionEPA))
-   ##~ if ((!exchange$initEPA)&&(isTRUE(input$actionEPA)))
-      ##~ exchange$initEPA <- TRUE
-##~ })
+if (F) observe({
+  # req(length(input$actionEPA))
+   if ((!exchange$initEPA)&&(isTRUE(input$actionEPA)))
+      exchange$initEPA <- TRUE
+})
 if (T) observe({
    sleeping()
    cat("observe for fitBounds():\n")
@@ -1411,38 +1471,45 @@ observe({
 observeEvent(input$comment,{
    sleeping()
    cat("observeEvent 'input$comment'\n")
-  # config <- jsonlite::fromJSON(configFile)
+  # config <- config_read()
    config$comment <- input$comment
-   writeLines(jsonlite::toJSON(config),configFile)
+   config_write(config)
+})
+observeEvent(input$relative,{
+   sleeping()
+   cat("observeEvent 'input$relative'\n")
+  # config <- config_read()
+   config$relative <- input$relative
+   config_write(config)
 })
 if (FALSE) {
    observeEvent(input$sleepVerbose,{
       sleeping()
       cat("observeEvent 'input$sleepVerbose'\n")
-     # config <- jsonlite::fromJSON(configFile)
+     # config <- config_read()
       config$sleepVerbose <- input$sleepVerbose
-      writeLines(jsonlite::toJSON(config),configFile)
+      config_write(config)
    })
 }
 observeEvent(input$sleepValue,{
    sleeping()
    cat("observeEvent 'input$sleepValue'\n")
-  # config <- jsonlite::fromJSON(configFile)
+  # config <- config_read()
    config$sleepValue <- input$sleepValue
-   writeLines(jsonlite::toJSON(config),configFile)
+   config_write(config)
 })
 observeEvent(input$levelNAC,{
    sleeping()
    cat("observeEvent 'input$levelNAC'\n")
-  # config <- jsonlite::fromJSON(configFile)
+  # config <- config_read()
    config$quantile <- input$levelNAC
-   writeLines(jsonlite::toJSON(config),configFile)
+   config_write(config)
 })
 'rvCommentTable' <- reactive({
    sleeping()
    cat("'rvCommentTable()'\n")
-   if (file.exists(commentFile)) {
-      da <- jsonlite::fromJSON(commentFile)
+   if (comment_exists()) {
+      da <- comment_read()
    }
    else
       da <- NULL
@@ -1463,7 +1530,7 @@ observeEvent(input$levelNAC,{
             da <- unique(da)
             da <- da[nchar(da$Comment)>0,]
             if (nrow(da)>0)
-               writeLines(jsonlite::toJSON(da),commentFile)
+               comment_write(da)
          }
       })
    }
@@ -1491,11 +1558,12 @@ if (T) observeEvent(input$rebuildNAC,{ ## eventReactive actionlink
    cat("observe 'input$rebuildNAC'\n")
    concern <- c(input$mulNAR,input$mulNAY,input$mulNAG)
    if (!identical(as.numeric(concern),as.numeric(config$concern))) {
-     # config <- jsonlite::fromJSON(configFile)
+     # config <- config_read()
       config$concern <- concern
-      writeLines(jsonlite::toJSON(config),configFile)
+      config_write(config)
       dummy <- "restart is required"
       save(dummy,file=sessionFile)
+      prm_upload(sessionFile)
       session$reload()
    }
 })

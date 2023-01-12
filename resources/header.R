@@ -1,6 +1,5 @@
 devel <- !grepl(file.path(gsub("^\\w:/","",Sys.getenv("RAS")),"shiny"),gsub("^\\w:/","",getwd()))
 hlink <- FALSE
-staffOnly <- nchar(Sys.getenv("MSOFFICE"))>0
 isScroll <- TRUE
 useExchange <- FALSE
 # invisible(stats::runif(352))
