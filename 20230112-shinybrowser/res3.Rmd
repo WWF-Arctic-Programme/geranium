@@ -1,0 +1,19 @@
+---
+zoutput: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+#
+
+##
+
+### 
+
+```{r}
+shinybrowser::detect()
+# plutil::pluglibrary(shinybrowser)
+renderPrint({
+   ret <- try(shinybrowser::get_browser())
+   str(ret)
+})
+```

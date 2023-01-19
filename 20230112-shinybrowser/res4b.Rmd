@@ -1,0 +1,22 @@
+---
+runtime: shiny
+---
+
+
+```{r}
+shinybrowser::detect()
+```
+
+```{r}
+fillCol(flex=NA
+   ,verbatimTextOutput("browser")
+)
+```
+
+
+```{r}
+output$browser <- renderPrint({
+   ret <- try(shinybrowser::get_all_info())
+   str(ret)
+})
+```

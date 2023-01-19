@@ -1,0 +1,37 @@
+---
+title: "TEST"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, include=FALSE}
+library(flexdashboard)
+library(htmltools)
+```
+
+Page
+====================================
+
+Row
+-----------------------------
+
+### HTML and JavaScript
+
+<button id="btn">Click me</button>
+
+```{js, echo=FALSE}
+$("#btn").on("click", function() {
+  alert("You clicked the button!")
+})
+```
+
+### HTML using 'htmltools'
+
+```{r, echo=FALSE}
+tags$button("Another button")
+```

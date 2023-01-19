@@ -1,9 +1,10 @@
 invisible(Sys.setlocale("LC_TIME","C"))
-staffOnly <- F & nchar(Sys.getenv("MSOFFICE"))>0
+staffOnly <- T & nchar(Sys.getenv("MSOFFICE"))>0
 sessionFile <- "quickload/session.Rdata"
 rdstoken <- file.path("quickload/dropbox-token.rds")
 isRemote <- ((!staffOnly)&&(file.exists(rdstoken)))
 # isRemote <- file.exists(rdstoken)
+useNACR <- FALSE
 quickStart <- FALSE
 if ((!file.exists(sessionFile))||(file.size(sessionFile)<1024))
    prm_download(sessionFile)
@@ -91,6 +92,7 @@ kwdGray <- "Not applicable"
 allActivity <- "All human use"
 noneActivity <- "No human use"
 nameAllCF <- "All conservation features"
+nameAllSeason <- "Annual maximum"
 groupList <- c('\\d'=nameAllCF
               ,'1'="Walrus"
               ,'2'="Pinnipeds"
@@ -146,7 +148,7 @@ ref <- polygonize(blank,engine="sf")
 ref$ID <- seq(spatial_count(ref))
 cell <- ursa(dist2land["dist"],"cell")*1e-3
 nameInit <- "---"
-seasonList <- c("Annual maximum"
+seasonList <- c(nameAllSeason
                ,format(seq(as.Date("2020-01-15"),length.out=12,by="1 month"),"%B"))[]
 methodList <- c('overlap'=paste(sQuote(kwdRed),"colors overwrite",sQuote(kwdYellow),"colors")
                ,'threat'=paste("Accentuated",sQuote(kwdRed),"palette")
@@ -285,49 +287,17 @@ if (!quickStart) {
       v
    }) |> do.call(rbind,args=_)
    concern$industry <- factor(industryCode(concern$industry))
-   concernNAR <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                           ,function(x) length(which(x$value %in% '3'))) |>
-                 unclass() |> data.frame()
-   concernNAY <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                           ,function(x) length(which(x$value %in% '2'))) |>
-                 unclass() |> data.frame()
-   concernNAG <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                           ,function(x) length(which(x$value %in% '1'))) |>
-                 unclass() |> data.frame()
-   if (T) {
-      concernMissed <- by(concern,list(CF=concern$CF_code,industry=concern$industry)
-                                 ,function(x) {
-         y <- length(which(!is.na(x$value)))
-         y[y==0] <- NA
-         y
-      }) |> unclass() |> data.frame()
-      concernNAR <- concernNAR/concernMissed*12
-      concernNAY <- concernNAY/concernMissed*12
-      concernNAG <- concernNAG/concernMissed*12
-   }
-   concernNAO <- mulNA[1]*concernNAR
-   concernNAC <- mulNA[1]*concernNAR+mulNA[2]*concernNAY+mulNA[3]*concernNAG
    ursa:::.elapsedTime("concern prepare -- finish")
 }
 if (!quickStart) {
    if (!dir.exists(dirname(sessionFile)))
       dir.create(dirname(sessionFile))
    save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
-       ,PAs,half,vulner,industries,comments,concern,concernNAO,concernNAC
+       ,PAs,half,vulner,industries,comments,concern
+      # ,concernNAO,concernNAC
        ,file=sessionFile)
    if (isRemote)
       prm_upload(sessionFile)
-}
-meanNAO <- sum(colSums(concernNAO,na.rm=TRUE))/spatial_count(pu)
-meanNAC <- sum(colSums(concernNAC,na.rm=TRUE))/spatial_count(pu)
-if (F) {
-   sumNAC <- rowSums(concernNAC,na.rm=TRUE)/ncol(concernNAC)/max(concernNAC,na.rm=TRUE)
-   sumNAO <- rowSums(concernNAO,na.rm=TRUE)/ncol(concernNAO)/max(concernNAO,na.rm=TRUE)
-} else {
-   d <- max(config$concern)*12
-   sumNAC <- apply(concernNAC,1,\(v) sum(v,na.rm=TRUE)/sum(!is.na(v))/d)
-   sumNAO <- apply(concernNAO,1,\(v) sum(v,na.rm=TRUE)/sum(!is.na(v))/d)
-   rm(d)
 }
 sname <- unique(substr(industryAbbr$abbr,1,1))
 ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)

@@ -2,7 +2,7 @@ exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL
                           ,prev=integer(),curr=integer() ## need for removing forgiven clean
                           ,cd=character(),domain=NULL
                           ,CF=NULL,industry=NULL,conflict=NULL#,initEPA=FALSE
-                          ,rebuildNAO=TRUE
+                          ,rebuildNAO=TRUE,subset=NULL
                           )
 proxyCross <- DT::dataTableProxy("cross")
 proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
@@ -404,7 +404,25 @@ if (F) observe({ ## setView for Selector
    str(list(industry=industry,economy=economy))
    if ((!length(industry))&&(economy=="none"))
       return(NULL)
-   if (!length(economy)) {
+   if (T | !length(economy)) {
+      season <- conflict$season
+     # if (!length(season))
+     #    season <- "max"
+      group <- conflict$group
+      group <- groupList[na.omit(match(group,groupList))]
+     # str(list(season=seson,group=group))
+      if (!length(group)) {
+        # return(NULL)
+         group <- "\\d"
+      }
+      group <- names(group)
+     # a <- rvActivity()$map
+     # print(industry)
+     # iname <- unname(industry)
+   }
+   else {
+     # season <- "max HERE"
+     # group <- "\\d HERE"
       season <- conflict$season
       group <- conflict$group
       group <- groupList[na.omit(match(group,groupList))]
@@ -412,13 +430,6 @@ if (F) observe({ ## setView for Selector
       if (!length(group))
          return(NULL)
       group <- names(group)
-     # a <- rvActivity()$map
-     # print(industry)
-     # iname <- unname(industry)
-   }
-   else {
-      season <- "max"
-      group <- "\\d"
    }
    str(list(industry=industry,season=season,group=group,economy=economy))
    print("next to 'interimMap'")
@@ -484,7 +495,9 @@ observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    else
       activity <- "all"
    str(activity)
-   str(rules$activity)
+   str(c('industry:'=input$industry))
+   str(c('exchange:'=exchange$subset))
+   str(rules$industry)
    str(vulner$industry)
    cat("------------\n")
    aoi <- rvAOI()
@@ -493,7 +506,11 @@ observeEvent(input$drawEconomy,{ ## eventReactive actionlink
   # interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
    ##~ exchange$domain <- FALSE
    ##~ plutil::timeHint(paste("domain is",exchange$domain))
-   ret <- crossTable(aoi=aoi,group=group,activity=activity)
+   ret <- crossTable(aoi=aoi
+                    ,group=group
+                   # ,activity=activity
+                    ,activity=unlist(exchange$subset)
+                    ,season=input$season)
    ret <- ret[ret$'Cover'>=input$omitPercent,]
    ret
 })
@@ -881,6 +898,11 @@ if (T) { ## industrySelection
   # plutil::timeHint(paste("human use:",industry," --- ",exchange$industry))
    req(industry %in% unlist(industries))
    da <- human_use(industry)
+   if (any(input$season %in% tail(seasonList,-1))) {
+      ind <- which(substr(colnames(da),1,3) %in% substr(input$season,1,3))
+      if (length(ind))
+         da <- da[,c(1,ind)]
+   }
    if (T) {
       st <- rvActivityStat()
       if (!is.null(st))
@@ -897,6 +919,11 @@ if (T) { ## industrySelection
   # plutil::timeHint(paste("human use:",cf," --- ",exchange$cf))
    req(cf %in% spec$cf)
    da <- human_use(cf)
+   if (any(input$season %in% tail(seasonList,-1))) {
+      ind <- which(substr(colnames(da),1,3) %in% substr(input$season,1,3))
+      if (length(ind))
+         da <- da[,c(1,ind)]
+   }
    if (T) {
       st <- rvActivityStat()
       if (!is.null(st))
@@ -1233,14 +1260,24 @@ if (T) observe({ ## update 'input$industry'
   # req(!is.null(choice <- input$activity))
    choice <- input$activity
    print(choice)
-   if ((length(choice)==1)&&(choice==nameAllHuman))
+   activitySubset <- c("Infrastructure","Mining","Shipping")
+   industrySubset <- industryName(c("ICI","MOP","ST"))
+   if ((length(choice)==1)&&(choice==nameAllHuman)) {
       choice2 <- c('Do not show'="none",'All selected activity'="all",industries)
+      select2 <- choice2[1]
+   }
+   else if ((all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
+      choice2 <- c('Do not show'="none",'All selected activity'="all",industrySubset)
+      select2 <- industryName("ST")
+   }
    else {
       choice2 <- choice[choice %in% names(industries)]
       choice2 <- c('Do not show'="none",'All selected activity'="all",industries[choice2])
+      select2 <- choice2[1]
    }
    exchange$conflict <- NULL
-   updateSelectInput(session,"industry",choices=choice2,selected=choice2[1])
+   exchange$subset <- tail(choice2,-2)
+   updateSelectInput(session,"industry",choices=choice2,selected=select2)
 })
 if (T) observe({ ## update 'input$economy'
    sleeping()
@@ -1248,6 +1285,7 @@ if (T) observe({ ## update 'input$economy'
    industry <- input$industry
    print(c(industry=industry))
    print(industry %in% industryAbbr$industry)
+   readyToSelect <- FALSE
    if ((length(industry)==1)&&(industry %in% industryAbbr$industry)) {
       choice <- "SIGHT list is expected here"
       cvalue <- sight[[industryCode(industry)]]
@@ -1257,8 +1295,10 @@ if (T) observe({ ## update 'input$economy'
       if (!is.na(cvalue[1])) {
          if (isTRUE(cvalue[1]=="NA"))
             choice <- c('Not applicable for show'="none")
-         else
-            choice <- c('Do not show'="none",cvalue)
+         else {
+            choice <- c(cvalue,'Do not show'="none")
+            readyToSelect <- TRUE
+         }
       }
       ##~ if ((!is.na(cvalue[1]))||(isTRUE(cvalue[1]!="NA"))) {
          ##~ choice <- c('Do not show'="none",cvalue)
@@ -1270,7 +1310,8 @@ if (T) observe({ ## update 'input$economy'
       choice <- c('Not applicable for show'="none")
    else
       choice <- c('Do not show'="none",spatial_basename(economyList))
-   updateSelectInput(session,"economy",choices=choice,selected=choice[1])
+   updateSelectInput(session,"economy",choices=choice
+                    ,selected=if (readyToSelect) cvalue else choice[1])
 })
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
    sleeping()
@@ -1335,6 +1376,23 @@ if (T) observeEvent(input$group,{ ## update 'input$group'
          if (anyNA(ind <- match(input$group,tail(unname(groupList),-1)))) {
             if (length(ind2 <- which(!is.na(ind)))) {
                updateSelectInput(session,"group",selected=input$group[ind2])
+            }
+         }
+      }
+   }
+})
+if (T) observeEvent(input$season,{ ## update 'input$season'
+   sleeping()
+   cat("observeEvent 'input$season':\n")
+   if (is.null(input$season))
+      updateSelectInput(session,"season",selected=nameAllSeason)
+   else {
+      if ((length(input$season)>1)&&(tail(input$season,1)==nameAllSeason))
+         updateSelectInput(session,"season",selected=nameAllSeason)
+      else {
+         if (anyNA(ind <- match(input$season,tail(unname(seasonList),-1)))) {
+            if (length(ind2 <- which(!is.na(ind)))) {
+               updateSelectInput(session,"season",selected=input$season[ind2])
             }
          }
       }
@@ -1427,7 +1485,8 @@ observeEvent(input$initEPA,{
 'rvMetricsMap' <- reactive({
    sleeping()
    cat("rvMetricsMap:\n")
-   metricsMap()
+   ctable <- rvActivityStat()
+   metricsMap(ctable)
 })
 observeEvent(input$actionNAC,{
    sleeping()

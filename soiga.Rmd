@@ -35,8 +35,10 @@ output:
       - https://nplatonov.github.io/site_libs/flex_dashboard.css
       - include/geranium.css
       navbar:
+         - { title: "&nbsp;", href: "#section-welcome", align: left}
          - { title: "&nbsp;", href: "#section-admin", align: right}
-         - { icon: "ion-home", href: "#", align: right}
+         - { icon: "ion-home", href: "#section-map", align: right}
+         - { icon: "ion-calculator", href: "#section-assessment", align: right}
          - { icon: "ion-help", href: "#section-manual", align: right}
          - { icon: "ion-social-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
@@ -56,7 +58,7 @@ const item = document.getElementsByClassName("navbar-brand");
 const text = item[0].firstChild;
 const link = document.createElement('a');
 const cl = document.createElement('span');
-link.setAttribute("href","#");
+link.setAttribute("href","#section-map");
 link.appendChild(text);
 cl.setAttribute("class","navbar-title");
 cl.appendChild(link);
@@ -167,68 +169,20 @@ fillRow(flex=c(NA,NA,NA,NA,NA)
              # ,selected="Cetaceans"
               ,width="191px")
    ,HTML("&nbsp;&nbsp;")
-   ,selectInput("season","Season",seasonList
+   ,selectInput("season","Season group",seasonList
              # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
               ,selected=seasonList[1L]
+              ,multiple=T
               ,width="146px")
    ,HTML("&nbsp;&nbsp;")
-   ,selectInput("activity","Activity",c(nameAllHuman,names(industries))
+   ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
               # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
-              # ,selected=seasonList[1L]
-               ,selected=nameAllHuman
+               ,selected=c("Infrastructure","Mining","Shipping")
+              # ,selected=nameAllHuman
                ,multiple=T
                ,width="121px")
    )
 ```
-
----
-
-
-```{r, eval=isShiny}
-fillRow(flex=c(NA,1,NA)
-   ,shiny::selectInput("industry","Commercial activity acceptability (only for visualization)"
-                 # ,c('No overlap'="none",'All human use'="all",industries)
-                  ,"---"
-                  ,multiple=T
-                  ,width="382px")
-   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-   ,actionLink("drawIndustry","Update map")
-)
-fillRow(flex=c(NA,1)
-   ,shiny::selectInput("economy","Activity maps (only for visualization)"
-                  ,"---"
-                  ,multiple=F
-                  ,width="382px")
-   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-  # ,actionLink("drawEconomy","Update map")
-)
-conditionalPanel(condition="input.industry!='none' || input.economy!='none'"
-      ,selectInput("coloring","Colorization",unname(methodList)
-                # ,selected=grep("overlap",methodList,value=TRUE)
-                 ,width="382px")
-)
-if (F) {
-  shiny::actionButton(inputId='ab1', label="location.href", 
-                          icon = icon("th"), 
-                          onclick ="location.href='#section-region';"
-                          )
-  shiny::actionButton(inputId='ab2', label="window.open", 
-                          icon = icon("th"), 
-                          onclick ="window.open('#section-region', '_top')"
-                         # onclick ="location.href('#section-region')"
-                          )
-}
-```
-
-```{r, eval=F}
-conditionalPanel(condition="input.economy!='none'"
-      ,selectInput("economyColor","Industry colorization",unname(methodList)
-                # ,selected=grep("overlap",methodList,value=TRUE)
-                 ,width="352px")
-)
-```
-
-----
 
 ```{r, eval=T}
 renderUI({
@@ -241,7 +195,7 @@ renderUI({
    else
       lab <- substr(paste("Overview for",dQuote(lab),"region"),1,49)
    if (is.null(aoi))
-      b2 <- navButton("Global metrics","#descRegion","desc",span=T)
+      b2 <- navButton("Overview for Domain","#descRegion","desc",span=T)
    else
       b2 <- navButton(lab,"#descRegion","desc",span=T)
    b1 <- navButton("Selected Area Details","#crosstable","cross",span=T)
@@ -295,7 +249,54 @@ renderUI({
 ##~ })
 ```
 
----
+----
+
+:::dropup
+
+```{r, eval=isShiny}
+fillRow(flex=c(NA,1,NA)
+   ,shiny::selectInput("industry","Commercial activity acceptability (only for visualization)"
+                 # ,c('No overlap'="none",'All human use'="all",industries)
+                  ,"---"
+                  ,multiple=T
+                  ,width="382px")
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+   ,actionLink("drawIndustry","Update map")
+)
+fillRow(flex=c(NA,1)
+   ,shiny::selectInput("economy","Activity maps (only for visualization)"
+                  ,"---"
+                  ,multiple=T
+                  ,width="382px")
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+  # ,actionLink("drawEconomy","Update map after economy")
+)
+conditionalPanel(condition="2==2 || input.industry!='none' || input.economy!='none'"
+      ,selectInput("coloring","Colorization",unname(methodList)
+                # ,selected=grep("overlap",methodList,value=TRUE)
+                 ,width="382px")
+)
+if (F) {
+  shiny::actionButton(inputId='ab1', label="location.href", 
+                          icon = icon("th"), 
+                          onclick ="location.href='#section-region';"
+                          )
+  shiny::actionButton(inputId='ab2', label="window.open", 
+                          icon = icon("th"), 
+                          onclick ="window.open('#section-region', '_top')"
+                         # onclick ="location.href('#section-region')"
+                          )
+}
+```
+
+```{r, eval=F}
+conditionalPanel(condition="input.economy!='none'"
+      ,selectInput("economyColor","Industry colorization",unname(methodList)
+                # ,selected=grep("overlap",methodList,value=TRUE)
+                 ,width="352px")
+)
+```
+:::
 
 <!--
 
@@ -321,10 +322,12 @@ fillRow(flex=c(1,1)
 )
 ```
 
+<!--
 [Conservation Action Hotspots / Dictionary / FAQ](#welcome)  
 [How the assessment was made](#assessment)  
 [User Manual](#manual) `r paste(rep("&nbsp;",36),collapse="")` [Admin](#admin){.admin}
 `r paste(rep("&nbsp;",6),collapse="")` [TODO](https://docs.google.com/spreadsheets/d/1Sg9i8-sUEEHS_gqB83AxU9aZ32rYnLBYJwL_50wFTfE){.admin target="_blank"}
+-->
 
 
 ```{r eval=T & isShiny & staffOnly, results='asis'}
@@ -376,7 +379,7 @@ output$buttonsCross <- renderUI({
 ```
 
 ```{r eval=staffOnly, results='asis'}
-cat("### verbose {data-width=200}\n\n")
+cat("### verbose {data-width=160}\n\n")
 renderPrint(selectionTables())
 ```
 
@@ -557,7 +560,7 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
 
 # Reg desc {#descRegion data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
-## Column 1 - map {data-width=220}
+## Column 1 - map {data-width=300}
 
 ### `r renderText({
    aoi <- rvAOI()
@@ -589,25 +592,35 @@ fillCol(flex=c(1,NA,NA)
       ##~ )
    ##~ )
    ,fixedRow(NULL
-      ,column(4
+      ,column(2
          ,conditionalPanel(condition="input.initEPA>='0'"
            # ,actionLink("actionEPA","Show Existing Protected Areas")
             ,checkboxInput("actionEPA","Stats for Existing Protected Areas")
          )
       )
-      ,column(4
+      ,column(2
          ,conditionalPanel(condition="input.initEPA=='0'"
             ,actionLink("initEPA","Show Existing Protected Areas")
          )
       )
-      ,column(2
+      ,column(1
          ,conditionalPanel(condition="input.actionNAO=='0'"
             ,actionLink("actionNAO","Show NAOR")
          )
       )
-      ,column(2
+      ,column(1
          ,conditionalPanel(condition="input.actionNAC=='0'"
             ,actionLink("actionNAC","Show NACR")
+         )
+      )
+      ,column(3
+         ,conditionalPanel(condition="2>1"
+            ,actionLink("showCommercial","Show Commercial Activities (all)")
+         )
+      )
+       ,column(3
+         ,conditionalPanel(condition="2>1"
+            ,actionLink("showConservation","Show Conservation Action Priority (all)")
          )
       )
    )
@@ -635,6 +648,7 @@ output$regionLeaflet <- renderLeaflet({
 
 ```{r}
 DT::renderDT({
+   switchDomain(FALSE)
    result <- rvRegionStats()
    if (result$nCF==0)
       return(DT::datatable(data.frame('Missed CFs'="bar",check.names=FALSE)[integer(),,drop=FALSE]
@@ -678,83 +692,69 @@ DT::renderDT({
 ### {data-header="Conservation Concern Level by Activity" data-height=200}
 
 ```{r}
-fillRow(flex=c(1,NA)
-   ,fillCol(flex=c(NA,1)
-      ,HTML("Conservation Concern Level by Activity")
-      ,renderPlotly({
-         metrics <- rvRegionStats()
-         req(metrics$nCF>0)
-        # saveRDS(metrics,"C:/tmp/interim.rds")
-         result <- metrics$'IND'
-         localNAC <- concernNAC[,names(result)]/spatial_count(pu)
-         ref <- colSums(localNAC,na.rm=TRUE)#/spatial_count(pu)*metrics$'nPU'
-         IND <- data.frame(industry=names(result),value=result,ref=ref)
-         IND <- IND[order(IND$value,decreasing=TRUE),]
-         IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
-         iname <- substr(IND$industry,1,1)
-        # sname <- unique(iname)
-        # ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
-        # names(ct) <- sname
-         mcol <- ctIndustry[substr(IND$industry,1,1)]
-         meanNAC <- sum(colSums(localNAC,na.rm=TRUE))#/spatial_count(pu)
-         mvalue <- meanNAC/length(IND$industry) # *metrics$nPU
-         if (isTRUE(input$relative)) {
-            IND$value <- 100*IND$value/metrics$'maxNAC'
-            IND$ref <- 100*IND$ref/metrics$'maxNAC'
-            mvalue <- 100*mvalue/metrics$'maxNAC'
-         }
-         p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
-                     ,marker=list(color=mcol),name='Region'
-                     ) %>%
-              add_trace(y=~ref,name='Domain',marker=list(color='rgb(204,204,204)')
-                       ,visible="legendonly") %>%
-              layout(NULL
-                    ,xaxis=list(title=""),yaxis=list(title=c("IND","NACR")[2])
-                   # ,title="Conservation Concern Level by Activity"
-                   # ,showlegend=FALSE
-                    ,legend=list(x=0.5,y=0.9,orientation='h')
-                    ,shapes=list(list(x0=~head(industry,1),x1=~tail(industry,1)
-                      ,y0=mvalue,y1=mvalue
-                      ,type="line",line=list(color="#8888",dash="dot")))
-                   # ,margin=list(l=0,r=0,t=0)
-                    )
-         p
-      })
-   )
-   ,fillCol(flex=c(NA,1)
-     # ,HTML("Top NACR CF")
-      ,HTML(paste0("<abbr title='Proportion of maximal NAC'>Top NACR CF</abbr>"))
-      ,DT::renderDT({
-         ctable <- rvActivityStat()
-         ntable <- ctable[order(ctable$NAC,decreasing=TRUE),c("CF name","NAC"),drop=FALSE]
-         rownames(ntable) <- paste0("<abbr title='",ntable$'CF name',"'>",rownames(ntable),"</abbr>")
-         ntable <- ntable[,"NAC",drop=FALSE]
-         colnames(ntable) <- paste0("<abbr title='Proportion of maximal NAC'>NAC</abbr>")
-         res <- data.frame(cf=rownames(ntable))
-         cat("0112a\n")
-         print(ntable)
-         print(res)
-         cat("0112b\n")
-         da <- DT::datatable(ntable,escape=F
-                            ,colnames=NULL
-                            ,selection="none"
-                           # ,extension=c("Scroller")
-                            ,options=list(dom="t",ordering=F,pageLength=50
-                                        # ,scroller=T,scrollY="calc(50vh - 105px)"
-                                         )
-                            ,class="compact"
-                            )
-         da <- DT::formatRound(da,colnames(ntable),0)
-         da
-      })
-   )
+fillCol(flex=c(NA,1)
+   ,HTML("Conservation Concern Level by Activity")
+   ,renderPlotly({
+      metrics <- rvRegionStats()
+      req(metrics$nCF>0)
+      str(metrics)
+     # saveRDS(metrics,"C:/tmp/interim.rds")
+      result <- metrics$'IND'
+     # ctable <- rvActivityStat()
+     # d <- concernSubset(concern,ctable=ctable)
+      d <- concern
+      d <- concernSubset(d,season=names(metrics$'SC0'),verbose=T)
+      d <- concernIndex(d)$concernNAC
+      localNAC <- d[,names(result)]/ifelse(useNACR,spatial_count(pu),1)
+      ref <- colSums(localNAC,na.rm=TRUE)
+      if (!useNACR & !input$relative)
+         ref <- ref*metrics$'nPU'/spatial_count(pu)
+                             # spatial_count(pu)/metrics$'nPU'
+      IND <- data.frame(industry=names(result),value=result,ref=ref)
+      IND <- IND[order(IND$value,decreasing=TRUE),]
+      IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
+      iname <- substr(IND$industry,1,1)
+     # sname <- unique(iname)
+     # ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
+     # names(ct) <- sname
+      mcol <- ctIndustry[substr(IND$industry,1,1)]
+      meanNAC <- sum(colSums(localNAC,na.rm=TRUE))/ifelse(!useNACR,spatial_count(pu),1)
+      mvalue <- meanNAC/length(IND$industry)*ifelse(!useNACR & !input$relative,metrics$nPU,1)
+      mvalue <- sum(colSums(localNAC,na.rm=TRUE))/length(IND$industry)
+      if (!useNACR & !input$relative)
+         mvalue <- mvalue*metrics$'nPU'/spatial_count(pu)
+      if (isTRUE(input$relative)) {
+         IND$value <- 100*IND$value/metrics$'maxNAC'
+         maxNAC <- length(unique(concern$CF_code))*length(metrics$'SC0')*max(config$concern)
+         IND$ref <- 100*IND$ref/maxNAC
+         mvalue <- 100*mvalue/maxNAC
+      }
+      p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
+                  ,marker=list(color=mcol),name='Region'
+                  ) %>%
+           add_trace(y=~ref,name='Domain',marker=list(color='rgb(204,204,204)')
+                    ,visible="legendonly") %>%
+           layout(NULL
+                 ,xaxis=list(title="")
+                 ,yaxis=list(title=ifelse(input$relative,"Indexes (%)"
+                         ,ifelse(useNACR,"Relative Indexes","Absolute indexes")))
+                # ,title="Conservation Concern Level by Activity"
+                # ,showlegend=FALSE
+                 ,legend=list(x=0.5,y=0.9,orientation='h')
+                 ,shapes=if (!input$relative) NULL else list(list(x0=~head(industry,1)
+                            ,x1=~tail(industry,1),y0=mvalue,y1=mvalue
+                            ,type="line",line=list(color="#8888",dash="dot")))
+                # ,margin=list(l=0,r=0,t=0)
+                 )
+      p
+   })
 )
 ```
 
-### {data-header="Seasonal histogram" data-height=150}
+### {data-header="Seasonal histogram" data-height=160}
 
 ```{r}
-fillRow(flex=c(16,NA,24,NA,8)
+fillRow(flex=c(8,NA,16,NA,24)
    ,fillCol(flex=c(NA,1)
       ,HTML("Indexes for the region")
       ,DT::renderDT({
@@ -786,35 +786,61 @@ fillRow(flex=c(16,NA,24,NA,8)
       })
    )
    ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+   ,{if (F)
+      fillCol(flex=c(NA,1)
+         ,HTML("Most Critical Months")
+         ,DT::renderDT({
+            result <- rvRegionStats()
+            req(result$nCF>0)
+            res <- result[['SC']] |> data.frame() |> t()
+            if (input$relative)
+               res <- res/result$'maxNAC'*100
+            res <- t(res) |> as.data.frame(check.names=FALSE)
+            da <- DT::datatable(res,escape=F
+                               ,colnames="" # "<abbr title='Season of concern'>SC</abbr>"
+                               ,selection="none"
+                               ,options=list(dom="t",ordering=F),class="compact")
+            DT::formatRound(da,colnames(res),1)
+         })
+      )
+   else
+      fillCol(flex=c(NA,1,1,1)
+         ,DT::renderDT({
+            aoi <- rvAOI()
+            ctable <- rvActivityStat()
+            cap <- indexCAP(aoi=aoi,ctable=ctable)
+            cap0 <- indexCAP(aoi=NULL,ctable=ctable)
+            da <- data.frame(Selection=round(cap,0),ArcNet=round(cap0,0))
+            rownames(da) <- "<abbr title='CAP index per cell'>CAPR</abbr>"
+            DT::datatable(da,escape=FALSE
+                         ,selection="none"
+                         ,options=list(dom="t",ordering=F),class="compact"
+                         )
+         })
+         ,HTML("Commercial Activities (PPU) = 21 (average for ArcNet = 4)")
+         ,HTML("Conservation action priority (PPU) = 14 (average for ArcNet = 3")
+         ,HTML("Conservation action priority (PPU = 194 (13451 sum for ArcNet))")
+      )
+   }
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
    ,fillCol(flex=c(NA,1)
       ,HTML("Conservation Concern Level by Month")
       ,renderPlotly({
-         sc <- rvRegionStats()
-         req(sc$nCF>0)
-         sc <- sc[['SC0']]
+         result <- rvRegionStats()
+         req(result$nCF>0)
+         sc <- result[['SC0']]
+         if (input$relative)
+            sc <- sc/result$'maxNAC'*100
          sc <- data.frame(month=names(sc),value=sc)
          sc$month <- factor(sc$month,levels=sc$month,ordered=TRUE)
          p <- plot_ly(sc,x=~month,y=~value,type="bar",orientation="v") %>%
                   layout(NULL
-                        ,xaxis=list(title=""),yaxis=list(title=c("SC IND","NACR")[2])
+                        ,xaxis=list(title="")
+                        ,yaxis=list(title=ifelse(input$relative,"Indexes (%)"
+                                ,ifelse(useNACR,"Relative Indexes","Absolute indexes")))
                        # ,margin=list(l=0,r=0,t=0)
                         )
          p
-      })
-   )
-   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-   ,fillCol(flex=c(NA,1)
-      ,HTML("Most Critical Months")
-      ,DT::renderDT({
-         res <- rvRegionStats()
-         req(res$nCF>0)
-         res <- res[['SC']] |> data.frame() |> t()
-         res <- t(res) |> as.data.frame(check.names=FALSE)
-         da <- DT::datatable(res,escape=F
-                            ,colnames="" # "<abbr title='Season of concern'>SC</abbr>"
-                            ,selection="none"
-                            ,options=list(dom="t",ordering=F),class="compact")
-         DT::formatRound(da,colnames(res),1)
       })
    )
 )
@@ -887,7 +913,41 @@ output$instantReport <- downloadHandler(
 )
 ```
 
-## quantilies {data-width=50}
+## Top Concern {data-width=50}
+
+###
+
+```{r}
+fillCol(flex=c(NA,1)
+  # ,HTML("Top NACR CF")
+   ,HTML(paste0("<abbr title=","'Proportion of maximal Conservation Concern Level'"
+               ,">Top CFs by Concern</abbr>"))
+   ,DT::renderDT({
+     # result <- rvRegionStats() ## dummy returning; renew table
+      switchDomain(FALSE)
+      ctable <- rvActivityStat()
+      req(nrow(ctable)>0)
+      ntable <- ctable[order(ctable$NAC,decreasing=TRUE),c("CF name","NAC"),drop=FALSE]
+      rownames(ntable) <- paste0("<abbr title='",ntable$'CF name',"'>",rownames(ntable),"</abbr>")
+      ntable <- ntable[,"NAC",drop=FALSE]
+      colnames(ntable) <- paste0("<abbr title='Proportion of maximal NAC'>NAC</abbr>")
+      res <- data.frame(cf=rownames(ntable))
+      da <- DT::datatable(ntable,escape=F
+                         ,colnames=NULL
+                         ,selection="none"
+                        # ,extension=c("Scroller")
+                         ,options=list(dom="t",ordering=F,pageLength=50
+                                     # ,scroller=T,scrollY="calc(50vh - 105px)"
+                                      )
+                         ,class="compact"
+                         )
+      da <- DT::formatRound(da,colnames(ntable),0)
+      da
+   })
+)
+```
+
+## quantilies {data-width=50 .hidden}
 
 ### {data-header="TOP IND"}
 
@@ -896,9 +956,11 @@ fillCol(flex=c(NA,1)
    ,HTML("Activities of Concern")
    ,DT::renderDT({
      # res <- rvRegionStats()[['TOP IND']] |> data.frame() |> t()
-      res <- rvRegionStats()
-      req(res$nCF>0)
-      res <- res[['IND']]
+      result <- rvRegionStats()
+      req(result$nCF>0)
+      res <- result[['IND']]
+      if (input$relative)
+         res <- res/result$'maxNAC'*100
       LH <- quantile(res,probs=max(input$levelNAC)*1e-2)
       res <- sort(res[res>=LH],decreasing=TRUE) |> data.frame() |> t()
       cname <- colnames(res)
@@ -930,9 +992,11 @@ fillCol(flex=c(NA,1)
    ,HTML("Activities of Least Concern")
    ,DT::renderDT({
      # res <- rvRegionStats()[['LC IND']] |> data.frame() |> t()
-      res <- rvRegionStats()
-      req(res$nCF>0)
-      res <- res[['IND']]
+      result <- rvRegionStats()
+      req(result$nCF>0)
+      res <- result[['IND']]
+      if (input$relative)
+         res <- res/result$'maxNAC'*100
       LH <- quantile(res,probs=min(input$levelNAC)*1e-2)
       res <- sort(res[res<=LH],decreasing=FALSE) |> data.frame() |> t()
       cname <- colnames(res)
@@ -1122,8 +1186,7 @@ DT::renderDT({
                      ,backgroundColor=DT::styleEqual(c('1','2','3'
                                                       ,kwdGreen,kwdYellow,kwdRed
                                                      )
-                                           ,c("palegreen","LemonChiffon","lightsalmon"
-                                             ,"palegreen","LemonChiffon","lightsalmon"))
+                                           ,c(clrLUT,clrLUT))
                      ,backgroundSize='95% 18pt'
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
@@ -1267,9 +1330,11 @@ sliderInput("mulNAY",label="Multiplyer for yellow cells"
 sliderInput("mulNAG",label="Multiplyer for green cells"
            ,min=0,max=100,step=1,value=config$concern[3]
            )
-actionLink("rebuildNAC","Apply changes")
-br()
-HTML("Application will be restarted with initialization during 1-2 mins.")
+if (F) {
+   actionLink("rebuildNAC","Apply changes")
+   br()
+   HTML("Application will be restarted with initialization during 1-2 mins.")
+}
 ```
 
 ### Misc {data-height="auto"}

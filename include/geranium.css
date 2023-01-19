@@ -203,6 +203,10 @@ h1 {
 .form-group {
    margin-bottom: 0px;
 }
+.dropup .selectize-dropdown {
+  bottom: 100% !important; 
+  top: auto !important;
+}
 @media screen and (max-width: 1269px) {
    .navbar::before {
       content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';

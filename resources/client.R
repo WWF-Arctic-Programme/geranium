@@ -25,9 +25,9 @@
    cat(as.character(match.call())[1]
       ,as.character(packageVersion("flexdashboard"))
       ,as.character(packageVersion("ursa"))
-      ,shinybrowser::get_browser()
-      ,shinybrowser::get_width()
-      ,shinybrowser::get_height()
+     # ,shinybrowser::get_browser()
+     # ,shinybrowser::get_width()
+     # ,shinybrowser::get_height()
       ,":\n"
       )
    s2 <- rvAOI()
