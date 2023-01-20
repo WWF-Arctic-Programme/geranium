@@ -1855,38 +1855,91 @@
    ind <- which(rm!=0)
    res[ind] <- res[ind]/rm[ind]
    res <- res^0.5
-   res
+   ret <- lapply(sight,function(x) {
+      if (!(all(x %in% names(res))))
+         return(NULL)
+      y <- res[x]
+      if (F & verbose)
+         print(y)
+      if (length(y)==1)
+         return(y)
+      local_sum(y,cover=0)
+   }) |> as.ursa()
+   ret
 }
 'indexCAP' <- function(aoi=NULL,ctable=NULL,verbose=FALSE) {
    cs <- concernSubset(concern,ctable=ctable)
    ci <- concernIndex(cs)
    concernNAC <- ci$concernNAC
-   if (!is.null(aoi)) {
-      session_grid(dist2land)
-      rAOI <- puAOI(aoi) |> spatial_centroid() |> allocate()
-      rHU <- band_mean(huAmount()[!is.na(rAOI)])
+   listCF <- rownames(concernNAC)
+  # str(puvspr)
+  # cf <- puvspr[]
+   cap <- rHU ## huAmount() rHU
+   session_grid(cap)
+   ind <- match(names(cap),colnames(concernNAC))
+   if (all(is.na(ind))) {
+      session_grid(cap)
+      return(domain=ursa(0),aoi=ursa(0))
    }
-   else
-      rHU <- band_mean(huAmount())
-   if (verbose)
-      print(rHU)
+   concernNAC <- concernNAC[,na.omit(ind),drop=FALSE]
+   cap <- cap[which(!is.na(ind))]
    if (verbose) {
-      print(sight[colnames(concernNAC)])
-   }
-   cap <- lapply(sight,function(x) mean(rHU[x],na.rm=TRUE))
-   str(cap)
-   if (verbose)
       print(concernNAC)
-   cap <- cap[colnames(concernNAC)]
-   if (verbose)
-      str(cap)
-   #concernNAC
-   #data.frame(cap)
-   cap <- concernNAC*cap
-   cvr <- ctable[,"Cover",drop=FALSE]
-   ind <- match(rownames(cvr),rownames(cap))
-  # cap1 <- sum(cap[ind,],na.rm=TRUE)
-   cap <- cap[ind,]*cvr[[1]]/100
-   cap <- sum(cap,na.rm=TRUE)
-   cap
+      print(cap)
+   }
+   ursa:::.elapsedTime("HU amount via raster -- start")
+   a <- open_envi("requisite/amount",cache=TRUE)
+   aname <- names(a)
+   cl <- length(chunk_band(a,3)[[1]])
+   nbreak <- ceiling(length(listCF)/cl)
+  # str(cl)
+  # str(nbreak)
+   cl <- cut(seq_along(listCF),breaks=nbreak) |> as.integer()
+  # str(cl)
+   a4 <- ursa(nband=length(unique(cl)))
+   for (i in seq_along(unique(cl)) |> sample()) {
+      a2 <- a[listCF[cl==i]]
+      bname <- names(a2)
+      a3 <- ursa(bandname=bname)
+      for (j in seq(a2) |> sample()) {
+         a3[j] <- local_sum(a2[j]*cap*unlist(concernNAC[bname[j],]),cover=0)
+      }
+      a4[i] <- local_sum(a3,cover=0)
+   }
+   close(a)
+   a5 <- c(domain=local_sum(a4,cover=0))
+   ursa:::.elapsedTime("HU amount via raster -- finish")
+   if (F)
+      display(ursa_crop(a5,border=1))
+   if (!is.null(aoi)) {
+      rAOI <- !is.na(puAOI(aoi) |> spatial_centroid() |> allocate())
+      return(c(a5,aoi=a5[rAOI]))
+   }
+   return(a5)
+   if (F) {
+      listI <- colnames(concernNAC)
+      if (verbose)
+         print(rHU)
+     # rHU <- band_mean(rHU)
+      if (verbose)
+         print(rHU)
+      if (verbose) {
+         print(sight[listI])
+      }
+      if (verbose)
+         print(concernNAC)
+      if (verbose)
+         str(cap)
+      #concernNAC
+      #data.frame(cap)
+      cap <- concernNAC*cap
+      cvr <- ctable[,"Cover",drop=FALSE]
+      ind <- match(rownames(cvr),rownames(cap))
+     # cap1 <- sum(cap[ind,],na.rm=TRUE)
+      cap <- cap[ind,]*cvr[[1]]/100
+      cap <- sum(cap,na.rm=TRUE)
+      cap
+      return(cap)
+   }
+   return(NULL)
 }

@@ -177,7 +177,7 @@ fillRow(flex=c(NA,NA,NA,NA,NA)
    ,HTML("&nbsp;&nbsp;")
    ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
               # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
-               ,selected=c("Infrastructure","Mining","Shipping")
+               ,selected= if (staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
               # ,selected=nameAllHuman
                ,multiple=T
                ,width="121px")
@@ -808,9 +808,21 @@ fillRow(flex=c(8,NA,16,NA,24)
          ,DT::renderDT({
             aoi <- rvAOI()
             ctable <- rvActivityStat()
-            cap <- indexCAP(aoi=aoi,ctable=ctable)
-            cap0 <- indexCAP(aoi=NULL,ctable=ctable)
-            da <- data.frame(Selection=round(cap,0),ArcNet=round(cap0,0))
+            cat("aoi:\n")
+            str(aoi)
+            cat("ctable:\n")
+            str(ctable)
+            shiny::showNotification(id="indexCAP",closeButton=FALSE,duration=120
+                            ,paste("This action may take some time."
+                                  ,"Please wait...")
+                            ,type="warning")
+            cap <- indexCAP(aoi=aoi,ctable=ctable) |> band_mean()
+            shiny::removeNotification(id="indexCAP")
+            print(cap)
+            if (length(cap)==1)
+               da <- data.frame(ArcNet=round(cap["domain"],0))
+            else
+               da <- data.frame(Selection=round(cap["aoi"],0),ArcNet=round(cap["domain"],0))
             rownames(da) <- "<abbr title='CAP index per cell'>CAPR</abbr>"
             DT::datatable(da,escape=FALSE
                          ,selection="none"

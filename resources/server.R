@@ -1266,7 +1266,7 @@ if (T) observe({ ## update 'input$industry'
       choice2 <- c('Do not show'="none",'All selected activity'="all",industries)
       select2 <- choice2[1]
    }
-   else if ((all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
+   else if ((staffOnly)&&(all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
       choice2 <- c('Do not show'="none",'All selected activity'="all",industrySubset)
       select2 <- industryName("ST")
    }

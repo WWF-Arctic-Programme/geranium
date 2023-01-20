@@ -278,27 +278,6 @@ if (!quickStart) {
 scenarioCF <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
                           ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
 rownames(scenarioCF) <- NULL
-if (!quickStart) {
-   ursa:::.elapsedTime("concern prepare -- start")
-   concern <- lapply(seq_len(nrow(vulner)),function(i) {
-      m <- monthList(vulner$'Limitations'[i])
-      v <- vulner[rep(i,length(m)),c("CF_code","industry","value"),drop=FALSE]
-      v$month <- m
-      v
-   }) |> do.call(rbind,args=_)
-   concern$industry <- factor(industryCode(concern$industry))
-   ursa:::.elapsedTime("concern prepare -- finish")
-}
-if (!quickStart) {
-   if (!dir.exists(dirname(sessionFile)))
-      dir.create(dirname(sessionFile))
-   save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
-       ,PAs,half,vulner,industries,comments,concern
-      # ,concernNAO,concernNAC
-       ,file=sessionFile)
-   if (isRemote)
-      prm_upload(sessionFile)
-}
 sname <- unique(substr(industryAbbr$abbr,1,1))
 ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
 names(ctIndustry) <- sname
@@ -310,6 +289,28 @@ colnames(hu)[grep("human.*use.*name",colnames(hu),ignore.case=TRUE)] <- "industr
 colnames(hu)[grep("sight.*dataset",colnames(hu),ignore.case=TRUE)] <- "economy"
 sight <- strsplit(hu$economy,split="\\s*,\\s*")
 names(sight) <- hu$abbr
+if (!quickStart) {
+   ursa:::.elapsedTime("concern prepare -- start")
+   concern <- lapply(seq_len(nrow(vulner)),function(i) {
+      m <- monthList(vulner$'Limitations'[i])
+      v <- vulner[rep(i,length(m)),c("CF_code","industry","value"),drop=FALSE]
+      v$month <- m
+      v
+   }) |> do.call(rbind,args=_)
+   concern$industry <- factor(industryCode(concern$industry))
+   ursa:::.elapsedTime("concern prepare -- finish")
+   rHU <- huAmount()
+}
+if (!quickStart) {
+   if (!dir.exists(dirname(sessionFile)))
+      dir.create(dirname(sessionFile))
+   save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
+       ,PAs,half,vulner,industries,comments,concern,rHU
+      # ,concernNAO,concernNAC
+       ,file=sessionFile)
+   if (isRemote)
+      prm_upload(sessionFile)
+}
 if (isShiny) {
   # removeModal()
 }
