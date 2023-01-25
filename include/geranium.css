@@ -64,7 +64,7 @@ table.dataTable > tbody > tr > * {
 }
 .flowing-content-container:not(.sbframe-commentary) {
    padding-bottom: 4px;
-   overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 .dataTable tfoot tr th {
    background-color: white;
@@ -207,9 +207,9 @@ h1 {
   bottom: 100% !important; 
   top: auto !important;
 }
-@media screen and (max-width: 1269px) {
+@media screen and ((max-width: 1269px) or (max-height: 600px)) {
    .navbar::before {
-      content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';
+      content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels by width or 600 pixels by height. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';
       display: block;
       position: relative;
       padding-top: 0px;

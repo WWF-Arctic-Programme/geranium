@@ -25,10 +25,19 @@
    }
    !toWrite
 }
-'mapper' <- function(obj,pal) {
-   devel2 <- FALSE
-   if (missing(pal))
-      pal <- cubehelix(5)
+'mapper' <- function(obj,pal=NULL,ncolor=NULL) {
+   devel2 <- !FALSE
+   if (is.null(pal)) {
+     # pal <- cubehelix(5)
+      pal <- pYlRd
+      if (is.null(ncolor)) {
+         if (isTRUE(ursa:::.is.integer(config$ncolor)))
+            ncolor <- config$ncolor
+         else
+            ncolor <- 5
+      }
+      pal <- colorRampPalette(pal)(ncolor)
+   }
    if (band_blank(obj>0))
       return(colorize(obj,pal=pal))
    n <- length(pal)
@@ -67,7 +76,10 @@
       print(c('breakvalue:'=cl1/mul))
       print(c('pal:'=pal))
    }
+   print("0124m")
    d1 <- colorize(obj,breakvalue=cl1/mul,name=cname,pal=pal)
+  # write_envi(d1,"C:/tmp/interim")
+   print("0124n")
    d1
 }
 'legender' <- function(obj,x=0.02,y=0.93,title="Values:") {
@@ -208,13 +220,13 @@
    b <- pu[pu$ID %in% b$ID,"ID"]
    b
 }
-'map1_1d' <- function(a,grid=NULL,kind="devel") {
+'map1_1d' <- function(a,grid=NULL,kind="devel",ncolor=NULL) {
    kind <- match.arg(kind)
    if (!is.null(grid))
       session_grid(grid)
    g0 <- session_grid()
    session_grid(a)
-   d6 <- mapper(a)
+   d6 <- mapper(a,ncolor=ncolor)
    session_grid(g0)
    d6
 }
@@ -886,7 +898,7 @@
             )
    })
 }
-'human_use' <- function(cut=5011,verbose=FALSE) {
+'.human_use.deprecated' <- function(cut=5011,verbose=FALSE) {
    opW <- options(warn=-1)
    id <- as.integer(gsub("^(\\d{4}).*","\\1",cut))
    options(opW)
@@ -985,6 +997,37 @@
   # print(as.table(c(da)))
    ret
 }
+'human_use' <- function(cut=5011,verbose=FALSE) {
+   opW <- options(warn=-1)
+   id <- as.integer(gsub("^(\\d{4}).*","\\1",cut))
+   options(opW)
+   isCF <- !is.na(id)
+   isIndustry <- !isCF
+   cat(paste0("human_use(",sQuote(cut),"):\n"))
+   if (verbose)
+      print(c(CF=isCF,industry=isIndustry))
+   if (isCF) {
+      da <- concern[concern$CF_code==cut,]
+      da <- by(da,list(da$industry,da$month),\(x) x$value)[]
+   }
+   else {
+      da <- concern[concern$industry==industryCode(cut),]
+      da <- by(da,list(da$CF_code,da$month),\(x) x$value)[]
+   }
+   da[] <- as.character(da)
+   da[is.na(da)] <- "N/A"
+   colnames(da) <- month.abb[as.integer(colnames(da))]
+   if (isCF) {
+      cname <- rownames(da)
+      ret <- cbind('Industry'=industryName(rownames(da)),as.data.frame(da))
+   }
+   else {
+      aname <- rownames(da)
+      ret <- cbind('CF Code'=CFCode(aname),'CF Name'=CFName(aname),as.data.frame(da))
+      rownames(ret) <- NULL
+   }
+   ret
+}
 'crossTable' <- function(aoi=NULL,group=NULL,activity=NULL,season=NULL,verbose=FALSE) {
    if (isShiny)
       cat("crosstable():\n")
@@ -1006,7 +1049,9 @@
    }) |> do.call(rbind,args=_)
    am2$amount <- am2$amount/spec[spec$cf %in% am2$cf,"amount"]*100
    if (length(group)) {
-      gr2 <- substr(as.character(am2$cf),1,1)
+      ng <- unique(nchar(group))
+      stopifnot('Mixed groups are not supported'=length(ng)==1)
+      gr2 <- substr(as.character(am2$cf),1,ng)
       ind <- lapply(group,function(patt) grep(patt,gr2)) |> do.call(c,args=_) |> unique()
       am2 <- am2[ind,]
    }
@@ -1074,13 +1119,13 @@
       })
       res <- unclass(con2) #|> data.frame()
       colnames(res) <- industryName(colnames(res))
-      res <- res[match(am2$cf,rownames(res)),]
+      res <- res[match(am2$cf,rownames(res)),,drop=FALSE]
    }
    res <- data.frame(res,check.names=FALSE)
    cname <- gsub(pattRules,"\\2",colnames(res)) |> substr(1,300) #|> abbreviate(24)
    ind <- match(industryAbbr$industry,cname) |> na.omit() |> c()
    cname <- cname[ind]
-   res <- res[,ind]
+   res <- res[,ind,drop=FALSE]
    colnames(res) <- cname
    indCF <- match(rownames(res),as.character(am2$cf))
    ic <- concernIndex(concern)
@@ -1092,13 +1137,15 @@
                ,'NAC'=sumNAC[indNAI]*100
                ,res)
   # res[,1] <- sprintf("%.1f",as.numeric(res[,1]))
-   res[is.na(res)] <- ""
+   res[is.na(res)] <- "N/A" ## "" "N/A"
    if (T) {
       ind <- match(rownames(res),scenarioCF$CF_code)
       res <- cbind('CF name'=scenarioCF$CF_name[ind],res)
    }
    if (is.null(season))
       season <- tail(seasonList,-1)
+   attr(res,"industry") <- industryCode(colnames(res)) |> na.omit() |> c()
+   attr(res,"group") <- group
    attr(res,"season") <- season
    res
 }
@@ -1117,28 +1164,33 @@
    }
    cat("-- interimMap -- begin --------------\n")
    cat("-- interimMap -- end ----------------\n") |> on.exit()
+   if (any(industry %in% names(industries)))
+      industry <- unlist(na.omit(industries[industry]))
+   industry <- industryCode(industry)
    prm <- list(industry=sort(unname(industry))
               ,group=sort(unname(group))
               ,season=sname[sort(match(season,sname))]
               ,economy=sort(unname(economy)))
    str(prm)
    fname <- file.path("requests",paste0("t",digest::digest(prm,"crc32")))
-   if (F & envi_exists(fname)) {
-      cat("read from cache\n")
+   if (envi_exists(fname)) {
+      cat(paste0("interimMap: read from cache ",fname,"\n"))
       session_grid(NULL)
       return(read_envi(fname))
    }
    if (isShiny)
       shiny::showNotification(id="trafficMap",closeButton=FALSE,duration=120
-                      ,paste("Your request is at first time."
+                      ,paste("Your 'trafficlight' request is at first time."
                             ,"Please wait his finalizing."
                             ,"It will be processed faster next time...")
                       ,type="warning")
+   ursa:::.elapsedTime("aggregation -- start")
    if (T) {
+      cat("via concern:\n")
       v <- concern
       v <- v[lapply(group,grep,substr(as.character(v$CF_code),1,1)) |>
          do.call(c,args=_) |> sort(),]
-      v <- v[industryName(v$industry) %in% industry,]
+      v <- v[v$industry %in% industry,]
       if (nrow(v)) {
          if (byMonths)
             v <- v[v$month %in% match(season,sname),]
@@ -1177,8 +1229,26 @@
                     ,by=list(CF_code=v$CF_code,industry=v$industry),max)
       s <- aggregate(list(count=v$CF_code),by=list(CF_code=v$CF_code,value=v$value),length)
    }
+   str(s)
+   ursa:::.elapsedTime("aggregation -- finish")
    g0 <- session_grid("requisite/amount")
-   if (is.null(s)) {
+   if (isTRUE(economy=="capr")) {
+      res2 <- indexCAPR(group=group,activity=industry,season=season)
+      res2 <- polygonize(res2)
+   }
+   else if (isTRUE(economy=="nacr")) {
+      res2 <- indexNACR(group=group,activity=industry,season=season)
+      res2 <- polygonize(res2)
+   }
+   else if (isTRUE(economy=="naor")) {
+      res2 <- indexNAOR(group=group,activity=industry,season=season)
+      res2 <- polygonize(res2)
+   }
+   else if (isTRUE(economy=="humanuse")) {
+      res2 <- indexHumanUse(group=group,activity=industry,season=season)
+      res2 <- polygonize(res2)
+   }
+   else if (is.null(s)) {
       ind <- match(economy,spatial_basename(economyList))
       if (is.na(ind))
          stop(paste("cannot identify file name for",economy))
@@ -1324,9 +1394,18 @@
    result <- list()
    nPU <- spatial_count(puaoi)
    mul <- ifelse(useNACR,nPU,1)
-   cname <- industryCode(colnames(b))
-   listI <- c(na.omit(cname))
-   listCF <- rownames(b)
+  # cname <- industryCode(colnames(b))
+  # listI <- c(na.omit(cname))
+   listI <- attr(b,"industry")
+   if (T)
+      listCF <- rownames(b)
+   else { ## gives error in shiny
+      listCF <- attr(b,"group")
+      if (any(nchar(listCF)!=4)) {
+         list1 <- unique(concern$CF_code)
+         listCF <- lapply(listCF,\(x) grep(x,list1,value=TRUE)) |> do.call(c,args=_) |> sort()
+      }
+   }
    emptyCF <- !nrow(b)
    if (!emptyCF) {
      # mul <- nPU
@@ -1353,9 +1432,13 @@
       }
       result$'NACR' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr))/nPU
      # result$'NAC' <- sum(rowSums(dNAC,na.rm=TRUE)*t(cvr[match(rownames(dNAC),rownames(cvr)),]))
+      result$'meanNAOR' <- ic$meanNAO
+      result$'meanNACR' <- ic$meanNAC
       result$'NAO' <- result$'NAOR'*nPU
       result$'NAC' <- result$'NACR'*nPU
       d <- colSums(dNAC*t(cvr),na.rm=TRUE)/mul
+      if (length(unique(names(d)))==1)
+         names(d) <- colnames(dNAC)
       result$'IND' <- d
       d0 <- sort(unique(d))
       thLo <- head(d0,3) |> tail(1)
@@ -1369,13 +1452,14 @@
          res <- res[res<=quantile(res,3/length(res))]
       result$'LC IND' <- res
       d <- concern[concern$CF_code %in% listCF & concern$industry %in% listI &
-                   concern$value %in% c(1,2),]
+                   concern$value %in% c(1,2,3),]
       d$cover <- cvr[match(d$CF_code,rownames(cvr)),]
-      d$value[d$value==0] <- mulNA[3]+1000
-      d$value[d$value==1] <- mulNA[2]+1000
-      d$value[d$value==2] <- mulNA[1]+1000
-      ind <- d$value>1000
-      d$value[ind] <- d$value[ind]-1000
+      d$value[d$value==1] <- mulNA[3]+10000
+      d$value[d$value==2] <- mulNA[2]+10000
+      d$value[d$value==3] <- mulNA[1]+10000
+      ind <- d$value>10000
+      d$value[ind] <- d$value[ind]-10000
+     # write.csv(d,"c:/tmp/interim.csv",row.names=FALSE,quote=FALSE);q()
       d$score <- d$value*d$cover
       d <- by(d,d$month,function(x) sum(x$score))/mul
       d <- d |> unclass() |> t() |>
@@ -1539,13 +1623,19 @@
    }
    map
 }
-'metricsMap' <- function(ctable=NULL,industry="dummy",group=c("a")) {
+'metricsMap' <- function(ctable=NULL,industry=NULL,group=NULL,season=NULL) {
+   prm <- list(mulNA=config$concern,concern=concern,ctable=attributes(ctable)
+              ,industry=industry,group=group,season=season)
+   str(prm)
+   fname <- file.path("requests",paste0("m",digest::digest(prm,"crc32")))
+   if (envi_exists(fname)) {
+      cat(paste0("metricsMap: read from cache ",fname,"\n"))
+      session_grid(NULL)
+      return(read_envi(fname))
+   }
    print("0115c")
-   str(ctable)
-   ic <- concernSubset(concern,ctable=ctable)#,activity=industry,group=group)
-   str(ic)
-   ic <- concernIndex(concern)
-   str(ic)
+   ic <- concernSubset(concern,ctable=ctable,activity=industry,group=group,season=season)
+   ic <- concernIndex(ic)
    print("0115d")
    v <- ic$concernNAC
    if (!length(indR <- do.call(c,lapply(group,grep,substr(rownames(v),1,1)))))
@@ -1592,12 +1682,17 @@
    resNAO <- by(resNAO,resNAO$pu,function(x) sum(x$value)) |> c()
    ind <- which(!is.na(match(as.character(pu$ID),names(res))))
    res2 <- pu[ind,,drop=FALSE]
-   spatial_data(res2) <- data.frame(PU=pu$ID[ind],NAO=resNAO,NAC=res)
+   spatial_data(res2) <- data.frame(PU=pu$ID[ind],NAOR=resNAO,NACR=res)
    sf::st_agr(res2) <- "constant"
   # str(res2)
   # print(summary(res2$NAC))
   # res3 <- res2[res2$NAC>quantile(res2$NAC,0.9999),]
   # str(res3)
+   if (FALSE)
+      return(res2)
+   session_grid(dist2land)
+   res2 <- spatial_centroid(res2) |> allocate()
+   write_envi(res2,fname)
    res2
 }
 # 'selectRegion' <- function(data=names(regionSF),region="(\\s(22)|Barents)") {
@@ -1629,8 +1724,8 @@
    return(invisible(NULL))
 }
 'config_init' <- function() {
-   config <- list(comment=TRUE,relative=FALSE,sleepValue=0
-                 ,concern=c(100,10,1),quantile=c(10,90))
+   config <- list(comment=TRUE,relative=TRUE,sleepValue=0
+                 ,concern=c(100,10,1),quantile=c(10,90),ncolor=7L)
    prm_init(config,configFile)
 }
 'config_exists' <- function() {
@@ -1676,10 +1771,10 @@
    0L
 }
 'prm_download' <- function(file) {
-   if ((isRemote)&&(!prm_exists(file))) {
+   if ((isRemote)&&(T | !prm_exists(file))) {
       db <- rdrop2::drop_auth(rdstoken=rdstoken)
       wd_ <- setwd(dirname(file))
-      rdrop2::drop_download(file,overwrite=TRUE)
+      rdrop2::drop_download(basename(file),overwrite=TRUE,verbose=F)
       setwd(wd_)
    }
    0L
@@ -1690,6 +1785,13 @@
    ret
 }
 'prm_write' <- function(prm,file) {
+   if (file.exists(file)) {
+      prm0 <- jsonlite::fromJSON(file)
+      if (identical(prm0,prm)) {
+        # cat(paste("no changes in",dQuote(file),"\n"))
+         return(0L)
+      }
+   }
    writeLines(jsonlite::toJSON(prm),file)
    prm_upload(file)
 }
@@ -1701,8 +1803,20 @@
    rownames(d) <- NULL
    d$industry <- as.character(d$industry)
    if (!is.null(ctable)) {
-      listCF <- as.integer(rownames(ctable))
-      listI <- industryCode(colnames(ctable)) |> na.omit() |> c()
+      if (T) { ## ArcNet CF List
+         gr <- attr(ctable,"group")
+         if (!all(nchar(gr)==4)) {
+            list1 <- sort(unique(d$CF_code))
+            listCF <- lapply(gr,\(x) grep(paste0("^",x),list1,value=TRUE)) |>
+               do.call(c,args=_) |> sort()
+         }
+         else
+            listCF <- gr
+      }
+      else
+         listCF <- as.integer(rownames(ctable))
+     # listI <- industryCode(colnames(ctable)) |> na.omit() |> c()
+      listI <- attr(ctable,"industry")
       listS <- attr(ctable,"season")
       if (any(nchar(listS)>2)) {
          listS <- match(substr(listS,1,3),substr(tail(seasonList,-1),1,3))
@@ -1783,14 +1897,16 @@
    concernFile <- file.path("requests",paste0("i"
                            ,digest::digest(list(mulNA=mulNA,concern=concern),"crc32")
                            ,".rds"))
-   if (file.exists(concernFile))
+   print(concernFile)
+   if (file.exists(concernFile)) {
       return(readRDS(concernFile))
+   }
    ursa:::.elapsedTime("concernIndex -- start")
    ursa:::.elapsedTime("concernIndex -- finish") |> on.exit()
    concern$industry <- as.character(concern$industry)
    if (isShiny)
       shiny::showNotification(id="concernIndex",closeButton=FALSE,duration=120
-                      ,paste("Your request is at first time."
+                      ,paste("Your 'concern' request is at first time."
                             ,"Please wait his finalizing."
                             ,"It will be processed faster next time...")
                       ,type="warning")
@@ -1867,11 +1983,53 @@
    }) |> as.ursa()
    ret
 }
-'indexCAP' <- function(aoi=NULL,ctable=NULL,verbose=FALSE) {
-   cs <- concernSubset(concern,ctable=ctable)
+'indexNACR' <- function(aoi=NULL,ctable=NULL,group=NULL,activity=NULL,season=NULL
+                       ,verbose=FALSE) {
+   metricsMap(ctable=ctable,group=group,industry=activity,season=season)["NACR"]
+}
+'indexNAOR' <- function(aoi=NULL,ctable=NULL,group=NULL,activity=NULL,season=NULL
+                       ,verbose=FALSE) {
+   metricsMap(ctable=ctable,group=group,industry=activity,season=season)["NAOR"]
+}
+'indexHumanUse' <- function(aoi=NULL,ctable=NULL,group=NULL,activity=NULL,season=NULL
+                       ,verbose=FALSE) {
+   if (!is.null(ctable)) {
+     # cs <- concernSubset(concern,ctable=ctable) ## quick, but CFs not for domain
+      cs <- concernSubset(concern,ctable=NULL
+                         ,group=attr(ctable,"group")
+                         ,activity=attr(ctable,"industry")
+                         ,season=attr(ctable,"season")
+                         )
+   }
+   else
+      cs <- concernSubset(concern,ctable=NULL,group=group,activity=activity,season=season)
+   ind <- which(names(rHU) %in% unique(cs$industry))
+   if (!length(ind))
+      return(c(humanUse=ursa(0)))
+   res <- c(domain=local_sum(rHU[ind]))
+   if (!is.null(aoi)) {
+      session_grid(res)
+      rAOI <- !is.na(puAOI(aoi) |> spatial_centroid() |> allocate())
+      return(c(res,aoi=res[rAOI]))
+   }
+   res
+}
+'indexCAPR' <- function(aoi=NULL,ctable=NULL,group=NULL,activity=NULL,season=NULL
+                       ,verbose=FALSE) {
+   if (!is.null(ctable)) {
+     # cs <- concernSubset(concern,ctable=ctable) ## quick, but CFs not for domain
+      cs <- concernSubset(concern,ctable=NULL
+                         ,group=attr(ctable,"group")
+                         ,activity=attr(ctable,"industry")
+                         ,season=attr(ctable,"season")
+                         )
+   }
+   else
+      cs <- concernSubset(concern,ctable=NULL,group=group,activity=activity,season=season)
    ci <- concernIndex(cs)
    concernNAC <- ci$concernNAC
    listCF <- rownames(concernNAC)
+  # listCF <- sort(unique(concern$CF_code))
   # str(puvspr)
   # cf <- puvspr[]
    cap <- rHU ## huAmount() rHU
@@ -1879,38 +2037,147 @@
    ind <- match(names(cap),colnames(concernNAC))
    if (all(is.na(ind))) {
       session_grid(cap)
-      return(domain=ursa(0),aoi=ursa(0))
+      return(c(domain=ursa(0),aoi=ursa(0)))
    }
    concernNAC <- concernNAC[,na.omit(ind),drop=FALSE]
    cap <- cap[which(!is.na(ind))]
-   if (verbose) {
-      print(concernNAC)
-      print(cap)
-   }
-   ursa:::.elapsedTime("HU amount via raster -- start")
-   a <- open_envi("requisite/amount",cache=TRUE)
-   aname <- names(a)
-   cl <- length(chunk_band(a,3)[[1]])
-   nbreak <- ceiling(length(listCF)/cl)
-  # str(cl)
-  # str(nbreak)
-   cl <- cut(seq_along(listCF),breaks=nbreak) |> as.integer()
-  # str(cl)
-   a4 <- ursa(nband=length(unique(cl)))
-   for (i in seq_along(unique(cl)) |> sample()) {
-      a2 <- a[listCF[cl==i]]
-      bname <- names(a2)
-      a3 <- ursa(bandname=bname)
-      for (j in seq(a2) |> sample()) {
-         a3[j] <- local_sum(a2[j]*cap*unlist(concernNAC[bname[j],]),cover=0)
+   fname <- file.path("requests"
+           ,paste0("p",digest::digest(list(cap=cap,concern=concernNAC),"crc32")))
+   if (!envi_exists(fname)) {
+      if (isShiny)
+         shiny::showNotification(id="indexCAPR",closeButton=FALSE,duration=120
+                         ,paste("Your 'CAPR' request is at first time."
+                               ,"Please wait his finalizing."
+                               ,"It will be processed faster next time...")
+                         ,type="warning")
+      if (verbose) {
+         print(series(concernNAC,8))
+         print(cap)
       }
-      a4[i] <- local_sum(a3,cover=0)
+      if (T) {
+         ursa:::.elapsedTime("HU amount via vector -- start")
+         ##~ if (F) {
+            ##~ str(puvspr)
+            ##~ res <- by(puvspr$amount,puvspr$species,max,na.rm=TRUE)
+            ##~ print(summary(res))
+            ##~ print(puvspr[puvspr$species==1007,])
+           ##~ # puvspr0 <- p
+           ##~ # puvspr <- read.csv("D:/RAS/2021/accenter/branch/pampan/4.2.1/common/input/puvspr.dat.gz")
+            ##~ puvspr <- read.csv("D:/RAS/2023/ArcNet/geranium/devel/puvspr.dat.gz")
+           ##~ ##### ursa_value(a)[ind] <- cf$amount/max(cf$amount)
+            ##~ str(puvspr)
+            ##~ res <- by(puvspr$amount,puvspr$species,max,na.rm=TRUE)
+            ##~ print(summary(res))
+            ##~ print(puvspr[puvspr$species==1007,])
+            ##~ puvspr$amount <- puvspr$amount/18
+            ##~ print(puvspr[puvspr$species==1007,])
+            ##~ q()
+         ##~ }
+         pr <- puvspr[puvspr$species %in% rownames(concernNAC),]
+        # pr$coverage <- NULL
+        # res1 <- by(puvspr,puvspr$species,\(x) max(x$amount))
+        # print(summary(res1))
+         cp <- c(pu=allocate(spatial_centroid(pu["ID"])),cap)
+         cp <- polygonize(cp)
+         cp <- spatial_data(cp)
+         nac <- cbind(species=as.integer(rownames(concernNAC)),concernNAC)
+         res1 <- merge(pr,cp,by="pu")
+         res2 <- merge(res1,nac,by="species")
+         rname <- colnames(res2)
+         aname <- gsub("\\..$","",rname)
+         ta <- table(aname)
+         tname <- names(ta[ta==2])
+         ##~ str(pr)
+         ##~ str(cp)
+         ##~ str(nac)
+         if (T) {
+            res2x <- res2[,paste0(tname,".x"),drop=FALSE]
+            res2y <- res2[,paste0(tname,".y"),drop=FALSE]
+            res2z <- res2x*res2y*res2[["amount"]]
+            colnames(res2z) <- tname
+            res2 <- cbind(res2[,-match(c(colnames(res2x),colnames(res2y)),colnames(res2))]
+                         ,res2z)
+         }
+         else {
+            for (i in seq_along(tname)) {
+               message("DO MATRIX BY MATRIX MULTIPLICATION WITHOUT LOOP")
+               cname1 <- paste0(tname[i],".x")
+               cname2 <- paste0(tname[i],".y")
+               res2[[tname[i]]] <- res2[[cname1]]*res2[[cname2]]*res2[["amount"]]
+               res2[[cname1]] <- NULL
+               res2[[cname2]] <- NULL
+            }
+         }
+        # print(res2)
+        # print(sum(res2$amount))
+         if (T) {
+           # res3 <- aggregate(res2,by=list(pu=res2$pu),function(x) {
+           #    str(x)
+           # })
+            res3 <- by(res2[,tname],res2$pu,simplify=!FALSE,\(x) {
+               sum(unlist(x),na.rm=TRUE)
+            })
+           # str(res3)
+           # print(sum(res3))
+           # print(mean(res3))
+           # print(sum(res3)/spatial_count(pu))
+            res3 <- data.frame(pu=as.integer(names(res3)),value=as.numeric(res3))
+            a5 <- spatial_geometry(pu)[match(res3$pu,pu$ID)]
+            spatial_data(a5) <- data.frame(domain=res3$value)
+            a5 <- spatial_centroid(a5) |> allocate()
+         }
+         ursa:::.elapsedTime("HU amount via vector -- finish")
+      }
+      else {
+         ursa:::.elapsedTime("HU amount via raster -- start")
+         a <- open_envi("requisite/amount",cache=TRUE)
+        # a6 <- a["1007"]
+        # print(as.data.frame(c(pu=dist2land["ID"][a6],a6=a6))[,-c(1,2)])
+         aname <- names(a)
+         cl <- length(chunk_band(a,30)[[1]])
+         nbreak <- ceiling(length(listCF)/cl)
+        # str(cl)
+        # str(nbreak)
+         if (nbreak==1)
+            cl <- rep(1L,length(listCF))
+         else
+            cl <- cut(seq_along(listCF),breaks=nbreak) |> as.integer()
+        # str(cl)
+         a4 <- ursa(nband=length(unique(cl)))
+         for (i in seq_along(unique(cl)) |> sample()) {
+            a2 <- a[listCF[cl==i]]
+           # print(a2)
+           # print(as.data.frame(c(pu=dist2land["ID"][a2],a2=a2))[,-c(1,2)])
+            bname <- names(a2)
+            a3 <- ursa(bandname=bname)
+            for (j in seq(a2) |> sample()) {
+              # a3[j] <- local_sum(a2[j]*cap*unlist(concernNAC[bname[j],]),cover=0)
+               a5 <- a2[j]*cap*unlist(concernNAC[bname[j],])
+              # print(a5)
+               a3[j] <- local_sum(a5,cover=0)
+            }
+           # print(a2)
+           # print(a3)
+            a4[i] <- local_sum(a3,cover=0)
+         }
+         close(a)
+        # q()
+         a5 <- c(domain=local_sum(a4,cover=0))
+         ursa:::.elapsedTime("HU amount via raster -- finish")
+      }
+      if (F) {
+         print(as.data.frame(c(pu=dist2land["ID"][a5],a5=a5))[,-c(1,2)])
+      }
+      if (F)
+         display(ursa_crop(a5,border=1))
+      write_envi(a5,fname)
+      if (isShiny)
+         removeNotification(id="indexCAPR")
    }
-   close(a)
-   a5 <- c(domain=local_sum(a4,cover=0))
-   ursa:::.elapsedTime("HU amount via raster -- finish")
-   if (F)
-      display(ursa_crop(a5,border=1))
+   else {
+      cat("read CAP from cache\n")
+      a5 <- read_envi(fname,resetGrid=TRUE)
+   }
    if (!is.null(aoi)) {
       rAOI <- !is.na(puAOI(aoi) |> spatial_centroid() |> allocate())
       return(c(a5,aoi=a5[rAOI]))

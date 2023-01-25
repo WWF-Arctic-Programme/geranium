@@ -22,7 +22,8 @@ output:
          version: 4
          bootswatch: minty
       logo: https://wwf.ru/assets/img/logo.jpg
-      favicon: https://www.arcticwwf.org/favicons/favicon-32x32.png
+      favicon1: https://www.arcticwwf.org/favicons/favicon-32x32.png
+      favicon: https://i.stack.imgur.com/FzlQy.jpg
       orientation: columns
       vertical_layout: fill
       mathjax: ~
@@ -137,7 +138,7 @@ https://github.com/rstudio/flexdashboard/issues/181
 
 
 ```{r, eval=isShiny}
-width <- c("100%","450px")[2]
+width <- c("100%","472px")[2]
 if (F)
    checkboxInput("customize","Customize",value=FALSE)
 if (F)
@@ -175,18 +176,69 @@ fillRow(flex=c(NA,NA,NA,NA,NA)
               ,multiple=T
               ,width="146px")
    ,HTML("&nbsp;&nbsp;")
-   ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
-              # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
-               ,selected= if (staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
-              # ,selected=nameAllHuman
-               ,multiple=T
-               ,width="121px")
+   ,conditionalPanel(condition="!!output.debug"
+      ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
+                 # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
+                  ,selected= if (F & staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
+                 # ,selected=nameAllHuman
+                  ,multiple=T
+                  ,width="121px")
+      )
    )
 ```
 
+:::dropdown
+
+```{r, eval=isShiny}
+fillRow(flex=c(NA,1,NA)[1]
+   ,shiny::selectInput("industry","Commercial activities"
+                 # ,c('No overlap'="none",'All human use'="all",industries)
+                  ,"---"
+                  ,multiple=T
+                  ,width=width)
+  # ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+  # ,actionLink("drawIndustry_deprecated","Update map")
+)
+fillRow(flex=c(NA,NA,NA),height="50%"
+   ,conditionalPanel(condition="input.economy!='zzzskip'"
+      ,shiny::selectInput("economy","Indices maps"
+                     ,"---"
+                     ,multiple=F
+                     ,width="352px")
+   )
+   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+   ,fillCol(flex=c(NA,NA,NA)
+      ,br()
+      ,br()
+      ,conditionalPanel(condition="input.economy!='skip'"
+                       ,actionLink("drawIndustry","Update map"))
+   )
+)
+if (F) {
+  shiny::actionButton(inputId='ab1', label="location.href", 
+                          icon = icon("th"), 
+                          onclick ="location.href='#section-region';"
+                          )
+  shiny::actionButton(inputId='ab2', label="window.open", 
+                          icon = icon("th"), 
+                          onclick ="window.open('#section-region', '_top')"
+                         # onclick ="location.href('#section-region')"
+                          )
+}
+```
+
+```{r, eval=F}
+conditionalPanel(condition="input.economy!='none'"
+      ,selectInput("economyColor","Industry colorization",unname(methodList)
+                # ,selected=grep("overlap",methodList,value=TRUE)
+                 ,width="352px")
+)
+```
+:::
+
 ```{r, eval=T}
 renderUI({
-   if (file.exists(sessionFile))
+   if (F & file.exists(sessionFile))
       showNotification(paste("session:",format(file.mtime(sessionFile))),duration=2)
    aoi <- rvAOI()
    lab <- regionSF[[input$region]]$region[aoi$id]
@@ -247,56 +299,11 @@ renderUI({
 ##~ renderUI({
    ##~ col <- if (is.null(rvAOI())) "green" else "grey"
 ##~ })
+br()
+br()
+
 ```
 
-----
-
-:::dropup
-
-```{r, eval=isShiny}
-fillRow(flex=c(NA,1,NA)
-   ,shiny::selectInput("industry","Commercial activity acceptability (only for visualization)"
-                 # ,c('No overlap'="none",'All human use'="all",industries)
-                  ,"---"
-                  ,multiple=T
-                  ,width="382px")
-   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-   ,actionLink("drawIndustry","Update map")
-)
-fillRow(flex=c(NA,1)
-   ,shiny::selectInput("economy","Activity maps (only for visualization)"
-                  ,"---"
-                  ,multiple=T
-                  ,width="382px")
-   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-  # ,actionLink("drawEconomy","Update map after economy")
-)
-conditionalPanel(condition="2==2 || input.industry!='none' || input.economy!='none'"
-      ,selectInput("coloring","Colorization",unname(methodList)
-                # ,selected=grep("overlap",methodList,value=TRUE)
-                 ,width="382px")
-)
-if (F) {
-  shiny::actionButton(inputId='ab1', label="location.href", 
-                          icon = icon("th"), 
-                          onclick ="location.href='#section-region';"
-                          )
-  shiny::actionButton(inputId='ab2', label="window.open", 
-                          icon = icon("th"), 
-                          onclick ="window.open('#section-region', '_top')"
-                         # onclick ="location.href('#section-region')"
-                          )
-}
-```
-
-```{r, eval=F}
-conditionalPanel(condition="input.economy!='none'"
-      ,selectInput("economyColor","Industry colorization",unname(methodList)
-                # ,selected=grep("overlap",methodList,value=TRUE)
-                 ,width="352px")
-)
-```
-:::
 
 <!--
 
@@ -332,7 +339,8 @@ fillRow(flex=c(1,1)
 
 ```{r eval=T & isShiny & staffOnly, results='asis'}
 cat("### {data-height=\"auto\"}\n\n")
-renderPrint({
+verbatimTextOutput("debug")
+output$debug <- renderPrint({
    selectionRegion()
 })
 ```
@@ -446,7 +454,7 @@ output$buttonsCF <- renderUI({
 ```
 
 
-## CF metadata and map {data-width=200}
+## {data-width=200}
 
 ### Cell Comment CF {data-height="auto"}
 
@@ -456,7 +464,12 @@ renderTable({
 })
 ```
 
-### Industry Description {data-height=200}
+### `r renderText({
+   if (is.null(rvSelectIndustry()))
+      "CF Amount Distribution"
+   else
+      "Industry Description"
+})` {data-height=200}
 
 ```{r eval=T & isShiny}
 renderUI({
@@ -485,6 +498,7 @@ renderPrint({
 ## {data-width=500}
 
 ### All compatibilities for a single Industry
+
 ```{r eval=T & isShiny}
 fillCol(flex=c(NA,1,NA)
        ##~ ,shiny::selectInput("cfcode","CF from crosstable",nameInit,width=width)
@@ -524,7 +538,13 @@ renderTable({
 })
 ```
 
-### Display CF {data-height=220}
+### `r renderText({
+   if (!is.null(rvSelectCF()))
+      "CF Amount Distribution"
+   else
+      "Industry Description"
+})` {data-height=200}
+
 
 ```{r eval=T & isShiny}
 renderUI({
@@ -577,20 +597,20 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
 
 
 ```{r}
-fillCol(flex=c(1,NA,NA)
+fillCol(flex=c(1,NA,NA,NA)
    ,leafletOutput("regionLeaflet")
   # ,uiOutput("uiRegionLeaflet")
-   ##~ ,fixedRow(NULL
-      ##~ ,column(6
-         ##~ ,checkboxInput("regionDesc","Show Existing Protected Areas (it is not quick)")
-      ##~ )
-      ##~ ,column(3
-         ##~ ,checkboxInput("switchNAO","Show NAOR")
-      ##~ )
-      ##~ ,column(3
-         ##~ ,checkboxInput("switchNAC","Show NACR")
-      ##~ )
-   ##~ )
+      ,fixedRow(NULL
+        # ,column(6
+        #    ,checkboxInput("switchEPA","Show Existing Protected Areas")
+        # )
+        # ,column(3
+        #    ,checkboxInput("switchNAO","Show NAOR")
+        # )
+        # ,column(3
+        #    ,checkboxInput("switchNAC","Show NACR")
+        # )
+   )
    ,fixedRow(NULL
       ,column(2
          ,conditionalPanel(condition="input.initEPA>='0'"
@@ -598,7 +618,7 @@ fillCol(flex=c(1,NA,NA)
             ,checkboxInput("actionEPA","Stats for Existing Protected Areas")
          )
       )
-      ,column(2
+      ,column(3
          ,conditionalPanel(condition="input.initEPA=='0'"
             ,actionLink("initEPA","Show Existing Protected Areas")
          )
@@ -614,13 +634,13 @@ fillCol(flex=c(1,NA,NA)
          )
       )
       ,column(3
-         ,conditionalPanel(condition="2>1"
-            ,actionLink("showCommercial","Show Commercial Activities (all)")
+         ,conditionalPanel(condition="input.actionHU=='0'"
+            ,actionLink("actionHU","Show Commercial Activities (all)")
          )
       )
-       ,column(3
-         ,conditionalPanel(condition="2>1"
-            ,actionLink("showConservation","Show Conservation Action Priority (all)")
+       ,column(1
+         ,conditionalPanel(condition="input.actionCAP=='0'"
+            ,actionLink("actionCAP","Show CAPR")
          )
       )
    )
@@ -754,13 +774,21 @@ fillCol(flex=c(NA,1)
 ### {data-header="Seasonal histogram" data-height=160}
 
 ```{r}
-fillRow(flex=c(8,NA,16,NA,24)
+fillRow(flex=c(12,NA,12,NA,24)
    ,fillCol(flex=c(NA,1)
-      ,HTML("Indexes for the region")
+      ,HTML("Concern Indexes")
       ,DT::renderDT({
          result <- rvRegionStats()
          req(result$nCF>0)
-         res <- result[grep('^NA',names(result))] |> as.data.frame()
+        # res <- result[grep('^NA',names(result))] |> as.data.frame()
+         res <- result[c("NAOR","NACR","NAO","NAC")] |> as.data.frame()
+         res <- rbind(res,data.frame(NAOR=result$meanNAOR,NACR=result$meanNACR,NAO=NA,NAC=NA))
+         if (is.null(rvAOI())) {
+            res <- res[1,,drop=FALSE]
+            rownames(res) <- c("Selection","ArcNet")[2]
+         }
+         else
+            rownames(res) <- c("Selection","ArcNet")
          cname <- colnames(res)
          cname[cname=="NAO"] <- paste0("<abbr title='"
                                       ,"Conservation concern, not allowed only"
@@ -777,7 +805,7 @@ fillRow(flex=c(8,NA,16,NA,24)
          colnames(res) <- cname
          res <- t(res) |> as.data.frame(check.names=FALSE)
          da <- DT::datatable(res,escape=F
-                            ,colnames=""
+                           # ,colnames=""
                             ,selection="none"
                             ,options=list(dom="t",ordering=F),class="compact"
                             ,width="200px"
@@ -804,34 +832,46 @@ fillRow(flex=c(8,NA,16,NA,24)
          })
       )
    else
-      fillCol(flex=c(NA,1,1,1)
+      fillCol(flex=c(NA,1,NA)
+         ,HTML("Activity Indexes")
          ,DT::renderDT({
             aoi <- rvAOI()
             ctable <- rvActivityStat()
-            cat("aoi:\n")
-            str(aoi)
-            cat("ctable:\n")
-            str(ctable)
-            shiny::showNotification(id="indexCAP",closeButton=FALSE,duration=120
-                            ,paste("This action may take some time."
-                                  ,"Please wait...")
-                            ,type="warning")
-            cap <- indexCAP(aoi=aoi,ctable=ctable) |> band_mean()
-            shiny::removeNotification(id="indexCAP")
-            print(cap)
-            if (length(cap)==1)
-               da <- data.frame(ArcNet=round(cap["domain"],0))
-            else
-               da <- data.frame(Selection=round(cap["aoi"],0),ArcNet=round(cap["domain"],0))
-            rownames(da) <- "<abbr title='CAP index per cell'>CAPR</abbr>"
+           # cat("aoi:\n")
+           # str(aoi)
+           # cat("ctable:\n")
+           # str(ctable)
+            if (FALSE)
+               shiny::showNotification(id="indexCAPR",closeButton=FALSE,duration=120
+                               ,paste("This action may take some time."
+                                     ,"Please wait...")
+                               ,type="warning")
+            ##~ cap <- indexCAPR(aoi=aoi
+                           ##~ ,group=attr(ctable,"season")
+                           ##~ ,activity=NULL
+                           ##~ ,season=attr(ctable,"season")
+                           ##~ ) |> band_mean()
+            cap <- round(band_mean(indexCAPR(aoi=aoi,ctable=ctable)),0)
+            hu <- round(band_mean(indexHumanUse(aoi=aoi,ctable=ctable)),2)
+            res <- rbind(cap,hu)
+            if (ncol(res)==1) {
+               da <- data.frame(ArcNet=res[,"domain"])
+            } else {
+               da <- data.frame(Selection=res[,"aoi"],ArcNet=res[,"domain"])
+            }
+            if (FALSE)
+               shiny::removeNotification(id="indexCAPR")
+            print(res)
+            rownames(da) <- c("<abbr title='Conservation Action Priority index per cell'>CAPR</abbr>"
+                             ,"<abbr title='Commercial Activities Amount per cell'>HUAR</abbr>")
             DT::datatable(da,escape=FALSE
                          ,selection="none"
                          ,options=list(dom="t",ordering=F),class="compact"
                          )
          })
-         ,HTML("Commercial Activities (PPU) = 21 (average for ArcNet = 4)")
-         ,HTML("Conservation action priority (PPU) = 14 (average for ArcNet = 3")
-         ,HTML("Conservation action priority (PPU = 194 (13451 sum for ArcNet))")
+        # ,HTML("Commercial Activities (PPU) = 21 (average for ArcNet = 4)")
+        # ,HTML("Conservation action priority (PPU) = 14 (average for ArcNet = 3")
+         ,HTML("TODO: Conservation action priority (PPU = 194 (13451 sum for ArcNet))")
       )
    }
    ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
@@ -940,6 +980,8 @@ fillCol(flex=c(NA,1)
       ctable <- rvActivityStat()
       req(nrow(ctable)>0)
       ntable <- ctable[order(ctable$NAC,decreasing=TRUE),c("CF name","NAC"),drop=FALSE]
+      ntable <- ntable[ntable$NAC>=50,]
+      req(nrow(ntable)>0)
       rownames(ntable) <- paste0("<abbr title='",ntable$'CF name',"'>",rownames(ntable),"</abbr>")
       ntable <- ntable[,"NAC",drop=FALSE]
       colnames(ntable) <- paste0("<abbr title='Proportion of maximal NAC'>NAC</abbr>")
@@ -1041,7 +1083,8 @@ fillCol(flex=c(NA,1)
 
 ```{r eval=T & isShiny}
 fillCol(flex=c(NA,1,1)
-   ,renderTable({
+  # ,renderTable({
+   ,DT::renderDT({
       metadataCF()
    })
    ,renderUI({
@@ -1265,8 +1308,9 @@ output$buttonsComment <- renderUI({
 
 ----
 
-`r file.mtime(sessionFile)`  
-`r file.mtime("./quickload/comments.json")`
+`r paste0(basename(sessionFile),": ",file.mtime(sessionFile))`  
+`r paste0(basename(commentFile),": ",file.mtime(commentFile))`  
+`r paste0(basename(configFile),": ",file.mtime(configFile))`  
 
 
 ```{r, eval=F}
@@ -1281,9 +1325,17 @@ sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,valu
 
 # {#admin .hidden .failured}
 
-## {data-width=100}
+## {data-width=80}
 
 ###
+
+### Deep colouring {data-height="auto"}
+
+```{r}
+   sliderInput("ncolor",label="Number of categories in maps"
+               ,min=5,max=11,step=1,value=config$ncolor
+               )
+```
 
 ### Verbosing {data-height="auto"}
 
@@ -1310,12 +1362,12 @@ output$downloadComment <- downloadHandler(
       req(comment_exists())
       da <- comment_read()
       req(nrow(da)>0)
-      switch(fileext
+      switch(fileext 
             ,'.csv'=write.csv(da,file)
             ,'.xlsx'=xlsx::write.xlsx(da,file,sheetName="comments",append=FALSE)
             )
    }
-)
+)  
 br()
 br()
 DT::renderDT({
@@ -1328,7 +1380,7 @@ DT::renderDT({
 })
 ```
 
-## {data-width=100}
+## {data-width=120}
 
 ### NAC Multipliers
 
@@ -1351,9 +1403,18 @@ if (F) {
 
 ### Misc {data-height="auto"}
 
+:::dropup
+
 ```{r}
 checkboxInput("relative","Relative NAC",value=config$relative)
 sliderInput("levelNAC",label="Quantilies (%) for IND LC (low) and TOP IND (high)"
            ,min=0,max=100,step=1,value=config$quantile
            )
+conditionalPanel(condition="2==2 || input.industry!='none' || input.economy!='none'"
+      ,selectInput("coloring","Colorization",unname(methodList)
+                # ,selected=grep("overlap",methodList,value=TRUE)
+                 ,width="342px"
+                 )
+)
 ```
+:::

@@ -2,7 +2,7 @@ invisible(Sys.setlocale("LC_TIME","C"))
 staffOnly <- T & nchar(Sys.getenv("MSOFFICE"))>0
 sessionFile <- "quickload/session.Rdata"
 rdstoken <- file.path("quickload/dropbox-token.rds")
-isRemote <- ((!staffOnly)&&(file.exists(rdstoken)))
+isRemote <- ((!staffOnly | T)&&(file.exists(rdstoken)))
 # isRemote <- file.exists(rdstoken)
 useNACR <- FALSE
 quickStart <- FALSE
@@ -24,14 +24,16 @@ require(ursa)
 requireNamespace("sf")
 #plutil::ursula(3)
 isShiny <- ursa:::.isShiny()
-if (dropboxBoris <- F & isShiny) {
+if (dropboxBoris <- T | isShiny) {
    if (file.exists(mdname)) {
+      ntu <- as.numeric(difftime(Sys.time(),file.mtime(mdname)),units="hours")>12
      # md5a <- unname(tools::md5sum(mdname))
       md5a <- digest::digest(readBin(mdname,"raw",10e6))
    } else {
+      ntu <- TRUE
       md5a <- digest::digest(Sys.time())
    }
-   if (isRemote | !file.exists(mdname)) {
+   if ((ntu)&&(isRemote | !file.exists(mdname))) {
       mdtemp <- tempfile() # "c:/tmp/mdfile.xlsx" # tempfile()
       download.file("https://www.dropbox.com/scl/fi/v2tg3cfhyoyermj0ebcdq/compatibility-assessment_all_2022-11-18.xlsx?dl=1&rlkey=gtq0rcg9b458v5hapsilkzu00"
                    ,mdtemp,mode="wb")
@@ -44,6 +46,7 @@ if (dropboxBoris <- F & isShiny) {
          if (quickStart)
             quickStart <- FALSE
       }
+      Sys.setFileTime(mdname,Sys.time())
    }
 }
 ##~ if (!file.exists("requisite/inventory.rds")) {
@@ -82,7 +85,7 @@ pBl2 <- paste0(pBase[4],format(as.hexmode(round(seq(15,151,length=5))),width=2,u
 pYlBase <- colorRampPalette(c(pBase[2],"#af9f00"))(5)
 pYl <- paste0(pYlBase,format(as.hexmode(round(seq(15,255,length=length(pYlBase))))
                             ,width=2,upper.case=TRUE))
-pYlRd <- pGrYlRd[c(5,8)]
+p2YlRd <- pGrYlRd[c(5,8)]
 height <- 600
 retina <- 2
 kwdRed <- "Incompatible"
@@ -203,8 +206,11 @@ if (!quickStart) {
          cf$amount <- 0
       else if (minv-maxv==0)
          cf$amount <- 1
-      else
+      else {
+         if (T)
+            minv <- 0
          cf$amount <- (cf$amount-minv)/(maxv-minv)
+      }
       cf
    }) |> do.call(rbind,args=_)
    spec <- by(puvspr,puvspr$species,function(x) {
@@ -275,9 +281,14 @@ if (!quickStart) {
    vulner$CF_code <- as.integer(vulner$CF_code)
    comments$CF_code <- as.integer(comments$CF_code)
 }
-scenarioCF <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
-                          ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
+#scenarioCF <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
+#                          ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
+scenarioCF <- readxl::read_excel(dir(path="requisite",pattern="ArcNet.*CFs.*\\.xlsx$"
+                                ,ignore.case=TRUE,full.names=TRUE),.name_repair="minimal")
 rownames(scenarioCF) <- NULL
+scenarioCF <- scenarioCF[,nchar(colnames(scenarioCF))>0]
+scenarioCF$CF_name <- gsub("\\s\\("," (<em>",scenarioCF$CF_name)
+scenarioCF$CF_name <- gsub("\\)","</em>)",scenarioCF$CF_name)
 sname <- unique(substr(industryAbbr$abbr,1,1))
 ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
 names(ctIndustry) <- sname
@@ -297,6 +308,7 @@ if (!quickStart) {
       v$month <- m
       v
    }) |> do.call(rbind,args=_)
+   concern$value[concern$value==0] <- NA
    concern$industry <- factor(industryCode(concern$industry))
    ursa:::.elapsedTime("concern prepare -- finish")
    rHU <- huAmount()
@@ -308,7 +320,7 @@ if (!quickStart) {
        ,PAs,half,vulner,industries,comments,concern,rHU
       # ,concernNAO,concernNAC
        ,file=sessionFile)
-   if (isRemote)
+   if ((isRemote)&&(!staffOnly))
       prm_upload(sessionFile)
 }
 if (isShiny) {

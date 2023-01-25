@@ -312,7 +312,7 @@
                 ,selection=list(mode="single",target=c("cell","row+column")[2])
                 ,options=list(NULL
                              ##~ ,columnDefs=list(list(className='dt-right',targets=seq(1,ncol(res))))
-                             ,scrollY="calc(100vh - 265px)"
+                             ,scrollY="calc(100vh - 280px)"
                              ,scrollX=T
                              ,fixedColumns=if (F) F else list(leftColumns=2)
                              ,ordering=T
@@ -817,16 +817,13 @@
       md$CF_code <- paste0("[",md$CF_code,"](#annualCF)")
   # da <- t(as.data.frame(md,check.names=FALSE))
    da <- data.frame(t(md))
-   if (F) {
-      ret <- DT::datatable(da,colnames=c("","")
+   saveRDS(da,"C:/tmp/interim.rds")
+   if (T) {
+      ret <- DT::datatable(da
+                          ,colnames=c("")
                           ,rownames=TRUE,selection="none",escape=FALSE
-                   ,extension="Scroller"
-                   ,options=list(dom="t",ordering=F
-                                ,scroller=T
-                               # ,scrollY="300px"
-                               # ,autoWidth=FALSE
-                               # ,columnDefs=list(list(width='300px',targets=c(1,2)))
-                                ))
+                          ,options=list(dom="t",ordering=F,pageLength=nrow(da))
+                          )
    }
    else {
       da <- cbind(left=rownames(da),da)
@@ -839,7 +836,15 @@
    ursa:::.elapsedTime("mapA")
    g0 <- session_grid()
    session_grid(dist2land)
-   a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
+  # a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
+   if (index %in% c("NAOR","NACR"))
+      a <- rvMetricsMap()[index]
+   else if (index %in% "CAPR") {
+      a <- indexCAPR(ctable=rvActivityStat())
+   }
+   else if (index %in% "humanuse") {
+      a <- indexHumanUse(ctable=rvActivityStat())
+   }
    a <- c(name=mapper(a))
    print(a)
    ct <- ursa_colortable(a)
@@ -850,7 +855,9 @@
    pal <- leaflet::colorFactor(palette=as.character(ct),levels=v)
    if (T) {
       ursa:::.elapsedTime("mapB")
+     # saveRDS(b,"C:/tmp/interim.rds")
       d <- by(b,b$name,function(x) spatial_union(x)) #|> do.call(rbind,args=_)
+      d <- d[sapply(d,is.list)]
       b <- sf::st_sf(name=names(d),geometry=sf::st_sfc(d,crs=spatial_crs(b)))
       rm(d)
       ursa:::.elapsedTime("mapC")
@@ -859,6 +866,8 @@
    showPAs <- isTRUE(input$initEPA>0)
    showNAO <- isTRUE(input$actionNAO>0)
    showNAC <- isTRUE(input$actionNAC>0)
+   showCAP <- isTRUE(input$actionCAP>0)
+   showHU <- isTRUE(input$actionHU>0)
    if (showAOI)
       grAOI <- as.list(args(regionAddAOI))$group
    if (showPAs)
@@ -867,7 +876,15 @@
       grNAO <- "NAOR index"
    if (showNAC)
       grNAC <- "NACR index"
-   if (grepl("NAC",index))
+   if (showCAP)
+      grCAP <- "CAPR index"
+   if (showHU)
+      grHU <- "Commercial Activity"
+   if (grepl("humanuse",index))
+      gr <- grHU
+   else if (grepl("CAP",index))
+      gr <- grCAP
+   else if (grepl("NAC",index))
       gr <- grNAC
    else if (grepl("NAO",index))
       gr <- grNAO
