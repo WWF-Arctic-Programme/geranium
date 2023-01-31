@@ -4,8 +4,8 @@ pkglist <- c("rmarkdown","shiny","remotes","sf","ursa" ## 1:5
                   ,"fasterize","formattable","readxl","interp" ## 10:13
                   ,"plotly","bookdown","rsconnect","pinp","rticles" ## 14:18
                   ,"tint","tufte","akima","xlsx","quarto", "rdrop2" ## 19:24
-                 # ,"- shinybrowser" ## [25]
-                  )[] ## [21:22]
+                  ,"shinybrowser","flexdashboard" ## [25:26]
+                  )[1:24] ## [1:24]
 ret <- sapply(pkglist,\(pkg) {
    if (!requireNamespace(pkg))
       return(pkg)

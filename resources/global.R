@@ -2,7 +2,7 @@ invisible(Sys.setlocale("LC_TIME","C"))
 staffOnly <- T & nchar(Sys.getenv("MSOFFICE"))>0
 sessionFile <- "quickload/session.Rdata"
 rdstoken <- file.path("quickload/dropbox-token.rds")
-isRemote <- ((!staffOnly | T)&&(file.exists(rdstoken)))
+isRemote <- ((!staffOnly & T)&&(file.exists(rdstoken)))
 # isRemote <- file.exists(rdstoken)
 useNACR <- FALSE
 quickStart <- FALSE

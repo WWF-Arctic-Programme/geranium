@@ -24,6 +24,7 @@
 'selectionRegion' <- function() {
    cat(as.character(match.call())[1]
       ,as.character(packageVersion("flexdashboard"))
+      ,as.character(packageVersion("DT"))
       ,as.character(packageVersion("ursa"))
      # ,shinybrowser::get_browser()
      # ,shinybrowser::get_width()
@@ -817,7 +818,7 @@
       md$CF_code <- paste0("[",md$CF_code,"](#annualCF)")
   # da <- t(as.data.frame(md,check.names=FALSE))
    da <- data.frame(t(md))
-   saveRDS(da,"C:/tmp/interim.rds")
+  # saveRDS(da,"C:/tmp/interim.rds")
    if (T) {
       ret <- DT::datatable(da
                           ,colnames=c("")

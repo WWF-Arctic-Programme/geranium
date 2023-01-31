@@ -1,4 +1,4 @@
-repos <- "https://cloud.r-project.org"
+repos <- c("https://cloud.r-project.org","https://cran.asia")[2]
 type <- if (.Platform$OS.type=="windows") "binary" else getOption("pkgType")
 need_updating <- data.frame(old.packages(repos=repos,type=type))
 to_update <- need_updating[!need_updating$Package %in% "flexdashboard",]
