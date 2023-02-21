@@ -22,8 +22,8 @@ output:
          version: 4
          bootswatch: minty
       logo: https://wwf.ru/assets/img/logo.jpg
-      favicon1: https://www.arcticwwf.org/favicons/favicon-32x32.png
-      favicon: https://i.stack.imgur.com/FzlQy.jpg
+      favicon: https://www.arcticwwf.org/favicons/favicon-32x32.png
+      favicon2: https://i.stack.imgur.com/FzlQy.jpg
       orientation: columns
       vertical_layout: fill
       mathjax: ~
@@ -191,7 +191,7 @@ fillRow(flex=c(NA,NA,NA,NA,NA)
 
 ```{r, eval=isShiny}
 fillRow(flex=c(NA,1,NA)[1]
-   ,shiny::selectInput("industry","Commercial activities"
+   ,shiny::selectInput("industry","Industrial activities"
                  # ,c('No overlap'="none",'All human use'="all",industries)
                   ,"---"
                   ,multiple=T
@@ -201,7 +201,7 @@ fillRow(flex=c(NA,1,NA)[1]
 )
 fillRow(flex=c(NA,NA,NA),height="50%"
    ,conditionalPanel(condition="input.economy!='zzzskip'"
-      ,shiny::selectInput("economy","Indices maps"
+      ,shiny::selectInput("economy","Indexes maps"
                      ,"---"
                      ,multiple=F
                      ,width="352px")
@@ -292,13 +292,14 @@ renderUI({
    col <- if (is.null(rvAOI())) "list" else "list"
   # b1 <- navButton("Human Activities in the Arctic","#list",col,span=T)
   # b2 <- navButton("Conservation Features","#list",col,span=T)
-   b1 <- navButton("All Human Uses","#list",col="list",span=T)
+   b1 <- navButton("All Activities","#list",col="list",span=T)
    b2 <- navButton("All Conservation Features","#list",col="list",span=T)
    navButton(list(b1,b2),border=T)
 })
 ##~ renderUI({
    ##~ col <- if (is.null(rvAOI())) "green" else "grey"
 ##~ })
+br()
 br()
 br()
 
@@ -615,7 +616,7 @@ fillCol(flex=c(1,NA,NA,NA)
       ,column(2
          ,conditionalPanel(condition="input.initEPA>='0'"
            # ,actionLink("actionEPA","Show Existing Protected Areas")
-            ,checkboxInput("actionEPA","Stats for Existing Protected Areas")
+            ,checkboxInput("actionEPA",HTML("Stats for <abbr title=\"Existing Protected Areas\">EPA</abbr>"))
          )
       )
       ,column(3
@@ -625,17 +626,17 @@ fillCol(flex=c(1,NA,NA,NA)
       )
       ,column(1
          ,conditionalPanel(condition="input.actionNAO=='0'"
-            ,actionLink("actionNAO","Show NAOR")
+            ,actionLink("actionNAO","Show SR")
          )
       )
       ,column(1
          ,conditionalPanel(condition="input.actionNAC=='0'"
-            ,actionLink("actionNAC","Show NACR")
+            ,actionLink("actionNAC","Show MNSR")
          )
       )
       ,column(3
          ,conditionalPanel(condition="input.actionHU=='0'"
-            ,actionLink("actionHU","Show Commercial Activities (all)")
+            ,actionLink("actionHU","Show Industrial Activities (all)")
          )
       )
        ,column(1
@@ -666,233 +667,80 @@ output$regionLeaflet <- renderLeaflet({
 ### {data-header="Basic Statistics" data-height="auto"}
 
 
-```{r}
+```{r, eval=T}
 DT::renderDT({
    switchDomain(FALSE)
    result <- rvRegionStats()
-   if (result$nCF==0)
-      return(DT::datatable(data.frame('Missed CFs'="bar",check.names=FALSE)[integer(),,drop=FALSE]
-                          ,options=list(dom="t",ordering=F),class="compact"
-                          ))
-   res <- result[grep("(nPU|nCF|ePA|^(area|pu))",names(result))] |> as.data.frame()
-   cname <- colnames(res)
-   indRound <- grep("^(pu|area|ePA)",colnames(res))
-   dname <- rep("",ncol(res))
-   ver <- 2
-   dname[1] <- c("Number of Planning Units in Selected Region(s)"
-                ,"No of PUs")[ver]
-   dname[2] <- c("Number of Conservation Features"
-                ,"No of CFs")[ver]
-   dname[3] <- c("Area of Selected Region(s), sq.km"
-                ,"Total Area, km<sup>2</sup>")[ver]
-   dname[4] <- c("Area of Planning Units in Selected Region(s), sq.km"
-                ,"Total Area, PUs, km<sup>2</sup>")[ver]
-   dname[5] <- c("Terrestrial Area in Selected Region(s), sq.km"
-                ,"Terrestrial Area, PUs, km<sup>2</sup>")[ver]
-   dname[6] <- c("Marine Area in Selected Region(s), sq.km"
-                ,"Marine Area, PUs, km<sup>2</sup>")[ver]
-   if (length(dname)>=7)
-      dname[7] <- c("Existing Protected Areas in Selected Region(s)
-                   , sq.km","Existing Protected Areas, PUs, km<sup>2</sup>")[ver]
-   cname[1] <- paste0("<abbr title='",dname[1],"'>","PUs","</abbr>")
-   cname[2] <- paste0("<abbr title='",dname[2],"'>","CFs","</abbr>")
-   cname[3] <- paste0("<abbr title='",dname[2],"'>","srcArea","</abbr>")
-   cname[4] <- paste0("<abbr title='",dname[4],"'>","puArea","</abbr>")
-   cname[5] <- paste0("<abbr title='",dname[5],"'>","puLand","</abbr>")
-   cname[6] <- paste0("<abbr title='",dname[6],"'>","puMarine","</abbr>")
-   if (length(cname)>=7)
-      cname[7] <- paste0("<abbr title='",dname[7],"'>","EPA","</abbr>")
-   colnames(res) <- dname
-   da <- DT::datatable(res,escape=F,rownames="",selection="none"
-                      ,options=list(dom="t",ordering=F),class="compact")
-   DT::formatRound(da,indRound,1)
+   regionTable(result)
 })
 ```
 
-### {data-header="Conservation Concern Level by Activity" data-height=200}
+### {data-header="Conservation Concern Level by Activity" data-height=180}
 
-```{r}
+```{r, eval=T}
 fillCol(flex=c(NA,1)
    ,HTML("Conservation Concern Level by Activity")
    ,renderPlotly({
       metrics <- rvRegionStats()
       req(metrics$nCF>0)
-      str(metrics)
-     # saveRDS(metrics,"C:/tmp/interim.rds")
-      result <- metrics$'IND'
-     # ctable <- rvActivityStat()
-     # d <- concernSubset(concern,ctable=ctable)
-      d <- concern
-      d <- concernSubset(d,season=names(metrics$'SC0'),verbose=T)
-      d <- concernIndex(d)$concernNAC
-      localNAC <- d[,names(result)]/ifelse(useNACR,spatial_count(pu),1)
-      ref <- colSums(localNAC,na.rm=TRUE)
-      if (!useNACR & !input$relative)
-         ref <- ref*metrics$'nPU'/spatial_count(pu)
-                             # spatial_count(pu)/metrics$'nPU'
-      IND <- data.frame(industry=names(result),value=result,ref=ref)
-      IND <- IND[order(IND$value,decreasing=TRUE),]
-      IND$industry <- factor(IND$industry,levels=IND$industry,ordered=TRUE)
-      iname <- substr(IND$industry,1,1)
-     # sname <- unique(iname)
-     # ct <- ursa::cubehelix(length(sname),bright=167,rotate="circle")
-     # names(ct) <- sname
-      mcol <- ctIndustry[substr(IND$industry,1,1)]
-      meanNAC <- sum(colSums(localNAC,na.rm=TRUE))/ifelse(!useNACR,spatial_count(pu),1)
-      mvalue <- meanNAC/length(IND$industry)*ifelse(!useNACR & !input$relative,metrics$nPU,1)
-      mvalue <- sum(colSums(localNAC,na.rm=TRUE))/length(IND$industry)
-      if (!useNACR & !input$relative)
-         mvalue <- mvalue*metrics$'nPU'/spatial_count(pu)
-      if (isTRUE(input$relative)) {
-         IND$value <- 100*IND$value/metrics$'maxNAC'
-         maxNAC <- length(unique(concern$CF_code))*length(metrics$'SC0')*max(config$concern)
-         IND$ref <- 100*IND$ref/maxNAC
-         mvalue <- 100*mvalue/maxNAC
-      }
-      p <- plot_ly(IND,x=~industry,y=~value,type="bar",orientation="v"
-                  ,marker=list(color=mcol),name='Region'
-                  ) %>%
-           add_trace(y=~ref,name='Domain',marker=list(color='rgb(204,204,204)')
-                    ,visible="legendonly") %>%
-           layout(NULL
-                 ,xaxis=list(title="")
-                 ,yaxis=list(title=ifelse(input$relative,"Indexes (%)"
-                         ,ifelse(useNACR,"Relative Indexes","Absolute indexes")))
-                # ,title="Conservation Concern Level by Activity"
-                # ,showlegend=FALSE
-                 ,legend=list(x=0.5,y=0.9,orientation='h')
-                 ,shapes=if (!input$relative) NULL else list(list(x0=~head(industry,1)
-                            ,x1=~tail(industry,1),y0=mvalue,y1=mvalue
-                            ,type="line",line=list(color="#8888",dash="dot")))
-                # ,margin=list(l=0,r=0,t=0)
-                 )
-      p
+      regionPlotIndustry(metrics,relative=input$relative)
    })
 )
 ```
 
 ### {data-header="Seasonal histogram" data-height=160}
 
-```{r}
-fillRow(flex=c(12,NA,12,NA,24)
-   ,fillCol(flex=c(NA,1)
-      ,HTML("Concern Indexes")
-      ,DT::renderDT({
-         result <- rvRegionStats()
-         req(result$nCF>0)
-        # res <- result[grep('^NA',names(result))] |> as.data.frame()
-         res <- result[c("NAOR","NACR","NAO","NAC")] |> as.data.frame()
-         res <- rbind(res,data.frame(NAOR=result$meanNAOR,NACR=result$meanNACR,NAO=NA,NAC=NA))
-         if (is.null(rvAOI())) {
-            res <- res[1,,drop=FALSE]
-            rownames(res) <- c("Selection","ArcNet")[2]
-         }
-         else
-            rownames(res) <- c("Selection","ArcNet")
-         cname <- colnames(res)
-         cname[cname=="NAO"] <- paste0("<abbr title='"
-                                      ,"Conservation concern, not allowed only"
-                                      ,"'>","NAO","</abbr>")
-         cname[cname=="NAC"] <- paste0("<abbr title='"
-                                      ,"Conservation concern, not allowed and conditional"
-                                      ,"'>","NAC","</abbr>")
-         cname[cname=="NAOR"] <- paste0("<abbr title='"
-                                      ,"Conservation concern, not allowed only relative"
-                                      ,"'>","NAOR","</abbr>")
-         cname[cname=="NACR"] <- paste0("<abbr title='"
-                                      ,"Conservation concern, not allowed and conditional relative"
-                                      ,"'>","NACR","</abbr>")
-         colnames(res) <- cname
-         res <- t(res) |> as.data.frame(check.names=FALSE)
-         da <- DT::datatable(res,escape=F
-                           # ,colnames=""
-                            ,selection="none"
-                            ,options=list(dom="t",ordering=F),class="compact"
-                            ,width="200px"
-                            )
-         DT::formatRound(da,colnames(res),1)
-      })
-   )
-   ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-   ,{if (F)
-      fillCol(flex=c(NA,1)
-         ,HTML("Most Critical Months")
+```{r, eval=T}
+fillRow(flex=c(10,NA,14)
+   ,fillCol(flex=c(1,NA,1)
+      ,fillCol(flex=c(NA,1)
+         ,HTML("Concern Indexes")
          ,DT::renderDT({
             result <- rvRegionStats()
             req(result$nCF>0)
-            res <- result[['SC']] |> data.frame() |> t()
-            if (input$relative)
-               res <- res/result$'maxNAC'*100
-            res <- t(res) |> as.data.frame(check.names=FALSE)
-            da <- DT::datatable(res,escape=F
-                               ,colnames="" # "<abbr title='Season of concern'>SC</abbr>"
-                               ,selection="none"
-                               ,options=list(dom="t",ordering=F),class="compact")
-            DT::formatRound(da,colnames(res),1)
+            regionConcernIndices(result)
          })
       )
-   else
-      fillCol(flex=c(NA,1,NA)
-         ,HTML("Activity Indexes")
-         ,DT::renderDT({
-            aoi <- rvAOI()
-            ctable <- rvActivityStat()
-           # cat("aoi:\n")
-           # str(aoi)
-           # cat("ctable:\n")
-           # str(ctable)
-            if (FALSE)
-               shiny::showNotification(id="indexCAPR",closeButton=FALSE,duration=120
-                               ,paste("This action may take some time."
-                                     ,"Please wait...")
-                               ,type="warning")
-            ##~ cap <- indexCAPR(aoi=aoi
-                           ##~ ,group=attr(ctable,"season")
-                           ##~ ,activity=NULL
-                           ##~ ,season=attr(ctable,"season")
-                           ##~ ) |> band_mean()
-            cap <- round(band_mean(indexCAPR(aoi=aoi,ctable=ctable)),0)
-            hu <- round(band_mean(indexHumanUse(aoi=aoi,ctable=ctable)),2)
-            res <- rbind(cap,hu)
-            if (ncol(res)==1) {
-               da <- data.frame(ArcNet=res[,"domain"])
-            } else {
-               da <- data.frame(Selection=res[,"aoi"],ArcNet=res[,"domain"])
-            }
-            if (FALSE)
-               shiny::removeNotification(id="indexCAPR")
-            print(res)
-            rownames(da) <- c("<abbr title='Conservation Action Priority index per cell'>CAPR</abbr>"
-                             ,"<abbr title='Commercial Activities Amount per cell'>HUAR</abbr>")
-            DT::datatable(da,escape=FALSE
-                         ,selection="none"
-                         ,options=list(dom="t",ordering=F),class="compact"
-                         )
-         })
-        # ,HTML("Commercial Activities (PPU) = 21 (average for ArcNet = 4)")
-        # ,HTML("Conservation action priority (PPU) = 14 (average for ArcNet = 3")
-         ,HTML("TODO: Conservation action priority (PPU = 194 (13451 sum for ArcNet))")
-      )
-   }
+      ,br()#HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+      ,{if (F)
+         fillCol(flex=c(NA,1)
+            ,HTML("Most Critical Months")
+            ,DT::renderDT({
+               result <- rvRegionStats()
+               req(result$nCF>0)
+               res <- result[['SC']] |> data.frame() |> t()
+               if (input$relative)
+                  res <- res/result$'maxNAC'*100
+               res <- t(res) |> as.data.frame(check.names=FALSE)
+               da <- DT::datatable(res,escape=F
+                                  ,colnames="" # "<abbr title='Season of concern'>SC</abbr>"
+                                  ,selection="none"
+                                  ,options=list(dom="t",ordering=F),class="compact")
+               DT::formatRound(da,colnames(res),1)
+            })
+         )
+      else
+         fillCol(flex=c(NA,1)
+            ,HTML("Activity Indexes")
+            ,DT::renderDT({
+               aoi <- rvAOI()
+               ctable <- rvActivityStat()
+              # DT::datatable(data.frame(id=1,value="dummy"))
+               regionActivityIndices(ctable,aoi)
+            })
+           # ,HTML("Industrial Activities (PPU) = 21 (average for ArcNet = 4)")
+           # ,HTML("Conservation action priority (PPU) = 14 (average for ArcNet = 3")
+           # ,HTML("TODO: Conservation action priority (PPU = 194 (13451 sum for ArcNet))")
+         )
+      }
+   )
    ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
    ,fillCol(flex=c(NA,1)
       ,HTML("Conservation Concern Level by Month")
       ,renderPlotly({
          result <- rvRegionStats()
          req(result$nCF>0)
-         sc <- result[['SC0']]
-         if (input$relative)
-            sc <- sc/result$'maxNAC'*100
-         sc <- data.frame(month=names(sc),value=sc)
-         sc$month <- factor(sc$month,levels=sc$month,ordered=TRUE)
-         p <- plot_ly(sc,x=~month,y=~value,type="bar",orientation="v") %>%
-                  layout(NULL
-                        ,xaxis=list(title="")
-                        ,yaxis=list(title=ifelse(input$relative,"Indexes (%)"
-                                ,ifelse(useNACR,"Relative Indexes","Absolute indexes")))
-                       # ,margin=list(l=0,r=0,t=0)
-                        )
-         p
+         regionPlotSeason(result,relative=input$relative)
       })
    )
 )
@@ -901,7 +749,7 @@ fillRow(flex=c(12,NA,12,NA,24)
 ### {data-height="auto"}
 
 ```{r}
-downloadLink("downloadMetrics","Download interim tables for NAO and NAC")
+downloadLink("downloadMetrics","Download interim tables for SR and MNSR")
 HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
 downloadLink("instantReport","Instant Report")
 output$downloadMetrics <- downloadHandler(
@@ -922,11 +770,13 @@ output$downloadMetrics <- downloadHandler(
       interim <- rvRegionMetrics()
       req(!is.null(interim$cover))
      # str(interim)
+      dNAM <- cbind(interim$cover,interim$NAM)
       dNAO <- cbind(interim$cover,interim$NAO)
       dNAC <- cbind(interim$cover,interim$NAC)
      # str(res)
      # res <- iris
-      xlsx::write.xlsx(dNAO,file,sheetName="NAO",append=FALSE)
+      xlsx::write.xlsx(dNAM,file,sheetName="NAM",append=FALSE)
+      xlsx::write.xlsx(dNAO,file,sheetName="NAO",append=TRUE)
       xlsx::write.xlsx(dNAC,file,sheetName="NAC",append=TRUE)
    }
 )
@@ -969,7 +819,7 @@ output$instantReport <- downloadHandler(
 
 ###
 
-```{r}
+```{r, eval=T}
 fillCol(flex=c(NA,1)
   # ,HTML("Top NACR CF")
    ,HTML(paste0("<abbr title=","'Proportion of maximal Conservation Concern Level'"
@@ -980,11 +830,12 @@ fillCol(flex=c(NA,1)
       ctable <- rvActivityStat()
       req(nrow(ctable)>0)
       ntable <- ctable[order(ctable$NAC,decreasing=TRUE),c("CF name","NAC"),drop=FALSE]
+      ntable <- ntable[!is.nan(ntable$NAC),]
       ntable <- ntable[ntable$NAC>=50,]
       req(nrow(ntable)>0)
       rownames(ntable) <- paste0("<abbr title='",ntable$'CF name',"'>",rownames(ntable),"</abbr>")
       ntable <- ntable[,"NAC",drop=FALSE]
-      colnames(ntable) <- paste0("<abbr title='Proportion of maximal NAC'>NAC</abbr>")
+      colnames(ntable) <- paste0("<abbr title='Proportion of maximal MNSR'>MNSR</abbr>")
       res <- data.frame(cf=rownames(ntable))
       da <- DT::datatable(ntable,escape=F
                          ,colnames=NULL
@@ -1005,7 +856,7 @@ fillCol(flex=c(NA,1)
 
 ### {data-header="TOP IND"}
 
-```{r}
+```{r, eval=FALSE}
 fillCol(flex=c(NA,1)
    ,HTML("Activities of Concern")
    ,DT::renderDT({
@@ -1041,7 +892,7 @@ fillCol(flex=c(NA,1)
 
 ### {data-header="IND LC"}
 
-```{r}
+```{r, eval=FALSE}
 fillCol(flex=c(NA,1)
    ,HTML("Activities of Least Concern")
    ,DT::renderDT({
@@ -1160,7 +1011,7 @@ fillCol(flex=c(1,NULL,NA)
 
 ## {.failured data-height="auto"}
 
-### Conservation Features
+### Conservation Features {data-height=600}
 
 ```{r, eval=T & isShiny}
 fillCol(flex=1,DT::DTOutput("onlyCF"))
@@ -1175,7 +1026,7 @@ output$switchCF <- renderUI({
 })
 ```
 
-### Human use in the Arctic
+### Activities in the Arctic {data-height=400}
 
 ```{r, eval=T & isShiny}
 fillCol(flex=1,DT::DTOutput("onlyIndustry"))

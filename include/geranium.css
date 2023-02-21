@@ -150,6 +150,9 @@ table.overcontent tbody td {
 .linkbutton a {
    color: white;
 }
+#buttonsCross {
+   overflow-y: hidden;
+}
 img[data-width^=ursa] {
    opacity: 0.1
 }

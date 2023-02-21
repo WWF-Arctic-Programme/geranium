@@ -5,6 +5,7 @@ rdstoken <- file.path("quickload/dropbox-token.rds")
 isRemote <- ((!staffOnly & T)&&(file.exists(rdstoken)))
 # isRemote <- file.exists(rdstoken)
 useNACR <- FALSE
+ignoreMissing <- TRUE
 quickStart <- FALSE
 if ((!file.exists(sessionFile))||(file.size(sessionFile)<1024))
    prm_download(sessionFile)
@@ -20,11 +21,12 @@ if (file.exists(sessionFile)) {
 # mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
 mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
+# mdname <- "requisite/compatibility assessment_all_CURRENT_WORKING.xlsx"
 require(ursa)
 requireNamespace("sf")
 #plutil::ursula(3)
 isShiny <- ursa:::.isShiny()
-if (dropboxBoris <- T | isShiny) {
+if (dropboxBoris <- T & isShiny) {
    if (file.exists(mdname)) {
       ntu <- as.numeric(difftime(Sys.time(),file.mtime(mdname)),units="hours")>12
      # md5a <- unname(tools::md5sum(mdname))
@@ -92,7 +94,7 @@ kwdRed <- "Incompatible"
 kwdYellow <- c("Concessional","Conditional","Compatible under certain conditions")[2]
 kwdGreen <- c("Compatible","Compatible/not applicable")[2]
 kwdGray <- "Not applicable"
-allActivity <- "All human use"
+allActivity <- "All groups"
 noneActivity <- "No human use"
 nameAllCF <- "All conservation features"
 nameAllSeason <- "Annual maximum"
@@ -117,7 +119,9 @@ kwdLUT <- c('0'=kwdGray,'1'=kwdGreen,'2'=kwdYellow,'3'=kwdRed,'9'=kwdGray)
 #clrLUT <- c('0'="grey70",'1'="yellow",'2'="orange",'3'="red",'9'="grey70")
 clrLUT <- c('0'="grey70",'1'="Khaki",'2'="BurlyWood",'3'="Salmon",'9'="grey70")[c('1','2','3')]
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
-basename(listPD)
+#basename(listPD)
+sepRules <- " » "
+sepRules <- iconv(sepRules,to="UTF-8")
 if (!quickStart) {
    regionSF <- vector("list",length(listPD))
    names(regionSF) <- basename(listPD)
@@ -141,7 +145,9 @@ if (!quickStart) {
 session_grid(NULL)
 if (!quickStart) {
    dist2land <- ursa_read("requisite/dist2land-f.tif")
-   rules <- jsonlite::fromJSON("requisite/buffer-rules.json")
+  # rules <- jsonlite::fromJSON("requisite/buffer-rules.json")
+   rules <- read.csv("requisite/industry_conditions.csv")
+   rules$unique <- with(rules,paste0(activity,sepRules,industry))
    blank <- (!is.na(dist2land["ID"]))-1L
 }
 #rules <- jsonlite::fromJSON("buffer-rules.json")
@@ -158,17 +164,23 @@ methodList <- c('overlap'=paste(sQuote(kwdRed),"colors overwrite",sQuote(kwdYell
                ,'mix'=paste(sQuote(kwdRed),"and",sQuote(kwdYellow),"mixed colors")
                ,'source'=paste(sQuote(kwdRed),"and","source")
                )
-nameAllHuman <- "All human use"
-sepRules <- " » "
-sepRules <- iconv(sepRules,to="UTF-8")
+nameAllHuman <- allActivity
 pattRules <- paste0("^(.+\\S)",gsub("\\s","\\\\s",sepRules),"(\\S.+)$")
-#activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity)) ## deprecated
-activity <- unique(gsub(pattRules,"\\1",rules$activity))
-activity <- c(noneActivity,allActivity,activity)
+# activity <- unique(gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\1",rules$activity)) ## deprecated
+# activity <- unique(gsub(pattRules,"\\1",rules$activity))
+activity <- c(noneActivity,allActivity,rules$activity)
 options(spinner.color="#ECF0F5")
 nameSelector <- "Selector"
 nameEditor <- "Editor"
 nameClick <- "Click region(s) on map"
+choiceMap <- c('Do not show'="none"
+              ,'CAPR'="capr"
+              ,'MNSR'="nacr"
+              ,'SR'="naor"
+              ,'Industrial activities acceptability'="trafficlight"
+              ,'Industrial activities amount'="humanuse"
+              )
+
 cell <- ursa(dist2land["dist"],"cell")*1e-3
 if (F)
    clf <- compose_coastline(spatial_transform(spatial_read("crop-coast.geojson"),6931)
@@ -225,7 +237,7 @@ if (!quickStart) {
    ursa:::.elapsedTime("marxan inputs reading -- finish")
    half <- median(spatial_area(pu))/2
 }
-industryAbbr <- read.csv("requisite/industry.csv")
+industryAbbr <- read.csv("requisite/industry_conditions.csv")
 industryAbbr <- industryAbbr[order(industryAbbr$abbr),]
 rownames(industryAbbr) <- NULL
 configFile <- "quickload/config.json"
@@ -236,7 +248,7 @@ mulNA <- config$concern
 patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
 if (!quickStart) {
    vulner <- vector("list",nrow(rules))
-   names(vulner) <- rules$activity
+   names(vulner) <- rules$unique
    comments <- vulner
    activity <- readxl::excel_sheets(mdname)
    industries <- vector("list",length(activity))
@@ -246,7 +258,7 @@ if (!quickStart) {
       v <- as.data.frame(v)
       cname <- colnames(v)
       vname <- paste0(sheet,sepRules,cname)
-      ind <- vname %in% rules$activity
+      ind <- vname %in% rules$unique
       v2 <- v[,!ind]
       ind2 <- grep("^comment",colnames(v2),ignore.case=TRUE,invert=!TRUE)
       if (hasComment <- length(ind2)>0) {
@@ -265,14 +277,20 @@ if (!quickStart) {
          if (hasComment) {
             v3 <- v2
             v3$value <- v4[,v4name[i]]
-            comments[[match(vname[ind[i]],rules$activity)]] <- v3
+            comments[[match(vname[ind[i]],rules$unique)]] <- v3
          }
         # v2$value <- v[,ind[i]][[1]]
          val <- v[,ind[i]]
          val[val>9] <- NA
          v2$value <- as.integer(val)
-         vulner[[match(vname[ind[i]],rules$activity)]] <- v2
+         vulner[[match(vname[ind[i]],rules$unique)]] <- v2
       }
+   }
+   if (F) {
+      a <- lapply(vulner,dim)
+      names(a) <- substr(names(a),1,48)
+      str(a)
+      q()
    }
    vulner <- do.call(rbind,vulner)
    vulner <- vulner[which(!is.na(vulner$'Limitations')),]

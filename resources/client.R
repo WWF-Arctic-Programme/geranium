@@ -74,7 +74,7 @@
    else
       b1 <- NULL
    if (isTRUE(exchange$domain)) {
-      b6 <- navButton("All Human Uses","#list","list",span=T)
+      b6 <- navButton("All Activities","#list","list",span=T)
       b7 <- navButton("All Conservation Features","#list","list",span=T)
    }
    else {
@@ -238,7 +238,7 @@
    cat(as.character(match.call())[1],":\n")
    switchDomain(TRUE)
   # req(res <- rvActivityStat())
-   res <- industryAbbr[,c(1,2)] # read.csv("requisite/industry.csv")
+   res <- industryAbbr[,c(1,2)] # read.csv("requisite/industry_conditions.csv")
    b <- DT::datatable(res,rownames=FALSE,escape=!FALSE
                 ##~ ,class="display overcontent"
                 ,extension=c("Scroller")
@@ -262,8 +262,8 @@
    switchDomain(TRUE)
    req(res <- rvActivityStat())
   # res <- data.frame('CF code'=as.integer(rownames(res)),'CF name'=res[[1]])
-   res <- data.frame('CF code'=as.integer(rownames(res)),'CF name'=res[[1]],check.names=FALSE)
-   b <- DT::datatable(res,rownames=FALSE,escape=!FALSE
+   res <- data.frame('CF code'=as.integer(rownames(res)),'CF name'=res[[1]],check.names=FALSE)
+   b <- DT::datatable(res,rownames=FALSE,escape=FALSE
                 ##~ ,class="display overcontent"
                 ,extension=c("Scroller")
                 ,selection=list(mode="single",target="row")
@@ -297,9 +297,15 @@
    if (hasNAI) {
       res$'NAC' <- as.numeric(res$'NAC')/100
       res$'NAO' <- as.numeric(res$'NAO')/100
-      colnames(res)[indNAI] <- paste0("<abbr title='",colnames(res)[indNAI]
-                                     ," index achievement'>",colnames(res)[indNAI],"</abbr>")
+      indNAC <- grep("^NAC",colnames(res))
+      indNAO <- grep("^NAO",colnames(res))
+      colnames(res)[indNAC] <- "<em><abbr title=\"Minor Notable Significant for CF index achievement\">MNSCF</abbr></em>"
+      colnames(res)[indNAO] <- "<em><abbr title=\"Significant for CF index achievement\">SCF</abbr></em>"
+     # colnames(res)[indNAI] <- paste0("<abbr title='",colnames(res)[indNAI]
+     #                                ," index achievement'>",colnames(res)[indNAI],"</abbr>")
    }
+   indCover <- grep("^Cover",colnames(res))
+   colnames(res)[indCover] <- "<em>Cover</em>"
    colnames(res)[ind2] <- paste0("<abbr title='"
                                               ,industryAbbr$industry[na.omit(ind)],"'>"
                                               ,industryAbbr$abbr[na.omit(ind)],"</abbr>")
@@ -357,7 +363,7 @@
                     # ,backgroundRepeat='no-repeat'
                     # ,backgroundPosition='center'
                      )
-   b <- DT::formatPercentage(b,'Cover',1)
+   b <- DT::formatPercentage(b,indCover,1)
    if (hasNAI)
       b <- DT::formatPercentage(b,indNAI,1)
    b
@@ -610,7 +616,7 @@
    }
    else {
       fileout <- "res1.html" # "res1.html" ## tempfile()
-      lut <- read.csv("./requisite/industry.csv")
+      lut <- read.csv("./requisite/industry_conditions.csv")
       if (length(ind <- match(industry,lut$industry))) {
          if (nchar(lut$manual[ind]))
             industry <- lut$manual[ind]
@@ -874,13 +880,13 @@
    if (showPAs)
       grPAs <- as.list(args(regionAddEPA))$group
    if (showNAO)
-      grNAO <- "NAOR index"
+      grNAO <- "SR index"
    if (showNAC)
-      grNAC <- "NACR index"
+      grNAC <- "MNSR index"
    if (showCAP)
       grCAP <- "CAPR index"
    if (showHU)
-      grHU <- "Commercial Activity"
+      grHU <- "Industrial Activities"
    if (grepl("humanuse",index))
       gr <- grHU
    else if (grepl("CAP",index))

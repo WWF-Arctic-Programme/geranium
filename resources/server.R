@@ -40,7 +40,7 @@ if (T) observe({ ## update 'input$column'
    req(!is.null(input$sheet))
    req(input$sheet %in% activity)
    cat("observe: update input$column:\n")
-   forcing <- grep(paste0("^",input$sheet),rules$activity,value=TRUE)
+   forcing <- grep(paste0("^",input$sheet),rules$unique,value=TRUE)
   # forcing <- gsub("(.+\\S)\\s*»\\s*(\\S.+)","\\2",forcing) ## deprecated
    forcing <- gsub(pattRules,"\\2",forcing)
    if (length(forcing))
@@ -544,16 +544,15 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    }
    else
       industry <- input$industry
-   print("0124o")
-   print(industry)
-   print("0124p")
    ret <- crossTable(aoi=aoi
                     ,group=group
                     ,activity=industry
                    # ,activity=activity
                    # ,activity=unlist(exchange$subset)
-                    ,season=input$season)
-   ret <- ret[ret$'Cover'>=input$omitPercent,]
+                    ,season=input$season
+                    ,minCover=input$omitPercent ## +++
+                    )
+  # ret <- ret[ret$'Cover'>=input$omitPercent,] ## ---
    ret
 })
 'rvCustomer' <- reactive({
@@ -1330,17 +1329,18 @@ if (T) observe({ ## update 'input$economy'
   # print(c(industry=industry))
   # print(isTRUE(industry %in% industryAbbr$industry))
    if (!is.null(exchange$selection)) {
-      choice <- c('Unsupported with selection'="skip")
+      if (input$economy=="skip") {
+         return(NULL)
+        # choice <- c('Unsupported with selection'="skip")
+      }
+      else {
+         choice <- "skip"
+         names(choice) <- names(choiceMap[match(input$economy,choiceMap)])
+      }
       updateSelectInput(session,"economy",choices=choice,selected=choice[1])
       return(NULL)
    }
-   choice <- c('Do not show'="none"
-              ,'CAPR'="capr"
-              ,'NACR'="nacr"
-              ,'NAOR'="naor"
-              ,'Commercial activity acceptability'="trafficlight"
-              ,'Commercial activity amount'="humanuse"
-              )
+   choice <- choiceMap
    if ("all" %in% industry) {
       if (allActivity %in% input$activity)
          industry2 <- unlist(industries)
@@ -1670,13 +1670,13 @@ observe({
    if (showPAs)
       grPAs <- as.list(args(regionAddEPA))$group
    if (showNAO)
-      grNAO <- "NAOR index"
+      grNAO <- "SR index"
    if (showNAC)
-      grNAC <- "NACR index"
+      grNAC <- "MNSR index"
    if (showCAP)
       grCAP <- "CAPR index"
    if (showHU)
-      grHU <- "Commercial Activity"
+      grHU <- "Industrial Activities"
    map <- addLayersControl(map
                         ,overlayGroups=c(NULL
                                         ,"Arctic SDI"
@@ -1742,7 +1742,6 @@ observeEvent(input$levelNAC,{
    }
    else
       da <- NULL
-   str(da)
    req(cf <- CFCode(rvSelectCF()))
    req(industry <- industryCode(rvSelectIndustry()))
    if (input$submit) {
