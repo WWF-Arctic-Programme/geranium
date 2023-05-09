@@ -1,14 +1,15 @@
 invisible(Sys.setlocale("LC_TIME","C"))
+root <- here::here()
 staffOnly <- T & nchar(Sys.getenv("MSOFFICE"))>0
 sessionFile <- "quickload/session.Rdata"
-rdstoken <- file.path("quickload/dropbox-token.rds")
-isRemote <- ((!staffOnly & T)&&(file.exists(rdstoken)))
-# isRemote <- file.exists(rdstoken)
+rdstoken <- file.path(root,"quickload/dropbox-token.rds")
 useNACR <- FALSE
 ignoreMissing <- TRUE
 quickStart <- FALSE
-if ((!file.exists(sessionFile))||(file.size(sessionFile)<1024))
+if ((!staffOnly)&&((!file.exists(sessionFile))||(file.size(sessionFile)<1024))) {
+   isRemote <- TRUE ## only for 'sessionFile' download 
    prm_download(sessionFile)
+}
 if (file.exists(sessionFile)) {
    a <- load(sessionFile)
    if (("dummy" %in% a)&&(dummy=="rebuild")) {
@@ -17,6 +18,8 @@ if (file.exists(sessionFile)) {
       quickStart <- file.size(sessionFile)>=1024
    }
 }
+isRemote <- ((!staffOnly & T)&&(file.exists(rdstoken)))
+# isRemote <- file.exists(rdstoken)
 # mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
@@ -97,7 +100,7 @@ kwdGray <- "Not applicable"
 allActivity <- "All groups"
 noneActivity <- "No human use"
 nameAllCF <- "All conservation features"
-nameAllSeason <- "Annual maximum"
+nameAllSeason <- c("Annual","Annual maximum")[1]
 groupList <- c('\\d'=nameAllCF
               ,'1'="Walrus"
               ,'2'="Pinnipeds"
@@ -228,6 +231,7 @@ if (!quickStart) {
    spec <- by(puvspr,puvspr$species,function(x) {
       data.frame(cf=x$species[1],amount=sum(x$amount))
    }) |> do.call(rbind,args=_)
+   session_grid(NULL)
    pu <- spatial_read("requisite/pulayer")
    sf::st_agr(pu) <- "constant"
    PAs <- spatial_read("requisite/PAs_union1.shp") |> spatial_transform(4326)
@@ -338,7 +342,7 @@ if (!quickStart) {
        ,PAs,half,vulner,industries,comments,concern,rHU
       # ,concernNAO,concernNAC
        ,file=sessionFile)
-   if ((isRemote)&&(!staffOnly))
+   if ((isRemote)&&(T | !staffOnly))
       prm_upload(sessionFile)
 }
 if (isShiny) {

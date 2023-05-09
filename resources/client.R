@@ -238,8 +238,9 @@
    cat(as.character(match.call())[1],":\n")
    switchDomain(TRUE)
   # req(res <- rvActivityStat())
-   res <- industryAbbr[,c(1,2)] # read.csv("requisite/industry_conditions.csv")
+   res <- industryAbbr[,c(3,1,2)] # read.csv("requisite/industry_conditions.csv")
    b <- DT::datatable(res,rownames=FALSE,escape=!FALSE
+                ,colnames=c("","Activity","Industry")
                 ##~ ,class="display overcontent"
                 ,extension=c("Scroller")
                 ,selection=list(mode="single",target="row")
@@ -287,11 +288,14 @@
    cat("crosstable -> datatable\n")
    res <- rvActivityStat()
    req(res)
+   lab <- regionSF[[input$region]]$region[rvAOI()$id]
+   isChicory <- ((length(lab))&&(grepl("^PAC",lab)))
   # rname - colnames(res)
   # selectRows(proxyOnlyIndustry,NULL)
   # selectRows(proxyOnlyCF,NULL)
    ind <- match(colnames(res),industryAbbr$industry)
    ind2 <- which(!is.na(ind))
+  # res <- cbind('CF Code'=rownames(res),res)
    res$'Cover' <- as.numeric(res$'Cover')/100
    hasNAI <- length(indNAI <- grep('^NA[CO]',colnames(res)))==2
    if (hasNAI) {
@@ -312,6 +316,13 @@
   # res$'CF name' <- substr(res$'CF name',1,12)
   # res <- input$industry
   # req(res %in% unlist(industries))
+  # rownames(res) <- paste0("<a href=\"ya.ru\" target=\"_blank\"",rownames(res),"</a>")
+   if (isChicory) {
+      res[[1]] <- paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/cf/"
+                        ,paste0("s",sapply(paste0("cf",rownames(res)),digest::digest,"crc"),".html")
+                        ,"\" target=\"_blank\">",res[[1]],"</a>")
+   }
+  # colnames(res)[1] <- ""
    b <- DT::datatable(res,rownames=TRUE,escape=FALSE
                 ##~ ,class="display overcontent"
                 ,extension=c("Scroller","FixedColumns","FixedHeader","Responsive"
@@ -791,7 +802,7 @@
 'displayIndustry' <- function() { ## renderLEaflet
    cat(as.character(match.call())[1],":\n")
    req(industry <- rvSelectIndustry())
-   a <- interimMap(industry=industry)
+   a <- conditionMap(industry=industry)
   # saveRDS(a,"c:/tmp/industry-a.rds")
    coloring <- names(methodList[match(input$coloring,methodList)])
    d6 <- map3_1d(a,kind=coloring,source=input$sheet)
@@ -875,41 +886,62 @@
    showNAC <- isTRUE(input$actionNAC>0)
    showCAP <- isTRUE(input$actionCAP>0)
    showHU <- isTRUE(input$actionHU>0)
-   if (showAOI)
+  # if (showAOI)
       grAOI <- as.list(args(regionAddAOI))$group
-   if (showPAs)
+  # if (showPAs)
       grPAs <- as.list(args(regionAddEPA))$group
-   if (showNAO)
+  # if (showNAO)
       grNAO <- "SR index"
-   if (showNAC)
+  # if (showNAC)
       grNAC <- "MNSR index"
-   if (showCAP)
+  # if (showCAP)
       grCAP <- "CAPR index"
-   if (showHU)
+  # if (showHU)
       grHU <- "Industrial Activities"
-   if (grepl("humanuse",index))
+   if (grepl("humanuse",index)) {
       gr <- grHU
-   else if (grepl("CAP",index))
+      toAdd <- showHU
+   }
+   else if (grepl("CAP",index)) {
       gr <- grCAP
-   else if (grepl("NAC",index))
+      toAdd <- showCAP
+   }
+   else if (grepl("NAC",index)) {
       gr <- grNAC
-   else if (grepl("NAO",index))
+      toAdd <- showNAC
+   }
+   else if (grepl("NAO",index)) {
       gr <- grNAO
-   else
+      toAdd <- showNAO
+   }
+   else {
       gr <- "undefined"
-   map <- addPolygons(map,data=b
-                   ,color=~pal(name)
-                   ,weight=0
-                  # ,popup=~gsub(";\\s*","\n",name)
-                   ,label=~name
-                   ,stroke=TRUE
-                   ,fillOpacity=0.7
-                   ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.7
-                                                             # ,sendToBack=TRUE
-                                                             # ,bringToFront=TRUE
-                                                              )
-                   ,group=gr
-                   )
+      toAdd <- TRUE
+   }
+   layerId <- digest::digest(gr,"crc32")
+   print("========================================================\n")
+   print(input$actionNAC)
+   print(showNAC)
+   print(toAdd)
+   toAdd <- TRUE
+   print("========================================================\n")
+   if (toAdd)
+      map <- addPolygons(map,data=b
+                      ,color=~pal(name)
+                      ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                      ,label=~name
+                      ,stroke=TRUE
+                      ,fillOpacity=0.7
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.7
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=gr
+                     # ,layerId=layerId
+                      )
+   else
+      map <- removeShape(map,layerId)
    map <- addLegend(map
                  ,position="topleft"
                  ,pal=pal
@@ -918,16 +950,113 @@
                  ,title=gr
                  ,group=gr
                  )
-   ##~ map <- addLayersControl(map
-                        ##~ ,overlayGroups=c(NULL
-                                        ##~ ,"Arctic SDI"
-                                        ##~ ,if (showAOI) grAOI
-                                        ##~ ,if (showPAs) grPAs
-                                        ##~ ,if (showNAO) grNAO
-                                        ##~ ,if (showNAC) grNAC
-                                        ##~ )
-                        ##~ ,options=layersControlOptions(collapsed=FALSE)
-                        ##~ )
+   if (T) {
+      map <- removeLayersControl(map)
+      map <- addLayersControl(map
+                           ,overlayGroups=c(NULL
+                                           ,"Arctic SDI"
+                                           ,if (showAOI) grAOI
+                                           ,if (showPAs) grPAs
+                                           ,if (showNAO) grNAO
+                                           ,if (showNAC) grNAC
+                                           ,if (showCAP) grCAP
+                                           ,if (showHU) grHU
+                                           )
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+   }
    ursa:::.elapsedTime("mapD")
    map
+}
+'iceConcTable' <- function() {
+   cat("iceConcTable()\n")
+   icCover <- rvIceConcCover()
+   icCover$concern
+}
+'iceConcRule' <- function() {
+   cat("iceConcRule()\n")
+   rule <- rvIceConcCover()$rule
+   rule$manual <- NULL
+   rule$activity <- NULL
+   rule$abbr <- NULL
+   rule$unique <- NULL
+   rule
+}
+'iceConcHuman' <- function() {
+   cat("iceConcHuman()\n")
+   icCover <- rvIceConcCover()
+  # human <- icCover$assess["industry"]
+   human <- icCover$human
+   ret <- glance(human,fileout=ursa:::.maketmp(ext=".png")
+                ,resetGrid=TRUE,retina=1,blank="white",coast.fill="#00000010"
+                ,legend="bottom",las=1,units="Static industry limitations")
+   list(src=ret
+       ,'width'="100%"
+       ,'height'="100%"
+       ,'max-width'="100%"
+       ,'object-fit'="scale-down"
+      # ,display="inline-block"
+       )
+}
+'iceConcMonthly' <- function() {
+   cat("iceConcMonthly()\n")
+   g0 <- session_grid()
+   ice <- rvIceConcCover()$ice
+   assess <- rvIceConcCover()$assess
+   if (!is.null(ice)) {
+      a <- spatial_centroid(assess[,ice]) |> allocate(resetGrid=TRUE) |>
+         ursa_crop(border=2)
+      rm(assess)
+      ursa:::.gc(TRUE)
+      ret <- display_homo(a,ratio=9/16,blank="white"
+                    ,fileout=ursa:::.maketmp(ext=".png"),retina=1)
+      ursa:::.gc(TRUE)
+   }
+   else {
+      a <- spatial_centroid(assess[,"industry"]) |> allocate(resetGrid=TRUE) |>
+         ursa_crop(border=2)
+      rm(assess)
+      ursa:::.gc(TRUE)
+      ret <- display(a,blank="white",fileout=ursa:::.maketmp(ext=".png"),retina=1)
+   }
+   session_grid(g0)
+   list(src=ret
+       ,'width'="100%"
+       ,'height'="100%"
+       ,'max-width'="100%"
+       ,'object-fit'="scale-down"
+      # ,display="inline-block"
+       )
+}
+'iceConcCF' <- function() {
+   cat("iceConcCF()\n")
+   g0 <- session_grid()
+   icCover <- rvIceConcCover()
+   assess <- icCover$assess
+   subject <- assess[assess$amount>0,]["amount"]
+   g1 <- c(800,600)
+   session_grid(g1)
+   compose_open(2,fileout=ursa:::.maketmp(ext=".png"),retina=1)
+   session_grid(consistent_grid(spatial_grid(subject),ref=g1,expand=1.1))
+   bbox <- ursa:::spatialize(session_bbox())
+   ct1 <- compose_panel(subject,blank="white",coast.fill="#00000010")
+   session_grid(consistent_grid(spatial_grid(pu),ref=g1,expand=0.9))
+   compose_panel(subject,pal=ursa_colortable(ct1)[[1]]
+                ,blank="white",coast.fill="#00000010",plot.lwd=0)
+   panel_plot(bbox,lwd=1,col="transparent",border="black")
+   compose_legend(ct1,units="CF relative amount")
+   ret <- compose_close()
+  # session_grid(icCover$gPU)
+  # a <- spatial_centroid(icCover$assess[,icCover$mname]) |> allocate() |>
+  #    ursa_crop(border=2)
+  # ret <- display(a,layout=c(3,4),blank="white"
+  #               ,fileout=ursa:::.maketmp(ext=".png"),retina=1)
+   session_grid(g0)
+   list(src=ret
+       ,'width'="100%"
+       ,'height'="100%"
+       ,'max-width'="100%"
+       ,'object-fit'="scale-down"
+      # ,display="inline-block"
+       )
 }

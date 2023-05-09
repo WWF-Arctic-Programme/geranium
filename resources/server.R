@@ -453,8 +453,8 @@ if (F) observe({ ## setView for Selector
       group <- names(group)
    }
    str(list(industry=industry,season=season,group=group,economy=economy))
-   print("next to 'interimMap'")
-   a <- interimMap(industry=industry,season=season,group=group,economy=economy)
+   print("next to 'interimMap'/'conditionMap'")
+   a <- conditionMap(industry=industry,season=season,group=group,economy=economy)
    a
 })
 'rvConflictMap' <- reactive({
@@ -530,7 +530,13 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    str(rules$industry)
    str(vulner$industry)
    cat("------------\n")
+   print("0305u")
    aoi <- rvAOI()
+   str(aoi)
+   str(pu)
+   print(spatial_crs(aoi))
+   print(spatial_crs(pu))
+   print("0305v")
   # if (!is.null(aoi))
   #    saveRDS(aoi,"c:/tmp/interim_stat.rds")
   # interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
@@ -1320,6 +1326,8 @@ if (T) observe({ ## update 'input$industry'
   # exchange$subset <- tail(choice2,-1)
   # print(c(subset=exchange$subset))
    updateSelectInput(session,"industry",choices=choice2,selected=select2)
+   updateRadioButtons(session,"actionNAC",selected=character())
+  # updateCheckboxInput(session,"actionNAC",value=FALSE)
 })
 if (T) observe({ ## update 'input$economy'
    sleeping()
@@ -1414,6 +1422,8 @@ if (T) observe({ ## update 'input$economy'
   # exchange$conflict <- list(industry=input$industry,group=input$group
   #                          ,season=input$season,economy=input$economy)
    updateSelectInput(session,"economy",choices=choice,selected=choice[1])
+   updateRadioButtons(session,"actionNAC",selected=character())
+  # updateCheckboxInput(session,"actionNAC",value=FALSE)
 })
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
    sleeping()
@@ -1633,28 +1643,35 @@ observeEvent(input$initEPA,{
                      )
    d
 })
-observeEvent(input$actionNAC,{
+'rvIceConcCover' <- reactive({
    sleeping()
+   cat("rvIceConcCover:\n")
+   iceConcCover(CF=rvSelectCF(),industry=rvSelectIndustry())
+})
+if (F) observeEvent(input$actionNAC,{
+   sleeping()
+  # req(isTRUE(input$actionNAC))
+  # req(nchar(input$actionNAC)>0)
    cat("initialize NACR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"NACR")
 })
-observeEvent(input$actionNAO,{
+if (F) observeEvent(input$actionNAO,{
    sleeping()
    cat("initialize NAOR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"NAOR")
   # updateActionLink(input$actionNAC)
 })
-observeEvent(input$actionCAP,{
+if (F) observeEvent(input$actionCAP,{
    sleeping()
    cat("initialize CAPR map...\n")
    indexMap(leafletProxy("regionLeaflet"),"CAPR")
 })
-observeEvent(input$actionHU,{
+if (F) observeEvent(input$actionHU,{
    sleeping()
    cat("initialize HU map...\n")
    indexMap(leafletProxy("regionLeaflet"),"humanuse")
 })
-observe({
+if (F) observe({
    sleeping()
    cat("observe for addLayersControl():\n")
   # showNotification("update controls",duration=3)
@@ -1794,4 +1811,7 @@ if (T) observeEvent(input$rebuildNAC,{ ## eventReactive actionlink
       prm_upload(sessionFile)
       session$reload()
    }
+})
+observeEvent(input$actionNAC,{
+   showNotification(paste("showNAC is",input$actionNAC),duration=3)
 })

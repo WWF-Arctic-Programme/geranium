@@ -26,7 +26,7 @@ output:
       favicon2: https://i.stack.imgur.com/FzlQy.jpg
       orientation: columns
       vertical_layout: fill
-      mathjax: ~
+      mathjax: true
       css:
       - site_libs/common.css
       - site_libs/flex_dashboard.css
@@ -241,7 +241,8 @@ renderUI({
    if (F & file.exists(sessionFile))
       showNotification(paste("session:",format(file.mtime(sessionFile))),duration=2)
    aoi <- rvAOI()
-   lab <- regionSF[[input$region]]$region[aoi$id]
+   lab <- lab0 <- regionSF[[input$region]]$region[aoi$id]
+   isPAC <- (length(lab)==1)&&(grepl("^PAC",lab))
    if (length(lab)>1)
       lab <- "Overview for selected regions"
    else
@@ -252,7 +253,16 @@ renderUI({
       b2 <- navButton(lab,"#descRegion","desc",span=T)
    b1 <- navButton("Selected Area Details","#crosstable","cross",span=T)
    b3 <- navButton("ArcNet Domain Details","#crosstable","cross",span=T)
-   b <- if (is.null(aoi)) list(b3,b2) else list(b1,b2)
+   if (isPAC) {
+      link <- paste0("https://wwf-arctic-programme.github.io/chicory/pac/r"
+                    ,digest::digest(sprintf("region%02d"
+                                     ,as.integer(gsub("\\D","",lab))),"crc32")
+                    ,".html")
+      b4 <- navButton("Chicory",link,color="chicory",span=T)
+   }
+   else
+      b4 <- NULL
+   b <- if (is.null(aoi)) list(b3,b2) else list(b1,b2,b4)
    navButton(b,border=T)
 })
 ```
@@ -589,8 +599,12 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
       "Entire area"
    else {
       lab <- regionSF[[input$region]]$region[aoi$id]
-      if (length(lab))
+      if (length(lab)>0)
          paste(lab,collapse=", ")
+      else if (length(lab)==1e8)
+         paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/pac/"
+               ,"r",digest::digest(sprintf("region%02d",as.integer(gsub("\\D","",lab))),"crc"),".html"
+               ,"\" target=\"_blank\">",lab,"</a>")
       else
          "Selected area"
    }
@@ -630,8 +644,12 @@ fillCol(flex=c(1,NA,NA,NA)
          )
       )
       ,column(1
-         ,conditionalPanel(condition="input.actionNAC=='0'"
-            ,actionLink("actionNAC","Show MNSR")
+        # ,checkboxInput("actionNAC",label="Show MNSR",value=FALSE)
+        # ,radioButtons("actionNAC",label=NULL,choices="Show MNSR",selected=character())
+         ,conditionalPanel(condition="input.actionNAC == 0" # =='0' ==null
+           # ,actionLink("actionNAC","Show MNSR")
+           # ,radioButtons("actionNAC",label=NULL,choices="Show MNSR",selected=character())
+            ,checkboxInput("actionNAC",label="Show MNSR",value=FALSE)
          )
       )
       ,column(3
@@ -671,6 +689,9 @@ output$regionLeaflet <- renderLeaflet({
 DT::renderDT({
    switchDomain(FALSE)
    result <- rvRegionStats()
+   print("0306a")
+   str(result)
+   print("0306b")
    regionTable(result)
 })
 ```
@@ -749,9 +770,9 @@ fillRow(flex=c(10,NA,14)
 ### {data-height="auto"}
 
 ```{r}
-downloadLink("downloadMetrics","Download interim tables for SR and MNSR")
+downloadLink("downloadMetrics","Download interim data for MNSCF and MNSIA")
 HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-downloadLink("instantReport","Instant Report")
+downloadLink("instantReport","Instant Report (template)")
 output$downloadMetrics <- downloadHandler(
    filename=function() {
       aoi <- rvAOI()
@@ -775,9 +796,9 @@ output$downloadMetrics <- downloadHandler(
       dNAC <- cbind(interim$cover,interim$NAC)
      # str(res)
      # res <- iris
-      xlsx::write.xlsx(dNAM,file,sheetName="NAM",append=FALSE)
-      xlsx::write.xlsx(dNAO,file,sheetName="NAO",append=TRUE)
-      xlsx::write.xlsx(dNAC,file,sheetName="NAC",append=TRUE)
+      xlsx::write.xlsx(dNAM,file,sheetName="ref",append=FALSE)
+      xlsx::write.xlsx(dNAO,file,sheetName="SC",append=TRUE)
+      xlsx::write.xlsx(dNAC,file,sheetName="MNSC",append=TRUE)
    }
 )
 output$instantReport <- downloadHandler(
@@ -786,29 +807,52 @@ output$instantReport <- downloadHandler(
       if (is.null(aoi))
          lab <- "Global"
       lab <- regionSF[[input$region]]$region[aoi$id]
-      paste0("metrics-",digest::digest(lab,"crc32"),".pdf")
+      paste0("metrics-",digest::digest(lab,"crc32"),".docx")
    }
    ,content=function(file) {
       cat("instantReport (content):\n")
+      fext <- gsub(".*\\.(.+$)","\\1",basename(file))
+      oformat <- {
+         if (fext=="docx")
+               bookdown::word_document2(toc=FALSE
+                                       ,number_sections=FALSE
+                                       )
+         else if (fext=="pdf")
+               bookdown::pdf_document2(toc=FALSE
+                                      ,number_sections=FALSE
+               )
+         else if (fext=="html")
+               bookdown::html_document2(toc=FALSE
+                                       ,number_sections=FALSE
+               )
+         else
+            NULL
+      }
+      ooptions <- {
+         if ((fext=="docx")&&(file.exists("instant-ref.docx")))
+            list(reference_docs="instant-ref.docx")
+         else
+            NULL
+      }
       interim <- rvRegionMetrics()
       req(!is.null(interim$cover))
-      str(interim)
-      print(getwd())
-      fname <- "report/instantReport.Rmd"
+      str(interim$result)
+     # print(getwd())
+      fname <- file.path(root,"report","instantTemplate.Rmd")
       # tempReport <- file.path(tempdir(),fname)
      # file.copy(fname,tempReport,overwrite=TRUE)
       showModal(modalDialog(title = "Compiling in progress","Please wait"
                        ,size="s",easyClose = TRUE,footer = NULL))
-      ret <- rmarkdown::render(fname
+      ret <- try(rmarkdown::render(fname
                        ,output_file=file
-                       ,output_format=bookdown::pdf_document2(toc=FALSE
-                          ,number_sections=FALSE
-                       )
-                       ##~ ,output_format=bookdown::html_document2(toc=FALSE
-                          ##~ ,number_sections=FALSE
-                       ##~ )
-                       ,params=list(metrics=interim,aoi=rvAOI())
-                       ,envir=new.env(parent=globalenv()))
+                       ,output_format=oformat
+                       ,output_options=ooptions
+                       ,params=list(metrics=interim
+                                   ,aoi=rvAOI()
+                                   ,ctable=rvActivityStat()
+                                   ,dpath=file.path(root,"request"))
+                       ,envir=new.env(parent=globalenv())))
+      str(ret)
       removeModal()
       ret
    }
@@ -966,21 +1010,21 @@ fillCol(flex=c(NA,1,1)
 
 ```{r eval=T & isShiny}
 if (staffOnly) {
-   fillCol(flex=c(1,NA,NA)
+   fillCol(flex=c(1,NA)
       ,leafletOutput("industryMap")
-      ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
+     # ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
      # ,actionLink("industryDesc","Show map (it is not quick)")
       ,renderPrint(selectionTables())
    )
 } else {
-   fillCol(flex=c(1,NA)
+   fillCol(flex=c(1)
       ,leafletOutput("industryMap")
-      ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
+     # ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
      # ,actionLink("industryDesc","Show map (it is not quick)")
    )
 }
 output$industryMap <- renderLeaflet({
-   req(input$industryDesc)
+  # req(input$industryDesc)
    displayIndustry()
 })
 ```
@@ -1052,9 +1096,21 @@ output$buttonsList <- renderUI({
 
 # Comments {#comment data-orientation="columns" `r if (T & hideTabs) ".hidden"`}
 
-## {data-width=20}
+## {data-width=100}
 
-## {data-width=150}
+### `r renderText(rvSelectCF())`/`r renderText(industryCode(rvSelectIndustry()))` interaction {#iceconc}
+
+```{r}
+fillCol(flex=NA
+   ,iceConcTable() |> renderTable()
+   ,iceConcRule() |> renderTable()
+   ,renderImage(iceConcHuman(),deleteFile=T)
+   ,renderImage(iceConcCF(),deleteFile=T)
+   ,renderImage(iceConcMonthly(),deleteFile=T)
+)
+```
+
+## {data-width=100}
 
 ### Initial comments {data-height="auto"}
 
@@ -1078,6 +1134,7 @@ DT::renderDT({
    da <- cbind(CF=paste0("<abbr title='",CFName(cf),"'>",cf,"</abbr>")
               ,Industry=paste0("<abbr title='",industry,"'>",rownames(da),"</abbr>")
               ,da[,-1])
+  # saveRDS(da,"C:/tmp/interim.rds")
    b <- DT::datatable(da,rownames=!TRUE,escape=FALSE,selection="none"
                       # ,extensions="Scroller"
                        ,options=list(NULL
@@ -1118,7 +1175,7 @@ output$buttonsComment <- renderUI({
 })
 ```
 
-## {data-width=70}
+## {data-width=60}
 
 ### Leave a comment {data-height="240"}
 
@@ -1139,14 +1196,14 @@ output$buttonsComment <- renderUI({
   # )
 #)
 ```
-> Your name, your comment will be visible for everyone. Your comment will be moderated. It can be edited or deleted by Geranium administrator.
+> Your name, your comment will be visible for everyone. Your comment will be moderated. It can be edited or deleted by Geranium managers.
 
 
 
 ```{r, eval=T, child="include/welcome.Rmd"}
 ```
 
-### Staff only quick navigation {data-width=100}
+### Staff only quick navigation {data-width=160}
 
 [Spatial Query](#map)  
 [Cross details](#crosstable)  
@@ -1162,6 +1219,8 @@ output$buttonsComment <- renderUI({
 `r paste0(basename(sessionFile),": ",file.mtime(sessionFile))`  
 `r paste0(basename(commentFile),": ",file.mtime(commentFile))`  
 `r paste0(basename(configFile),": ",file.mtime(configFile))`  
+`r paste0("quickStart",": ",as.character(quickStart))`  
+`r paste0("root",": ",root)`  
 
 
 ```{r, eval=F}

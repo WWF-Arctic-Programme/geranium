@@ -12,6 +12,9 @@ bibliography1: ./demography.bib
 link-citations: true
 csl: https://nplatonov.github.io/platt4.csl
 output:
+   bookdown::word_document2:
+      toc: false
+      number_sections: false
    bookdown::pdf_document2:
       toc: false
       number_sections: false
@@ -38,7 +41,9 @@ isPlotly <- FALSE
 aoi <- params$aoi
 metrics <- params$metrics
 dpath <- params$dpath
-knitr::opts_chunk$set(fig.align="center",fig.width=6,fig.height=3.6
+knitr::opts_chunk$set(NULL
+                    # ,fig.align="center" ## not for `docx`
+                     ,fig.width=6,fig.height=3.6
                      ,widgetframe_widgets_dir=dpath
                      ,echo=F,message=F,warning=F
                      )
@@ -115,13 +120,13 @@ source("resources/header.R")
 setwd(wd)
 ```
 
-```{r aoi, eval=T}
+```{r aoi, eval=!ursa:::.isShiny()}
 if (T & is.null(aoi)) {
-   aoi <- selectRegion("PAC 22")
+   aoi <- selectRegion("PAC 13")
 }
 if (is.null(metrics)) {
    group <- c("\\d")
-   ctable <- crosstable(aoi=aoi,group=group)
+   ctable <- crossTable(aoi=aoi,group=group)
    metrics <- regionStats(aoi=aoi,ctable=ctable,raw=T,isPA=F)
 }
 if ("result" %in% names(metrics)) {

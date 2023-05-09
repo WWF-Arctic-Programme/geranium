@@ -141,6 +141,9 @@ table.overcontent tbody td {
 .linkbutton.comment {
    background-color: slategray;
 }
+.linkbutton.chicory {
+   background-color: #3399FF;
+}
 .linkbutton.map {
    background-color: darkmagenta;
 }
@@ -202,6 +205,13 @@ h1 {
    overflow: hidden;
    padding-bottom: 12px;
    padding-top: 12px;
+  /*
+   margin-bottom: 22px;
+   margin-top: 22px;
+  */
+   line-height: 2.6;
+   margin-top: -1em;
+   margin-bottom: 0em;
 }
 .form-group {
    margin-bottom: 0px;
@@ -209,6 +219,12 @@ h1 {
 .dropup .selectize-dropdown {
   bottom: 100% !important; 
   top: auto !important;
+}
+#section-iceconc > .chart-stage {
+   overflow: auto;
+}
+#section-iceconc > .chart-stage > .chart-shim > .flexfill-container > .bootstrap-table {
+   overflow: hidden;
 }
 @media screen and ((max-width: 1269px) or (max-height: 600px)) {
    .navbar::before {
