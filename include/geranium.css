@@ -226,6 +226,16 @@ h1 {
 #section-iceconc > .chart-stage > .chart-shim > .flexfill-container > .bootstrap-table {
    overflow: hidden;
 }
+img.propersize-devel {
+   max-width: 20vw;
+   height: auto;
+}
+img.propersize {
+   height: auto;
+}
+td.hidden {
+   display: none;
+}
 @media screen and ((max-width: 1269px) or (max-height: 600px)) {
    .navbar::before {
       content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels by width or 600 pixels by height. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';

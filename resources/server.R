@@ -1,14 +1,16 @@
-exchange <- reactiveValues(editor=NULL,overlay=NULL,selection=NULL
+exchange <- reactiveValues(editor=NULL,domain=NULL,selection=NULL
                           ,prev=integer(),curr=integer() ## need for removing forgiven clean
-                          ,cd=character(),domain=NULL
+                          ,cd=character(),overlay=NULL ## need for removing forgiven clean
                           ,CF=NULL,industry=NULL,conflict=NULL#,initEPA=FALSE
                           ,rebuildNAO=TRUE,subset=NULL,config=config
+                          ,region=NULL
                           )
 proxyCross <- DT::dataTableProxy("cross")
 proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
 proxyOnlyCF <- DT::dataTableProxy("onlyCF")
 proxyIndustrydata <- DT::dataTableProxy("industrydata")
 proxyCFdata <- DT::dataTableProxy("cfdata")
+proxyRegion <- leafletProxy("regionLeaflet")
 if (F) ## patch for shiny 2022-12-17
    spatial_crs(PAs) <- 4326
 'sleeping' <- function() {
@@ -453,7 +455,7 @@ if (F) observe({ ## setView for Selector
       group <- names(group)
    }
    str(list(industry=industry,season=season,group=group,economy=economy))
-   print("next to 'interimMap'/'conditionMap'")
+   print("next to 'conditionMap'")
    a <- conditionMap(industry=industry,season=season,group=group,economy=economy)
    a
 })
@@ -463,7 +465,7 @@ if (F) observe({ ## setView for Selector
   # plutil::timeHint(as.character(input$customize))
    a <- if (T) rvActivityMap() else NULL
    if (is.null(a)) {
-      print("next to 'conflictBasemap'")
+      print("next to \"conflictBasemap\"")
       return(conflictBasemap())
    }
    coloring <- names(methodList[match(input$coloring,methodList)])
@@ -528,7 +530,7 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    print(c('industry:'=input$industry))
    print(c('exchange:'=exchange$subset))
    str(rules$industry)
-   str(vulner$industry)
+  # str(vulner$industry) ## deprecated
    cat("------------\n")
    print("0305u")
    aoi <- rvAOI()
@@ -1263,7 +1265,7 @@ if (F) observeEvent(input$regionAction,{
                       ,type="warning")
    grPAs <- "Existing Protected Areas"
    colPAs <- "#992B"
-   regionProxy <- leafletProxy("regionLeaflet")
+  # regionProxy <- leafletProxy("regionLeaflet")
    ursa:::.elapsedTime("add PAs -- begin")
    regionProxy %>% leaflet::addPolygons(data=PAs # spatial_transform(PAs,4326) ## PAs
                       ,label=grPAs
@@ -1307,13 +1309,13 @@ if (T) observe({ ## update 'input$industry'
   # req(!is.null(choice <- input$activity))
    choice <- input$activity
    print(choice)
-   activitySubset <- c("Infrastructure","Mining","Shipping")
-   industrySubset <- industryName(c("ICI","MOP","ST"))
    if ((length(choice)==1)&&(choice==nameAllHuman)) {
       choice2 <- c('All activities'="all",'Do not show'="none",industries)[-2]
       select2 <- choice2[1]
    }
    else if ((F & staffOnly)&&(all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
+      activitySubset <- c("Infrastructure","Mining","Shipping")
+      industrySubset <- industryName(c("ICI","MOP","ST"))
       choice2 <- c('All activities'="all",'Do not show'="none",industrySubset)[-2]
       select2 <- industryName("ST")
    }
@@ -1326,8 +1328,20 @@ if (T) observe({ ## update 'input$industry'
   # exchange$subset <- tail(choice2,-1)
   # print(c(subset=exchange$subset))
    updateSelectInput(session,"industry",choices=choice2,selected=select2)
-   updateRadioButtons(session,"actionNAC",selected=character())
-  # updateCheckboxInput(session,"actionNAC",value=FALSE)
+  # updateRadioButtons(session,"actionNAC",selected=character())
+   updateCheckboxInput(session,"actionNAC",value=FALSE)
+   updateCheckboxInput(session,"actionNAO",value=FALSE)
+   updateCheckboxInput(session,"actionHU",value=FALSE)
+   updateCheckboxInput(session,"actionCAP",value=FALSE)
+})
+if (T) observeEvent(input$industry, { ## update 'input$actionNAC'
+   sleeping()
+   cat("observe input$industry + update 'input$actionNAC'\n")
+  # updateRadioButtons(session,"actionNAC",selected=character())
+   updateCheckboxInput(session,"actionNAC",value=FALSE)
+   updateCheckboxInput(session,"actionNAO",value=FALSE)
+   updateCheckboxInput(session,"actionHU",value=FALSE)
+   updateCheckboxInput(session,"actionCAP",value=FALSE)
 })
 if (T) observe({ ## update 'input$economy'
    sleeping()
@@ -1336,6 +1350,7 @@ if (T) observe({ ## update 'input$economy'
    req(industry)
   # print(c(industry=industry))
   # print(isTRUE(industry %in% industryAbbr$industry))
+  # print(c(selection=!is.null(exchange$selection)))
    if (!is.null(exchange$selection)) {
       if (input$economy=="skip") {
          return(NULL)
@@ -1363,8 +1378,9 @@ if (T) observe({ ## update 'input$economy'
    if (!any(industry2 %in% names(rHU))) {
       choice <- grep("(capr|humanuse)",choice,invert=TRUE,value=TRUE)
    }
-   print(c('industry2.'=industry2))
-   print(choice)
+  # print(c('industry.'=input$industry))
+  # print(c('industry2.'=industry2))
+  # print(choice)
    if (F) {
       readyToSelect <- FALSE
       if ((length(industry)==1)&&(industry %in% industryAbbr$industry)) {
@@ -1422,8 +1438,6 @@ if (T) observe({ ## update 'input$economy'
   # exchange$conflict <- list(industry=input$industry,group=input$group
   #                          ,season=input$season,economy=input$economy)
    updateSelectInput(session,"economy",choices=choice,selected=choice[1])
-   updateRadioButtons(session,"actionNAC",selected=character())
-  # updateCheckboxInput(session,"actionNAC",value=FALSE)
 })
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
    sleeping()
@@ -1545,65 +1559,174 @@ if (T) observeEvent(input$season,{ ## update 'input$season'
 })
 'rvInitEPA' <- reactive({
    sleeping()
-   cat("rvInitEPA:\n")
-   ((length(input$initEPA)>0)&&(input$initEPA>0))
+   ret <- (length(input$initEPA)>0)&&(input$initEPA>0)
+   cat("rvInitEPA:",ret,"\n")
+   ret
+   
 })
 if (F) observe({
   # req(length(input$actionEPA))
    if ((!exchange$initEPA)&&(isTRUE(input$actionEPA)))
       exchange$initEPA <- TRUE
 })
+# if (T) observeEvent(rvAOI(),{ ## -- this ignored when all deselected
 if (T) observe({
+   sleeping()
+   isAOI <- !is.null(aoi <- rvAOI())
+  # isEPA <- rvInitEPA()
+   cat("regionAddAOI():\n")
+  # map <- leafletProxy("regionLeaflet")
+   map <- regionAddAOI(map=proxyRegion,aoi=aoi,addOverlay=TRUE)#,showEPA=isEPA)
+  # map <- indexMap(proxyRegion,"AOI")
+   if (!isAOI) {
+      e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=70,value=0),crs=4326)
+     # e <- spatial_transform(e,3575)
+      bbox <- unname(spatial_bbox(e))
+   }
+   else {
+      bbox <- unname(spatial_bbox(aoi))
+   }
+   if (F) {
+      grBasemap <- as.list(args(conflictBasemap))$group
+      prmAOI <- as.list(args(regionAddAOI))
+      grAOI <- prmAOI$group
+      layerAOI <- prmAOI$layerID
+      cat(ifelse(isAOI,"add AOI layer to","remove AOI layer from"),"region map:\n")
+      colAOI <- "#092B"
+      map <- leafletProxy("regionLeaflet")
+     # map <- proxyRegion
+      if (F) { ## before
+        # map <- clearGroup(map,grAOI)
+         map <- removeShape(map,layerAOI)
+        # map <- hideGroup(map,grAOI)
+        # map <- removeControl(map,layerAOI)
+         map <- clearShapes(map) ## bad idea
+         map <- addLayersControl(map
+                              ,overlayGroups=c(grBasemap
+                                             # ,if (isEPA) grEPA
+                                              )
+                              ,options=layersControlOptions(collapsed=FALSE)
+                              )
+      }
+      if (T & !isAOI) {
+         ursa:::.elapsedTime("0904h")
+         str(grAOI)
+         ##~ map <- clearShapes(map) ## bad idea
+         if (T)
+            map <- clearGroup(map,grAOI)
+         if (T)
+            map <- removeShape(map,grAOI)
+         if (T)
+            map <- addLayersControl(map
+                                 ,overlayGroups=c(grBasemap
+                                                # ,if (isEPA) grEPA
+                                                 )
+                                 ,options=layersControlOptions(collapsed=FALSE)
+                                 )
+         ##~ map <- clearControls(map)
+         e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=70,value=0),crs=4326)
+        # e <- spatial_transform(e,3575)
+         ursa:::.elapsedTime("0904i")
+         bbox <- unname(spatial_bbox(e))
+      }
+      if (isAOI) {
+        # spatial_write(aoi,"C:/tmp/aoi.sqlite")
+         map <- removeShape(map,layerAOI)
+        # map <- hideGroup(map,grAOI)
+        # map <- showGroup(map,grAOI)
+         ursa:::.elapsedTime("0904c")
+        # spatial_write(aoi,"c:/tmp/aoi.sqlite")
+         map <- clearGroup(map,grAOI)
+         map <- regionAddAOI(map=map,aoi=aoi,addOverlay=FALSE)
+         if (F)
+            map <- leaflet::addPolygons(map,data=spatial_union(aoi)
+                            ,label=grAOI
+                            ,color=colAOI
+                           # ,weight=0
+                           # ,popup=~gsub(";\\s*","\n",name)
+                           # ,stroke=TRUE
+                            ,fillOpacity=0.2
+                            ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                      # ,sendToBack=TRUE
+                                                                      # ,bringToFront=TRUE
+                                                                       )
+                           # ,group=grAOI
+                           # ,layerId=grAOI ## only sinlge polygon when multiple selected
+                            )
+         if (F)
+            map <- addLayersControl(map
+                                 ,overlayGroups=c(grBasemap
+                                                 ,grAOI
+                                                # ,if (isEPA) grEPA
+                                                 )
+                                 ,options=layersControlOptions(collapsed=FALSE)
+                                 )
+         if (F)
+            map <- showGroup(map,grAOI)
+         ursa:::.elapsedTime("0904g")
+         bbox <- unname(spatial_bbox(aoi))
+      }
+   }
+   ret <- leaflet::fitBounds(map
+                     ,lng1=bbox[1],lat1=bbox[2],lng2=bbox[3],lat2=bbox[4]
+                     ,options=list(minZoom=2)
+                     )
+})
+if (F) observe({
    sleeping()
    cat("observe for fitBounds():\n")
 # observeEvent(input$regionLeaflet_shape_click,{
 # observeEvent(rvAOI(),{
   # rvAOI()
   # cat(" ************* CLICKED *************\n")
-   proxyRegion <- leafletProxy("regionLeaflet")
-   isPAs <- rvInitEPA()
-  # isPAs <- ((length(input$initEPA)>0)&&(input$initEPA>0))
+  # proxyRegion <- leafletProxy("regionLeaflet")
+   isEPA <- rvInitEPA()
+  # isEPA <- ((length(input$initEPA)>0)&&(input$initEPA>0))
    prmAOI <- as.list(args(regionAddAOI))
    prmEPA <- as.list(args(regionAddEPA))
    grAOI <- prmAOI$group
    layerAOI <- prmAOI$layerID
-   grPAs <- prmEPA$group
-   if (is.null(aoi <- rvAOI())) {
-      cat("remove AOI layer from region map:\n")
+   grEPA <- prmEPA$group
+   isAOI <- !is.null(aoi <- rvAOI())
+   cat(ifelse(isAOI,"add AOI layer to","remove AOI layer from"),"region map:\n")
+   cat("- AOI --------------------------\n")
+   str(aoi)
+   cat("- AOI --------------------------\n")
+   str(layerAOI)
+   cat("- AOI --------------------------\n")
+  # proxyRegion <- regionAddAOI(map=proxyRegion,aoi=aoi,addOverlay=FALSE)
+   if (!isAOI) {
      # showNotification("remove AOI layer from region map",duration=2)
      # if (file.exists("C:/tmp/aoi.sqlite"))
      #    file.remove("C:/tmp/aoi.sqlite")
-     # proxyRegion <- removeShape(proxyRegion,grAOI)
-      proxyRegion <- clearGroup(proxyRegion,grAOI)
-     # proxyRegion <- removeShape(proxyRegion,layerAOI)
+     # proxyRegion <- clearGroup(proxyRegion,grAOI)
+      proxyRegion <- removeShape(proxyRegion,layerAOI)
+     # proxyRegion <- hideGroup(proxyRegion,grAOI)
       proxyRegion <- removeControl(proxyRegion,layerAOI)
      # proxyRegion <- hideGroup(proxyRegion,grAOI)
-     # proxyRegion <- clearShapes(proxyRegion)
-      ##~ proxyRegion <- addLayersControl(proxyRegion
-                           ##~ ,overlayGroups=c("Arctic SDI"
-                              ##~ ,if (isPAs) grPAs)
-                           ##~ ,options=layersControlOptions(collapsed=FALSE)
-                           ##~ )
-      proxyRegion <- clearControls(proxyRegion)
+     # proxyRegion <- clearShapes(proxyRegion) ## bad idea
+      proxyRegion <- addLayersControl(proxyRegion
+                           ,overlayGroups=c("Arctic SDI",if (isEPA) grEPA)
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+     # proxyRegion <- clearControls(proxyRegion)
       e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=70,value=0),crs=4326)
      # e <- spatial_transform(e,3575)
       bbox <- unname(spatial_bbox(e))
    }
-   else {
+   if (isAOI) {
       cat("add AOI layer to region map:\n")
      # showNotification(paste("add AOI",spatial_count(aoi),"layer(s) to region map"),duration=2)
      # spatial_write(aoi,"C:/tmp/aoi.sqlite")
-      proxyRegion <- removeShape(proxyRegion,layerAOI)
+     # proxyRegion <- removeShape(proxyRegion,layerAOI)
      # proxyRegion <- hideGroup(proxyRegion,grAOI)
-      proxyRegion <- clearGroup(proxyRegion,grAOI)
      # proxyRegion <- showGroup(proxyRegion,grAOI)
-      proxyRegion <- regionAddAOI(map=proxyRegion,aoi=aoi,addOverlay=FALSE)
-      ##~ proxyRegion <- addLayersControl(proxyRegion
-                           ##~ ,overlayGroups=c("Arctic SDI"
-                                           ##~ ,grAOI
-                                           ##~ ,if (isPAs) grPAs)
-                           ##~ ,options=layersControlOptions(collapsed=FALSE)
-                           ##~ )
+      proxyRegion <- addLayersControl(proxyRegion
+                           ,overlayGroups=c("Arctic SDI"
+                                           ,grAOI
+                                           ,if (isEPA) grEPA)
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
      # proxyRegion <- showGroup(proxyRegion,grAOI)
       if (F) proxyRegion <- addLayersControl(proxyRegion
                            ,options=layersControlOptions(addOverlayLayer=grAOI)
@@ -1617,16 +1740,6 @@ if (T) observe({
                      )
 })
 # eventReactive(input$actionRegion,{
-observeEvent(input$initEPA,{
-#observeEvent(rvInitEPA(),{
-# observe({
-  # req(isTRUE(exchange$initEPA))
-   sleeping()
-   cat("'input$initEPA' / 'exhchange$initEPA' :\n")
-   proxyRegion <- leafletProxy("regionLeaflet")
-   aoi <- rvAOI()
-   regionAddEPA(proxyRegion,aoi)
-})
 'rvMetricsMap' <- reactive({
    sleeping()
    cat("rvMetricsMap:\n")
@@ -1648,34 +1761,58 @@ observeEvent(input$initEPA,{
    cat("rvIceConcCover:\n")
    iceConcCover(CF=rvSelectCF(),industry=rvSelectIndustry())
 })
-if (F) observeEvent(input$actionNAC,{
+if (F) observe({
+  # isolate(rvAOI())
+   aoi <- rvAOI()
+   cat("observe 'rvAOI(), not Event'\n")
+   indexMap(proxyRegion,"AOI")
+})
+if (T) observeEvent(input$initEPA,{
+#observeEvent(rvInitEPA(),{
+# observe({
+  # req(isTRUE(exchange$initEPA))
+   sleeping()
+   cat("'input$initEPA' / 'exhchange$initEPA' -- before:\n")
+   isEPA <- isTRUE(input$initEPA>0)
+  # proxyRegion <- leafletProxy("regionLeaflet")
+   if (isEPA)
+      shiny::showNotification(id="initEPA",closeButton=FALSE,duration=6
+                      ,paste("Rendering EPA is slow."
+                            ,"This layer will be appear at soon...")
+                      ,type="warning")
+  # aoi <- rvAOI()
+  # regionAddEPA(proxyRegion,aoi,addPolygon=isEPA)
+   indexMap(proxyRegion,"EPA")
+   cat("'input$initEPA' / 'exhchange$initEPA' -- after:\n")
+})
+if (T) observeEvent(input$actionNAC,{
    sleeping()
   # req(isTRUE(input$actionNAC))
   # req(nchar(input$actionNAC)>0)
    cat("initialize NACR map...\n")
-   indexMap(leafletProxy("regionLeaflet"),"NACR")
+   indexMap(proxyRegion,"NACR") ## ,add=isTRUE(input$actionNAC)
 })
-if (F) observeEvent(input$actionNAO,{
+if (T) observeEvent(input$actionNAO,{
    sleeping()
    cat("initialize NAOR map...\n")
-   indexMap(leafletProxy("regionLeaflet"),"NAOR")
+   indexMap(proxyRegion,"NAOR")
   # updateActionLink(input$actionNAC)
 })
-if (F) observeEvent(input$actionCAP,{
+if (T) observeEvent(input$actionCAP,{
    sleeping()
    cat("initialize CAPR map...\n")
-   indexMap(leafletProxy("regionLeaflet"),"CAPR")
+   indexMap(proxyRegion,"CAPR")
 })
-if (F) observeEvent(input$actionHU,{
+if (T) observeEvent(input$actionHU,{
    sleeping()
    cat("initialize HU map...\n")
-   indexMap(leafletProxy("regionLeaflet"),"humanuse")
+   indexMap(proxyRegion,"humanuse")
 })
 if (F) observe({
    sleeping()
    cat("observe for addLayersControl():\n")
   # showNotification("update controls",duration=3)
-   map <- leafletProxy("regionLeaflet")
+   proxyRegion <- leafletProxy("regionLeaflet")
    showAOI <- !is.null(rvAOI())
    showPAs <- isTRUE(input$initEPA>0)
    showNAO <- isTRUE(input$actionNAO>0)
@@ -1694,7 +1831,7 @@ if (F) observe({
       grCAP <- "CAPR index"
    if (showHU)
       grHU <- "Industrial Activities"
-   map <- addLayersControl(map
+   proxyRegion <- addLayersControl(proxyRegion
                         ,overlayGroups=c(NULL
                                         ,"Arctic SDI"
                                         ,if (showAOI) grAOI
@@ -1812,6 +1949,9 @@ if (T) observeEvent(input$rebuildNAC,{ ## eventReactive actionlink
       session$reload()
    }
 })
-observeEvent(input$actionNAC,{
-   showNotification(paste("showNAC is",input$actionNAC),duration=3)
+if (F) observeEvent(input$actionNAC,{
+   showNotification(paste("showNAC is",input$actionNAC),duration=2)
+})
+'rvRegion' <- reactive({
+   exchange$region
 })

@@ -7,7 +7,7 @@ output:
 # &shy; {#assessment data-icon="fa-info" .hidden data-orientation="columns"}
 
 ```{r}
-# htmltools::includeHTML('assessment2.html')
+# htmltools::includeHTML('Howtheassessmentwasmade.html')
 htmltools::includeMarkdown('assessment2.Rmd')
 ```
 
@@ -15,5 +15,8 @@ htmltools::includeMarkdown('assessment2.Rmd')
    #assessment, #section-assessment {
       margin: 1em auto 1em auto;
       max-width: 790px;
+      background-color: white;
+      padding: 1em;
+      height: unset !important;
    }
 ```

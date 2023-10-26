@@ -1,11 +1,12 @@
 repos <- "https://cloud.r-project.org"
 pkglist <- c("rmarkdown","shiny","remotes","sf","ursa" ## 1:5
-                  ,"leaflet","DT","mapedit","xml2" ## 6:9
+                  ,"leaflet","shinydashboard","mapedit","xml2" ## 6:9
                   ,"fasterize","formattable","readxl","interp" ## 10:13
                   ,"plotly","bookdown","rsconnect","pinp","rticles" ## 14:18
                   ,"tint","tufte","akima","xlsx","quarto", "rdrop2" ## 19:24
-                  ,"here","shinybrowser","flexdashboard" ## [25:27]
-                  )[25] ## [1:25]
+                  ,"here","shinyjs","rjson","shinycssloaders" ## 25:28
+                  ,"DT","flexdashboard" ## 29:30
+                  )[29] ## [1:26]
 ret <- sapply(pkglist,\(pkg) {
    if (!requireNamespace(pkg))
       return(pkg)
@@ -17,3 +18,7 @@ install.packages(ret
                 ,repos=repos)
 if ((!requireNamespace("flexdashboard"))||(packageVersion("flexdashboard")>="0.6.0"))
    remotes::install_version("flexdashboard",version="0.5.2",upgrade="never",repos=repos)
+#if ((!requireNamespace("DT"))||(packageVersion("DT")>"0.28"))
+#   remotes::install_version("DT",version="0.28",upgrade="never",repos=repos)
+#if ((!requireNamespace("leaflet"))||(packageVersion("leaflet")>="2.1.1"))
+#   remotes::install_version("leaflet",version="2.1.1",upgrade="never",repos=repos)

@@ -1,17 +1,29 @@
+if (ursa:::.argv0name()=="global")
+   stop("direct run is forbidden")
 invisible(Sys.setlocale("LC_TIME","C"))
 root <- here::here()
 staffOnly <- T & nchar(Sys.getenv("MSOFFICE"))>0
 sessionFile <- "quickload/session.Rdata"
+vulnerFile <- paste0("quickload/vulner",seq(4),".rds")
 rdstoken <- file.path(root,"quickload/dropbox-token.rds")
+
+iceCover <- if (file.exists(iceCoverFile <- file.path(root 
+                           ,"quickload/iceCover.rds"))) readRDS(iceCoverFile) else NULL
 useNACR <- FALSE
 ignoreMissing <- TRUE
 quickStart <- FALSE
+count <- 0L
+showHist <- T | !staffOnly
+showComment <- TRUE
 if ((!staffOnly)&&((!file.exists(sessionFile))||(file.size(sessionFile)<1024))) {
    isRemote <- TRUE ## only for 'sessionFile' download 
    prm_download(sessionFile)
 }
 if (file.exists(sessionFile)) {
    a <- load(sessionFile)
+  # str(concern)
+  # str(vulner)
+  # str(comments)
    if (("dummy" %in% a)&&(dummy=="rebuild")) {
       quickStart <- FALSE
    } else {
@@ -23,8 +35,8 @@ isRemote <- ((!staffOnly & T)&&(file.exists(rdstoken)))
 # mdname <- "./compatibility assessment_all_2021-04-05-fixed.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2021-05-24-seasons.xlsx"
 # mdname <- "requisite/compatibility assessment_all_2022-08-23.xlsx" 
-mdname <- "requisite/compatibility assessment_all_2022-11-18.xlsx"
 # mdname <- "requisite/compatibility assessment_all_CURRENT_WORKING.xlsx"
+mdname <- file.path(root,"requisite/compatibility assessment_all_2022-11-18.xlsx")
 require(ursa)
 requireNamespace("sf")
 #plutil::ursula(3)
@@ -69,6 +81,11 @@ if (dropboxBoris <- T & isShiny) {
    ##~ str(src)
    ##~ q()
 ##~ }
+configFile <- file.path(root,"quickload/config.json")
+commentFile <- file.path(root,"quickload/comments.json")
+configCloud <- FALSE
+config <- config_init()
+mulNA <- config$concern
 pGrYl <- cubehelix(5,light=91,dark=221,weak=220,rich=165,hue=2)
 pYlRd <- cubehelix(5,light=91,dark=221,weak=110,rich=165,hue=2,inv=TRUE)
 pRd <- cubehelix(5,light=233,dark=91,weak=110,rotate=0,hue=2)
@@ -121,6 +138,7 @@ kwdLUT <- c('0'=kwdGray,'1'=kwdGreen,'2'=kwdYellow,'3'=kwdRed,'9'=kwdGray)
 #clrLUT <- c('0'="grey70",'1'="PaleGoldenrod",'2'="BurlyWood",'3'="Salmon",'9'="grey70")
 #clrLUT <- c('0'="grey70",'1'="yellow",'2'="orange",'3'="red",'9'="grey70")
 clrLUT <- c('0'="grey70",'1'="Khaki",'2'="BurlyWood",'3'="Salmon",'9'="grey70")[c('1','2','3')]
+names(clrLUT) <- trafficValue(names(clrLUT))
 listPD <- list.dirs(path="predefined",recursive=FALSE,full.names=TRUE)
 #basename(listPD)
 sepRules <- " » "
@@ -147,9 +165,9 @@ if (!quickStart) {
 }
 session_grid(NULL)
 if (!quickStart) {
-   dist2land <- ursa_read("requisite/dist2land-f.tif")
+   dist2land <- ursa_read(file.path(root,"requisite/dist2land-f.tif"))
   # rules <- jsonlite::fromJSON("requisite/buffer-rules.json")
-   rules <- read.csv("requisite/industry_conditions.csv")
+   rules <- read.csv(file.path(root,"requisite/industry_conditions.csv"))
    rules$unique <- with(rules,paste0(activity,sepRules,industry))
    blank <- (!is.na(dist2land["ID"]))-1L
 }
@@ -213,7 +231,7 @@ if (!quickStart) {
    cfmeta <- cfmeta[with(cfmeta,order(CF_code,CF_name)),]
    cfmeta$label <- paste0(cfmeta[["CF_code"]]," - ",cfmeta[["CF_name"]])
    ursa:::.elapsedTime("marxan inputs reading -- start")
-   puvspr <- read.csv("requisite/puvspr.dat.gz")
+   puvspr <- read.csv(file.path(root,"requisite/puvspr.dat.gz"))
    puvspr <- by(puvspr,puvspr$species,simplify=FALSE,function(cf) {
       minv <- min(cf$amount)
       maxv <- max(cf$amount)
@@ -232,25 +250,24 @@ if (!quickStart) {
       data.frame(cf=x$species[1],amount=sum(x$amount))
    }) |> do.call(rbind,args=_)
    session_grid(NULL)
-   pu <- spatial_read("requisite/pulayer")
+   pu <- spatial_read(file.path(root,"requisite/pulayer"))
    sf::st_agr(pu) <- "constant"
-   PAs <- spatial_read("requisite/PAs_union1.shp") |> spatial_transform(4326)
+   PAs <- spatial_read(file.path(root,"requisite/PAs_union1.shp")) |> spatial_transform(4326)
    sf::st_agr(PAs) <- "constant"
    if (length(ind <- which(!spatial_valid(PAs,each=TRUE))))
       PAs <- sf::st_make_valid(PAs[ind,])
    ursa:::.elapsedTime("marxan inputs reading -- finish")
    half <- median(spatial_area(pu))/2
 }
-industryAbbr <- read.csv("requisite/industry_conditions.csv")
+industryAbbr <- read.csv(file.path(root,"requisite/industry_conditions.csv"))
 industryAbbr <- industryAbbr[order(industryAbbr$abbr),]
 rownames(industryAbbr) <- NULL
-configFile <- "quickload/config.json"
-commentFile <- "quickload/comments.json"
-configCloud <- FALSE
-config <- config_init()
-mulNA <- config$concern
+industries <- by(industryAbbr$industry,industryAbbr$activity,function(x) x)
+iname <- names(industries)
+attributes(industries) <- NULL
+names(industries) <- iname
 patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
-if (!quickStart) {
+if (F & !quickStart) { ## vulner is deprecated
    vulner <- vector("list",nrow(rules))
    names(vulner) <- rules$unique
    comments <- vulner
@@ -305,8 +322,10 @@ if (!quickStart) {
 }
 #scenarioCF <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
 #                          ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
-scenarioCF <- readxl::read_excel(dir(path="requisite",pattern="ArcNet.*CFs.*\\.xlsx$"
-                                ,ignore.case=TRUE,full.names=TRUE),.name_repair="minimal")
+scenarioCF <- readxl::read_excel(dir(path=file.path(root,"requisite")
+                                    ,pattern="Table.*ArcNet.*CFs.*\\.xlsx$"
+                                    ,ignore.case=TRUE,full.names=TRUE)
+                                ,.name_repair="minimal")
 rownames(scenarioCF) <- NULL
 scenarioCF <- scenarioCF[,nchar(colnames(scenarioCF))>0]
 scenarioCF$CF_name <- gsub("\\s\\("," (<em>",scenarioCF$CF_name)
@@ -322,8 +341,9 @@ colnames(hu)[grep("human.*use.*name",colnames(hu),ignore.case=TRUE)] <- "industr
 colnames(hu)[grep("sight.*dataset",colnames(hu),ignore.case=TRUE)] <- "economy"
 sight <- strsplit(hu$economy,split="\\s*,\\s*")
 names(sight) <- hu$abbr
-if (!quickStart) {
+if (F & !quickStart) { ## vulner is deprecated
    ursa:::.elapsedTime("concern prepare -- start")
+   stop("HERE")
    concern <- lapply(seq_len(nrow(vulner)),function(i) {
       m <- monthList(vulner$'Limitations'[i])
       v <- vulner[rep(i,length(m)),c("CF_code","industry","value"),drop=FALSE]
@@ -335,11 +355,161 @@ if (!quickStart) {
    ursa:::.elapsedTime("concern prepare -- finish")
    rHU <- huAmount()
 }
+if (T & !quickStart) {
+   ursa:::.elapsedTime("concern prepare -- start")
+   sname <- format(as.Date(paste0("2021-",seq(12),"-15")),"%B")
+   list1 <- dir(path="requisite",pattern="^concernAssessment-.+\\.xlsx$"
+               ,full.names=TRUE)
+   a4 <- lapply(list1 |> sample(),\(fname) {
+      list2 <- readxl::excel_sheets(fname)
+      a3 <- lapply(list2 |> sample(),\(sheet) {
+         if (!isShiny)
+            cat(sheet,"")
+         a <- readxl::read_excel(fname,sheet=sheet,.name_repair="minimal")
+         a2 <- lapply(sname |> sample(),\(m) {
+            cname <- grep(m,colnames(a),value=TRUE,ignore.case=TRUE)
+            nsymbol <- nchar(cname)
+            if (!length(nsymbol))
+               return(NULL)
+            res <- data.frame(CF_code=a$CF_code
+                             ,industry=sheet
+                             ,value=a[[cname[which.min(nsymbol)]]]
+                             ,month=match(m,sname)
+                             ,comment=a[[cname[which.max(nsymbol)]]]
+                             )
+            res
+         }) |> do.call(rbind,args=_)
+         a2
+      }) |> do.call(rbind,args=_)
+   }) |> do.call(rbind,args=_)
+   if (!isShiny)
+      cat("\n")
+   a4$CF_code <- as.integer(a4$CF_code)
+  # str(a4$value)
+  # print(table(a4$value))
+   a4$value <- as.integer(a4$value)
+  # str(a4$value)
+  # print(table(a4$value))
+   a4$value[!(a4$value %in% c(1,2,3))] <- NA
+   a4$industry <- factor(a4$industry)
+  # a4$comment <- paste0(substr(a4$comment,1,5),"...")
+   a4 <- a4[with(a4,order(CF_code,industry,month)),]
+   if (!isShiny) {
+      if (exists("concern"))
+         str(concern)
+      str(a4)
+      if (exists("concern"))
+         print(table(concern$value))
+      print(table(a4$value))
+   }
+   concern <- a4
+   ursa:::.elapsedTime("concern prepare -- finish")
+  # saveRDS(concern,"C:/tmp/concern.rds")
+   rm(a4)
+   rHU <- huAmount()
+   vulner <- NULL
+   if (T) {
+      verbose <- T
+      rule <- read.csv(file.path(root,"requisite/industry_conditions.csv"))
+     # rule <- rules[rules$abbr %in% industry,]
+      rule$manual <- rule$unique <- rule$activity <- rule$industry <- NULL
+     # rule$industry <- substr(rule$industry,1,16)
+      r <- rule
+      colnames(r)[grep("^abbr",colnames(r))] <- "industry"
+      if (verbose) {
+         cat("r:\n")
+         str(r)
+      }
+      v <- concern
+     # v <- concernSubset(concern,activity=prm$industry,group=prm$group,season=prm$season)
+      v <- v[!is.na(v$value),]
+      v <- aggregate(list(value=v$value)
+                    ,by=list(CF_code=v$CF_code
+                            ,industry=v$industry
+                           # ,value=v$value
+                           # ,month=v$month
+                            )
+                    ,function(x) {
+         x <- na.omit(x)
+         if (!length(x))
+            return(NA)
+         max(x)
+      })
+      colnames(v)[grep("^CF",colnames(v))] <- "species"
+      v$industry <- factor(v$industry,levels=levels(concern$industry))
+      if (verbose) {
+         cat("v:\n")
+         str(v)
+      }
+      w <- spatial_data(pu)
+      colnames(w)[grep("^ID",colnames(w))] <- "pu"
+      w <- w[,c("pu","coast","depth")]
+      if (verbose) {
+         cat("w:\n")
+         str(w)
+      }
+      u <- puvspr[,c("species","pu","amount")]
+      if (verbose) {
+         cat("u:\n")
+         str(u)
+      }
+      ursa:::.elapsedTime("w+r")
+      res1 <- merge(w,r)
+      rm(w,r)
+      ursa:::.gc(TRUE)
+      print("0701a")
+     # str(res1)
+     # print(object.size(res1))
+      if (TRUE) ## `FALSE` should be identical to `interimMap()`
+         res1 <- res1[res1$depth<=res1$maxDepth & res1$depth>=res1$minDepth &
+                      res1$coast>=res1$minCoast*cell & res1$coast<=res1$maxCoast*cell,]
+      print("0701b")
+     # str(res1)
+     # print(object.size(res1))
+     # res1 <- res1[,grep("^(min|max)",colnames(res1),invert=TRUE)]
+      print("0701c")
+      str(res1)
+      res1 <- res1[,c("pu","industry")]
+      print("0701d")
+      res1$industry <- factor(res1$industry,levels=levels(concern$industry))
+      print("0701e")
+     # cat("res1:\n")
+     # str(res1)
+     # print(object.size(res1))
+      ursa:::.elapsedTime("u+v")
+      print("0701f")
+      res2 <- merge(u,v)
+      rm(u,v)
+      ursa:::.gc(TRUE)
+      ursa:::.elapsedTime("u+v merged")
+      str(res2)
+      res2 <- res2[with(res2,paste0(industry,pu)) %in% with(res1,paste0(industry,pu)),]
+      str(res2)
+      print("0701g 'merge(u,v)'")
+      rm(res1)
+      ursa:::.elapsedTime("u+w+v+r -- done")
+      res2$value <- NULL
+      vulner <- res2
+      if (T) {
+         upu <- sort(unique(vulner$pu))
+         group <- seq(length(vulnerFile))
+         ind <- sample(group,length(upu),replace=TRUE)
+         ret <- lapply(group,\(i) {
+            j <- which(vulner$pu %in% upu[ind==i])
+            saveRDS(vulner[j,],vulnerFile[i])
+         })
+         vulner <- NULL
+      }
+   }
+}
 if (!quickStart) {
    if (!dir.exists(dirname(sessionFile)))
       dir.create(dirname(sessionFile))
    save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
-       ,PAs,half,vulner,industries,comments,concern,rHU
+       ,PAs,half
+      # ,vulner
+     # ,comments ## deprecated
+       ,concern,rHU
       # ,concernNAO,concernNAC
        ,file=sessionFile)
    if ((isRemote)&&(T | !staffOnly))

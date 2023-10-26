@@ -56,14 +56,33 @@
    cat(as.character(match.call())[1],":\n")
    req(cf <- rvSelectCF())
    req(industry <- rvSelectIndustry())
-   activity <- rvIndustryGroup()
-   patt <- paste0(activity,sepRules,industry)
-   cmt <- comments[comments$industry %in% patt & comments$CF_code %in% cf
-                  ,c("Limitations","Comment")]
-   cat("----------------\n")
-   print(data.frame(industry=industryCode(industry),CF=cf))
-   str(cmt)
-   cat("----------------\n")
+   print(data.frame(cf=cf,industry=industry))
+   if ("comment" %in% colnames(concern)) {  ## via 'concern'
+      pair <- concern[concern$CF_code %in% cf & concern$industry %in% industryCode(industry),]
+      pair$comment  <- gsub("^Relative intersection area is ","Coverage ",pair$comment)
+      if (!isShiny) {
+         ind <- nchar(pair$comment)>44
+         pair$comment[ind] <- paste0(substr(pair$comment[ind],1,44),"...")
+      }
+      cmt <- by(pair,list(value=pair$value,comment=pair$comment),\(x) {
+         ret <- data.frame(value=x$value[1]
+                          ,Limitations=bymonth(x$month,name=TRUE)
+                          ,Comment=x$comment[1]
+                          )[,-1]
+         ret
+      })
+      req(length(cmt)>0)
+      cmt <- do.call(rbind,cmt)
+   }
+   else { ## deprecated; via 'vulner/comments'
+      activity <- rvIndustryGroup()
+      patt <- paste0(activity,sepRules,industry)
+      cmt <- comments[comments$industry %in% patt & comments$CF_code %in% cf
+                     ,c("Limitations","Comment")]
+      rownames(cmt) <- NULL
+      if (!isShiny)
+         cmt$Comment <- paste0(substr(cmt$Comment,1,44),"...")
+   }
    cmt
 }
 'buttonsTemplate' <- function() {
@@ -153,8 +172,25 @@
      # da$Industry <- paste0("[",da$Industry,"](#annualIndustry)")
       da$Industry <- paste0("<a href=#section-annualIndustry data-toggle=\"tab\">",da$Industry,"</a>")
    }
+   if (length(ind <- grep("industry",colnames(da),ignore.case=TRUE))>0)
+      colnames(da)[ind] <- "Activity"
   # b <- DT::datatable(b)
   # return(DT::datatable(iris))
+  # saveRDS(da,"C:/tmp/interim.rds")
+   m <- format(as.Date(paste0("2021-",seq(12),"-15")),"%b")
+   da0 <- unname(unlist(da[,m]))
+   patt <- "(\\S+)<sup>(\\S+)</sup>"
+   da1 <- gsub(patt,"\\1",da0)
+   da2 <- gsub(patt,"\\2",da0)
+   da3 <- paste0("<span class='hidden'>",da2,"</span>")
+   # da0 <- gsub("<(/)*sup>","",da0)
+   da0 <- paste0(da1,da3)
+   da[,m] <-  da0
+   ct <- c(clrLUT,'N/A'="grey90")
+   ct <- data.frame(value=da0,color=ct[da2]) |> unique()
+   ct <- DT::styleEqual(ct$value,ct$color)
+   ct <- gsub("&gt;",">",ct)
+   ct <- gsub("&lt;","<",ct)
    b <- DT::datatable(da,rownames=TRUE,escape=FALSE,selection="single"
                        ,extensions="Scroller"
                        ,options=list(NULL
@@ -166,10 +202,7 @@
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('1','2','3'
-                                                      ,kwdGreen,kwdYellow,kwdRed
-                                                     )
-                                           ,c(clrLUT,clrLUT))
+                     ,backgroundColor=ct
                      ,backgroundSize='95% 18pt'
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
@@ -193,6 +226,20 @@
   # b <- DT::datatable(b)
   # useJS <- TRUE
   # colW <- ifelse(useJS,68,999)
+   m <- format(as.Date(paste0("2021-",seq(12),"-15")),"%b")
+   da0 <- unname(unlist(da[,m]))
+   patt <- "(\\S+)<sup>(\\S+)</sup>"
+   da1 <- gsub(patt,"\\1",da0)
+   da2 <- gsub(patt,"\\2",da0)
+   da3 <- paste0("<span class='hidden'>",da2,"</span>")
+   # da0 <- gsub("<(/)*sup>","",da0)
+   da0 <- paste0(da1,da3)
+   da[,m] <-  da0
+   ct <- c(clrLUT,'N/A'="grey90")
+   ct <- data.frame(value=da0,color=ct[da2]) |> unique()
+   ct <- DT::styleEqual(ct$value,ct$color)
+   ct <- gsub("&gt;",">",ct)
+   ct <- gsub("&lt;","<",ct)
    b <- DT::datatable(da
                        ,rownames=""
                        ,escape=FALSE
@@ -217,10 +264,7 @@
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('1','2','3'
-                                                      ,kwdGreen,kwdYellow,kwdRed
-                                                     )
-                                                     ,c(clrLUT,clrLUT))
+                     ,backgroundColor=ct
                      ,backgroundSize='95% 18pt'
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
@@ -289,7 +333,13 @@
    res <- rvActivityStat()
    req(res)
    lab <- regionSF[[input$region]]$region[rvAOI()$id]
-   isChicory <- ((length(lab))&&(grepl("^PAC",lab)))
+   print("1010a -----------------------\n")
+   print(lab)
+   print(length(lab)>0)
+   print(grepl("^PAC",lab)>0)
+   print(grepl("^PAC",lab))
+   print("1010b -----------------------\n")
+   isChicory <- ((length(lab)==1)&&(grepl("^PAC",lab)))
   # rname - colnames(res)
   # selectRows(proxyOnlyIndustry,NULL)
   # selectRows(proxyOnlyCF,NULL)
@@ -319,7 +369,7 @@
   # rownames(res) <- paste0("<a href=\"ya.ru\" target=\"_blank\"",rownames(res),"</a>")
    if (isChicory) {
       res[[1]] <- paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/cf/"
-                        ,paste0("s",sapply(paste0("cf",rownames(res)),digest::digest,"crc"),".html")
+                        ,paste0("s",sapply(paste0("cf",rownames(res)),digest::digest,"crc32"),".html")
                         ,"\" target=\"_blank\">",res[[1]],"</a>")
    }
   # colnames(res)[1] <- ""
@@ -360,20 +410,27 @@
                 )
   # b <- DT::formatStyle(b,ind2
   #                     ,'background-image'="linear-gradient(to right,red,blue)")
-   if (T)
+   if (T) {
+      grG <- trafficValue('1')
+      grY <- trafficValue('2')
+      grR <- trafficValue('3')
+      grRG <- paste0(grR,"/",grG)
+      grRY <- paste0(grR,"/",grY)
+      grYG <- paste0(grY,"/",grG)
       b <- DT::formatStyle(b,ind2
-                     ,backgroundImage=DT::styleEqual(c('1','2','3','3/1','3/2','2/1')
-                           ,c(paste0("linear-gradient(to right,",clrLUT['1'],",",clrLUT['1'],")")
-                             ,paste0("linear-gradient(to right,",clrLUT['2'],",",clrLUT['2'],")")
-                             ,paste0("linear-gradient(to right,",clrLUT['3'],",",clrLUT['3'],")")
-                             ,paste0("linear-gradient(to right,",clrLUT['3'],",",clrLUT['1'],")")
-                             ,paste0("linear-gradient(to right,",clrLUT['3'],",",clrLUT['2'],")")
-                             ,paste0("linear-gradient(to right,",clrLUT['2'],",",clrLUT['1'],")")
+                     ,backgroundImage=DT::styleEqual(c(grG,grY,grR,grRG,grRY,grYG)
+                           ,c(paste0("linear-gradient(to right,",clrLUT[grG],",",clrLUT[grG],")")
+                             ,paste0("linear-gradient(to right,",clrLUT[grY],",",clrLUT[grY],")")
+                             ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grR],")")
+                             ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grG],")")
+                             ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grY],")")
+                             ,paste0("linear-gradient(to right,",clrLUT[grY],",",clrLUT[grG],")")
                              ))
                     # ,backgroundSize='95% 18pt'
                     # ,backgroundRepeat='no-repeat'
                     # ,backgroundPosition='center'
                      )
+   }
    b <- DT::formatPercentage(b,indCover,1)
    if (hasNAI)
       b <- DT::formatPercentage(b,indNAI,1)
@@ -629,17 +686,20 @@
       fileout <- "res1.html" # "res1.html" ## tempfile()
       lut <- read.csv("./requisite/industry_conditions.csv")
       if (length(ind <- match(industry,lut$industry))) {
-         if (nchar(lut$manual[ind]))
-            industry <- lut$manual[ind]
+         if (is.character(lut$manual))
+            if (nchar(lut$manual[ind]))
+               industry <- lut$manual[ind]
       }
+      opW <- options(warn=1)
       a0 <- read_xml("./include/industries.html",encoding="UTF-8",as_html=TRUE)
+      options(opW)
       a1 <- as_list(a0)[[1]][[1]]
       a1 <- lapply(a1,function(a2) {
          if (!is.list(a2))
             return(NULL)
          if (is.null(a2$h2))
             return(NULL)
-         h2 <- a2$h2[[1]]
+         h2 <- a2$h2[[1]][[1]]
          if (h2!=activity)
             return(NULL)
          c2 <- attributes(a2)
@@ -648,7 +708,7 @@
                return(NULL)
             if (is.null(a3$h3))
                return(if (simple) NULL else a3)
-            h3 <- a3$h3[[1]]
+            h3 <- a3$h3[[1]][[1]]
             if (h3!=industry)
                return(NULL)
             a3
@@ -771,12 +831,14 @@
    am <- pu[pu$ID %in% sp$pu,]
    spatial_data(am) <- sp["amount"]
    g2 <- regrid(spatial_grid(am),expand=1.5)
-   session_grid(consistent_grid(g2,ref=c(600,600)))
-   ret <- glance(am,fileout=ursa:::.maketmp(ext=".png"),scale=1,retina=1,border=11)
+   session_grid(consistent_grid(g2,ref=c(520,520)))
+   ret <- glance(am,fileout=ursa:::.maketmp(ext=".png")
+                ,blank="white",coast.fill="#00000010"
+                ,scale=1,retina=1,border=11)
    session_grid(g1)
    ursa:::.elapsedTime("display -- finish")
    list(src=ret,width="100%",'height'="100%",'max-width'="100%"
-       ,'object-fit'="scale-down")#,display="inline-block")
+       ,'object-fit'="scale-down",class="propersize")#,display="inline-block")
 }
 'leafletCF' <- function(cf) {
  #  showNotification("leafletCF",duration=5)
@@ -796,7 +858,7 @@
    cat(as.character(Sys.time()),as.character(match.call())[1],":\n")
    if (missing(aoi))
       aoi <- rvAOI()
-   m <- regionMap(aoi,showPAs=input$regionDesc)
+   m <- regionMap_deprecated(aoi,showPAs=input$regionDesc)
    m
 }
 'displayIndustry' <- function() { ## renderLEaflet
@@ -850,8 +912,333 @@
    }
    ret
 }
-'indexMap' <- function(map,index) {
-   ursa:::.elapsedTime("mapA")
+'indexMap_external' <- function(map,index) { ## client.R
+   showAOI <- !is.null(aoi <- rvAOI())
+   showEPA <- isTRUE(input$initEPA>0)
+   showNAO <- isTRUE(input$actionNAO>0)
+   showNAC <- isTRUE(input$actionNAC>0)
+   showCAP <- isTRUE(input$actionCAP>0)
+   showHU <- isTRUE(input$actionHU>0)
+   ##~ if (missing(map)) {
+      ##~ if (any(showEPA,showNAO,showNAC,showCAP,showHU))
+         ##~ map <- proxyRegion
+   ##~ }
+   ##~ if ((missing(index))&&(showAOI)) {
+      ##~ print("indexMap A")
+      ##~ index <- "AOI"
+   ##~ }
+   ##~ if (missing(index)) {
+      ##~ if (missing(map)) {
+         ##~ print("indexMap B -- regionMap no index")
+         ##~ return(regionMap(aoi=aoi))
+      ##~ }
+      ##~ print("indexMap C -- map")
+      ##~ return(map)
+   ##~ }
+   if (missing(map)) {
+      print("indexMap D -- regionMap no map")
+      return(regionMap(index=index,aoi=aoi
+                      ,showAOI=showAOI,showEPA=showEPA,showNAO=showNAO
+                      ,showNAC=showNAC,showCAP=showCAP,showHU=showHU))
+   }
+   print("indexMap E -- regionMap")
+   ret <- regionMap(map,index,aoi=aoi
+            ,showAOI=showAOI,showEPA=showEPA,showNAO=showNAO
+            ,showNAC=showNAC,showCAP=showCAP,showHU=showHU)
+   exchange$region <- ret
+   ret
+}
+'regionMap_devel' <- function(map,index,aoi,showAOI=!is.null(aoi)
+                       ,showEPA=FALSE,showNAO=FALSE,showNAC=FALSE
+                       ,showCAP=FALSE,showHU=FALSE) { ## for process.R
+   NULL
+}
+'regionAddAOI' <- function(map,aoi=NULL
+                          ,group="Selected Region(s)",col="#092B",layerID="layerAOI"
+                          ,addPolygon=TRUE,addOverlay=TRUE,addLegend=TRUE
+                         # ,showEPA=FALSE
+                          ) {
+   grAOI <- group
+   colAOI <- col
+   layerAOI <- layerID
+   grBasemap <- as.list(args(conflictBasemap))$group
+   ursa:::.elapsedTime("0904g")
+   showAOI <- (!missing(aoi))&&(is_spatial(aoi))
+  # prmEPA <- as.list(args(regionAddEPA))
+  # grEPA <- prmEPA$group
+   clearAOI <- !showAOI
+   if (missing(map)) {
+      if (showAOI) {
+         ursa:::.elapsedTime("0904i1")
+         map <- conflictBasemap(aoi)
+      }
+      else {
+         ursa:::.elapsedTime("0904i2")
+         map <- conflictBasemap()
+      }
+      ursa:::.elapsedTime("0904j")
+   }
+   if (FALSE & showAOI) {
+      ursa:::.elapsedTime("0904a")
+      aoi <- aoi |> puAOI() |> spatial_union() |> spatial_transform(4326)
+      ursa:::.elapsedTime("0904b")
+     # aoi <- spatial_transform(spatial_union(aoi),4326)
+     # aoi <- spatial_transform(aoi,4326)
+   }
+   if (clearAOI) {
+     # map <- clearControls(map)
+      map <- removeControl(map,grAOI)
+      map <- removeShape(map,layerAOI)
+     # map <- clearGroup(map,grAOI)
+      map <- hideGroup(map,grAOI) ## remove legend
+     # map <- clearShapes(map) ## bad idea
+   }
+   if (showAOI & addPolygon) {
+      ursa:::.elapsedTime("0904c3")
+      map <- removeShape(map,layerAOI)
+     # map <- clearShapes(map) ## bad idea
+      map <- leaflet::addPolygons(map,data=spatial_union(aoi)
+                      ,label=grAOI
+                      ,color=colAOI
+                     # ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                     # ,stroke=TRUE
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=grAOI
+                      ,layerId=layerAOI
+                      )
+      map <- showGroup(map,grAOI)
+      ursa:::.elapsedTime("0904f3")
+   }
+   if (showAOI & addLegend) {
+      ursa:::.elapsedTime("0904k")
+      map <- leaflet::addLegend(map
+                    ,position="bottomleft"
+                    ,colors=colAOI
+                    ,opacity=0.2
+                    ,labels=grAOI
+                    ,group=grAOI
+                    ,layerId=layerAOI
+                    )
+   }
+   if (F & addOverlay) {
+      ursa:::.elapsedTime("0904l")
+      map <- removeLayersControl(map)
+      map <- addLayersControl(map
+                           ,overlayGroups=c(character()
+                                           ,grBasemap
+                                           ,if (showAOI) grAOI
+                                          # ,if (showEPA) grEPA
+                                           )
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+   }
+   else { ## addLayersControl to keep all indexes
+      ursa:::.elapsedTime("0904m1")
+      if (F & showAOI)
+         map <- indexMap(map,index=ifelse(showAOI,"AOI","skip"),onlyControl=TRUE)
+      ursa:::.elapsedTime("0904m2")
+   }
+   
+  # if (F & !showAOI & !showEPA)
+  #    map <- removeLayersControl(map)
+  ##~ # if (T | showPAs)
+  ##~ #    m <- hideGroup(m,grPAs)
+   ursa:::.elapsedTime("0904h")
+   map
+}
+'indexMap' <- function(map,index,onlyControl=FALSE) { ## client.R
+   if (onlyControl)
+      showAOI <- (!missing(index))&&(index=="AOI")
+   else
+      showAOI <- !is.null(aoi <- rvAOI())
+   showEPA <- isTRUE(input$initEPA>0)
+   showNAO <- isTRUE(input$actionNAO>0)
+   showNAC <- isTRUE(input$actionNAC>0)
+   showCAP <- isTRUE(input$actionCAP>0)
+   showHU <- isTRUE(input$actionHU>0)
+   if (!onlyControl) {
+      initMap <- missing(map)
+      if ((initMap)&&(!missing(aoi))) {
+        # if (missing(index))
+        #    return(NULL)
+         ursa:::.elapsedTime("mapG -- MISSING MAP")
+         if (showAOI) {
+            ursa:::.elapsedTime("0904i1")
+            map <- conflictBasemap(aoi)
+         }
+         else {
+            ursa:::.elapsedTime("0904i2")
+            map <- conflictBasemap()
+         }
+         ursa:::.elapsedTime("0904j")
+      }
+      if (missing(index))
+         if (showAOI)
+            index <- "AOI"
+      if (missing(index)) {
+         ursa:::.elapsedTime("mapH")
+         count <<- count+100L ## GLOBAL ASSIGNMENT
+         print(c('count.indexMap'=count))
+         return(map)
+      }
+   }
+   grAOI <- "Selected Region(s)" # as.list(args(regionAddAOI))$group
+   grEPA <- "Existing Protected Areas" # as.list(args(regionAddEPA))$group
+   grNAO <- "SR index"
+   grNAC <- "MNSR index"
+   grCAP <- "CAPR index"
+   grHU <- "Industrial Activities"
+   if (grepl("AOI",index)) {
+      gr <- grAOI
+      toAdd <- showAOI
+   }
+   else if (grepl("humanuse",index)) {
+      gr <- grHU
+      toAdd <- showHU
+   }
+   else if (grepl("CAP",index)) {
+      gr <- grCAP
+      toAdd <- showCAP
+   }
+   else if (grepl("NAC",index)) {
+      gr <- grNAC
+      toAdd <- showNAC
+   }
+   else if (grepl("NAO",index)) {
+      gr <- grNAO
+      toAdd <- showNAO
+   }
+   else if (grepl("EPA",index)) {
+      gr <- grEPA
+      toAdd <- showEPA
+   }
+   else {
+      gr <- "undefined"
+      toAdd <- TRUE
+   }
+   if (!onlyControl) {
+      ursa:::.elapsedTime("mapA")
+      layerId <- digest::digest(gr,"crc32")
+      print("========================================================\n")
+      print(data.frame(initMap=initMap
+                      ,index=index
+                     # ,gr=dQuote(gr)
+                      ,layerId=dQuote(layerId)
+                      ,AOI=showAOI,EPA=showEPA,NAC=showNAC,NAO=showNAO
+                      ,add=toAdd))
+      print("========================================================\n")
+      if (!toAdd) {
+         map <- removeControl(map,layerId)
+        # map <- removeControl(map,gr)
+        # map <- clearGroup(map,layerId)
+         map <- clearGroup(map,gr)
+         map <- removeShape(map,layerId)
+      }
+   }
+   if (T) {
+      if (onlyControl)
+         ursa:::.elapsedTime("0904n1")
+      map <- removeLayersControl(map)
+      map <- addLayersControl(map
+                           ,overlayGroups=c(NULL
+                                           ,"Arctic SDI"
+                                           ,if (showAOI) grAOI
+                                           ,if (showEPA) grEPA
+                                           ,if (showNAO) grNAO
+                                           ,if (showNAC) grNAC
+                                           ,if (showCAP) grCAP
+                                           ,if (showHU) grHU
+                                           )
+                           ,options=layersControlOptions(collapsed=FALSE)
+                           )
+      if (onlyControl)
+         ursa:::.elapsedTime("0904n2")
+   }
+   if (onlyControl)
+      return(map)
+   if (index %in% "AOI") {
+      if (!toAdd) {
+         e <- ursa:::spatialize(data.frame(lon=-45+c(0,180),lat=70,value=0),crs=4326)
+        # e <- spatial_transform(e,3575)
+         bbox <- unname(spatial_bbox(e))
+      }
+      else {
+         bbox <- unname(spatial_bbox(aoi))
+      }
+      map <- leaflet::fitBounds(map
+                        ,lng1=bbox[1],lat1=bbox[2],lng2=bbox[3],lat2=bbox[4]
+                        ,options=list(minZoom=2)
+                        )
+   }
+   if (!toAdd) {
+      ursa:::.elapsedTime("mapE")
+      return(map)
+   }
+   if (isShiny) {
+      showNotification(id=layerId,closeButton=FALSE,duration=120
+                      ,paste("Preparing map for",dQuote(gr)),type="warning")
+      on.exit(removeNotification(id=layerId))
+   }
+   if (T & index %in% "AOI") { ## implemented to 'regionAddAOI()'
+      return(map)
+      colAOI <- "#092B"
+     # map <- clearShapes(map) ## bad idea
+      map <- leaflet::addPolygons(map,data=spatial_union(aoi)
+                      ,label=gr
+                      ,color=colAOI
+                     # ,weight=0
+                     # ,popup=~gsub(";\\s*","\n",name)
+                     # ,stroke=TRUE
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                # ,sendToBack=TRUE
+                                                                # ,bringToFront=TRUE
+                                                                 )
+                      ,group=gr
+                      ,layerId=layerId
+                      )
+      map <- leaflet::addLegend(map
+                    ,position="bottomleft"
+                    ,colors=colAOI
+                    ,opacity=0.2
+                    ,labels=gr
+                    ,group=gr
+                    ,layerId=layerId
+                    )
+      ursa:::.elapsedTime("mapI")
+      return(map)
+   }
+   else if (index %in% "EPA") {
+      ursa:::.elapsedTime("0914c")
+     # opW <- options(warn=1) ## sf::sf_extSoftVersion() old GDAL?
+      colEPA <- "#992B"
+      map <- leaflet::addPolygons(map,data=spatial_transform(PAs,4326)
+                      ,label=gr
+                      ,color=colEPA
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.5
+                                                                 )
+                      ,group=gr
+                      ,layerId=layerId
+                      )
+      map <- leaflet::addLegend(map
+                    ,position="bottomleft"
+                    ,colors=colEPA
+                    ,opacity=0.2
+                    ,labels=gr
+                    ,group=gr
+                    ,layerId=layerId
+                    )
+     # options(opW)
+      ursa:::.elapsedTime("0914f")
+      ursa:::.elapsedTime("mapF")
+      return(map)
+   }
    g0 <- session_grid()
    session_grid(dist2land)
   # a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
@@ -871,77 +1258,39 @@
    b <- polygonize(a) |> spatial_transform(4326)
    session_grid(g0)
    pal <- leaflet::colorFactor(palette=as.character(ct),levels=v)
+   cat("- 1019a -----------\n")
+   str(ct)
+   str(v)
+   cat("- 1019b -----------\n")
    if (T) {
       ursa:::.elapsedTime("mapB")
      # saveRDS(b,"C:/tmp/interim.rds")
-      d <- by(b,b$name,function(x) spatial_union(x)) #|> do.call(rbind,args=_)
-      d <- d[sapply(d,is.list)]
-      b <- sf::st_sf(name=names(d),geometry=sf::st_sfc(d,crs=spatial_crs(b)))
-      rm(d)
+      if (TRUE) {
+         d <- by(b,b$name,function(x) spatial_union(x)) #|> do.call(rbind,args=_)
+         d <- d[sapply(d,is.list)]
+         b <- sf::st_sf(name=names(d),geometry=sf::st_sfc(d,crs=spatial_crs(b)))
+         rm(d)
+      }
+      else {
+         d <- aggregate(b,by=list(b$name),head,1)[,-1]
+      }
+     # spatial_write(b,"C:/tmp/interim.sqlite")
       ursa:::.elapsedTime("mapC")
    }
-   showAOI <- !is.null(rvAOI())
-   showPAs <- isTRUE(input$initEPA>0)
-   showNAO <- isTRUE(input$actionNAO>0)
-   showNAC <- isTRUE(input$actionNAC>0)
-   showCAP <- isTRUE(input$actionCAP>0)
-   showHU <- isTRUE(input$actionHU>0)
-  # if (showAOI)
-      grAOI <- as.list(args(regionAddAOI))$group
-  # if (showPAs)
-      grPAs <- as.list(args(regionAddEPA))$group
-  # if (showNAO)
-      grNAO <- "SR index"
-  # if (showNAC)
-      grNAC <- "MNSR index"
-  # if (showCAP)
-      grCAP <- "CAPR index"
-  # if (showHU)
-      grHU <- "Industrial Activities"
-   if (grepl("humanuse",index)) {
-      gr <- grHU
-      toAdd <- showHU
-   }
-   else if (grepl("CAP",index)) {
-      gr <- grCAP
-      toAdd <- showCAP
-   }
-   else if (grepl("NAC",index)) {
-      gr <- grNAC
-      toAdd <- showNAC
-   }
-   else if (grepl("NAO",index)) {
-      gr <- grNAO
-      toAdd <- showNAO
-   }
-   else {
-      gr <- "undefined"
-      toAdd <- TRUE
-   }
-   layerId <- digest::digest(gr,"crc32")
-   print("========================================================\n")
-   print(input$actionNAC)
-   print(showNAC)
-   print(toAdd)
-   toAdd <- TRUE
-   print("========================================================\n")
-   if (toAdd)
-      map <- addPolygons(map,data=b
-                      ,color=~pal(name)
-                      ,weight=0
-                     # ,popup=~gsub(";\\s*","\n",name)
-                      ,label=~name
-                      ,stroke=TRUE
-                      ,fillOpacity=0.7
-                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.7
-                                                                # ,sendToBack=TRUE
-                                                                # ,bringToFront=TRUE
-                                                                 )
-                      ,group=gr
-                     # ,layerId=layerId
-                      )
-   else
-      map <- removeShape(map,layerId)
+   map <- addPolygons(map,data=b
+                   ,color=~pal(name)
+                   ,weight=0
+                  # ,popup=~gsub(";\\s*","\n",name)
+                   ,label=~name
+                   ,stroke=TRUE
+                   ,fillOpacity=0.7
+                   ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.7
+                                                             # ,sendToBack=TRUE
+                                                             # ,bringToFront=TRUE
+                                                              )
+                   ,group=gr
+                  # ,layerId=layerId ## if included, only highest bar of colorbar is shown
+                   )
    map <- addLegend(map
                  ,position="topleft"
                  ,pal=pal
@@ -949,23 +1298,16 @@
                  ,opacity=0.5
                  ,title=gr
                  ,group=gr
+                 ,layerId=layerId
                  )
-   if (T) {
-      map <- removeLayersControl(map)
-      map <- addLayersControl(map
-                           ,overlayGroups=c(NULL
-                                           ,"Arctic SDI"
-                                           ,if (showAOI) grAOI
-                                           ,if (showPAs) grPAs
-                                           ,if (showNAO) grNAO
-                                           ,if (showNAC) grNAC
-                                           ,if (showCAP) grCAP
-                                           ,if (showHU) grHU
-                                           )
-                           ,options=layersControlOptions(collapsed=FALSE)
-                           )
-   }
    ursa:::.elapsedTime("mapD")
+   if (isShiny) {
+      removeNotification(id=layerId)
+      if (F)
+         showNotification(id=layerId,closeButton=FALSE,duration=6
+                         ,"Please wait for layer rendering. It will appear soon."
+                         ,type="warning")
+   }
    map
 }
 'iceConcTable' <- function() {
@@ -980,6 +1322,8 @@
    rule$activity <- NULL
    rule$abbr <- NULL
    rule$unique <- NULL
+   if (length(ind <- grep("industry",colnames(rule),ignore.case=TRUE))>0)
+      colnames(rule)[ind] <- "Activity"
    rule
 }
 'iceConcHuman' <- function() {
@@ -987,9 +1331,13 @@
    icCover <- rvIceConcCover()
   # human <- icCover$assess["industry"]
    human <- icCover$human
+   if (length(ind <- grep("industry",spatial_colnames(human),ignore.case=TRUE))>0)
+      spatial_colnames(human)[ind] <- "Activity"
    ret <- glance(human,fileout=ursa:::.maketmp(ext=".png")
                 ,resetGrid=TRUE,retina=1,blank="white",coast.fill="#00000010"
-                ,legend="bottom",las=1,units="Static industry limitations")
+                ,legend="bottom",las=1
+               # ,unit="Static industry limitations"
+                )
    list(src=ret
        ,'width'="100%"
        ,'height'="100%"
@@ -1034,6 +1382,7 @@
    icCover <- rvIceConcCover()
    assess <- icCover$assess
    subject <- assess[assess$amount>0,]["amount"]
+  # save(subject,pu,file="C:/tmp/interim.Rdata")
    g1 <- c(800,600)
    session_grid(g1)
    compose_open(2,fileout=ursa:::.maketmp(ext=".png"),retina=1)
@@ -1041,7 +1390,7 @@
    bbox <- ursa:::spatialize(session_bbox())
    ct1 <- compose_panel(subject,blank="white",coast.fill="#00000010")
    session_grid(consistent_grid(spatial_grid(pu),ref=g1,expand=0.9))
-   compose_panel(subject,pal=ursa_colortable(ct1)[[1]]
+   compose_panel(subject,col=ursa_colortable(ct1)[[1]]
                 ,blank="white",coast.fill="#00000010",plot.lwd=0)
    panel_plot(bbox,lwd=1,col="transparent",border="black")
    compose_legend(ct1,units="CF relative amount")

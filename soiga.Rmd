@@ -5,7 +5,7 @@ pagetitle2: Compatibility with AOIs - WWF ArcNet
 pagetitle3: Decision Support and Engagement Prioritisation
 pagetitle4: Soiga
 pagetitle5: <a class="home" href="#">Geranium NG</a>
-pagetitle: Geranium NG
+pagetitle: Geranium
 author6: 
 author5: "<abbr title=\"Tab panel with subtitle have to fill one line. Subtitle: 'Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners'\">De...</abbr>"
 author4: Decision support and engagement prioritisation
@@ -21,8 +21,11 @@ output:
       theme2: 
          version: 4
          bootswatch: minty
-      logo: https://wwf.ru/assets/img/logo.jpg
-      favicon: https://www.arcticwwf.org/favicons/favicon-32x32.png
+      logo1: https://wwf.ru/assets/img/logo.jpg
+      logo2: https://www.arcticwwf.org/favicons/favicon-32x32.png
+      logo: https://www.worldwildlife.org/assets/structure/unique/logo-c562409bb6158bf64e5f8b1be066dbd5983d75f5ce7c9935a5afffbcc03f8e5d.png
+      favicon: https://www.worldwildlife.org/assets/structure/unique/logo-c562409bb6158bf64e5f8b1be066dbd5983d75f5ce7c9935a5afffbcc03f8e5d.png
+      favicon1: https://www.arcticwwf.org/favicons/favicon-32x32.png
       favicon2: https://i.stack.imgur.com/FzlQy.jpg
       orientation: columns
       vertical_layout: fill
@@ -41,7 +44,7 @@ output:
          - { icon: "ion-home", href: "#section-map", align: right}
          - { icon: "ion-calculator", href: "#section-assessment", align: right}
          - { icon: "ion-help", href: "#section-manual", align: right}
-         - { icon: "ion-social-github", href: "https://github.com/nplatonov/geranium", align: right, target: _blank}
+         - { icon: "ion-social-github", href: "https://github.com/", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
 output3:
    html_vignette: 
@@ -87,21 +90,21 @@ hideTabs <- !is.null(rmarkdown::metadata[["author"]])
 
 ### Map to select/edit regions {data-width=500 data-height=200}
 
-```{r, eval=T & isShiny}
+```{r uimap, eval=T & isShiny}
 uiOutput("uiMap")
 #leafletOutput("viewer")
 #editModUI("editor")
 #selectModUI("selector")
 ```
 
-```{r eval=T & isShiny, fig.height=800}
+```{r uimapOutput, eval=T & isShiny, fig.height=800}
 output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-leafletOutput
    cat("renderUI -- begin:\n")
    if (input$region %in% nameEditor) {
       cat("   editor:\n")
-      Sys.sleep(1)
+     # Sys.sleep(1)
       ret <-  editModUI("editor")
-      Sys.sleep(1)
+     # Sys.sleep(1)
    }
    else if (T & input$predefined %in% nameClick) {
       cat("   selector:\n")
@@ -137,7 +140,7 @@ https://github.com/rstudio/flexdashboard/issues/181
 ### {data-height="auto"}
 
 
-```{r, eval=isShiny}
+```{r inputs, eval=isShiny}
 width <- c("100%","472px")[2]
 if (F)
    checkboxInput("customize","Customize",value=FALSE)
@@ -356,6 +359,16 @@ output$debug <- renderPrint({
 })
 ```
 
+```{r, eval=F & staffOnly}
+shinyApp(
+  ui = fluidPage(), # fillPage(),
+  server = function(input, session, output) {
+    session$onSessionEnded(stopApp)
+  }
+)
+```
+
+
 # Selected Area Details {#crosstable style="position: relative;" .zzzno-mobile .zzzno-print data-orientation="rows" `r if (hideTabs) ".hidden"`}
 
 ## Row {style="height: 50pc;" data-height=300}
@@ -479,7 +492,7 @@ renderTable({
    if (is.null(rvSelectIndustry()))
       "CF Amount Distribution"
    else
-      "Industry Description"
+      "Activity Description"
 })` {data-height=200}
 
 ```{r eval=T & isShiny}
@@ -508,7 +521,7 @@ renderPrint({
 
 ## {data-width=500}
 
-### All compatibilities for a single Industry
+### All compatibilities for a single Activity
 
 ```{r eval=T & isShiny}
 fillCol(flex=c(NA,1,NA)
@@ -541,7 +554,7 @@ output$buttonsIndustry <- renderUI({
 
 ## Right column {data-width=200}
 
-### Cell comment Industry {data-height="auto"}
+### Cell comment Activity {data-height="auto"}
 
 ```{r eval=T & isShiny}
 renderTable({
@@ -553,7 +566,7 @@ renderTable({
    if (!is.null(rvSelectCF()))
       "CF Amount Distribution"
    else
-      "Industry Description"
+      "Activity Description"
 })` {data-height=200}
 
 
@@ -603,7 +616,7 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
          paste(lab,collapse=", ")
       else if (length(lab)==1e8)
          paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/pac/"
-               ,"r",digest::digest(sprintf("region%02d",as.integer(gsub("\\D","",lab))),"crc"),".html"
+               ,"r",digest::digest(sprintf("region%02d",as.integer(gsub("\\D","",lab))),"crc32"),".html"
                ,"\" target=\"_blank\">",lab,"</a>")
       else
          "Selected area"
@@ -612,6 +625,7 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
 
 
 ```{r}
+condJS <- ifelse(F,"==false",">=0")
 fillCol(flex=c(1,NA,NA,NA)
    ,leafletOutput("regionLeaflet")
   # ,uiOutput("uiRegionLeaflet")
@@ -628,38 +642,42 @@ fillCol(flex=c(1,NA,NA,NA)
    )
    ,fixedRow(NULL
       ,column(2
-         ,conditionalPanel(condition="input.initEPA>='0'"
+         ,conditionalPanel(condition="2==2"
            # ,actionLink("actionEPA","Show Existing Protected Areas")
             ,checkboxInput("actionEPA",HTML("Stats for <abbr title=\"Existing Protected Areas\">EPA</abbr>"))
          )
       )
       ,column(3
-         ,conditionalPanel(condition="input.initEPA=='0'"
-            ,actionLink("initEPA","Show Existing Protected Areas")
+         ,conditionalPanel(condition=paste0("input.initEPA",condJS) ## ==false
+           # ,actionLink("initEPA","Show Existing Protected Areas")
+            ,checkboxInput("initEPA","Show Existing Protected Areas")
          )
       )
       ,column(1
-         ,conditionalPanel(condition="input.actionNAO=='0'"
-            ,actionLink("actionNAO","Show SR")
+         ,conditionalPanel(condition=paste0("input.actionNAO",condJS) ## ==false
+           # ,actionLink("actionNAO","Show SR")
+            ,checkboxInput("actionNAO",label="Show SR",value=FALSE)
          )
       )
       ,column(1
         # ,checkboxInput("actionNAC",label="Show MNSR",value=FALSE)
         # ,radioButtons("actionNAC",label=NULL,choices="Show MNSR",selected=character())
-         ,conditionalPanel(condition="input.actionNAC == 0" # =='0' ==null
+         ,conditionalPanel(condition=paste0("input.actionNAC",condJS) # =='0' ==null ==false
            # ,actionLink("actionNAC","Show MNSR")
            # ,radioButtons("actionNAC",label=NULL,choices="Show MNSR",selected=character())
             ,checkboxInput("actionNAC",label="Show MNSR",value=FALSE)
          )
       )
-      ,column(3
-         ,conditionalPanel(condition="input.actionHU=='0'"
-            ,actionLink("actionHU","Show Industrial Activities (all)")
+      ,column(1
+         ,conditionalPanel(condition=paste0("input.actionCAP",condJS) ## ==false
+           # ,actionLink("actionCAP","Show CAPR")
+            ,checkboxInput("actionCAP",label="Show CAPR",value=FALSE)
          )
       )
-       ,column(1
-         ,conditionalPanel(condition="input.actionCAP=='0'"
-            ,actionLink("actionCAP","Show CAPR")
+      ,column(3
+         ,conditionalPanel(condition=paste0("input.actionHU",condJS) ## ==false
+           # ,actionLink("actionHU","Show Industrial Activities (all)")
+            ,checkboxInput("actionHU",label="Industrial Activities (all)",value=FALSE)
          )
       )
    )
@@ -670,13 +688,29 @@ fillCol(flex=c(1,NA,NA,NA)
    })
 )
 output$uiRegionLeaflet <- renderUI({
-   req(input$actionRegion>0)
+  # req(input$actionRegion>0)
    ret <- leafletOutput("regionLeaflet")
    ret
 })
 output$regionLeaflet <- renderLeaflet({
+   if (count>1) {
+      showNotification(paste("Unexpected behaviour. Count is",count),duration=3)
+     # Sys.sleep(10)
+   }
    aoi <- isolate(rvAOI())
-   regionAddAOI(aoi=aoi,addOverlay=TRUE)
+   map <- regionAddAOI(aoi=aoi,addOverlay=TRUE)
+  # map <- indexMap(aoi=aoi)
+  # map <- conflictBasemap()
+  # if (!is.null(aoi))
+  #    map <- indexMap(map,"AOI")
+  # map <- indexMap(map)
+  # if (is.null(exchange$region))
+  #    map <- indexMap()
+  # else
+  #    map <- exchange$region
+   count <<- count+1L
+   print(c('count.regionLeaflet'=count))
+   map
 })
 ```
 
@@ -685,7 +719,7 @@ output$regionLeaflet <- renderLeaflet({
 ### {data-header="Basic Statistics" data-height="auto"}
 
 
-```{r, eval=T}
+```{r, eval=showHist}
 DT::renderDT({
    switchDomain(FALSE)
    result <- rvRegionStats()
@@ -698,7 +732,7 @@ DT::renderDT({
 
 ### {data-header="Conservation Concern Level by Activity" data-height=180}
 
-```{r, eval=T}
+```{r, eval=showHist}
 fillCol(flex=c(NA,1)
    ,HTML("Conservation Concern Level by Activity")
    ,renderPlotly({
@@ -711,7 +745,7 @@ fillCol(flex=c(NA,1)
 
 ### {data-header="Seasonal histogram" data-height=160}
 
-```{r, eval=T}
+```{r, eval=showHist}
 fillRow(flex=c(10,NA,14)
    ,fillCol(flex=c(1,NA,1)
       ,fillCol(flex=c(NA,1)
@@ -769,10 +803,10 @@ fillRow(flex=c(10,NA,14)
 
 ### {data-height="auto"}
 
-```{r}
+```{r, eval=showHist}
 downloadLink("downloadMetrics","Download interim data for MNSCF and MNSIA")
 HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-downloadLink("instantReport","Instant Report (template)")
+downloadLink("instantReport","Instant Report")
 output$downloadMetrics <- downloadHandler(
    filename=function() {
       aoi <- rvAOI()
@@ -863,7 +897,7 @@ output$instantReport <- downloadHandler(
 
 ###
 
-```{r, eval=T}
+```{r, eval=showHist}
 fillCol(flex=c(NA,1)
   # ,HTML("Top NACR CF")
    ,HTML(paste0("<abbr title=","'Proportion of maximal Conservation Concern Level'"
@@ -1006,7 +1040,7 @@ fillCol(flex=c(NA,1,1)
 
 ## {data-width=300}
 
-### Industry map 
+### Activity map 
 
 ```{r eval=T & isShiny}
 if (staffOnly) {
@@ -1032,7 +1066,7 @@ output$industryMap <- renderLeaflet({
 
 ## {data-width=360}
 
-### Industry description
+### Activity description
 
 
 ```{r eval=T & isShiny}
@@ -1100,9 +1134,9 @@ output$buttonsList <- renderUI({
 
 ### `r renderText(rvSelectCF())`/`r renderText(industryCode(rvSelectIndustry()))` interaction {#iceconc}
 
-```{r}
+```{r, eval=T | showComment}
 fillCol(flex=NA
-   ,iceConcTable() |> renderTable()
+  # ,iceConcTable() |> renderTable()
    ,iceConcRule() |> renderTable()
    ,renderImage(iceConcHuman(),deleteFile=T)
    ,renderImage(iceConcCF(),deleteFile=T)
@@ -1114,7 +1148,7 @@ fillCol(flex=NA
 
 ### Initial comments {data-height="auto"}
 
-```{r}
+```{r, eval=T | showComment}
 renderTable({
    cellComment()
 })
@@ -1122,7 +1156,7 @@ renderTable({
 
 ### {data-height="auto"}
 
-```{r}
+```{r, eval=T | showComment}
 DT::renderDT({
 ##~ renderPrint({
    cf <- rvSelectCF()
@@ -1132,8 +1166,29 @@ DT::renderDT({
    da <- rvHumanUseCF()
    da <- da[da[[1]] %in% industry,]
    da <- cbind(CF=paste0("<abbr title='",CFName(cf),"'>",cf,"</abbr>")
-              ,Industry=paste0("<abbr title='",industry,"'>",rownames(da),"</abbr>")
+              ,Activity=paste0("<abbr title='",industry,"'>",rownames(da),"</abbr>")
               ,da[,-1])
+   if (T) {
+      da2 <- sprintf("%.2f",iceConcTable()$available)
+      dim(da2) <- c(1,length(da2))
+      colnames(da2) <- colnames(da)[seq(3L,ncol(da))]
+      da2 <- data.frame(CF="Will be",Activity="revoved",da2)
+      da <- rbind(da,da2)
+   }
+   m <- format(as.Date(paste0("2021-",seq(12),"-15")),"%b")
+   da0 <- unname(unlist(da[,m]))
+   patt <- "(\\S+)<sup>(\\S+)</sup>"
+   da1 <- gsub(patt,"\\1",da0)
+   da2 <- gsub(patt,"\\2",da0)
+   da3 <- paste0("<span class='hidden'>",da2,"</span>")
+   # da0 <- gsub("<(/)*sup>","",da0)
+   da0 <- paste0(da1,da3)
+   da[,m] <-  da0
+   ct <- c(clrLUT,'N/A'="grey90")
+   ct <- data.frame(value=da0,color=ct[da2]) |> unique()
+   ct <- DT::styleEqual(ct$value,ct$color)
+   ct <- gsub("&gt;",">",ct)
+   ct <- gsub("&lt;","<",ct)
   # saveRDS(da,"C:/tmp/interim.rds")
    b <- DT::datatable(da,rownames=!TRUE,escape=FALSE,selection="none"
                       # ,extensions="Scroller"
@@ -1146,21 +1201,19 @@ DT::renderDT({
                                     )
                        )
    b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=DT::styleEqual(c('1','2','3'
-                                                      ,kwdGreen,kwdYellow,kwdRed
-                                                     )
-                                           ,c(clrLUT,clrLUT))
+                     ,backgroundColor=ct
                      ,backgroundSize='95% 18pt'
                      ,backgroundRepeat='no-repeat'
                      ,backgroundPosition='center'  
                      )
+  # b[] <- paste0(b[],"\n","AAA")
    b
 })
 ```
 
 ### Discussion
 
-```{r}
+```{r, eval=T | showComment}
 renderTable({
    rvCommentTable()
 })
@@ -1168,7 +1221,7 @@ renderTable({
 
 ### {data-height="auto"}
 
-```{r}
+```{r, eval=T | showComment}
 uiOutput("buttonsComment")
 output$buttonsComment <- renderUI({
    buttonsComment()
@@ -1179,7 +1232,7 @@ output$buttonsComment <- renderUI({
 
 ### Leave a comment {data-height="240"}
 
-```{r}
+```{r, eval=T | showComment}
 # fillRow(flex=c(2,1)
 #   ,fillCol(flex=NA
        textAreaInput("opinion","Suggestion",""
