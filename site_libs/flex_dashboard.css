@@ -728,6 +728,7 @@ strong {
      /* max-width: 90vw !important; */
    }
    .chart-stage .leaflet.html-widget-static-bound {
+      height: 460px !important;
      /* position: absolute !important;*/
       transform: scale(1); /* 0.97 */
      /* 

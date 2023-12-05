@@ -26,7 +26,7 @@
    !toWrite
 }
 'mapper' <- function(obj,pal=NULL,ncolor=NULL) {
-   devel2 <- !FALSE
+   devel2 <- FALSE
    if (is.null(pal)) {
      # pal <- cubehelix(5)
       pal <- pYlRd
@@ -38,8 +38,9 @@
       }
       pal <- colorRampPalette(pal)(ncolor)
    }
-   if (band_blank(obj>0))
+   if (band_blank(obj>0)) {
       return(colorize(obj,pal=pal))
+   }
    n <- length(pal)
    if (n==1) {
       d1 <- colorize(obj,pal=pal)
@@ -1016,18 +1017,19 @@
       da <- concern[concern$industry==industryCode(cut),]
       da <- by(da,list(da$CF_code,da$month),\(x) trafficValue(x$value))[]
    }
-   cat("- 1024a --------------------------------------\n")
-   str(da)
    if (isCF) {
       if (!is.null(iceCover)) {
          ice <- iceCover[iceCover$CF==id,3:ncol(iceCover)] |> as.matrix()
          ice[] <- sprintf("%0.2f",ice)
       }
-      if (F) res <- lapply(rownames(da),\(industry) {
-         print(data.frame(CF=id,industry=industry))
-         a <- iceConcCover(CF=id,industry=industry)
-         str(a)
-      })
+      else if (F) {
+         ice <- lapply(rownames(da),\(industry) {
+           # print(data.frame(CF=id,industry=industry))
+            iceConcCover(CF=id,industry=industry)$concern$available
+         }) |> do.call("rbind",args=_)
+         ice[] <- sprintf("%0.2f",ice)
+         str(ice)
+      }
    }
    else {
       if (!is.null(iceCover)) {
@@ -1040,8 +1042,6 @@
    da[is.na(da)] <- "N/A"
    if (!is.null(iceCover))
       da[] <- paste0(ice,"<sup>",as.character(da),"</sup>")
-   str(da)
-   cat("- 1024b --------------------------------------\n")
    colnames(da) <- month.abb[as.integer(colnames(da))]
    if (isCF) {
       cname <- rownames(da)
@@ -1054,13 +1054,38 @@
    }
    ret
 }
+'groupCF' <- function(group) {
+   if (missing(group))
+      res <- taxonCF$CF_code
+   else if (is.null(group))
+      res <- taxonCF$CF_code
+   else if (any(ind <- group %in% taxonCF$CF_code))
+      res <- group[ind]
+   else if (any(!(group %in% nameAllCF))) {
+      ind <- lapply(grep("^group",colnames(taxonCF)),\(g) {
+         which(taxonCF[[g]] %in% group)
+      })
+     # ind <- ind |> unlist() |> unique()
+      ind2 <- which(sapply(ind,\(x) length(x)>0))[1]
+      ind <- ind[[ind2]]
+      res <- taxonCF$CF_code[ind]
+   }
+   else #if (any(group %in% nameAllCF))
+      res <- taxonCF$CF_code
+   as.integer(res[res %in% CFCode()])
+}
+'group3ListCF' <- function() {
+   c(nameAllCF['3'],unique(taxonCF$group3[taxonCF$CF_code %in% unique(concern$CF_code)]))
+}
 'crossTable' <- function(aoi=NULL,group=NULL,activity=NULL,season=NULL
                         ,minCover=0,verbose=FALSE) {
    if (isShiny)
-      cat("crosstable():\n")
+      cat("crossTable:\n")
   # if (T & is.null(aoi))
   #    return(NULL)
    #aoi <- NULL
+   if (any(nameAllCF['3'] %in% group))
+      group <- NULL
    b <- puAOI(aoi)
    if (!isShiny & verbose) {
       cat("-crosstable----------\n")
@@ -1076,11 +1101,17 @@
    }) |> do.call(rbind,args=_)
    am2$amount <- am2$amount/spec[spec$cf %in% am2$cf,"amount"]*100
    if (length(group)) {
-      ng <- unique(nchar(group))
-      stopifnot('Mixed groups are not supported'=length(ng)==1)
-      gr2 <- substr(as.character(am2$cf),1,ng)
-      ind <- lapply(group,function(patt) grep(patt,gr2)) |> do.call(c,args=_) |> unique()
-      am2 <- am2[ind,]
+      ind <- which(am2$cf %in% groupCF(group))
+      if (length(ind)) {
+         am2 <- am2[ind,]
+      }
+      else {
+         ng <- unique(nchar(group))
+         stopifnot('Mixed groups are not supported'=length(ng)==1)
+         gr2 <- substr(as.character(am2$cf),1,ng)
+         ind <- lapply(group,function(patt) grep(patt,gr2)) |> do.call(c,args=_) |> unique()
+         am2 <- am2[ind,]
+      }
    }
    am2 <- am2[am2$cf %in% unique(concern$'CF_code'),]
    am2 <- am2[order(am2$amount,decreasing=TRUE),]
@@ -1185,7 +1216,7 @@
    res$NAC <- sumNAC[indNAI]*100
    res
 }
-'conditionMap' <- function(industry="Mass tourism",group="\\d",season="max",economy=NULL) {
+'conditionMap' <- function(industry="Mass tourism",group="Cetacean",season="max",economy=NULL) {
    verbose <- !FALSE
    sname <- format(as.Date(paste0("2021-",seq(12),"-15")),"%B")
    byMonths <- (length(season))&&(all(season %in% sname))
@@ -1201,7 +1232,8 @@
    colnames(r)[grep("^abbr",colnames(r))] <- "industry"
   # print(r)
    prm <- list(industry=sort(unname(industry))
-              ,group=sort(unname(group))
+             # ,group=sort(unname(group))
+              ,group=groupCF(group)
              # ,season=sname[sort(match(season,sname))]
               ,season=sort(match(season,sname))
               ,economy=sort(unname(economy)))
@@ -1219,8 +1251,8 @@
          nchunk <- 1L
       else
          nchunk <- length(vulnerFile)
-      isSubreg <- economy %in% c("nacr","naor")
-      if (!economy %in% c("capr","humanuse")) {
+      isSubreg <- isTRUE(economy %in% c("nacr","naor","mnsr","sr"))
+      if (!isTRUE(economy %in% c("capr","humanuse"))) {
          if (isShiny)
             shiny::showNotification(id="concernMap",closeButton=FALSE,duration=120
                             ,paste("'concernmap' request"
@@ -1244,8 +1276,8 @@
             n1 <- nrow(res2)
             if (length(prm$industry)<nrow(rules))
                res2 <- res2[res2$industry %in% prm$industry,]
-            if (prm$group!="\\d")
-               res2 <- res2[grep(prm$group,substr(res2$species,1,1)),]
+            if (!is.null(group))
+               res2 <- res2[res2$species %in% prm$group,]
             ind <- match(with(res2,paste0(species,industry))
                         ,with(v,paste0(species,industry)))
             res2$value <- v$value[ind]
@@ -1256,7 +1288,6 @@
             }
             by(res2,list(pu=res2$pu,value=res2$value),\(x) sum(x$amount))[]
          })
-         ursa:::.elapsedTime("B")
          ursa:::.gc(TRUE)
          if (isSubreg) {
             res3 <- lapply(res3,\(x) x) |> do.call(c,args=_)
@@ -1369,6 +1400,7 @@
      # res2$concern <- mulNA[res2$value]
       cat("res2:\n")
       str(res2)
+      res3 <- res2
    }
    if (isTRUE(economy %in% c("trafficlight")))
       economy <- NULL
@@ -1377,11 +1409,11 @@
       if (isTRUE(economy=="capr")) {
          ret <- indexCAPR(group=group,activity=industry,season=season)
       }
-      else if (isTRUE(economy=="nacr")) {
+      else if (isTRUE(economy %in% c("mnsr","nacr"))) {
         # str(list(group=group,activity=industry,season=season))
          ret <- indexNACR(group=group,activity=industry,season=season,subreg=res3)
       }
-      else if (isTRUE(economy=="naor")) {
+      else if (isTRUE(economy %in% c("sr","naor"))) {
          ret <- indexNAOR(group=group,activity=industry,season=season,subreg=res3)
       }
       else if (isTRUE(economy=="humanuse")) {
@@ -1408,6 +1440,7 @@
   # str(pu)
    res4 <- pu[match(rownames(res3),pu$ID),]
    spatial_data(res4) <- data.frame(res3,check.names=FALSE)
+   str(res4)
    res5 <- allocate(spatial_centroid(res4),resetGrid=TRUE)
    m <- (sum(res5,cover=0)>0)-1
    res5[is.na(res5)] <- m
@@ -1626,12 +1659,28 @@
       return(cname)
    if (all(cname %in% industryAbbr$abbr))
       return(cname)
+   cname <- gsub("^[A-Z]([A-Z])+(:|\\s*-)*\\s","",cname)
    industryAbbr$abbr[match(gsub(pattRules,"\\2",cname),industryAbbr$industry)]
 }
 'industryName' <- function(abbr) {
    if (missing(abbr))
       return(industryAbbr$industry)
+   if (is.list(abbr)) {
+      return(gsub("^[A-Z]([A-Z])+(:|\\s*-)*\\s","",unlist(abbr)))
+   }
+   abbr <- gsub("^([A-Z]([A-Z])+)(:|\\s*-)*\\s.*","\\1",abbr)
    industryAbbr$industry[match(abbr,industryAbbr$abbr)]
+}
+'industryCodeName' <- function(name) {
+   if (is.list(name))
+      return(name)
+   if (grepl("^[A-Z]{2,3}\\:\\s\\S.+$",name))
+      return(name)
+   isList <- is.list(name)
+   ret <- lapply(name,\(x) paste0(industryCode(x),": ",industryName(x)))
+   if (is.list(name))
+      return(ret)
+   unlist(ret)
 }
 'CFCode' <- function(cfname) {
    if (missing(cfname)) {
@@ -1919,7 +1968,7 @@
       print(metrics$'industryNAC')
       result <- result/metrics$'industryNAC'*100
    }
-  # ctable <- rvActivityStat()
+  # ctable <- rvCrossTable()
   # d <- concernSubset(concern,ctable=ctable)
    d <- concern
    d <- concernSubset(d,season=names(metrics$'SC0'),verbose=T)
@@ -1966,7 +2015,7 @@
               # ,hoverinfo="text"
                ,hovertemplate="%{text}<br>%{x}: %{y:.1f}%"
                ) %>%
-        add_trace(y=~ref,name='Domain',marker=list(color='rgb(204,204,204)')
+        add_trace(y=~ref,name='ArcNet Area',marker=list(color='rgb(204,204,204)')
                  ,visible="legendonly") %>%
         layout(NULL
               ,xaxis=list(title="")
@@ -2205,7 +2254,7 @@
    if (!length(indR <- do.call(c,lapply(group,grep,substr(rownames(v),1,1)))))
       indR <- seq_len(nrow(v))
    industryList <- colnames(v) |> industryName()
-  # print(industryList |> industryCode())
+  # print(industryList |> industryCode()); q()
   # cfList <- rownames(v)
    if (!length(indC <- which(industryList %in% industry))) {
       if (length(indC <- which(names(industries) %in% industry))) {
@@ -2306,7 +2355,10 @@
 }
 'config_init' <- function() {
    config <- list(comment=TRUE,relative=TRUE,sleepValue=0
-                 ,concern=c(100,10,1),quantile=c(10,90),ncolor=7L)
+                 ,concern=c(100,10,1),quantile=c(10,90),ncolor=7L
+                # ,user=data.frame(name=character(),level=integer())
+                 ,user=list()
+                 )
    prm_init(config,configFile)
 }
 'config_exists' <- function() {
@@ -2319,7 +2371,10 @@
    prm_read(configFile)
 }
 'comment_read' <- function() {
-   prm_read(commentFile)
+   da <- prm_read(commentFile)
+   da <- do.call(rbind,lapply(da,as.data.frame))
+   da <- da[order(da$Time,decreasing=TRUE),]
+   da
 }
 'config_write' <- function(config) {
    prm_write(config,configFile)
@@ -2370,12 +2425,12 @@
 }
 'prm_read' <- function(file) {
    prm_download(file)
-   ret <- jsonlite::fromJSON(file)
+   ret <- jsonlite::fromJSON(file,simplifyDataFrame=FALSE)
    ret
 }
 'prm_write' <- function(prm,file) {
    if (file.exists(file)) {
-      prm0 <- jsonlite::fromJSON(file)
+      prm0 <- jsonlite::fromJSON(file,simplifyDataFrame=FALSE)
       if (identical(prm0,prm)) {
         # cat(paste("no changes in",dQuote(file),"\n"))
          return(0L)
@@ -2398,6 +2453,9 @@
             list1 <- sort(unique(d$CF_code))
             listCF <- lapply(gr,\(x) grep(paste0("^",x),list1,value=TRUE)) |>
                do.call(c,args=_) |> sort()
+            if (!length(listCF)) {
+               listCF <- list1[list1 %in% groupCF(gr)]
+            }
          }
          else if (!is.null(gr))
             listCF <- gr
@@ -2437,6 +2495,8 @@
             d <- d[d$CF_code %in% group,]
          else {
             gr <- lapply(group,\(x) grep(paste0("^",x),d$CF_code)) |> unlist() |> sort()
+            if (!length(gr))
+               gr <- groupCF(group)
             d <- d[gr,]
          }
       }
@@ -2605,6 +2665,7 @@
 }
 'indexHumanUse' <- function(aoi=NULL,ctable=NULL,group=NULL,activity=NULL,season=NULL
                        ,verbose=FALSE) {
+   session_grid(rHU)
    if (!is.null(ctable)) {
      # cs <- concernSubset(concern,ctable=ctable) ## quick, but CFs not for domain
       cs <- concernSubset(concern,ctable=NULL
@@ -2619,6 +2680,7 @@
    if (!length(ind))
       return(c(humanUse=ursa(0)))
    res <- c(domain=local_sum(rHU[ind]))
+   ignorevalue(res) <- -99
    if (!is.null(aoi)) {
       session_grid(res)
       rAOI <- !is.na(puAOI(aoi) |> spatial_centroid() |> allocate())
@@ -3007,4 +3069,7 @@
    if (!is.character(x))
       return(ret)
    as.character(ret)
+}
+'getPIN' <- function(name) {
+   substr(strtoi(paste0("0x",substr(digest::digest(paste(adminPWD,name),"crc32"),1,6))),1,4)
 }

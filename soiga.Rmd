@@ -40,7 +40,7 @@ output:
       - include/geranium.css
       navbar:
          - { title: "&nbsp;", href: "#section-welcome", align: left}
-         - { title: "&nbsp;", href: "#section-admin", align: right}
+        # - { title: "&nbsp;", href: "#section-admin", align: right}
          - { icon: "ion-home", href: "#section-map", align: right}
          - { icon: "ion-calculator", href: "#section-assessment", align: right}
          - { icon: "ion-help", href: "#section-manual", align: right}
@@ -74,10 +74,19 @@ item[0].appendChild(item2[0]);
 ```{r header, eval=T, code=readLines("resources/header.R")}
 ```
 
-```{r server, code=readLines("resources/server.R")}
+```{r server, evel=T, code=readLines("resources/server.R")}
 ```
 
-```{r client, code=readLines("resources/client.R")}
+```{r deprecated, eval=F, code=readLines("resources/server_deprecated.R")}
+```
+
+```{r tables, eval=T, code=readLines("resources/tables.R")}
+```
+
+```{r output, eval=T, code=readLines("resources/output.R")}
+```
+
+```{r client, eval=T, code=readLines("resources/client.R")}
 ```
 
 ```{r tabs}
@@ -100,15 +109,15 @@ uiOutput("uiMap")
 ```{r uimapOutput, eval=T & isShiny, fig.height=800}
 output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-leafletOutput
    cat("renderUI -- begin:\n")
-   if (input$region %in% nameEditor) {
-      cat("   editor:\n")
-     # Sys.sleep(1)
-      ret <-  editModUI("editor")
-     # Sys.sleep(1)
-   }
-   else if (T & input$predefined %in% nameClick) {
+   if (F)
+      NULL
+   else if (T & input$predefined %in% nameClick) { ## selector should be earlier editor
       cat("   selector:\n")
       ret <-  selectModUI("selector")
+   }
+   else if (input$region %in% nameEditor) {
+      cat("   editor:\n")
+      ret <-  editModUI("editor")
    }
    else { ## selected from list: "PAC "
       cat("   viewer:\n")
@@ -120,11 +129,13 @@ output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-l
 })
 ```
 
+<!--
 ```{r eval=F & isShiny}
 output$viewer <- renderLeaflet({
    mapViewer()
 })
 ```
+-->
 
 <!--
 https://github.com/rstudio/flexdashboard/issues/181
@@ -134,8 +145,16 @@ https://github.com/rstudio/flexdashboard/issues/181
 > NEED TO UPDATE [Conservation Action Hotspots](#welcome) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [How the assessment was made](#assessment) &nbsp;&nbsp;&nbsp;&nbsp; [Dictionary](#welcome) &nbsp;&nbsp;&nbsp;&nbsp; [FAQ](#manual)
 -->
 
+```{r staffmap, eval=T & isShiny & staffOnly, results='asis'}
+# cat("### staff only Map {data-height=\"auto\"}\n\n")
+cat("## {data-width=\"300\"}\n\n### staff only Map\n\n")
+renderPrint({
+   selectionTables()
+})
+```
 
-## {#inputs .no-sidebar zzzdata-width="470px" data-width=320}
+
+## {#inputs .no-sidebar zzzdata-width="470px" data-width=400}
 
 ### {data-height="auto"}
 
@@ -151,47 +170,82 @@ if (F)
 fillRow(flex=NA
    ,selectInput("region","Spatial query",c(names(regionSF),nameEditor)
               ,selected="PACs" # sample(names(regionSF),1)
-              ,width="272px")
+              ,width="212px")
    ,HTML("&nbsp;&nbsp;")
    ,conditionalPanel(condition=paste0("input.xxxregion==",sQuote(nameEditor)) ## nameEditor <- "Editor"
       ,selectInput("predefined","Region from list",nameInit
                    # ,selected=nameSelector
-                    ,width="182px")
+                    ,width="182px") ## 'leaflet.extras' of 'leafpm'
    )
+  # ,actionButton("upload","Upload region",width="64px")
+   ,HTML("&nbsp;&nbsp;")
    ,sliderInput("omitPercent"
              # ,list(content = "My Label", position = "left")
               ,label="Omit small coverage"
               ,min=0,max=5,step=0.1,value=3
-              ,width="182px"
+              ,width="112px"
               )
+   ,conditionalPanel(condition="2==2" # "!!output.debug"
+      ,fillRow(flex=NA
+         ,HTML("&nbsp;&nbsp;")
+         ,conditionalPanel(condition="!output.pinEntered"
+            ,passwordInput("pwd","PIN",width="64px")
+         )
+         ,conditionalPanel(condition="!!output.pinEntered"
+            ,fillCol(flex=NA
+               ,renderText({
+                  a <- rvUserName()
+                  if (nchar(a)>15)
+                     a <- paste0(substr(a,1,14),"\u2026")
+                  a
+                })
+               ,HTML("&nbsp;&nbsp;")
+              # ,actionLink("reset","Reset (debug)")
+               ,actionLink("reset",renderText({
+                  if (nchar(rvUserName())>0) "Logout" else "Unauthorized"
+               }),width="60px")
+            )
+         )
+      )
+   )
 )
-fillRow(flex=c(NA,NA,NA,NA,NA)
-   ,selectInput("group","CF group",unname(groupList)
-             # ,selected=sample(unname(groupList),1)
-              ,selected=unname(ifelse(F,sample(groupList,1),groupList[1]))
-              ,multiple=T
-             # ,selected="Cetaceans"
-              ,width="191px")
-   ,HTML("&nbsp;&nbsp;")
+fillRow(flex=NA
+   ,conditionalPanel(condition="2==2" # "!!output.debug"
+      ,fillRow(flex=NA
+         ,selectInput("group3",c("Conservation Feature (CF) Group","CF group3 (draft term)")[1]
+                    # ,choices=nameAllCF['3']
+                     ,choices=unname(groupList)
+                    # ,choices=groupListCF()
+                    # ,selected=unname(ifelse(F,sample(groupList,1),groupList[1]))
+                     ,selected=nameAllCF['3']
+                     ,multiple=T
+                    # ,selected="Cetaceans"
+                    ,width="191px")
+         ,HTML("&nbsp;&nbsp;")
+      )
+   )
    ,selectInput("season","Season group",seasonList
              # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
               ,selected=seasonList[1L]
               ,multiple=T
               ,width="146px")
-   ,HTML("&nbsp;&nbsp;")
-   ,conditionalPanel(condition="!!output.debug"
-      ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
-                 # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
-                  ,selected= if (F & staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
-                 # ,selected=nameAllHuman
-                  ,multiple=T
-                  ,width="121px")
+   ,conditionalPanel(condition="2==2" # "!!output.debug"
+      ,fillRow(flex=NA
+         ,HTML("&nbsp;&nbsp;")
+         ,div(class="latent"
+            ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
+                       # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
+                        ,selected= if (F & staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
+                       # ,selected=nameAllHuman
+                        ,multiple=T
+                        ,width="121px")
+            )
+         )
       )
    )
 ```
 
 :::dropdown
-
 ```{r, eval=isShiny}
 fillRow(flex=c(NA,1,NA)[1]
    ,shiny::selectInput("industry","Industrial activities"
@@ -202,6 +256,38 @@ fillRow(flex=c(NA,1,NA)[1]
   # ,HTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
   # ,actionLink("drawIndustry_deprecated","Update map")
 )
+```
+:::
+::: {.dropup .latent}
+```{r, eval=isShiny}
+conditionalPanel(condition="2==2" # "!!output.debug"
+   ,fillRow(flex=NA
+      ,shiny::selectInput("group2","CF species"
+                    # ,c('No overlap'="none",'All CF'="all","CF new field")
+                     ,"---"
+                     ,multiple=T
+                     ,width="221px")
+      ,HTML("&nbsp;&nbsp;")
+      ,shiny::selectInput("group1","CF parameters"
+                     ,"---"
+                     ,multiple=T
+                     ,width="246px")
+   )
+)
+```
+:::
+:::dropup
+```{r, eval=isShiny}
+conditionalPanel(condition="2==2" # "!!output.debug")
+    ,shiny::selectInput("group0","Individual CFs"
+                   ,"---"
+                   ,multiple=T
+                   ,width=width)
+)
+```
+:::
+:::dropup
+```{r, eval=isShiny}
 fillRow(flex=c(NA,NA,NA),height="50%"
    ,conditionalPanel(condition="input.economy!='zzzskip'"
       ,shiny::selectInput("economy","Indexes maps"
@@ -230,6 +316,7 @@ if (F) {
 }
 ```
 
+<!--
 ```{r, eval=F}
 conditionalPanel(condition="input.economy!='none'"
       ,selectInput("economyColor","Industry colorization",unname(methodList)
@@ -237,6 +324,8 @@ conditionalPanel(condition="input.economy!='none'"
                  ,width="352px")
 )
 ```
+-->
+
 :::
 
 ```{r, eval=T}
@@ -244,18 +333,18 @@ renderUI({
    if (F & file.exists(sessionFile))
       showNotification(paste("session:",format(file.mtime(sessionFile))),duration=2)
    aoi <- rvAOI()
-   lab <- lab0 <- regionSF[[input$region]]$region[aoi$id]
+   lab <- lab0 <- rvRegionSF()[[input$region]]$region[aoi$id]
    isPAC <- (length(lab)==1)&&(grepl("^PAC",lab))
    if (length(lab)>1)
       lab <- "Overview for selected regions"
    else
       lab <- substr(paste("Overview for",dQuote(lab),"region"),1,49)
    if (is.null(aoi))
-      b2 <- navButton("Overview for Domain","#descRegion","desc",span=T)
+      b2 <- navButton("Overview for ArcNet Area","#descRegion","desc",span=T)
    else
       b2 <- navButton(lab,"#descRegion","desc",span=T)
    b1 <- navButton("Selected Area Details","#crosstable","cross",span=T)
-   b3 <- navButton("ArcNet Domain Details","#crosstable","cross",span=T)
+   b3 <- navButton("ArcNet Area Details","#crosstable","cross",span=T)
    if (isPAC) {
       link <- paste0("https://wwf-arctic-programme.github.io/chicory/pac/r"
                     ,digest::digest(sprintf("region%02d"
@@ -274,12 +363,15 @@ renderUI({
 ### {data-height="auto"}
 -->
 
+<!--
 ```{r, eval=FALSE}
 renderUI({
    col <- if (!is.null(rvSelectIndustry())) "grey" else "grey"
    navButton("Customise my choice","#trafficlight",col,border=TRUE)
 })
+-->
 
+<!--
 ```{r, eval=F}
 renderUI({
    lab0 <- "Human activity"
@@ -287,7 +379,7 @@ renderUI({
    if (is.null(aoi))
       lab <- paste(lab0,"in the Arctic")
    else {
-      lab <- regionSF[[input$region]]$region[aoi$id]
+      lab <- rvRegionSF()[[input$region]]$region[aoi$id]
       if (length(lab)>1)
          lab <- paste(lab0,"for selected regions")
       else
@@ -300,32 +392,42 @@ renderUI({
    b1
 })
 ```
+-->
+
+
 ```{r, eval=T}
 renderUI({
-   col <- if (is.null(rvAOI())) "list" else "list"
-  # b1 <- navButton("Human Activities in the Arctic","#list",col,span=T)
-  # b2 <- navButton("Conservation Features","#list",col,span=T)
+  # col <- if (is.null(rvAOI())) "list" else "list"
    b1 <- navButton("All Activities","#list",col="list",span=T)
    b2 <- navButton("All Conservation Features","#list",col="list",span=T)
-   navButton(list(b1,b2),border=T)
+   b3 <- navButton("Lists...","#list",col="list",span=T)
+   if (is.null(rvAOI())) {
+     b3 <- NULL
+   }
+   else {
+     # switchDomain(FALSE)
+     # renderText("Lists of CFs or/and Activities unavailable with selection(s)")
+      b1 <- b2 <- NULL
+   }
+   navButton(list(b1,b2,b3),border=T)
 })
 ##~ renderUI({
    ##~ col <- if (is.null(rvAOI())) "green" else "grey"
 ##~ })
-br()
-br()
-br()
+# br()
+# br()
+# br()
 
 ```
 
 
 <!--
-
 [Industry cut (deprecated)](#industry)
 &nbsp;&nbsp;&nbsp;&nbsp;
 [Customise my choice (deprecated)](#trafficlight)
 -->
 
+<!--
 ```{r,eval=F,results='asis'}
 fillRow(flex=c(1,1)
    ,renderUI({
@@ -342,6 +444,7 @@ fillRow(flex=c(1,1)
    ,if (F & staffOnly) renderPrint(selectionRegion()) else renderText("empty")
 )
 ```
+-->
 
 <!--
 [Conservation Action Hotspots / Dictionary / FAQ](#welcome)  
@@ -359,6 +462,7 @@ output$debug <- renderPrint({
 })
 ```
 
+<!--
 ```{r, eval=F & staffOnly}
 shinyApp(
   ui = fluidPage(), # fillPage(),
@@ -367,6 +471,7 @@ shinyApp(
   }
 )
 ```
+-->
 
 
 # Selected Area Details {#crosstable style="position: relative;" .zzzno-mobile .zzzno-print data-orientation="rows" `r if (hideTabs) ".hidden"`}
@@ -384,20 +489,25 @@ fillCol(flex=c(NA,1)
        )
 ```
 
+<!--
 ```{r, eval=F}
 output$verb <- renderText({
    paste0(sQuote("flexdashboard")," package version: "
          ,as.character(packageVersion("flexdashboard")))
 })
+-->
+
 ```{r, eval=T}
 output$cross <- DT::renderDT({
    tableCross()
 })
 ```
 
+<!--
 ```{r, eval=F}
 output$smpl <- renderTable(res,align="r",rownames=TRUE)
 ```
+-->
 
 ```{r,eval=T}
 output$buttonsCross <- renderUI({
@@ -411,7 +521,7 @@ output$buttonsCross <- renderUI({
 ```
 
 ```{r eval=staffOnly, results='asis'}
-cat("### verbose {data-width=160}\n\n")
+cat("### verbose Cross {data-width=160}\n\n")
 renderPrint(selectionTables())
 ```
 
@@ -447,11 +557,14 @@ fillCol(flex=c(NA,1,NA)
        ##~ ,DT::DTOutput('cfdata')
 ##~ )
 ```
+<!--
 ```{r eval=F & isShiny}
 output$crossSelection <- renderPrint({
    selectionTables()
 })
 ```
+-->
+
 
 ```{r,eval=isShiny}
 output$cfmeta <- renderText({
@@ -492,7 +605,7 @@ renderTable({
    if (is.null(rvSelectIndustry()))
       "CF Amount Distribution"
    else
-      "Activity Description"
+      "Activity Description (industry is not selected)"
 })` {data-height=200}
 
 ```{r eval=T & isShiny}
@@ -566,7 +679,7 @@ renderTable({
    if (!is.null(rvSelectCF()))
       "CF Amount Distribution"
    else
-      "Activity Description"
+      "Activity Description (CF is not selected)"
 })` {data-height=200}
 
 
@@ -611,7 +724,7 @@ https://stackoverflow.com/questions/43225165/combine-in-flexdashboard-with-multi
    if (is.null(aoi))
       "Entire area"
    else {
-      lab <- regionSF[[input$region]]$region[aoi$id]
+      lab <- rvRegionSF()[[input$region]]$region[aoi$id]
       if (length(lab)>0)
          paste(lab,collapse=", ")
       else if (length(lab)==1e8)
@@ -683,8 +796,9 @@ fillCol(flex=c(1,NA,NA,NA)
    )
    ,renderUI({
       b1 <- navButton("Spatial query","#map",col="map",span=T)
-      b2 <- navButton("Selected Area Details","#crosstable",col="cross",span=T)
-      navButton(list(b1,b2))
+      b2 <- navButton("Lists...","#list",col="list",span=T)
+      b3 <- navButton("Selected Area Details","#crosstable",col="cross",span=T)
+      navButton(list(b1,b2,b3))
    })
 )
 output$uiRegionLeaflet <- renderUI({
@@ -723,9 +837,6 @@ output$regionLeaflet <- renderLeaflet({
 DT::renderDT({
    switchDomain(FALSE)
    result <- rvRegionStats()
-   print("0306a")
-   str(result)
-   print("0306b")
    regionTable(result)
 })
 ```
@@ -779,7 +890,7 @@ fillRow(flex=c(10,NA,14)
             ,HTML("Activity Indexes")
             ,DT::renderDT({
                aoi <- rvAOI()
-               ctable <- rvActivityStat()
+               ctable <- rvCrossTable()
               # DT::datatable(data.frame(id=1,value="dummy"))
                regionActivityIndices(ctable,aoi)
             })
@@ -812,9 +923,9 @@ output$downloadMetrics <- downloadHandler(
       aoi <- rvAOI()
       if (is.null(aoi))
          return("Global metrics.xlsx")
-      lab <- regionSF[[input$region]]$region[aoi$id]
+      lab <- rvRegionSF()[[input$region]]$region[aoi$id]
       str(aoi$id)
-      str(regionSF[[input$region]])
+      str(rvRegionSF()[[input$region]])
       lab <- strsplit(sort(lab),split="\\s") |>
          do.call(c,args=_) |>
          unique() |>
@@ -840,7 +951,7 @@ output$instantReport <- downloadHandler(
       aoi <- rvAOI()
       if (is.null(aoi))
          lab <- "Global"
-      lab <- regionSF[[input$region]]$region[aoi$id]
+      lab <- rvRegionSF()[[input$region]]$region[aoi$id]
       paste0("metrics-",digest::digest(lab,"crc32"),".docx")
    }
    ,content=function(file) {
@@ -883,7 +994,7 @@ output$instantReport <- downloadHandler(
                        ,output_options=ooptions
                        ,params=list(metrics=interim
                                    ,aoi=rvAOI()
-                                   ,ctable=rvActivityStat()
+                                   ,ctable=rvCrossTable()
                                    ,dpath=file.path(root,"request"))
                        ,envir=new.env(parent=globalenv())))
       str(ret)
@@ -905,7 +1016,7 @@ fillCol(flex=c(NA,1)
    ,DT::renderDT({
      # result <- rvRegionStats() ## dummy returning; renew table
       switchDomain(FALSE)
-      ctable <- rvActivityStat()
+      ctable <- rvCrossTable()
       req(nrow(ctable)>0)
       ntable <- ctable[order(ctable$NAC,decreasing=TRUE),c("CF name","NAC"),drop=FALSE]
       ntable <- ntable[!is.nan(ntable$NAC),]
@@ -934,6 +1045,7 @@ fillCol(flex=c(NA,1)
 
 ### {data-header="TOP IND"}
 
+<!--
 ```{r, eval=FALSE}
 fillCol(flex=c(NA,1)
    ,HTML("Activities of Concern")
@@ -967,9 +1079,11 @@ fillCol(flex=c(NA,1)
    })
 )
 ```
+-->
 
 ### {data-header="IND LC"}
 
+<!--
 ```{r, eval=FALSE}
 fillCol(flex=c(NA,1)
    ,HTML("Activities of Least Concern")
@@ -1003,12 +1117,13 @@ fillCol(flex=c(NA,1)
    })
 )
 ```
+-->
 
 # CF desc {#descCF .zzzhidden data-orientation="columns" `r if (hideTabs) ".hidden"`}
 
 ## {data-width=500}
 
-### Metadata
+### CF Metadata
 
 ```{r eval=T & isShiny}
 fillCol(flex=c(NA,1,1)
@@ -1044,9 +1159,9 @@ fillCol(flex=c(NA,1,1)
 
 ```{r eval=T & isShiny}
 if (staffOnly) {
-   fillCol(flex=c(1,NA)
+   fillCol(flex=c(1,NA,NA)
       ,leafletOutput("industryMap")
-     # ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
+      ,checkboxInput("industryDesc","Show map (it is not quick)",value=FALSE)
      # ,actionLink("industryDesc","Show map (it is not quick)")
       ,renderPrint(selectionTables())
    )
@@ -1058,7 +1173,8 @@ if (staffOnly) {
    )
 }
 output$industryMap <- renderLeaflet({
-  # req(input$industryDesc)
+   if (staffOnly)
+      req(input$industryDesc)
    displayIndustry()
 })
 ```
@@ -1098,11 +1214,13 @@ output$onlyCF <- DT::renderDT({
 })
 ```
 
+<!--
 ```{r, eval=F & isShiny}
 output$switchCF <- renderUI({
    switchCF()
 })
 ```
+-->
 
 ### Activities in the Arctic {data-height=400}
 
@@ -1113,11 +1231,18 @@ output$onlyIndustry <- DT::renderDT({
 })
 ```
 
+```{r eval=staffOnly, results='asis'}
+cat("### staff only lists {data-width=300}\n\n")
+renderPrint(selectionTables())
+```
+
+<!--
 ```{r, eval=F & isShiny}
 output$switchIndustry <- renderUI({
    switchIndustry()
 })
 ```
+-->
 
 ## {data-height=50}
    
@@ -1135,12 +1260,16 @@ output$buttonsList <- renderUI({
 ### `r renderText(rvSelectCF())`/`r renderText(industryCode(rvSelectIndustry()))` interaction {#iceconc}
 
 ```{r, eval=T | showComment}
-fillCol(flex=NA
-  # ,iceConcTable() |> renderTable()
-   ,iceConcRule() |> renderTable()
-   ,renderImage(iceConcHuman(),deleteFile=T)
-   ,renderImage(iceConcCF(),deleteFile=T)
-   ,renderImage(iceConcMonthly(),deleteFile=T)
+
+checkboxInput("iceConcDetails","Show details for this interaction",value=FALSE)
+conditionalPanel(condition="!!input.iceConcDetails"
+   ,fillCol(flex=NA
+     # ,iceConcTable() |> renderTable() ## deprecated
+      ,iceConcRule() |> renderTable()
+      ,renderImage(iceConcHuman(),deleteFile=T)
+      ,renderImage(iceConcCF(),deleteFile=T)
+      ,renderImage(iceConcMonthly(),deleteFile=T)
+   )
 )
 ```
 
@@ -1158,56 +1287,8 @@ renderTable({
 
 ```{r, eval=T | showComment}
 DT::renderDT({
-##~ renderPrint({
-   cf <- rvSelectCF()
-   industry <- rvSelectIndustry()
-   str(cf)
-   str(industry)
-   da <- rvHumanUseCF()
-   da <- da[da[[1]] %in% industry,]
-   da <- cbind(CF=paste0("<abbr title='",CFName(cf),"'>",cf,"</abbr>")
-              ,Activity=paste0("<abbr title='",industry,"'>",rownames(da),"</abbr>")
-              ,da[,-1])
-   if (T) {
-      da2 <- sprintf("%.2f",iceConcTable()$available)
-      dim(da2) <- c(1,length(da2))
-      colnames(da2) <- colnames(da)[seq(3L,ncol(da))]
-      da2 <- data.frame(CF="Will be",Activity="revoved",da2)
-      da <- rbind(da,da2)
-   }
-   m <- format(as.Date(paste0("2021-",seq(12),"-15")),"%b")
-   da0 <- unname(unlist(da[,m]))
-   patt <- "(\\S+)<sup>(\\S+)</sup>"
-   da1 <- gsub(patt,"\\1",da0)
-   da2 <- gsub(patt,"\\2",da0)
-   da3 <- paste0("<span class='hidden'>",da2,"</span>")
-   # da0 <- gsub("<(/)*sup>","",da0)
-   da0 <- paste0(da1,da3)
-   da[,m] <-  da0
-   ct <- c(clrLUT,'N/A'="grey90")
-   ct <- data.frame(value=da0,color=ct[da2]) |> unique()
-   ct <- DT::styleEqual(ct$value,ct$color)
-   ct <- gsub("&gt;",">",ct)
-   ct <- gsub("&lt;","<",ct)
-  # saveRDS(da,"C:/tmp/interim.rds")
-   b <- DT::datatable(da,rownames=!TRUE,escape=FALSE,selection="none"
-                      # ,extensions="Scroller"
-                       ,options=list(NULL
-                                    ,ordering=F
-                                   # ,scroller=T
-                                   # ,scrollY="calc(100vh - 265px)"
-                                    ,pageLength=nrow(da)
-                                    ,dom="t"
-                                    )
-                       )
-   b <- DT::formatStyle(b,colnames(da)
-                     ,backgroundColor=ct
-                     ,backgroundSize='95% 18pt'
-                     ,backgroundRepeat='no-repeat'
-                     ,backgroundPosition='center'  
-                     )
-  # b[] <- paste0(b[],"\n","AAA")
-   b
+  ##~ renderPrint({
+   commentList()
 })
 ```
 
@@ -1230,30 +1311,30 @@ output$buttonsComment <- renderUI({
 
 ## {data-width=60}
 
-### Leave a comment {data-height="240"}
+### `r renderText(ifelse(isTRUE(rvAdmin()),"Comments management","Leave a comment"))` {data-height="240"}
 
 ```{r, eval=T | showComment}
-# fillRow(flex=c(2,1)
-#   ,fillCol(flex=NA
-       textAreaInput("opinion","Suggestion",""
+conditionalPanel(condition="!output.admin"
+   ,fillCol(flex=NA
+      ,textAreaInput("opinion","Suggestion",""
                      ,placeholder="Your review, remarks, suggestions - any opinion"
                      ,width="calc(100% - 0px)"
                      ,height="200px"
                      )
-  # )
-  # ,fillCol(flex=c(NA,1,NA)
-      textInput("author","Your name","",placeholder="Your name"
-                ,width="calc(100% - 0px)")
-      br()
-      actionLink("submit","Submit")
-  # )
-#)
+      ,conditionalPanel(condition="!output.authorized"
+         ,textInput("author","Your name","",placeholder="Your name"
+                   ,width="calc(100% - 0px)")
+      )
+      ,br()
+      ,actionLink("submit","Submit")
+   )
+)
 ```
 > Your name, your comment will be visible for everyone. Your comment will be moderated. It can be edited or deleted by Geranium managers.
 
 
 
-```{r, eval=T, child="include/welcome.Rmd"}
+```{r, eval=staffOnly, child="include/welcome.Rmd"}
 ```
 
 ### Staff only quick navigation {data-width=160}
@@ -1275,71 +1356,148 @@ output$buttonsComment <- renderUI({
 `r paste0("quickStart",": ",as.character(quickStart))`  
 `r paste0("root",": ",root)`  
 
-
+<!--
 ```{r, eval=F}
 sliderInput("omitPercent",label="Omit small coverage",min=0,max=10,step=0.1,value=0)
 ```
+-->
 
-```{r, eval=T, child="include/assessment.Rmd"}
+```{r assessment, eval=T, child="include/assessment.Rmd"}
 ```
 
-```{r, eval=T, child="include/manual.Rmd"}
+```{r manual, eval=T, child="include/manual.Rmd"}
 ```
 
-# {#admin .hidden .failured}
+# `r renderText(rvUserInitials())` {#admin .nothidden .failured}
 
 ## {data-width=80}
 
-###
-
-### Deep colouring {data-height="auto"}
+### `r renderText(ifelse(rvAdmin(),"User management","Customization"))` {data-height=100}
 
 ```{r}
-   sliderInput("ncolor",label="Number of categories in maps"
-               ,min=5,max=11,step=1,value=config$ncolor
-               )
+cond1 <- "input.userNew == '' & input.userName != ''"
+conditionalPanel(condition="!!output.admin"
+   ,fillRow(flex=NA
+      ,conditionalPanel(condition="input.userNew == '' & output.userEmpty == false"
+         ,selectInput("userName","User name",choices="",width="180px")
+      )
+      ,HTML("&nbsp;&nbsp;")
+      ,conditionalPanel(condition=cond1
+         ,fillRow(flex=NA
+            ,selectInput("userLevel","User level"
+                        ,choices=c(0L,1L,2L,9L)
+                        ,selected=0L,width="60px")
+            ,HTML("&nbsp;&nbsp;")
+            ,actionLink("userForgot","PIN")
+         )
+      )
+   )
+   ,conditionalPanel(condition=cond1
+      ,renderPrint({
+         user <- rvUserInd()
+         str(user)
+        # ind <- rvAuthorized()
+        # ind <- match(input$userName,user$name)
+         
+      })
+   )
+   ,fillRow(flex=NA
+      ,textInput("userNew","New user",width="180px")
+      ,HTML("&nbsp;&nbsp;")
+      ,conditionalPanel(condition=cond1
+         ,actionLink("userRemove","Remove user")
+      )
+      ,conditionalPanel(condition="input.userNew != ''"
+         ,actionLink("userAdd","Add user")
+      )
+   )
+)
+conditionalPanel(condition="!output.admin & output.authorized"
+   ,fillCol(flex=NA
+      ,fileInput("customAOI",label="Your AOI",buttonLabel="Browse",placeholder=NULL
+               ,accept=c(".geojson",".geojson.gz",".shp.zip")
+               ,width="100%")
+      ,renderImage({
+         req(input$customAOI)
+         fname <- input$customAOI$datapath
+         session_grid(NULL)
+         a <- ursa:::spatialize(fname) |> spatial_geometry()
+         ret <- glance(a,pointsize=20,blank="white",coast.fill="#00000010")
+         list(src=ret,width="100%",'height'="100%",'max-width'="100%"
+          ,'object-fit'="scale-down",class="propersize")
+      },deleteFile=TRUE)
+   )
+)
 ```
 
-### Verbosing {data-height="auto"}
+
+### Settings {data-height="auto"}
 
 ```{r}
-   sliderInput("sleepValue",label="Pausing Value, ms"
-               ,min=0,max=1000,step=10,value=config$sleepValue
-               )
+conditionalPanel(condition="!!output.authorized"
+   ,fillCol(flex=NA
+      ,sliderInput("ncolor",label="Number of categories in maps"
+                  ,min=5,max=11,step=1,value=config$ncolor
+                  )
+      ,sliderInput("levelNAC",label="Quantilies (%) for IND LC (low) and TOP IND (high)"
+                 ,min=0,max=100,step=1,value=config$quantile
+                 )
+   )
+)
+conditionalPanel(condition="1==2" # !!output.debug & !!output.admin"
+   ,renderPrint({
+      r <- input$allComments_rows_selected
+      da <- rvAllComments()[r,]
+      print(c(selected=r))
+      str(da)
+   })
+)
 ```
 
 
 ## {data-width=180}
 
-### Comments
+### All Comments
 
 ```{r}
-checkboxInput("comment","Comments are available",value=config$comment)
-downloadLink("downloadComment","Download comments")
+conditionalPanel(condition="!!output.admin"
+   ,fillCol(flex=NA
+      ,DT::DTOutput("allComments")
+      ,uiOutput("onlyCommentButton")
+   )
+)
 fileext <- c(".csv",".xlsx")[2]
 output$downloadComment <- downloadHandler(
    filename=function() {
       paste0("comments-",format(Sys.time(),"%Y%m%d-%H%M"),fileext)
    }
    ,content=function(file) {
-      req(comment_exists())
-      da <- comment_read()
-      req(nrow(da)>0)
+      da <- rvAllComments()
       switch(fileext 
             ,'.csv'=write.csv(da,file)
             ,'.xlsx'=xlsx::write.xlsx(da,file,sheetName="comments",append=FALSE)
             )
    }
-)  
-br()
-br()
-DT::renderDT({
-   req(comment_exists())
-   da <- comment_read()
-   da <- da[order(da$Time,decreasing=TRUE),]
-   req(nrow(da)>0)
-   b <- DT::datatable(da,rownames="")
+)
+output$allComments <- DT::renderDT({
+   da <- rvAllComments()
+   b <- DT::datatable(da,rownames="",selection="single"
+                     ,extensions="Scroller"
+                     ,options=list(NULL
+                                  ,ordering=F
+                                  ,scroller=T
+                                  ,scrollY="calc(100vh - 240px)"
+                                  ,scrollX=FALSE
+                                  ,pageLength=nrow(da)
+                                  ,dom="ift"
+                                 # ,dom="iftlp"
+                                 # ,pageLength=6,lengthMenu=c(4,5,6,8,10,15,20)
+                                 )
+                     )
    b
+})
+output$onlyCommentButton <- renderUI({
+   onlyCommentButton()
 })
 ```
 
@@ -1348,20 +1506,24 @@ DT::renderDT({
 ### NAC Multipliers
 
 ```{r}
-sliderInput("mulNAR",label="Multiplyer for red cells"
-           ,min=0,max=100,step=1,value=config$concern[1]
-           )
-sliderInput("mulNAY",label="Multiplyer for yellow cells"
-           ,min=0,max=100,step=1,value=config$concern[2]
-           )
-sliderInput("mulNAG",label="Multiplyer for green cells"
-           ,min=0,max=100,step=1,value=config$concern[3]
-           )
-if (F) {
-   actionLink("rebuildNAC","Apply changes")
-   br()
-   HTML("Application will be restarted with initialization during 1-2 mins.")
-}
+conditionalPanel(condition="!!output.admin",{
+   fillCol(flex=NA
+      ,sliderInput("mulNAR",label="Multiplyer for red cells"
+                  ,min=0,max=100,step=1,value=config$concern[1]
+                  )
+      ,sliderInput("mulNAY",label="Multiplyer for yellow cells"
+                 ,min=0,max=100,step=1,value=config$concern[2]
+                 )
+      ,sliderInput("mulNAG",label="Multiplyer for green cells"
+                 ,min=0,max=100,step=1,value=config$concern[3]
+                 )
+      ,if (F) {
+         actionLink("rebuildNAC","Apply changes")
+         br()
+         HTML("Application will be restarted with initialization during 1-2 mins.")
+      }
+   )
+})
 ```
 
 ### Misc {data-height="auto"}
@@ -1369,15 +1531,27 @@ if (F) {
 :::dropup
 
 ```{r}
-checkboxInput("relative","Relative NAC",value=config$relative)
-sliderInput("levelNAC",label="Quantilies (%) for IND LC (low) and TOP IND (high)"
-           ,min=0,max=100,step=1,value=config$quantile
-           )
-conditionalPanel(condition="2==2 || input.industry!='none' || input.economy!='none'"
-      ,selectInput("coloring","Colorization",unname(methodList)
-                # ,selected=grep("overlap",methodList,value=TRUE)
-                 ,width="342px"
-                 )
+condAdmin <- "!!output.admin"
+condAuthorized <- "!!output.authorized"
+fillCol(flex=NA
+   ,conditionalPanel(condition=condAdmin
+      ,fillRow(flex=NA
+         ,checkboxInput("relative","Relative NAC?",value=config$relative,width="108px")
+         ,checkboxInput("comment","Comments?",value=config$comment,width="92px")
+         ,downloadLink("downloadComment","Download comments")
+      )
+   )
+   ,conditionalPanel(condition=condAdmin # "2==2 || input.industry!='none' || input.economy!='none'"
+         ,selectInput("coloring","Colorization",unname(methodList)
+                   # ,selected=grep("overlap",methodList,value=TRUE)
+                    ,width="342px"
+                    )
+   )
+   ,conditionalPanel(condition="!!output.admin & !!output.debug"
+      ,sliderInput("sleepValue",label="Pausing Value, ms"
+                  ,min=0,max=1000,step=10,value=config$sleepValue
+                  )
+   )
 )
 ```
 :::

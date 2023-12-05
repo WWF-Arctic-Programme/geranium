@@ -1,27 +1,22 @@
+proxyRegion <- leafletProxy("regionLeaflet")
 exchange <- reactiveValues(editor=NULL,domain=NULL,selection=NULL
                           ,prev=integer(),curr=integer() ## need for removing forgiven clean
                           ,cd=character(),overlay=NULL ## need for removing forgiven clean
                           ,CF=NULL,industry=NULL,conflict=NULL#,initEPA=FALSE
                           ,rebuildNAO=TRUE,subset=NULL,config=config
                           ,region=NULL
+                          ##~ ,clicked=c(crossCF=Sys.time(),crossIndustry=Sys.time()
+                                    ##~ ,dataCF=Sys.time(),dataIndustry=Sys.time()
+                                    ##~ ,onlyCF=Sys.time(),onlyIndustry=Sys.time()
+                                    ##~ )
+                          ,selectedIndustry=FALSE
                           )
-proxyCross <- DT::dataTableProxy("cross")
-proxyOnlyIndustry <- DT::dataTableProxy("onlyIndustry")
-proxyOnlyCF <- DT::dataTableProxy("onlyCF")
-proxyIndustrydata <- DT::dataTableProxy("industrydata")
-proxyCFdata <- DT::dataTableProxy("cfdata")
-proxyRegion <- leafletProxy("regionLeaflet")
+clicked <- reactiveValues(crossCF=Sys.time(),crossIndustry=Sys.time()
+                         ,dataCF=Sys.time(),dataIndustry=Sys.time()
+                         ,onlyCF=Sys.time(),onlyIndustry=Sys.time()
+                         )
 if (F) ## patch for shiny 2022-12-17
    spatial_crs(PAs) <- 4326
-'sleeping' <- function() {
-   req(input$sleepValue)
-  # if (isTRUE(input$sleepVerbose))
-   if (input$sleepValue>0)
-      cat("                                                               (paused)\n")
-  # if (isTRUE(())
-   Sys.sleep(input$sleepValue/1000)
-   NULL
-}
 if (T) observe({ ## update 'input$sheet'
    sleeping()
    cat("observe: update input$sheet:\n")
@@ -77,8 +72,8 @@ if (T) observe({ ## update input$region
    ##~ cat("observe: update input$predefined:\n")
    ##~ print("1")
    ##~ print(input$region)
-   ##~ str(regionSF)
-   ##~ print(input$region %in% names(regionSF))
+   ##~ str(rvRegionSF())
+   ##~ print(input$region %in% names(rvRegionSF()))
    ##~ print("2")
    cat("observe input$region + update input$predefined:\n")
   # if (length(exchange$curr)>0)
@@ -89,10 +84,10 @@ if (T) observe({ ## update input$region
   #    exchange$curr <- -20L
   # else
   #    exchange$curr <- -70L
-   if (input$region %in% names(regionSF))
+   if (input$region %in% names(rvRegionSF()))
       updateSelectInput(session,"predefined"
                        ,label="Select region of interest"
-                       ,choices=c(nameClick,regionSF[[input$region]][[1]])[1]
+                       ,choices=c(nameClick,rvRegionSF()[[input$region]][[1]])[1]
                        )
    else
       updateSelectInput(session,"predefined"
@@ -197,17 +192,17 @@ if (T) observe({ ## update 'exchange$selection'
                }
                if (length(ind2)) {
                  # print(c('ind2.'=ind2))
-                  s <- regionSF[[input$region]][ind[ind2],] ## class 'st_sf'
+                  s <- rvRegionSF()[[input$region]][ind[ind2],] ## class 'st_sf'
                   spatial_data(s) <- da[ind2,]
                  # exchange$curr <- rbind(exchange$curr,spatial_data(s))
                }
                else if (length(ind3)) {
                  # print(c('ind3.'=ind3))
-                  s <- regionSF[[input$region]][ind[ind3],] ## class 'st_sf'
+                  s <- rvRegionSF()[[input$region]][ind[ind3],] ## class 'st_sf'
                   spatial_data(s) <- da[ind3,]
                }
                else if (length(ind)<0){
-                  s <- regionSF[[input$region]][ind,] ## class 'st_sf'
+                  s <- rvRegionSF()[[input$region]][ind,] ## class 'st_sf'
                   spatial_data(s) <- da
                }
                else {
@@ -274,107 +269,19 @@ if (T) observe({ ## update 'exchange$selection'
       updateSelectInput(session,"region",choice=input$region
                        ,label="Freeze until active selection")
    else
-      updateSelectInput(session,"region",choice=c(names(regionSF),nameEditor)
+      updateSelectInput(session,"region",choice=c(names(rvRegionSF()),nameEditor)
                        ,selected=input$region,label="Spatial query")
   # ind <- input$tbl_rows_selected
   # if (is.integer(ind))
-  #    exchange$cf <- rvActivityStat()[ind,]
+  #    exchange$cf <- rvCrossTable()[ind,]
   # exchange$selection
 })
-if (F) observe({
+if (F) observe({ ## update 'session$cfcode'
    ind <- input$tbl_rows_selected
    if (is.integer(ind)) {
-      tbl <- rvActivityStat()[ind,,drop=TRUE]
+      tbl <- rvCrossTable()[ind,,drop=TRUE]
       ind2 <- ursa:::.sample(grep(tbl[[1]],cfmeta$CF_code))
       updateSelectInput(session,"cfcode",selected=cfmeta$label[ind2])
-   }
-})
-if (F) observe({ ## update 'input$industry'
-   print("observe crosstable, update 'industry' input")
-  # ind <- input$cfdata_rows_selected
-   cell <- input$cross_cells_selected
-   res <- rvActivityStat()
-   if (!is.null(res)) {
-      cname <- colnames(res)
-      sname <- NULL
-      if (sum(dim(cell))>0) {
-         sColumn <- cell[1,2]
-         if (sColumn>0) {
-            sname <- cname[sColumn] # gsub(pattRules,"\\2",cname[sColumn])
-            if (!(sname %in% unlist(industries)))
-               sname <- NULL
-         }
-      }
-      else {
-        # ind <- input$listCF_rows_selected
-        # cat("-----\n")
-        # str(ind)
-        # cat("-----\n")
-      }
-     # req(!is.null(input$listCF_rows_selected))
-     # cname <- gsub(pattRules,"\\2",grep(sepRules,cname,value=TRUE))
-      cname <- cname[cname %in% unlist(industries)]
-      updateSelectInput(session,"industry"
-                       ,choices=industries
-                       ,selected=if (!is.null(sname)) sname else sample(cname,1)
-                       )
-   }
-   else if (T) {
-      updateSelectInput(session,"industry",choices="Please choose AOI before")
-   }
-   else {
-      updateSelectInput(session,"industry"
-                       ,choices=industries
-                       ,selected=sample(unlist(industries),1)
-                       )
-   }
-})
-if (F) observe({ ## update 'input$cfcode'
-   print("observe crosstable, update 'cfcode' input")
-   cell <- input$cross_rows_selected
-   res <- rvActivityStat()
-  # saveRDS(res,"c:/tmp/update_res.rds")
-   if (!is.null(res)) {
-      rname <- rownames(res)
-      fname <- NULL
-      if (!is.null(ind <- input$listCF_rows_selected)) {
-         ##~ str(ind)
-         ##~ b <- res[ind,]
-         ##~ str(b)
-         fname <- rname[ind]
-      }
-      else if (sum(dim(cell))>0) {
-         sRow <- cell[1,1]
-         if (sRow>0) {
-            fname <- rname[sRow] # gsub(pattRules,"\\2",cname[sColumn])
-            if (!(fname %in% spec$cf))
-               fname <- NULL
-         }
-      }
-      fname <- fname[fname %in% spec$cf]
-      rname <- paste0(rname," - ",res[rname,1])
-      if (!is.null(fname))
-         fname <- paste0(fname," - ",res[fname,1])
-      updateSelectInput(session,"cfcode"
-                       ,choices=sort(rname)
-                       ,selected=if (!is.null(fname)) fname else sample(rname,1)
-                       )
-   }
-   else if (T) {
-      updateSelectInput(session,"cfcode",choices="Please choose AOI before")
-   }
-   else {
-      da <- rvHumanUseIndustry()
-     # saveRDS(da,"C:/tmp/update_cfcode.rds")
-      if (is.null(da))
-         updateSelectInput(session,"cfcode",choices="Please choose AOI before")
-      else {
-         value <- paste0(da$'CF Code'," - ",da$'CF Name')
-         updateSelectInput(session,"cfcode"
-                          ,choices=value
-                          ,selected=sample(value,1)
-                          )
-      }
    }
 })
 if (F) observe({ ## setView for Selector
@@ -407,7 +314,7 @@ if (F) observe({ ## setView for Selector
       return(NULL)
       if (any(c(nameInit,"none","skip") %in% input$economy))
          return(NULL)
-      conflict <- list(industry=input$industry,group=input$group
+      conflict <- list(industry=input$industry,group=input$group3
                       ,season=input$season,economy=input$economy
                       ,subset=exchange$subset
                       )
@@ -431,19 +338,23 @@ if (F) observe({ ## setView for Selector
       season <- conflict$season
      # if (!length(season))
      #    season <- "max"
-      group <- conflict$group
-      group <- groupList[na.omit(match(group,groupList))]
-     # str(list(season=seson,group=group))
-      if (!length(group)) {
-        # return(NULL)
-         group <- "\\d"
+      if (F) {
+         group <- conflict$group
+         group <- groupList[na.omit(match(group,groupList))]
+        # str(list(season=seson,group=group))
+         if (!length(group)) {
+           # return(NULL)
+            group <- "\\d"
+         }
+         group <- names(group)
       }
-      group <- names(group)
+      else
+         group <- rvSubsetCF()
      # a <- rvActivity()$map
      # print(industry)
      # iname <- unname(industry)
    }
-   else {
+   else if (F) {
      # season <- "max HERE"
      # group <- "\\d HERE"
       season <- conflict$season
@@ -490,71 +401,110 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
    sleeping()
    cat("observeEvent input$drawIndustry:\n")
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
-   exchange$conflict <- list(industry=input$industry,group=input$group
+   exchange$conflict <- list(industry=rvSubsetIndustry() # input$industry
+                            ,group=rvSubsetCF()
+                           # ,group=input$group3
                             ,season=input$season,economy=input$economy)
 })
 if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    sleeping()
    cat("observeEvent input$drawEconomy:\n")
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
-   exchange$conflict <- list(industry=input$industry,group=input$group
+   exchange$conflict <- list(industry=input$industry,group=input$group3
                             ,season=input$season,economy=input$economy)
 })
-'rvActivityStat' <- reactive({
+'rvSubsetIndustry' <- reactive({
    sleeping()
-   cat("rvActivityStat() to generate crossTable():\n")
-   if (isTRUE(exchange$domain)) {
-      cat("   domain is TRUE:\n")
-      return(crossTable())
+   cat("rvSubsetIndustry:\n")
+   ref <- unname(industryName(industries))
+   if ("all" %in% input$industry) { # low, level1
+      if (allActivity %in% input$activity) { ## up, level2
+         industry <- ref
+      }
+      else {
+         industry <- unname(industryName(industries[input$activity]))
+      }
    }
-   cat("   domain is FALSE:\n")
-  # return(NULL)
-   if ((is.null(input$sheet))||(is.null(input$column)))
-      activity <- "not applicable"
    else {
-      if ((input$sheet==nameInit)||(input$column==nameInit))
-         return(NULL)
-      activity <- paste0(input$sheet,sepRules,input$column)
+     # industry <- ref
+      industry <- unname(industryName(input$industry))
    }
-   cat("------------\n")
-   group <- names(groupList[match(input$group,groupList)])
-   str(input$activity)
-   str(names(industries))
-   if (all(input$activity %in% names(industries))) {
-      activity <- input$activity
-     # industry <- unlist(industries[input$activity]
+   ret <- industry[order(match(industry,ref))]
+   ret <- industryCode(ret)
+   ret
+})
+'rvGroupCF' <- reactive({
+   ret <- groupCF(c(input$group3,input$group2,input$group1,input$group0))
+   as.character(ret) ## character needs for 'CFMap'
+})
+'rvSubsetCF' <- reactive({
+   cat("rvSubsetCF:\n")
+   if (!is.null(rvAOI())) {
+      da <- rvCrossTable()
+     # str(dimnames(da))
+      ret <- rownames(da)
    }
    else
-      activity <- "all"
-   print(c('activity:'=activity))
-   print(c('industry:'=input$industry))
-   print(c('exchange:'=exchange$subset))
-   str(rules$industry)
-  # str(vulner$industry) ## deprecated
-   cat("------------\n")
-   print("0305u")
+      ret <- rvGroupCF()
+   sort(ret)
+})
+'rvCrossTable' <- reactive({
+   sleeping()
+   if ((FALSE)&&(isTRUE(switchDomain()))) {
+      cat("   domain is TRUE:\n")
+     # switchDomain(FALSE) ## FALSE is bad idea
+      groupCF <- rvGroupCF() ## don't use `rvSubsetCF` to avoid recursion
+      if (!is.null(indCF <- input$onlyCF_rows_selected))
+         groupCF <- groupCF[indCF]
+      industry <- rvSubsetIndustry()
+      if (!is.null(indI <- input$onlyIndustry_rows_selected))
+         industry <- industry[indI]
+      ret <- crossTable(aoi=NULL
+                       ,group=groupCF
+                       ,activity=industryCode(industry)
+                       ,season=input$season
+                       ,minCover=input$omitPercent
+                       )
+     # proxyOnlyCF %>% selectRows(NULL)
+     # proxyCross %>% selectRows(NULL)
+     # proxyCross %>% selectColumns(NULL)
+     # proxyIndustrydata %>% selectRows(NULL)
+     # proxyOnlyIndustry %>% selectRows(NULL)
+     # proxyCFdata %>% selectRows(NULL)
+      return(ret)
+   }
+   if (FALSE) {
+      if ((is.null(input$sheet))||(is.null(input$column)))
+         activity <- "not applicable"
+      else {
+         if ((input$sheet==nameInit)||(input$column==nameInit))
+            return(NULL)
+         activity <- paste0(input$sheet,sepRules,input$column)
+      }
+      if (all(input$activity %in% names(industries))) {
+         activity <- input$activity
+        # industry <- unlist(industries[input$activity]
+      }
+      else
+         activity <- "all"
+     # str(vulner$industry) ## deprecated
+   }
    aoi <- rvAOI()
-   str(aoi)
-   str(pu)
-   print(spatial_crs(aoi))
-   print(spatial_crs(pu))
-   print("0305v")
+  # group <- rvSubsetCF() # groupList[match(input$group3,groupList)]
+   group <- rvGroupCF() ## don't use `rvSubsetCF` to avoid recursion
+   if (!is.null(names(group)))
+      group <- names(group)
+   industry <- rvSubsetIndustry()
   # if (!is.null(aoi))
   #    saveRDS(aoi,"c:/tmp/interim_stat.rds")
   # interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
    ##~ exchange$domain <- FALSE
    ##~ plutil::timeHint(paste("domain is",exchange$domain))
-   if ("all" %in% input$industry) {
-      if ("all" %in% input$activity)
-         industry <- unlist(industries)
-      else
-         industry <- unlist(industries[input$activity])
-   }
-   else
-      industry <- input$industry
+   count <<- count+1L
+   showNotification(paste("call 'crossTable' right now:",count),duration=5)
    ret <- crossTable(aoi=aoi
                     ,group=group
-                    ,activity=industry
+                    ,activity=industryCode(industry)
                    # ,activity=activity
                    # ,activity=unlist(exchange$subset)
                     ,season=input$season
@@ -605,10 +555,10 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
      # options(opW)
    }
    else if (input$predefined %in% nameClick) {
-      m <- addFeatures(m,regionSF[[input$region]]
-                      ,label=regionSF[[input$region]][[1]]
+      m <- addFeatures(m,rvRegionSF()[[input$region]]
+                      ,label=rvRegionSF()[[input$region]][[1]]
                       ,color="#092B"
-                      ,layerId=~seq(spatial_count(regionSF[[input$region]]))
+                      ,layerId=~seq(spatial_count(rvRegionSF()[[input$region]]))
                       ,group="Region overlay"
                       )
       m <- addLayersControl(m
@@ -628,127 +578,35 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
       cat("SKIP REGION OVERLAPPING\n")
    ret
 })
-if (T) { ## CFSelection
-   observeEvent(input$onlyCF_row_last_clicked,{
-      sleeping()
-      cat(as.character(Sys.time())
-         ,"synchro CF selection -- from 'onlyCF' to 'industrydata'\n")
-      ind3c <- input$onlyCF_row_last_clicked
-      ind3s <- input$onlyCF_rows_selected
-      clear3 <- is.null(ind3s)
-      if (clear3) {
-         cat("   clear row\n")
-         if (useExchange)
-            exchange$CF <- NULL
-         if (!useExchange) {
-            DT::selectRows(proxyIndustrydata,NULL)
-         }
-      }
-      else {
-         da <- rvActivityStat()
-         cname <- rownames(da)[ind3s]
-         if (!length(cname))
-            cname <- NULL
-         else {
-            cat("   select row",dQuote(cname),"\n")
-            if (useExchange)
-               exchange$CF <- cname
-         }
-         if (!useExchange) {
-            ind2 <- ind3s # match(cname,unlist(industries))
-            DT::selectRows(proxyIndustrydata,ind2)
-         }
-      }
-   })
-   if (F) observe({
-     # prev <- rvSelectCF()
-      if (isFALSE(exchange$domain)) {
-         cat(as.character(Sys.time())
-            ,"synchro CF selection -- from 'cross' to 'industrydata'\n")
-         ind1s <- input$cross_rows_selected
-         clear1 <- is.null(ind1s)
-        # showNotification(paste("observeEvent: input$table1_columns_selected:"
-        #    ,if (clear1) "NULL" else as.character(ind1s)),duration=dur)
-         if (clear1) {
-            cat("   clear row\n")
-           # print(data.frame(prev=ifelse(is.null(prev),"NULL",prev),cname="NA"))
-            if (useExchange)
-               exchange$CF <- NULL
-            if (!useExchange) {
-               DT::selectRows(proxyIndustrydata,NULL)
-            }
-         }
-         else {
-            da <- rvActivityStat()
-            cname <- rownames(da)[ind1s]
-            cat("   select row",dQuote(cname),"\n")
-           # print(data.frame(prev=ifelse(is.null(prev),"NULL",prev),cname=cname))
-            if (useExchange)
-               exchange$CF <- cname
-            if (!useExchange) {
-               b <- rvHumanUseIndustry()
-               if (!is.null(b)) {
-                 # str(b)
-                 # str(rownames(b))
-                 # str(b[[1]])
-                  ind2 <- match(rownames(da)[ind1s],b[[1]]) ## abbr in rownames(b)
-                 # str(ind2)
-                 # showNotification("need to select row refferred to selected industry",duration=3)
-                  DT::selectRows(proxyIndustrydata,ind2)
-               }
-            }
-         }
-      }
-   })
-   observeEvent(input$industrydata_row_last_clicked,{
-      sleeping()
-     # prev <- exchange$CF
-      cat(paste0(as.character(Sys.time())
-                ," synchro CF selection -- from 'industrydata' to '"
-                ,ifelse(isFALSE(exchange$domain),"cross","onlyCF"),"'\n"))
-      ind2c <- input$industrydata_row_last_clicked
-      ind2s <- input$industrydata_rows_selected
-      clear2 <- is.null(ind2s)
-     # showNotification(paste("observeEvent: input$table2_row_last_clicked:"
-     #    ,if (clear2) "NULL" else as.character(ind2s)),duration=3)
-      if (clear2) {
-         cat("   clear row\n")
-         if (useExchange)
-            exchange$CF <- NULL
-         if (!useExchange) {
-            if (isFALSE(exchange$domain))
-               DT::selectRows(proxyCross,NULL)
-            if (isTRUE(exchange$domain))
-               DT::selectRows(proxyOnlyCF,NULL)
-         }
-      }
-      else {
-         b <- rvHumanUseIndustry()
-         cname <- b[[1]][ind2s]
-         cat("   select row",dQuote(cname),"\n")
-         if (useExchange)
-            exchange$CF <- cname
-         if (!useExchange) {
-            da <- rvActivityStat()
-            ind1 <- match(cname,rownames(da)) ## abbr in rownames(b)
-           # str(ind1)
-            if (isFALSE(exchange$domain)) {
-               DT::selectRows(proxyCross,ind1)
-            }
-            if (isTRUE(exchange$domain)) {
-               DT::selectRows(proxyOnlyCF,ind1)
-            }
-         }
-      }
-   })
+if (T) {
+   ##~ observeEvent(input$cross_row_last_clicked,exchange$clicked["crossCF"] <- Sys.time())
+   ##~ observeEvent(input$cross_column_last_clicked,exchange$clicked["crossIndustry"] <- Sys.time())
+   ##~ observeEvent(input$onlyCF_row_last_clicked,exchange$clicked["onlyCF"] <- Sys.time())
+   ##~ observeEvent(input$onlyIndustry_row_last_clicked,exchange$clicked["onlyIndustry"] <- Sys.time())
+   ##~ observeEvent(input$cfdata_row_last_clicked,exchange$clicked["dataIndustry"] <- Sys.time())
+   ##~ observeEvent(input$industrydata_row_last_clicked,exchange$clicked["dataCF"] <- Sys.time())
+   observeEvent(input$cross_row_last_clicked,clicked$crossCF <- Sys.time())
+   observeEvent(input$cross_column_last_clicked,clicked$crossIndustry <- Sys.time())
+   observeEvent(input$onlyCF_row_last_clicked,clicked$onlyCF <- Sys.time())
+   observeEvent(input$onlyIndustry_row_last_clicked,clicked$onlyIndustry <- Sys.time())
+   observeEvent(input$cfdata_row_last_clicked,clicked$dataIndustry <- Sys.time())
+   observeEvent(input$industrydata_row_last_clicked,clicked$dataCF <- Sys.time())
 }
-'rvSelectCF' <- reactive({
+'rvSelectCF_deprecated' <- reactive({
    sleeping()
    cat("rvSelectCF():\n")
    if (useExchange)
       return(exchange$CF)
+   if (length(ind <- input$industrydata_rows_selected)>0) {
+      print("input$industrydata_rows_selected")
+      if (!is.null(da <- rvHumanUseIndustry())) {
+         ret <- da[[1]][ind]
+         print(ret)
+         return(ret)
+      }
+   }
    if (length(ind <- input$cross_rows_selected)) {
-      if (!is.null(da <- rvActivityStat())) {
+      if (!is.null(da <- rvCrossTable())) {
          ret <- rownames(da)[ind]
         # exchange$CF <- ret
          print("input$cross_rows_selected")
@@ -756,196 +614,413 @@ if (T) { ## CFSelection
       }
    }
    if (length(ind <- input$onlyCF_rows_selected)) {
-      if (!is.null(da <- rvActivityStat())) {
-         ret <- rownames(da)[ind]
+      if (!is.null(da <- rvSubsetCF())) {
+         str(da)
+         str(ind)
+         ret <- da[ind]
         # exchange$CF <- ret
          print("input$onlyCF_rows_selected")
+         return(ret)
+      }
+      if ((FALSE)&&(!is.null(da <- rvCrossTable()))) {
+         ret <- rownames(da)[ind]
+        # exchange$CF <- ret
+         print("input$onlyCF_rows_selected (deprecated)")
          return(ret)
       }
    }
   # exchange$CF <- NULL
    NULL
 })
-if (T) { ## industrySelection
-   observeEvent(input$onlyIndustry_row_last_clicked,{
-      sleeping()
-      cat(as.character(Sys.time())
-         ,"synchro industry selection -- from 'onlyIndustry' to 'cfdata'\n")
-      ind3c <- input$onlyIndustry_row_last_clicked
-      ind3s <- input$onlyIndustry_rows_selected
-      clear3 <- is.null(ind3s)
-      if (clear3) {
-         cat("   clear row\n")
-         if (useExchange)
-            exchange$industry <- NULL
-         if (!useExchange) {
-            DT::selectRows(proxyCFdata,NULL)
-         }
-      }
-      else {
-         da <- rvActivityStat()
-         cname <- colnames(da)[ind3s]
-         if (!length(cname))
-            cname <- NULL
-         else {
-            cat("   clear row\n")
-            if (useExchange)
-               exchange$industry <- cname
-         }
-         if (!useExchange) {
-            ind2 <- match(cname,unlist(industries))
-            DT::selectRows(proxyCFdata,ind2)
-         }
-      }
-   })
-   observe({
-      if (isFALSE(exchange$domain)) {
-         sleeping()
-         cat(as.character(Sys.time())
-            ,"synchro industry selection -- from 'cross' to 'cfdata'\n")
-         ind1s <- input$cross_columns_selected
-         clear1 <- is.null(ind1s)
-        # showNotification(paste("observeEvent: input$table1_columns_selected:"
-        #    ,if (clear1) "NULL" else as.character(ind1s)),duration=dur)
-         if (clear1) {
-            if (useExchange)
-               exchange$industry <- NULL
-            cat("   clear row\n")
-            if (!useExchange) {
-               if (!is.null(input$cfdata_rows_selected))
-                  DT::selectRows(proxyCFdata,NULL)
-            }
-         }
-         else {
-            da <- rvActivityStat()
-            cname <- colnames(da)[ind1s]
-            if (!length(cname))
-               cname <- NULL
-            else {
-               cat("   select row\n")
-               if (useExchange)
-                  exchange$industry <- cname
-            }
-            if (!useExchange) {
-               b <- rvHumanUseCF()
-               if (!is.null(b)) {
-                 ##~ # str(b)
-                 ##~ # str(rownames(b))
-                 ##~ # str(b[[1]])
-                  ind2 <- match(colnames(da)[ind1s],b[[1]]) ## abbr in rownames(b)
-                 # str(ind2)
-                 # showNotification("need to select row refferred to selected CF",duration=3)
-                  DT::selectRows(proxyCFdata,ind2)
+'rvSelectCF' <- reactive({
+   sleeping()
+   cat("rvSelectCF():\n")
+   if (useExchange)
+      return(exchange$CF)
+   if (T & !is.null(r <- input$allComments_rows_selected)) {
+      da <- rvAllComments()[r,]
+     # return(da$Industry)
+      return(da$CF)
+   }
+   if (T) {
+     # subsetCF <- rvSubsetCF()
+      ##~ clicked <- exchange$clicked
+      ##~ isCross <- ((clicked["crossCF"]>clicked["onlyCF"])&&
+                  ##~ (clicked["crossCF"]>clicked["dataCF"]))
+      ##~ isData <- ((clicked["dataCF"]>clicked["onlyCF"])&&
+                  ##~ (clicked["dataCF"]>clicked["crossCF"]))
+      ##~ isOnly <- (#(length(indO <- input$onlyCF_rows_selected)>=0)&&
+                  ##~ (clicked["onlyCF"]>clicked["dataCF"])&&
+                  ##~ (clicked["onlyCF"]>clicked["crossCF"]))
+      isCross <- ((clicked$crossCF>clicked$onlyCF)&&
+                  (clicked$crossCF>clicked$dataCF))
+      isData <- ((clicked$dataCF>clicked$onlyCF)&&
+                  (clicked$dataCF>clicked$crossCF))
+      isOnly <- ((clicked$onlyCF>clicked$dataCF)&&
+                  (clicked$onlyCF>clicked$crossCF))
+     # str(as.list(clicked))
+      print(c(isCrossCF=isCross,isDataCF=isData,isOnlyCF=isOnly))
+      if (isCross) {
+         if (length(indC <- input$cross_rows_selected)>0) {
+            if (!is.null(da <- rvCrossTable())) {
+               ret <- rownames(da)[indC]
+               print(data.frame(indCross=indC,ret=ret))
+               indC1 <- match(ret,rvSubsetCF())
+               if (!is.na(indC1)) {
+                  DT::selectRows(proxyIndustrydata,indC1)
+                  DT::selectRows(proxyOnlyCF,indC1)
                }
+              # if (!is.null(da <- rvHumanUseIndustry())) {
+              #    if (!is.null(indC2 <- match(ret,da[[1]]))) {
+              #       DT::selectRows(proxyIndustrydata,indC2)
+              #    }
+              # }
+              # DT::selectRows(proxyOnlyCF,indC)
+               return(ret)
             }
+         }
+         else {
+            DT::selectRows(proxyIndustrydata,NULL)
+            DT::selectRows(proxyOnlyCF,NULL)
+            return(NULL)
+         }
+         showNotification("rvSelectCF: isProxy unhandled",duration=3)
+         return(NULL)
+      }
+      if (isData) {
+         indD <- input$industrydata_rows_selected
+         str(indD)
+         if (length(indD)>0) {
+            print("1121c")
+           # if (!is.null(da <- rvHumanUseIndustry())) {
+           #    print("1121d")
+              # ret <- da[[1]][indD]
+               ret <- rvSubsetCF()[indD]
+               print(data.frame(indData=indD,ret=ret))
+               if (!is.null(da <- rvCrossTable())) {
+                  if (!is.na(indD1 <- match(ret,rownames(da))))
+                 # print(data.frame(indData=indD,ret=ret,indD1=indD1))
+                     DT::selectRows(proxyCross,indD1)
+               }
+               DT::selectRows(proxyOnlyCF,indD)
+               return(ret)
+           # }
+           # else {
+           #    print("1121e")
+           #    showNotification("rvSelectCF: isData table corruption",duration=3)
+           #    return(NULL)
+           # }
+         }
+         else {
+            DT::selectRows(proxyCross,NULL)
+            DT::selectRows(proxyOnlyCF,NULL)
+            return(NULL)
+         }
+         showNotification("rvSelectCF: isData unhandled",duration=3)
+         return(NULL)
+      }
+      if (isOnly) {
+         indO <- input$onlyCF_rows_selected
+         if (length(indO)==1) {
+           # if (!is.null(da <- rvHumanUseIndustry())) {
+           #    str(da)
+              # ret <- da[[1]][indO] # ret <- subsetCF[indO]
+               ret <- rvSubsetCF()[indO]
+               print(data.frame(indOnly=indO,ret=ret))
+               DT::selectRows(proxyIndustrydata,indO)
+           #    print(data.frame(indData=indO,ret=ret))
+               if (!is.null(da <- rvCrossTable()))
+                  if (!is.na(indO1 <- match(ret,rownames(da))))
+                     DT::selectRows(proxyCross,indO1)
+           # }
+            return(ret)
+         }
+         else {
+            if (!length(indO)) {
+               DT::selectRows(proxyIndustrydata,NULL)
+               DT::selectRows(proxyCross,NULL)
+               return(NULL)
+            }
+            return(rvSubsetCF()[indO])
+         }
+         showNotification("rvSelectCF: isData unhandled",duration=3)
+         return(NULL)
+      }
+      showNotification("rvSelectCF: general unhandled",duration=3)
+      return(NULL)
+   }
+   if (length(ind <- input$cross_rows_selected)) {
+      if (!is.null(da <- rvCrossTable())) {
+         ret <- rownames(da)[ind]
+        # exchange$CF <- ret
+         print("input$cross_rows_selected")
+         return(ret)
+      }
+   }
+   if (length(ind <- input$onlyCF_rows_selected)) {
+      if (!is.null(da <- rvSubsetCF())) {
+         str(da)
+         str(ind)
+         ret <- da[ind]
+        # exchange$CF <- ret
+         print("input$onlyCF_rows_selected (domain)")
+         return(ret)
+      }
+   }
+   if (T & length(ind <- input$industrydata_rows_selected)) {
+      print("1110p")
+      if (T) {
+         if (!is.null(da <- rvHumanUseIndustry())) {
+            str(da[[1]])
+            ret <- da[[1]][ind]
+            print(ret)
+            return(ret)
          }
       }
-   })
-   observeEvent(input$cfdata_row_last_clicked,{
-      sleeping()
-      cat(paste0(as.character(Sys.time())
-                ," synchro industry selection -- from 'cfdata' to '"
-                ,ifelse(isFALSE(exchange$domain),"cross","onlyIndustry"),"'\n"))
-      ind2c <- input$cfdata_row_last_clicked
-      ind2s <- input$cfdata_rows_selected
-      clear2 <- is.null(ind2s)
-     # showNotification(paste("observeEvent: input$table2_row_last_clicked:"
-     #    ,if (clear2) "NULL" else as.character(ind2s)),duration=3)
-      if (clear2) {
-         if (useExchange)
-            exchange$industry <- NULL
-         if (isFALSE(exchange$domain))
-            cat("   clear column\n")
-         if (isTRUE(exchange$domain))
-            cat("   clear row\n")
-         if (!useExchange) {
-            if (isFALSE(exchange$domain)) {
-               DT::selectColumns(proxyCross,NULL)
-            }
-            if (isTRUE(exchange$domain)) {
-               DT::selectRows(proxyOnlyIndustry,NULL)
-            }
-         }
+      if (!is.null(da <- rvSubsetCF())) {
+         ret <- da[ind]
+        # exchange$CF <- ret
+         print("input$industrydata_rows_selected (domain)")
+         return(ret)
       }
       else {
-         b <- rvHumanUseCF()
-         cname <- b[[1]][ind2s]
-         if (!length(cname))
-            cname <- NULL
-         else {
-            if (useExchange)
-               exchange$industry <- cname
-         }
-         if (isFALSE(exchange$domain))
-            cat("   select column\n")
-         if (isTRUE(exchange$domain))
-            cat("   select row\n")
-         if (!useExchange) {
-            if (isFALSE(exchange$domain)) {
-               da <- rvActivityStat()
-               ind1 <- match(b[[1]][ind2s],colnames(da)) ## abbr in rownames(b)
-               DT::selectColumns(proxyCross,ind1)
-            }
-            if (isTRUE(exchange$domain)) {
-              # da <- rvActivityStat()
-               cname <- b[[1]][ind2s]
-               ind1 <- match(cname,industryAbbr$industry)
-              # cname <- colnames(da)
-              # cname <- cname[which(!is.na(match(cname,unlist(industries))))]
-              # ind1 <- match(cname,unlist(industries)) ## abbr in rownames(b)
-               DT::selectRows(proxyOnlyIndustry,ind1)
-            }
+         if (!is.null(da <- rvCrossTable())) {
+            ret <- rownames(da)[ind]
+            print("input$industrydata_rows_selected (aoi), row with cf selected")
+            print(ret)
+            return(ret)
          }
       }
-   })
-}
+     # da <- rvHumanUseCF()
+     # str(dimnames(da))
+     # da <- rvHumanUseIndustry()
+     # str(dimnames(da))
+     # da <- rvSubsetCF()
+     # str(da)
+     # str(da[ind])
+      print("1110q")
+   }
+  # exchange$CF <- NULL
+   NULL
+})
+if (T) observe({
+   selected <- length(input$cross_columns_selected)>0
+   if (selected) {
+      if (!exchange$selectedIndustry) {
+         exchange$selectedIndustry <- TRUE
+        # exchange$clicked["crossIndustry"] <- Sys.time()
+         clicked$crossIndustry <- Sys.time()
+      }
+   }
+   else {
+      if (exchange$selectedIndustry) {
+         exchange$selectedIndustry <- FALSE
+        # exchange$clicked["crossIndustry"] <- Sys.time()
+         clicked$crossIndustry <- Sys.time()
+      }
+   }
+})
 'rvSelectIndustry' <- reactive({
    sleeping()
    cat("rvSelectIndustry():\n")
+   if (T & !is.null(r <- input$allComments_rows_selected)) {
+      da <- rvAllComments()[r,]
+      return(da$Industry)
+     # return(da$CF)
+   }
+   if (T) {
+     # str(as.list(clicked))
+      ##~ clicked <- exchange$clicked
+      ##~ isCross <- ((clicked["crossIndustry"]>clicked["onlyIndustry"])&&
+                  ##~ (clicked["crossIndustry"]>clicked["dataIndustry"]))
+      ##~ isData <- ((clicked["dataIndustry"]>clicked["onlyIndustry"])&&
+                  ##~ (clicked["dataIndustry"]>clicked["crossIndustry"]))
+      ##~ isOnly <- (#(length(indO <- input$onlyCF_rows_selected)>=0)&&
+                  ##~ (clicked["onlyIndustry"]>clicked["dataIndustry"])&&
+                  ##~ (clicked["onlyIndustry"]>clicked["crossIndustry"]))
+      isCross <- ((clicked$crossIndustry>clicked$onlyIndustry)&&
+                  (clicked$crossIndustry>clicked$dataIndustry))
+      isData <- ((clicked$dataIndustry>clicked$onlyIndustry)&&
+                  (clicked$dataIndustry>clicked$crossIndustry))
+      isOnly <- ((clicked$onlyIndustry>clicked$dataIndustry)&&
+                  (clicked$onlyIndustry>clicked$crossIndustry))
+      print(c(isCrossI=isCross,isDataI=isData,isOnlyI=isOnly))
+     # subsetIndustry <- rvSubsetIndustry()
+      if (isCross) {
+         if (length(indC <- input$cross_columns_selected)>0) {
+            if (!is.null(da <- rvCrossTable())) {
+               ret <- industryCode(colnames(da)[indC])
+               indC1 <- match(ret,rvSubsetIndustry())
+               print(data.frame(indCross=indC,indC1=indC1,ret=ret))
+               if (is.na(indC1)) {
+                  indC1 <- NULL
+                  ret <- NULL
+               }
+               DT::selectRows(proxyCFdata,indC1)
+               DT::selectRows(proxyOnlyIndustry,indC1)
+               return(ret)
+            }
+         }
+         else {
+            DT::selectRows(proxyCFdata,NULL)
+            DT::selectRows(proxyOnlyIndustry,NULL)
+            return(NULL)
+         }
+         showNotification("rvSelectIndustry: isCross unhandled",duration=3)
+         return(NULL)
+      }
+      if (isData) {
+         indD <- input$cfdata_rows_selected
+         if (length(indD)>0) {
+            str(indD)
+           # if (!is.null(da <- rvHumanUseCF())) {
+           #    print("1121a")
+              # ret <- industryCode(da[[1]][indD])
+               ret <- rvSubsetIndustry()[indD]
+               print(data.frame(indData=indD,ret=ret))
+               if (!is.null(da <- rvCrossTable())) {
+                  if (!is.na(indD1 <- match(ret,colnames(da))))
+                     DT::selectColumns(proxyCross,indD1)
+               }
+               DT::selectRows(proxyOnlyIndustry,indD)
+               return(ret)
+           # }
+           # else {
+           #    print("1121b")
+           #    showNotification("rvSelectIndustry: isData table corruption",duration=3)
+           #    return(NULL)
+           # }
+         }
+         else {
+            DT::selectColumns(proxyCross,NULL)
+            DT::selectRows(proxyCFdata,NULL)
+            return(NULL)
+         }
+         showNotification("rvSelectIndustry: isData unhandled",duration=3)
+         return(NULL)
+      }
+      if (isOnly) {
+         indO <- input$onlyIndustry_rows_selected
+         if (length(indO)==1) {
+           # if (!is.null(da <- rvHumanUseIndustry())) {
+           #    str(da)
+              # ret <- da[[1]][indO] # ret <- subsetCF[indO]
+               ret <- rvSubsetIndustry()[indO]
+               print(data.frame(indOnly=indO,ret=ret))
+               DT::selectRows(proxyCFdata,indO)
+           #    print(data.frame(indData=indO,ret=ret))
+               if (!is.null(da <- rvCrossTable())) {
+                  str(dimnames(da))
+                  print(colnames(da))
+                  str(match(ret,industryCode(colnames(da))))
+                  if (!is.na(indO1 <- match(ret,industryCode(colnames(da))))) {
+                     DT::selectColumns(proxyCross,indO1)
+                  }
+               }
+           # }
+            return(ret)
+         }
+         else {
+            if (!length(indO)) {
+               DT::selectRows(proxyCFdata,NULL)
+               DT::selectColumns(proxyCross,NULL)
+               return(NULL)
+            }
+            return(rvSubsetIndustry()[indO])
+         }
+         showNotification("rvSelectIndustry: isData unhandled",duration=3)
+         return(NULL)
+      }
+      showNotification("rvSelectIndustry: general unhandled",duration=3)
+     # return(NULL)
+   }
+   ret <- NULL
+   if (F) on.exit({
+      print("1101 -- selected industry")
+      exchange$industry <- ret
+      print(ret)
+      print("1101 -- selected industry")
+   })
+  # str(as.list(exchange$clicked))
    if (useExchange)
       return(exchange$industry)
+   if (length(input$cfdata_row_last_clicked)>0) {
+      if ((T)&&(length(ind <- input$cfdata_rows_selected)>0)) {
+         print("input$cfdata_rows_selected")
+         if (T) {
+            if (!is.null(b <- rvSubsetIndustry())) {
+               print("1119c")
+               cname <- b[ind]
+               str(cname)
+               print("1119d")
+               ret <- cname
+               return(ret)
+            }
+         }
+         else if (F) {
+            if (!is.null(da <- rvHumanUseCF())) {
+               ret <- rownames(da)[ind]
+               print(ret)
+               ret <- industryCode(ret)
+               print(ret)
+               return(ret)
+            }
+         }
+      }
+   }
+   ##~ else if (T & length(ind <- input$onlyIndustry_rows_selected)) {
+      ##~ print("input$onlyIndustry_rows_selected")
+      ##~ if (!is.null(b <- rvSubsetIndustry())) {
+         ##~ cname <- b[ind]
+         ##~ ret <- indusrtyCode(cname)
+        ##~ # exchange$industry <- ret
+         ##~ return(ret)
+      ##~ }
+   ##~ }
    if (length(ind <- input$cross_columns_selected)) {
-      if (!is.null(b <- rvActivityStat())) {
-         cname <- colnames(b)[ind]
-         if (cname %in% unlist(industries)) {
+      print("input$cross_columns_selected")
+      if ((FALSE)&&(!is.null(b <- rvSubsetIndustry()))) {
+         print("1110a")
+         print(b)
+         print(ind)
+         cname <- b[ind]
+         print(cname)
+         print("1110b")
+         iname <- industryName(industries)
+         if (cname %in% iname) {
            # proxyCFdata %>% selectRows(NULL)
            # proxyOnlyIndustry %>% selectRows(NULL)
             ret <- cname
            # exchange$industry <- ret
-            print("input$cross_columns_selected")
+            print("input$cross_columns_selected (just proposed)")
             return(ret)
          }
       }
-   }
-   if (length(ind <- input$onlyIndustry_rows_selected)) {
-      if (!is.null(b <- rvActivityStat())) {
-        # print(colnames(b))
-         cname <- colnames(b)
-         cname <- cname[which(!is.na(match(cname,unlist(industries))))]
-        # cname <- cname[cname %in% unlist(industries)]
-         cname <- cname[ind]
-        # cname <- colnames(b)[ind]
-         if (cname %in% unlist(industries)) {
+      if ((TRUE)&&(!is.null(b <- rvCrossTable()))) {
+         cname <- colnames(b)[ind]
+         iname <- industryName(industries)
+         if (cname %in% iname) {
            # proxyCFdata %>% selectRows(NULL)
-           # proxyCross %>% selectColumns(NULL)
-            ret <- cname
+           # proxyOnlyIndustry %>% selectRows(NULL)
+            ret <- industryCode(cname)
            # exchange$industry <- ret
-            print("input$onlyIndustry_rows_selected")
             return(ret)
          }
       }
    }
   # exchange$industry <- NULL
+   print("no industry selection detected")
    NULL
 })
 'rvHumanUseIndustry' <- reactive({
    sleeping()
    cat("rvHumanUseIndustry():\n")
    industry <- rvSelectIndustry()
+   str(industry)
   # industry <- exchange$industry
   # industry <- "Mass tourism"
   # plutil::timeHint(paste("human use:",industry," --- ",exchange$industry))
-   req(industry %in% unlist(industries))
+   req(industry %in% industryCode(industryName(industries)))
    da <- human_use(industry)
    if (any(input$season %in% tail(seasonList,-1))) {
       ind <- which(substr(colnames(da),1,3) %in% substr(input$season,1,3))
@@ -953,7 +1028,7 @@ if (T) { ## industrySelection
          da <- da[,c(1,ind)]
    }
    if (T) {
-      st <- rvActivityStat()
+      st <- rvCrossTable()
       if (!is.null(st))
          da <- da[da$'CF Code' %in% rownames(st),]
    }
@@ -963,6 +1038,7 @@ if (T) { ## industrySelection
    sleeping()
    cat("rvHumanUseCF():\n")
    cf <- rvSelectCF()
+   str(cf)
   # cf <- exchange$cf
   # cf <- "9038"
   # plutil::timeHint(paste("human use:",cf," --- ",exchange$cf))
@@ -974,284 +1050,19 @@ if (T) { ## industrySelection
          da <- da[,c(1,ind)]
    }
    if (T) {
-      st <- rvActivityStat()
+      st <- rvCrossTable()
       if (!is.null(st))
          da <- da[da$'Industry' %in% colnames(st),]
    }
    da
 })
 'rvIndustryGroup' <- reactive({
-   cat("rvIndustryGroup():\n")
+   cat("rvIndustryGroup:\n")
    req(industry <- rvSelectIndustry())
-   str(industry)
-   u <- unlist(industries)
-   a <- sapply(industries,function(a) industry %in% a)
-   str(a)
-   ret <- names(industries)[sapply(industries,function(a) industry %in% a)]
-  # names(industry)
+   industry <- industryCode(industry)
+   ret <- sapply(industries,function(a) industry %in% industryCode(a))
+   ret <- names(ret)[ret]
    ret 
-})
-if (F) { ## proxy select columns/rows NULL
-   observeEvent(input$industrydata_rows_selected,{ ## CF
-      proxyOnlyCF %>% selectRows(NULL)
-      proxyCross %>% selectRows(NULL)
-   })
-   observeEvent(input$onlyCF_rows_selected,{ ## CF
-      proxyIndustrydata %>% selectRows(NULL)
-      proxyCross %>% selectRows(NULL)
-   })
-   observeEvent(input$cross_rows_selected,{ ## CF
-      proxyIndustrydata %>% selectRows(NULL)
-      proxyOnlyCF %>% selectRows(NULL)
-   })
-   observeEvent(input$cfdata_rows_selected,{ ## industry
-      proxyOnlyIndustry %>% selectRows(NULL)
-      proxyCross %>% selectColumns(NULL)
-   })
-   observeEvent(input$onlyIndustry_rows_selected,{ ## industry
-      proxyCFdata %>% selectRows(NULL)
-      proxyCross %>% selectColumns(NULL)
-   })
-   observeEvent(input$cross_columns_selected,{ ## industry
-      proxyCFdata %>% selectRows(NULL)
-      proxyOnlyIndustry %>% selectRows(NULL)
-   })
-}
-if (F) { 
-   observeEvent(input$cross_columns_selected,{
-      ind <- input$cross_columns_selected
-      b <- rvHumanUseCF()
-      da <- rvActivityStat()
-      cname <- colnames(da)[ind]
-     # ind2 <- match(cname)
-      ind2 <- match(cname,industryAbbr$industry)
-      cname <- industryAbbr$abbr[ind2]
-      ind3 <- match(cname,rownames(b))
-     # plutil::timeHint(paste(cname,collapse=" "));Sys.sleep(1)
-     # plutil::timeHint(paste(rownames(b),collapse=" "));Sys.sleep(1)
-     # plutil::timeHint(as.character(ind3));Sys.sleep(1)
-      if (is.integer(ind3)) {
-         selectRows(proxyCFdata,ind3)
-      }
-   })
-   observe({
-      cname <- rvSelectIndustry()
-      ind2 <- match(cname,industryAbbr$industry)
-      cname <- industryAbbr$abbr[ind2]
-      b <- rvHumanUseCF()
-      ind3 <- match(cname,rownames(b))
-      if (is.integer(ind3)) {
-         selectRows(proxyCFdata,ind3)
-      }
-   })
-}
-if (F) observe({
-   indRow <- input$cross_rows_selected
-   indCol <- input$cross_rows_selected
-   indI <- input$industrydata_rows_selected
-   indCF <- input$cfdata_rows_selected
-   if (is.null(indRow)) {
-      showNotification("wonna clear CF-row in Industry-table",duration=2)
-      selectRows(proxyIndustrydata,NULL)
-   }
-   else {
-      selectRows(proxyIndustrydata,indRow)
-   }
-   if (is.null(input$cross_columns_selected)) {
-      showNotification("wonna clear Industry-row in CF-table",duration=2)
-      selectRows(proxyCFdata,NULL)
-   }
-   if (!is.null(indRow)) {
-      indI <- input$industrydata_rows_selected
-      if (is.null(indI)) {
-         if (!is.null(indC <- input$industrydata_row_last_clicked)) {
-           # if (indC!=indI) {
-              # showNotification("'industrydata' row is deselected",duration=2)
-               ##~ if (!is.null(da <- rvHumanUseIndustry())) {
-                  ##~ showNotification("'industrydata' exists",duration=2)
-                  ##~ ind <- match(rvSelectCF(),da[[1]])
-                  ##~ if (is.integer(na.omit(ind)))
-                     ##~ selectRows(proxyIndustrydata,ind)
-               ##~ }
-           # }
-         }
-      }
-   }
-   else {
-     # showNotification("\"crosstable\" row is not selected")
-   }
-   ##~ if (is.null(input$cross_columns_selected)) {
-      ##~ showNotification("clear Industry-row in CF-table",duration=2)
-      ##~ selectRows(proxyOnlyCF,NULL)
-   ##~ }
-   indRow <- input$industrydata_rows_selected
-   indClick <- input$industrydata_row_last_clicked
-   if ((!is.null(indRow))&&(!is.null(indClick))&&(indRow==indClick)) {
-  # if (!is.null(indRow)) {
-      cat("#################\n")
-      str(list(row=indRow))
-      da <- rvHumanUseIndustry()
-      cf <- da[[1]][indRow]
-      str(cf)
-      b <- rvActivityStat()
-      ind <- match(cf,rownames(b))
-      str(ind)
-      if (isFALSE(exchange$domain)) {
-         selectRows(proxyCross,ind)
-      }
-      if (isTRUE(exchange$domain)) {
-         selectRows(proxyOnlyCF,ind)
-        # selectRows(proxyOnlyIndustry,3)
-      }
-      cat("#################\n")
-   }
-   else if (F) {
-      showNotification("'industrydata' is deselected",duration=2)
-      if (isFALSE(exchange$domain)) {
-        # selectRows(proxyCross,NULL)
-      }
-      else if (isTRUE(exchange$domain)) {
-        # selectRows(proxyOnlyCF,NULL)
-      }
-   }
-   indCol <- input$cfdata_rows_selected
-   if (!is.null(indCol)) {
-      cat("%%%%%%%%%%%%%%%%%\n")
-      str(list(col=indCol))
-      da <- rvHumanUseCF()
-     # str(da)
-     # str(rownames(da))
-      industry <- da[[1]][indCol]
-      str(industry)
-     # str(b)
-     # str(colnames(b))
-      if (isFALSE(exchange$domain)) {
-         b <- rvActivityStat()
-         ind <- match(industry,colnames(b))
-         selectColumns(proxyCross,ind)
-      }
-      if (isTRUE(exchange$domain)) {
-         ind <- match(industry,industryAbbr$industry)
-         selectRows(proxyOnlyIndustry,ind)
-      }
-      str(ind)
-      cat("%%%%%%%%%%%%%%%%%\n")
-   }
-   else if (F) {
-      if (!is.null(input$cfdata_rows_selected)) {
-         showNotification("'cfdata' is deselected",duration=2)
-         if (isFALSE(exchange$domain)) {
-            selectColumns(proxyCross,NULL)
-         }
-         else if (isTRUE(exchange$domain)) {
-           # selectRows(proxyOnlyCF,NULL)
-         }
-      }
-   }
-   if (F & isTRUE(exchange$domain)) {
-      selectRows(proxyCross,NULL)
-      selectColumns(proxyCross,NULL)
-   }
-})
-if (F) observeEvent(exchange$domain,{
-   cat("observe exchange$domain:\n")
-   if (isTRUE(exchange$domain)) {
-      selectRows(proxyCross,NULL)
-      selectColumns(proxyCross,NULL)
-   }
-   if (isFALSE(exchange$domain)) {
-      selectRows(proxyOnlyCF,NULL)
-      selectRows(proxyOnlyIndustry,NULL)
-   }
-})
-if (F) observe({
-   if (is.null(input$industrydata_rows_selected)) { ## deselect CF
-      if (!is.null(input$industrydata_row_last_clicked)) {
-        # cat("$$$$$$$$$$$$$$$\n")
-        # if (isFALSE(exchange$domain))
-        #    selectRows(proxyCross,NULL)
-        # cat("$$$$$$$$$$$$$$$\n")
-      }
-   }
-   if (is.null(input$cfdata_rows_selected)) { ## deselect Industry
-     # if (isFALSE(exchange$domain))
-     #    selectColumns(proxyCross,NULL)
-   }
-   if (!is.null(indRow <- input$cross_rows_selected)) {
-      if (!is.null(indCol <- input$cross_columns_selected)) {
-        # showNotification("select cfdata after cross row selection")
-        # selectColumns(proxyIndustrydata,2)
-        # selectColumns(proxyCFdata,3)
-      }
-   }
-
-})
-if (F) observeEvent(input$cross_columns_selected,{
-   showNotification("initial selection in 'industrydata'")
-   indC <- input$cross_columns_selected
-   indR <- input$cfdata_rows_selected
-   if (is.null(indR)) {
-      showNotification("select industry 2")
-      DT::selectRows(proxyCFdata,2L)
-      DT::selectRows(proxyIndustrydata,4L)
-   }
-   indI <- input$industrydata_rows_selected
-   if (is.null(indI)) {
-      showNotification("select CF 3")
-      DT::selectRows(proxyIndustrydata,3L)
-      DT::selectRows(proxyCFdata,6L)
-   }
-})
-# if (T & useExchange) observeEvent(exchange$CF,{
-if (T & useExchange)  observe({
-   sleeping()
-   cf <- exchange$CF
-   cat(as.character(Sys.time()),"observe 'exchange$CF':"
-      ,ifelse(is.null(cf),"NULL",cf),"\n")
-   if (!is.null(cf)) {
-      da <- rvActivityStat()
-      if (!is.null(da)) {
-         ind <- match(cf,rownames(da))
-         cat("   select row in 'cross'",cf,"\n")
-         selectRows(proxyCross,ind)
-      }
-      b <- rvHumanUseIndustry()
-      if (!is.null(b)) {
-         ind <- match(cf,b[[1]])
-         selectRows(proxyIndustrydata,ind)
-      }
-   }
-   else {
-      cat("   clear row in 'cross' and/or 'industrydata'\n")
-      if (!is.null(input$cross_rows_selected))
-         selectRows(proxyCross,NULL)
-      if (!is.null(input$industrydata_rows_selected))
-         selectRows(proxyIndustrydata,NULL)
-   }
-})
-if (T & useExchange)  observe({
-   sleeping()
-   industry <- exchange$industry
-   cat(as.character(Sys.time()),"observe 'exchange$industry':"
-      ,ifelse(is.null(industry),"NULL",industryCode(industry)),"\n")
-   if (!is.null(industry)) {
-      da <- rvActivityStat()
-      if (!is.null(da)) {
-         ind <- match(industry,colnames(da))
-         selectColumns(proxyCross,ind)
-      }
-      b <- rvHumanUseCF()
-      if (!is.null(b)) {
-         ind <- match(industry,b[[1]])
-         selectRows(proxyCFdata,ind)
-      }
-   }
-   else {
-      if (!is.null(input$cross_columns_selected))
-         selectColumns(proxyCross,NULL)
-      if (!is.null(input$cfdata_rows_selected))
-         selectRows(proxyCFdata,NULL)
-   }
 })
 if (F) observe({ ## clear chekbox not to show map on region Desc
    if (is.null(rvAOI()))
@@ -1298,7 +1109,7 @@ if (F) observeEvent(input$regionAction,{
 'rvRegionMetrics' <- reactive({
    sleeping()
    cat("rvRegionMetrics:\n")
-   result <- regionStats(aoi=rvAOI(),ctable=rvActivityStat(),isPA=input$actionEPA
+   result <- regionStats(aoi=rvAOI(),ctable=rvCrossTable(),isPA=input$actionEPA
                         ,raw=TRUE)
    result
 })
@@ -1310,7 +1121,7 @@ if (T) observe({ ## update 'input$industry'
    choice <- input$activity
    print(choice)
    if ((length(choice)==1)&&(choice==nameAllHuman)) {
-      choice2 <- c('All activities'="all",'Do not show'="none",industries)[-2]
+      choice2 <- c('All activities'="all",'Do not show'="none",industryCodeName(industries))[-2]
       select2 <- choice2[1]
    }
    else if ((F & staffOnly)&&(all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
@@ -1322,6 +1133,7 @@ if (T) observe({ ## update 'input$industry'
    else {
       choice2 <- choice[choice %in% names(industries)]
       choice2 <- c('All activities'="all",'Do not show'="none",industries[choice2])[-2]
+      choice2 <- industryCodeName(choice2)
       select2 <- choice2[1]
    }
   # exchange$conflict <- NULL
@@ -1333,6 +1145,25 @@ if (T) observe({ ## update 'input$industry'
    updateCheckboxInput(session,"actionNAO",value=FALSE)
    updateCheckboxInput(session,"actionHU",value=FALSE)
    updateCheckboxInput(session,"actionCAP",value=FALSE)
+})
+if (F) observe({ ## update 'input$conserve'
+   sleeping()
+   cat("observe 'input$group3' + update 'input$conserve'\n")
+   choice <- input$group3
+   print(choice)
+   if ((length(choice)==1)&&(choice==nameAllHuman)) {
+      choice2 <- c('All conservation features'="all",'Do not show'="none",industries)[-2]
+      select2 <- choice2[1]
+   }
+   else {
+      choice2 <- choice[choice %in% names(industries)]
+      choice2 <- c('All conservation features'="all",'Do not show'="none",industries[choice2])[-2]
+      select2 <- choice2[1]
+   }
+  # exchange$conflict <- NULL
+  # exchange$subset <- tail(choice2,-1)
+  # print(c(subset=exchange$subset))
+   updateSelectInput(session,"industry",choices=choice2,selected=select2)
 })
 if (T) observeEvent(input$industry, { ## update 'input$actionNAC'
    sleeping()
@@ -1366,9 +1197,9 @@ if (T) observe({ ## update 'input$economy'
    choice <- choiceMap
    if ("all" %in% industry) {
       if (allActivity %in% input$activity)
-         industry2 <- unlist(industries)
+         industry2 <- industryName(industries)
       else
-         industry2 <- unlist(industries[input$activity])
+         industry2 <- industryName(industries[input$activity])
    }
    else
       industry2 <- industry
@@ -1418,9 +1249,9 @@ if (T) observe({ ## update 'input$economy'
       if ("cap" %in% choice) {
          if ("all" %in% industry) {
             if (allActivity %in% input$activity)
-               industry2 <- unlist(industries)
+               industry2 <- industryName(industries)
             else
-               industry2 <- unlist(industries[input$activity])
+               industry2 <- industryName(industries[input$activity])
          }
          else
             industry2 <- industry
@@ -1435,7 +1266,7 @@ if (T) observe({ ## update 'input$economy'
          }
       }
    }
-  # exchange$conflict <- list(industry=input$industry,group=input$group
+  # exchange$conflict <- list(industry=input$industry,group=input$group3
   #                          ,season=input$season,economy=input$economy)
    updateSelectInput(session,"economy",choices=choice,selected=choice[1])
 })
@@ -1454,7 +1285,7 @@ if (T) observeEvent(input$industry,{ ## update 'input$industry'
       else {
          if (anyNA(ind <- match(event,unlist(industries)))) {
             if (length(ind2 <- which(!is.na(ind)))) {
-               choice <- event[ind2]
+               choice <- industryCodeName(event[ind2])
             }
          }
       }
@@ -1516,21 +1347,146 @@ if (T) observeEvent(input$activity,{ ## update 'input$activity'
       exchange$conflict <- NULL
    }
 })
-if (T) observeEvent(input$group,{ ## update 'input$group'
+if (F) observe({ ## update 'input$group3'
    sleeping()
-   cat("observeEvent 'input$group':\n")
-   if (is.null(input$group)) {
-      updateSelectInput(session,"group",selected=nameAllCF)
+   cat("observe 'input$group3':\n")
+   grList <- c(nameAllCF['3']
+              ,unique(taxonCF$group3[taxonCF$CF_code %in% unique(concern$CF_code)]))
+   updateSelectInput(session,"group3",selected=input$group3,choices=grList)
+})
+if (T) observeEvent(input$group3,{ ## update 'input$group3'
+   sleeping()
+   cat("observeEvent 'input$group3':\n")
+   grList3 <- c(nameAllCF['3']
+               ,unique(taxonCF$group3[taxonCF$CF_code %in% unique(concern$CF_code)]))
+   if (is.null(input$group3)) {
+      updateSelectInput(session,"group3",selected=nameAllCF['3'])#,choices=grList)
       exchange$conflict <- NULL
    }
    else {
-      if ((length(input$group)>1)&&(tail(input$group,1)==nameAllCF)) {
-         updateSelectInput(session,"group",selected=nameAllCF)
+      if ((length(input$group3)>1)&&(tail(input$group3,1)==nameAllCF['3'])) {
+         updateSelectInput(session,"group3",selected=nameAllCF['3'])#,choices=grList)
       }
       else {
-         if (anyNA(ind <- match(input$group,tail(unname(groupList),-1)))) {
+         if (anyNA(ind <- match(input$group3,tail(unname(grList3),-1)))) {
             if (length(ind2 <- which(!is.na(ind)))) {
-               updateSelectInput(session,"group",selected=input$group[ind2])
+               updateSelectInput(session,"group3",selected=input$group3[ind2]
+                               # ,choices=grList
+                                )
+               exchange$conflict <- NULL
+            }
+         }
+      }
+   }
+  # s2name <- ifelse(input$group3==nameAllCF['3'],nameAllCF['2'],paste("All",sQuote(input$group3)))
+   gr2list <- c(unname(nameAllCF['2'])
+               ,unique(taxonCF$group2[taxonCF$CF_code %in% groupCF(input$group3)]))
+   if (length(gr2list)==2)
+      updateSelectInput(session,"group2",selected=gr2list[2],choices=gr2list[2])
+   else
+      updateSelectInput(session,"group2",selected=nameAllCF['2'],choices=gr2list)
+   gr1list <- c(unname(nameAllCF['1'])
+               ,unique(taxonCF$group1[taxonCF$CF_code %in% groupCF(input$group3)]))
+   if (length(gr1list)==2)
+      updateSelectInput(session,"group1",selected=gr1list[2],choices=gr1list[2])
+   else
+      updateSelectInput(session,"group1",selected=nameAllCF['1'],choices=gr1list)
+   gr0list <- c(unname(nameAllCF['0'])
+               ,unique(taxonCF$group0[taxonCF$CF_code %in% groupCF(input$group3)]))
+   if (length(gr0list)==2)
+      updateSelectInput(session,"group0",selected=gr0list[2],choices=gr0list[2])
+   else
+      updateSelectInput(session,"group0",selected=nameAllCF['0'],choices=gr0list)
+})
+if (T) observeEvent(input$group2,{ ## update 'input$group2'
+   sleeping()
+   cat("observeEvent 'input$group2':\n")
+   grList2 <- c(unname(nameAllCF['2'])
+              ,unique(taxonCF$group2[taxonCF$CF_code %in% unique(concern$CF_code)]))
+   if (is.null(input$group2)) {
+      updateSelectInput(session,"group2",selected=nameAllCF['2'])#,choices=grList)
+      exchange$conflict <- NULL
+   }
+   else {
+      if ((length(input$group2)>1)&&(tail(input$group2,1)==nameAllCF['2'])) {
+         updateSelectInput(session,"group2",selected=nameAllCF['2'])#,choices=grList)
+      }
+      else {
+         if (anyNA(ind <- match(input$group2,tail(unname(grList2),-1)))) {
+            if (length(ind2 <- which(!is.na(ind)))) {
+               updateSelectInput(session,"group2",selected=input$group2[ind2]
+                               # ,choices=grList
+                                )
+               exchange$conflict <- NULL
+            }
+         }
+      }
+   }
+   gr2list <- groupCF(c(input$group3,input$group2))
+   gr1list <- c(unname(nameAllCF['1'])
+               ,unique(taxonCF$group1[taxonCF$CF_code %in% gr2list]))
+   if (length(gr1list)==2)
+      updateSelectInput(session,"group1",selected=gr1list[2],choices=gr1list[2])
+   else
+      updateSelectInput(session,"group1",selected=nameAllCF['1'],choices=gr1list)
+   gr0list <- c(unname(nameAllCF['0'])
+               ,unique(taxonCF$group0[taxonCF$CF_code %in% gr2list]))
+   if (length(gr0list)==2)
+      updateSelectInput(session,"group0",selected=gr0list[2],choices=gr0list[2])
+   else
+      updateSelectInput(session,"group0",selected=nameAllCF['0'],choices=gr0list)
+})
+if (T) observeEvent(input$group1,{ ## update 'input$group1'
+   sleeping()
+   cat("observeEvent 'input$group1':\n")
+   grList1 <- c(nameAllCF['1']
+              ,unique(taxonCF$group1[taxonCF$CF_code %in% unique(concern$CF_code)]))
+   if (is.null(input$group1)) {
+      updateSelectInput(session,"group1",selected=nameAllCF['1'])#,choices=grList)
+      exchange$conflict <- NULL
+   }
+   else {
+      if ((length(input$group1)>1)&&(tail(input$group1,1)==nameAllCF['1'])) {
+         updateSelectInput(session,"group1",selected=nameAllCF['1'])#,choices=grList)
+      }
+      else {
+         if (anyNA(ind <- match(input$group1,tail(unname(grList1),-1)))) {
+            if (length(ind2 <- which(!is.na(ind)))) {
+               updateSelectInput(session,"group1",selected=input$group1[ind2]
+                               # ,choices=grList
+                                )
+               exchange$conflict <- NULL
+            }
+         }
+      }
+   }
+   gr1list <- groupCF(c(input$group3,input$group2,input$group1))
+   gr0list <- c(unname(nameAllCF['0'])
+               ,unique(taxonCF$group0[taxonCF$CF_code %in% gr1list]))
+   if (length(gr0list)==2)
+      updateSelectInput(session,"group0",selected=gr0list[2],choices=gr0list[2])
+   else
+      updateSelectInput(session,"group0",selected=nameAllCF['0'],choices=gr0list)
+})
+if (T) observeEvent(input$group0,{ ## update 'input$group0'
+   sleeping()
+   cat("observeEvent 'input$group0':\n")
+   grList0 <- c(nameAllCF['0']
+              ,unique(taxonCF$group0[taxonCF$CF_code %in% unique(concern$CF_code)]))
+   if (is.null(input$group1)) {
+      updateSelectInput(session,"group0",selected=nameAllCF['0'])#,choices=grList)
+      exchange$conflict <- NULL
+   }
+   else {
+      if ((length(input$group0)>1)&&(tail(input$group0,1)==nameAllCF['0'])) {
+         updateSelectInput(session,"group0",selected=nameAllCF['0'])#,choices=grList)
+      }
+      else {
+         if (anyNA(ind <- match(input$group0,tail(unname(grList0),-1)))) {
+            if (length(ind2 <- which(!is.na(ind)))) {
+               updateSelectInput(session,"group0",selected=input$group0[ind2]
+                               # ,choices=grList
+                                )
                exchange$conflict <- NULL
             }
          }
@@ -1564,13 +1520,13 @@ if (T) observeEvent(input$season,{ ## update 'input$season'
    ret
    
 })
-if (F) observe({
+if (F) observe({ ## exchange$initEPA
   # req(length(input$actionEPA))
    if ((!exchange$initEPA)&&(isTRUE(input$actionEPA)))
       exchange$initEPA <- TRUE
 })
 # if (T) observeEvent(rvAOI(),{ ## -- this ignored when all deselected
-if (T) observe({
+if (T) observe({ ## regionAddAOI() and fitBounds()
    sleeping()
    isAOI <- !is.null(aoi <- rvAOI())
   # isEPA <- rvInitEPA()
@@ -1672,7 +1628,7 @@ if (T) observe({
                      ,options=list(minZoom=2)
                      )
 })
-if (F) observe({
+if (F) observe({ ## fitBounds()
    sleeping()
    cat("observe for fitBounds():\n")
 # observeEvent(input$regionLeaflet_shape_click,{
@@ -1739,18 +1695,17 @@ if (F) observe({
                      ,options=list(minZoom=2)
                      )
 })
-# eventReactive(input$actionRegion,{
 'rvMetricsMap' <- reactive({
    sleeping()
    cat("rvMetricsMap:\n")
-   ctable <- rvActivityStat()
+   ctable <- rvCrossTable()
    metricsMap(ctable)
 })
 'rvConcern' <- reactive({
    sleeping()
    cat("rvConcern:\n")
    d <- concernSubset(concern
-                     ,group=input$group
+                     ,group=input$group3
                      ,activity=input$activity
                      ,season=season$activity
                      )
@@ -1759,7 +1714,13 @@ if (F) observe({
 'rvIceConcCover' <- reactive({
    sleeping()
    cat("rvIceConcCover:\n")
-   iceConcCover(CF=rvSelectCF(),industry=rvSelectIndustry())
+  # req(isTRUE(input$iceConcDetails))
+   showNotification(id="iceConcCover",closeButton=FALSE,duration=120
+                   ,"Preparing data for ice concentration stats. Pleas wait for rendering."
+                   ,type="warning")
+   ret <- iceConcCover(CF=rvSelectCF(),industry=rvSelectIndustry())
+   removeNotification(id="iceConcCover")
+   ret
 })
 if (F) observe({
   # isolate(rvAOI())
@@ -1808,7 +1769,7 @@ if (T) observeEvent(input$actionHU,{
    cat("initialize HU map...\n")
    indexMap(proxyRegion,"humanuse")
 })
-if (F) observe({
+if (F) observe({ ## addLayersControl(proxyRegion)
    sleeping()
    cat("observe for addLayersControl():\n")
   # showNotification("update controls",duration=3)
@@ -1858,15 +1819,13 @@ observeEvent(input$relative,{
    exchange$config$relative <- input$relative
    config_write(exchange$config)
 })
-if (FALSE) {
-   observeEvent(input$sleepVerbose,{
-      sleeping()
-      cat("observeEvent 'input$sleepVerbose'\n")
-     # config <- config_read()
-      exchange$config$sleepVerbose <- input$sleepVerbose
-      config_write(exchange$config)
-   })
-}
+if (F) observeEvent(input$sleepVerbose,{
+   sleeping()
+   cat("observeEvent 'input$sleepVerbose'\n")
+  # config <- config_read()
+   exchange$config$sleepVerbose <- input$sleepVerbose
+   config_write(exchange$config)
+})
 observeEvent(input$sleepValue,{
    sleeping()
    cat("observeEvent 'input$sleepValue'\n")
@@ -1874,28 +1833,14 @@ observeEvent(input$sleepValue,{
    exchange$config$sleepValue <- input$sleepValue
    config_write(exchange$config)
 }) 
-observeEvent(input$ncolor,{
-   sleeping()
-   cat("observeEvent 'input$ncolor'\n")
-  # config <- config_read()
-   exchange$config$ncolor <- input$ncolor
-   config_write(exchange$config)
-})
-observeEvent(input$levelNAC,{
-   sleeping()
-   cat("observeEvent 'input$levelNAC'\n")
-  # config <- config_read()
-   exchange$config$quantile <- input$levelNAC
-   config_write(exchange$config)
-})
 'rvCommentTable' <- reactive({
    sleeping()
-   cat("'rvCommentTable()'\n")
+   cat("rvCommentTable\n")
    if (comment_exists()) {
       da <- comment_read()
    }
    else
-      da <- NULL
+      da <- data.frame()
    req(cf <- CFCode(rvSelectCF()))
    req(industry <- industryCode(rvSelectIndustry()))
    if (input$submit) {
@@ -1904,14 +1849,14 @@ observeEvent(input$levelNAC,{
          req(!is.null(opinion <- input$opinion))
          da2 <- data.frame(CF=cf,Industry=industry
                           ,Time=format(Sys.time(),"%Y-%m-%d %H:%M")
-                          ,Author=if (is.null(input$author)) "" else input$author
+                          ,Author=if (isTRUE(nchar(input$author)>0)) input$author else rvUserName()
                           ,Comment=opinion
                           )
          if (nrow(da2)) {
             da <- rbind(da,da2)
             da <- unique(da)
             da <- da[nchar(da$Comment)>0,]
-            if (nrow(da)>0)
+            if (length(da)>0)
                comment_write(da)
          }
       })
@@ -1923,18 +1868,20 @@ observeEvent(input$levelNAC,{
    da <- da[order(da$Time,decreasing=TRUE),]
    da
 })
+'rvAllComments' <- reactive({
+   sleeping()
+   cat("rvAllComments:\n")
+   req(comment_exists())
+   da <- comment_read()
+   req(nrow(da)>0)
+   da
+})
 if (T) observeEvent(input$submit,{
    sleeping()
    cat("observe 'input$submit'\n")
    req(!is.null(opinion <- input$opinion))
    updateTextAreaInput(session,"opinion",value="")
 })
-if (staffOnly) {
-   output$rebuildNAO <- reactive({
-      isTRUE(exchange$rebuildNAO)
-   })
-   outputOptions(output,"rebuildNAO",suspendWhenHidden=FALSE)
-}
 if (T) observeEvent(input$rebuildNAC,{ ## eventReactive actionlink
    sleeping()
    cat("observe 'input$rebuildNAC'\n")
@@ -1955,3 +1902,248 @@ if (F) observeEvent(input$actionNAC,{
 'rvRegion' <- reactive({
    exchange$region
 })
+observeEvent(input$reset,{
+   updateTextInput(session,"pwd",value="")
+  # ind <- match(names(re))
+  # updateTextInput(session,"customAOI",value=NULL) ## HOW TO update file input?
+})
+'rvPassword' <- reactive(digest::digest(input$pwd,"crc32"))
+'rvAdmin' <- reactive(T & rvPassword()==adminPWD)
+'rvUser' <- reactive(exchange$config$user)
+'rvPinEntered' <- reactive({
+   cat("rvPinEntered:\n")
+   if (rvAdmin())
+      return(0L)
+   if (F & staffOnly)
+      return(1L)
+   if (is.null(input$pwd))
+      return(NULL)
+   if (!nchar(input$pwd))
+      return(NULL)
+   user <- rvUser()
+   if (!length(user))
+      ind <- NA
+   else {
+      lapply(user,\(u) {str(u)})
+      lapply(user,\(u) u$name)
+      ind <- match(input$pwd,sapply(sapply(user,\(u) u$name),getPIN))
+      if ((length(ind)==1)&&(!is.na(ind)))
+         return(ind)
+   }
+   if (nchar(input$pwd)>=4)
+      ind <- -9L
+   if (is.na(ind))
+      return(NULL)
+   ind
+})
+'rvAuthorized' <- reactive({
+   cat("rvAuthorized:\n")
+   req(ind <- rvPinEntered())
+   req(ind>=0)
+   ind
+})
+'rvUserName' <- reactive({
+   cat("rvUserName:\n")
+   ind <- rvPinEntered()
+   if (!length(ind))
+      ret <- ""
+   else if (ind>0) {
+      ret <- rvUser()
+      ret <- ret[[ind]]$name 
+   }
+   else if (ind==0)
+      ret <- "Administrator"
+   else
+      ret <- ""
+   ret
+})
+'rvUserInd' <- reactive({
+   req(user <- rvUser())
+   ind <- match(input$userName,sapply(user,\(u) u$name))
+   req(!is.na(ind))
+   user[[ind]]
+})
+observeEvent(input$userForgot,{
+  # ind <- rvPassword()
+   showNotification(getPIN(input$userName),duration=3)
+})
+observeEvent(input$userRemove,{
+   cat("observeEvent 'input$userRemove'\n")
+   req(nchar(input$userName)>0)
+   user <- exchange$config$user
+   ind <- match(input$userName,sapply(user,\(u) u$name))
+   str(ind)
+   req(!is.na(ind))
+   user <- user[-ind]
+   exchange$config$user <- user
+   config_write(exchange$config)
+   showNotification(paste(dQuote(input$userName),"is removed"),duration=3)
+   updateSelectInput(session,"userName",selected="")
+})
+observeEvent(input$userAdd,{
+   req(nchar(input$userAdd)>0)
+   cat("observeEvent 'input$userAdd'\n")
+   newUser <- list(name=input$userNew
+                  ,level=0L
+                  ,ncolor=exchange$config$ncolor
+                  ,quantile=exchange$config$quantile
+                  )
+   user <- exchange$config$user
+   if (is.null(user))
+      user <- list(newUser)
+   else
+      user <- c(user,list(newUser))
+   user <- user[sapply(user,\(u) nchar(u$name)>0)]
+  # user <- user[!duplicated(user$name),]
+   exchange$config$user <- user
+   config_write(exchange$config)
+   showNotification(paste(dQuote(input$userNew),"is added"),duration=3)
+   updateTextInput(session,"userNew",value="")
+})
+observe({ ## update 'session$userName'
+   cat("observeEvent 'rvUserName'\n")
+   req(rvAdmin())
+   userName <- rvUser()
+   userName <- sapply(userName,\(u) u$name)
+  # userName <- rvUser()$name
+  # ind <- match(input$userName,userName)
+  # if (!is.na(ind))
+  #    selected <- 
+   updateSelectInput(session,"userName",choices=userName,selected=input$userName)
+})
+observeEvent(input$userName,{
+   cat("observeEvent 'input$userName' --> update user$level\n")
+   req(nchar(input$userName)>0)
+   user <- exchange$config$user
+   ind <- match(input$userName,sapply(user,\(u) u$name))
+   req(!is.na(ind))
+   updateSelectInput(session,"userLevel",selected=user[[ind]]$level)
+})
+observeEvent(input$userLevel,{
+   cat("observeEvent 'input$userLevel'\n")
+  # req(nchar(input$userName)>0)
+  # user <- exchange$config$user
+   req(rvAdmin())
+   user <- rvUser()
+  # ind <- rvAuthorized()
+   ind <- match(input$userName,sapply(user,\(u) u$name))
+   level <- user[[ind]]$level
+   req(level!=input$userLevel)
+   exchange$config$user[[ind]]$level <- input$userLevel
+   showNotification(paste(dQuote(input$userName),"user level is updated"),duration=3)
+   config_write(exchange$config)
+})
+observeEvent(input$ncolor,{
+   sleeping()
+   cat("observeEvent 'input$ncolor'\n")
+  # config <- config_read()
+   if (isTRUE((ind <- rvAuthorized())>0)) {
+      print("   user")
+      exchange$config$user[[ind]]$ncolor <- input$ncolor
+   }
+   else {
+      print("   admin")
+      exchange$config$ncolor <- input$ncolor
+   }
+   config_write(exchange$config)
+})
+observeEvent(input$levelNAC,{
+   sleeping()
+   cat("observeEvent 'input$levelNAC (quantile)'\n")
+  # config <- config_read()
+   if (isTRUE((ind <- rvAuthorized())>0)) {
+      print("   user")
+      exchange$config$user[[ind]]$quantile <- input$levelNAC
+   }
+   else {
+      print("   admin")
+      exchange$config$quantile <- input$levelNAC
+   }
+   config_write(exchange$config)
+})
+if (T) observe({ ## # observeEvent(rvAuthorized,{
+   cat("update user settings:\n")
+   req(ind <- rvAuthorized())
+   user <- rvUser()
+   if (ind>0) {
+      updateSelectInput(session,"ncolor",selected=user[[ind]]$ncolor)
+      updateSelectInput(session,"levelNAC",selected=user[[ind]]$quantile)
+   }
+   else if (ind==0) {## admin
+      ind2 <- match(input$userName,user$name)
+      if ((FALSE)&&(length(ind2))&&(!is.na(ind2))) {
+         updateSelectInput(session,"ncolor",selected=user$ncolor[ind2])
+      }
+      else {
+         updateSelectInput(session,"ncolor",selected=exchange$config$ncolor)
+         updateSelectInput(session,"levelNAC",selected=exchange$config$quantile)
+      }
+   }
+})
+'rvIsComment' <- reactive({
+   exchange$config$comment
+})
+'rvUserInitials' <- reactive({
+   ind <- rvAuthorized()
+   if (!length(ind))
+      ret <- ""
+   else if (ind==0)
+      ret <- "Admin"
+   else if (ind>0)
+      ret <- gsub("(\\w)(\\w*)","\\U\\1.",rvUser()[[ind]]$name,perl=TRUE)
+   else
+      ret <- ""
+   ret
+})
+'rvRegionSF' <- reactive({
+   cat("rvRegionSF:\n")
+   if (is.null(input$customAOI))
+      return(regionSF)
+   fname <- input$customAOI$datapath
+   session_grid(pu)
+   reg <- spatial_read(fname)
+   if (!length(spatial_fields(reg))) {
+      spatial_data(reg) <- data.frame(region="User defined")
+   }
+   else {
+      if (length(ind <- which(sapply(as.list(spatial_data(reg)),class) %in% "character"))) {
+         reg <- reg[spatial_fields(reg)[ind[1]]]
+      }
+      else {
+         reg <- reg[spatial_fields(reg)[1]]
+         if (length(ind <- grep("^PAC",colnames(reg)))) {
+            reg[[ind]] <- paste0("PAC ",reg[[ind]])
+         }
+      }
+      spatial_fields(reg) <- "region"
+      if (!is.character(reg$region))
+         reg$region <- as.character(reg$region)
+   }
+   reg <- reg[!is.na(reg$region),]
+   regionSF <- c(regionSF,list('<Custom AOI>'=spatial_transform(reg,4326)))
+   if (length(ind <- which(is.na(match(names(regionSF),names(regionU)))))>0) {
+      session_grid(blank)
+      for (i in ind) {
+         regU <- list(ursa:::.fasterize(regionSF[[i]]))
+         names(regU) <- names(regionSF)[i]
+         regionU <- c(regionU,regU)
+      }
+   }
+   regionSF
+})
+'rvRegionU' <- reactive({
+   cat("rvRegionU:")
+   regionSF <- rvRegionSF()
+   if (!length(ind <- which(is.na(match(names(regionSF),names(regionU))))))
+      return(regionU)
+   session_grid(blank)
+   for (i in ind) {
+      regU <- list(ursa:::.fasterize(regionSF[[i]]))
+      names(regU) <- names(regionSF)[i]
+      regionU <- c(regionU,regU)
+   }
+   regionU
+})
+'rvReviewComments' <- function() {
+   isTRUE(!is.null(input$allComments_rows_selected))
+}

@@ -3,10 +3,10 @@ if (ursa:::.argv0name()=="global")
 invisible(Sys.setlocale("LC_TIME","C"))
 root <- here::here()
 staffOnly <- T & nchar(Sys.getenv("MSOFFICE"))>0
+invisible(c("quickload","requests") |> lapply(\(x) if (!dir.exists(x)) dir.create(x)))
 sessionFile <- "quickload/session.Rdata"
 vulnerFile <- paste0("quickload/vulner",seq(4),".rds")
 rdstoken <- file.path(root,"quickload/dropbox-token.rds")
-
 iceCover <- if (file.exists(iceCoverFile <- file.path(root 
                            ,"quickload/iceCover.rds"))) readRDS(iceCoverFile) else NULL
 useNACR <- FALSE
@@ -116,19 +116,12 @@ kwdGreen <- c("Compatible","Compatible/not applicable")[2]
 kwdGray <- "Not applicable"
 allActivity <- "All groups"
 noneActivity <- "No human use"
-nameAllCF <- "All conservation features"
-nameAllSeason <- c("Annual","Annual maximum")[1]
-groupList <- c('\\d'=nameAllCF
-              ,'1'="Walrus"
-              ,'2'="Pinnipeds"
-             # ,'3'="Sea ice"
-              ,'4'="Fishes"
-              ,'5'="Cetaceans"
-              ,'6'="Birds"
-              ,'7'="Benthos"
-              ,'8'="Coastal"
-              ,'9'="Polar bears"
+nameAllCF <- c('3'="All conservation groups"
+              ,'2'="All conservation species"
+              ,'1'="All conservation parameters"
+              ,'0'="All conservation features"
               )
+nameAllSeason <- c("Annual","Annual maximum")[1]
 ##~ kwdRed <- "'2'"
 ##~ kwdYellow <- "'1'"
 ##~ kwdGreen <- "'0'"
@@ -263,6 +256,8 @@ industryAbbr <- read.csv(file.path(root,"requisite/industry_conditions.csv"))
 industryAbbr <- industryAbbr[order(industryAbbr$abbr),]
 rownames(industryAbbr) <- NULL
 industries <- by(industryAbbr$industry,industryAbbr$activity,function(x) x)
+if (T)
+   industries <- lapply(industries,\(x) paste0(industryCode(x),": ",x))
 iname <- names(industries)
 attributes(industries) <- NULL
 names(industries) <- iname
@@ -322,14 +317,23 @@ if (F & !quickStart) { ## vulner is deprecated
 }
 #scenarioCF <- read.csv(dir(path="requisite",pattern="scenario.*\\.csv$"
 #                          ,ignore.case=TRUE,full.names=TRUE),check.names=FALSE)
+taxonCF <- readxl::read_excel(dir(path=file.path(root,"requisite")
+                                    ,pattern="CF.*taxon.*\\.xlsx$"
+                                    ,ignore.case=TRUE,full.names=TRUE)
+                                ,.name_repair="minimal")
 scenarioCF <- readxl::read_excel(dir(path=file.path(root,"requisite")
                                     ,pattern="Table.*ArcNet.*CFs.*\\.xlsx$"
                                     ,ignore.case=TRUE,full.names=TRUE)
                                 ,.name_repair="minimal")
 rownames(scenarioCF) <- NULL
-scenarioCF <- scenarioCF[,nchar(colnames(scenarioCF))>0]
-scenarioCF$CF_name <- gsub("\\s\\("," (<em>",scenarioCF$CF_name)
-scenarioCF$CF_name <- gsub("\\)","</em>)",scenarioCF$CF_name)
+scenarioCF <- scenarioCF[!is.na(scenarioCF$CF_code),nchar(colnames(scenarioCF))>0]
+#scenarioCF <- scenarioCF[,nchar(colnames(scenarioCF))>0]
+#scenarioCF$CF_name <- gsub("\\s\\("," (<em>",scenarioCF$CF_name)
+#scenarioCF$CF_name <- gsub("\\)","</em>)",scenarioCF$CF_name)
+scenarioCF$CF_name <- taxonCF$CF_name[match(scenarioCF$CF_code,taxonCF$CF_code)]
+colnames(taxonCF) <- gsub("(^group\\d).*","\\1",colnames(taxonCF))
+if ("group0" %in% colnames(taxonCF))
+   taxonCF$group0 <- paste0(taxonCF$CF_code," ",taxonCF$group0)
 sname <- unique(substr(industryAbbr$abbr,1,1))
 ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
 names(ctIndustry) <- sname
@@ -341,6 +345,7 @@ colnames(hu)[grep("human.*use.*name",colnames(hu),ignore.case=TRUE)] <- "industr
 colnames(hu)[grep("sight.*dataset",colnames(hu),ignore.case=TRUE)] <- "economy"
 sight <- strsplit(hu$economy,split="\\s*,\\s*")
 names(sight) <- hu$abbr
+adminPWD <- "73fe3177"
 if (F & !quickStart) { ## vulner is deprecated
    ursa:::.elapsedTime("concern prepare -- start")
    stop("HERE")
@@ -501,6 +506,22 @@ if (T & !quickStart) {
          vulner <- NULL
       }
    }
+}
+if (F) {
+   groupList <- c('\\d'=nameAllCF
+                 ,'1'="Walrus"
+                 ,'2'="Pinnipeds"
+                # ,'3'="Sea ice"
+                 ,'4'="Fishes"
+                 ,'5'="Cetaceans"
+                 ,'6'="Birds"
+                 ,'7'="Benthos"
+                 ,'8'="Coastal"
+                 ,'9'="Polar bears"
+                 )
+} else {
+   ind <- scenarioCF$CF_code %in% CFCode()
+   groupList <- c(unname(nameAllCF['3']),unique(taxonCF$group3[ind]))
 }
 if (!quickStart) {
    if (!dir.exists(dirname(sessionFile)))

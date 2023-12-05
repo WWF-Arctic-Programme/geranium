@@ -1,0 +1,34 @@
+activity,industry,abbr,manual,minCoast,maxCoast,minDepth,maxDepth,iceFree
+Aquaculture,"Fish Farms (salmon, cod or other fish species)",AC,"Cages for salmon, cod or other fish species",0,1.5,0,1000,12
+Aquaculture,"Shellfish Farms (Mussels, Oysters, scallops etc)",AM,Mussels & Oysters & Scallops,0,1.5,0,1000,12
+Aquaculture,Seaweed Farming,AS,Seaweed Farming,0,1.5,0,20,99
+Fishery,Bottom Dredging,FBD,,0,999,0,200,99
+Fishery,bottom gillnets,FBG,,0,5,0,50,99
+Fishery,Bottom Trawling,FBT,,0,999,0,500,99
+Fishery,Crab traps,FCT,,0,999,0,1000,
+Fishery,Drift Nets,FDN,,0,999,0,6000,99
+Fishery,Fishing Rods,FFR,,0,5,0,5000,99
+Fishery,Invertebrates Collection by Divers,FIC,,0,1.5,0,20,99
+Fishery,Longline Fishing,FLF,,0,999,0,1000,
+Fishery,Purse Seiner,FPS,,0,999,0,5000,99
+Fishery,Pelagic Trawling,FPT,,0,999,0,600,
+Fishery,Seine and Stationary Seine,FSE,,0,1.5,0,20,99
+Fishery,Seaweed Mowing,FSM,,0,999,0,50,99
+Fishery,Snurrevad,FSN,,0,999,0,150,99
+Infrastructure,Coastal Infrastructure (except oil & gas infrastructure),ICI,Coastal infrastructure (except oil & gas infrastructure),-2,1.5,-50,500,
+Infrastructure,Dredging,ID,Dredging,0,3,0,20,
+Infrastructure,Underwater Oil & Gas Pipelines,IOP,Underwater pipelines,0,999,0,7000,
+Infrastructure,Coastal Oil Terminals (including other petrochemical storing facilities),IOT,Coastal oil terminals (including other petrochemical storing facilities),-1.5,2,-50,5000,
+Infrastructure,Submarine Communication and Power Cables,IUC,Submarine communication cables,0,999,0,7000,
+Infrastructure,Offshore Wind Farms,IW,Offshore Wind Farms,0,999,0,500,
+Mining,Coastal On-Shore Mining,MCM,Coastal on-shore mining,-3,1.5,-50,20,
+Mining,Gas Production (Offshore),MGP,Gas production,0,999,0,2000,
+Mining,Mining Other (Offshore),MOM,Other off-shore mining,0,999,0,7000,
+Mining,Oil Production (off-shore),MOP,Oil Production,0,999,0,2000,
+Shipping,Cargo/Passenger Vessels using HFO,SHF,Cargo/Passenger Vessel using HFO,0,999,0,7000,
+Shipping,Cargo/Passenger Vessels using LFO,SLF,Cargo/Passenger Vessel using LFO,0,999,0,7000,
+Shipping,Cargo/Passenger LNG-powered Vessels,SLN,Cargo/Passenger LNG-powered Vessel,0,999,0,7000,
+Shipping,Nuclear-powered Vessels,SN,Nuclear-powered Vessel,0,999,0,7000,
+Shipping,Tankers carrying oil and other petrochemicals,ST,Tankers carrying oil and other petrochemicals,0,999,0,7000,
+Tourism,Ecotourism,TET,Ecotourism,-3,999,-50,7000,
+Tourism,Mass tourism,TMT,Mass tourism,-3,999,-50,7000,

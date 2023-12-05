@@ -46,7 +46,7 @@
    session_grid("requisite/amount")
    allocate(spatial_centroid(res2))
 }
-wd <- setwd("..")
+.wd <- setwd("..")
 if (T) {
    source("resources/header.R")
 } else {
@@ -106,4 +106,4 @@ for (i in seq_along(ilist) |> sample()) {
   # ursa_write(a,paste0(fname,".tif"))
 }
 close(pb)
-setwd(wd)
+setwd(.wd)

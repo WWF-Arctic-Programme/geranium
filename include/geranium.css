@@ -236,6 +236,17 @@ img.propersize {
 td.hidden {
    display: none;
 }
+label:hover::after {
+   content: attr(id);
+   color: #0002;
+   position: absolute;
+   bottom: 0px;
+   right: 0px;
+}
+.latent .selectize-dropdown, .latent .control-label, .latent .selectize-input {
+   opacity: 0.2;
+}
+
 @media screen and ((max-width: 1269px) or (max-height: 600px)) {
    .navbar::before {
       content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels by width or 600 pixels by height. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';
