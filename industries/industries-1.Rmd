@@ -1,9 +1,0 @@
----
-bibliography: Activities_pl.bib
-csl: nature-conservation.csl
-toc: true
-toc_depth: 3
----
-
-```{r md1, child="industries-1.md", eval=T}
-```

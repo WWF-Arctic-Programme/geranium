@@ -33,7 +33,7 @@ Main Page (Spatial Query)
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image1.png){width="5.833333333333333in" height="3.104838145231846in"}
+![](./manual/image1.png){width="5.833333333333333in" height="3.104838145231846in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -93,7 +93,7 @@ Once all the parameters are set you can choose "Overview of the selected region"
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image2.png){width="6.5in" height="3.473611111111111in"}
+![](./manual/image2.png){width="6.5in" height="3.473611111111111in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -261,7 +261,7 @@ Buttons on the lower left side of the page help to navigate:
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image3.png){width="6.5in" height="3.453472222222222in"}
+![](./manual/image3.png){width="6.5in" height="3.453472222222222in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -285,11 +285,11 @@ If you choose "**CF details**", you will see a page with a table showing results
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image4.png){width="6.5in" height="3.4618055555555554in"}
+![](./manual/image4.png){width="6.5in" height="3.4618055555555554in"}
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated with medium confidence](./media/image5.png){width="6.5in" height="3.4319444444444445in"}
+![A screenshot of a computer Description automatically generated with medium confidence](./manual/image5.png){width="6.5in" height="3.4319444444444445in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -297,7 +297,7 @@ If instead of the "**CF details**" you click on "**CF overview**" you will be ab
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated with medium confidence](./media/image6.png){width="6.5in" height="3.466666666666667in"}
+![A screenshot of a computer Description automatically generated with medium confidence](./manual/image6.png){width="6.5in" height="3.466666666666667in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -305,7 +305,7 @@ In case you want to comment or disagree with the assigned level of conservation 
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image7.png){width="6.5in" height="3.4541666666666666in"}
+![](./manual/image7.png){width="6.5in" height="3.4541666666666666in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -313,7 +313,7 @@ On the left side you can also see how the selected CF overlaps with theoreticall
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a map Description automatically generated with medium confidence](./media/image8.png){width="4.437854330708661in" height="5.7756430446194225in"}
+![A screenshot of a map Description automatically generated with medium confidence](./manual/image8.png){width="4.437854330708661in" height="5.7756430446194225in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -345,7 +345,7 @@ iceFree - if the selected activity depends on ice distribution. Monthly mean sea
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image9.png){width="3.807292213473316in" height="3.581339676290464in"}
+![](./manual/image9.png){width="3.807292213473316in" height="3.581339676290464in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -361,7 +361,7 @@ To explore more details on each activity you can click on its index (below the t
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated](./media/image10.png){width="6.5in" height="3.4451388888888888in"}
+![A screenshot of a computer Description automatically generated](./manual/image10.png){width="6.5in" height="3.4451388888888888in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -369,7 +369,7 @@ To explore more details on each activity you can click on its index (below the t
 :::
 
 ::: {custom-style="Body Text"}
-![](./media/image11.png){width="6.5in" height="3.4569444444444444in"}
+![](./manual/image11.png){width="6.5in" height="3.4569444444444444in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -381,7 +381,7 @@ In the bottom part of each page, you can see the navigation buttons allowing you
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated](./media/image12.png){width="6.5in" height="3.442361111111111in"}
+![A screenshot of a computer Description automatically generated](./manual/image12.png){width="6.5in" height="3.442361111111111in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -389,7 +389,7 @@ Choose "**All Activities**" on the Main Page - it will lead you to the page with
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated with medium confidence](./media/image13.png){width="6.5in" height="3.4340277777777777in"}
+![A screenshot of a computer Description automatically generated with medium confidence](./manual/image13.png){width="6.5in" height="3.4340277777777777in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -401,7 +401,7 @@ On the right you can select any industrial activity and then explore it using bu
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated](./media/image12.png){width="6.5in" height="3.442361111111111in"}
+![A screenshot of a computer Description automatically generated](./manual/image12.png){width="6.5in" height="3.442361111111111in"}
 :::
 
 ::: {custom-style="Body Text"}
@@ -409,7 +409,7 @@ Select "All Conservation Features" on the Main Page. It will lead you to the pag
 :::
 
 ::: {custom-style="Body Text"}
-![A screenshot of a computer Description automatically generated with medium confidence](./media/image13.png){width="6.5in" height="3.4340277777777777in"}
+![A screenshot of a computer Description automatically generated with medium confidence](./manual/image13.png){width="6.5in" height="3.4340277777777777in"}
 :::
 
 ::: {custom-style="Body Text"}
