@@ -1,0 +1,79 @@
+---
+output:
+   flexdashboard::flex_dashboard:
+      orientation: columns
+---
+
+# &shy; {#getstarted data-icon="ion-help" `r if (T & !is.null(rmarkdown::metadata[["author"]])) ".hidden"` data-orientation="columns"}
+
+```{r}
+htmltools::includeMarkdown('getStarted1.Rmd')
+```
+
+:::{.bottom}
+```{r, eval=exists("navButton")}
+navButton("Start Exploring","#map",col="map")
+```
+:::
+
+```{r}
+htmltools::includeMarkdown('getStarted2.Rmd')
+```
+
+:::{.bottom}
+```{r, eval=exists("navButton")}
+navButton("Start Exploring","#map",col="map")
+actionButton("disclaimer","Disclaimer")
+HTML("<br><br>")
+observeEvent(input$disclaimer, {
+      showModal(modalDialog(
+        title = "Disclaimer",
+        HTML("Geranium is a web-based online visualisation and engagement tool presented by WWF Global Arctic Programme. Your use of this website, the site materials and the services provided on or through the site is at your own risk and are provided \"as is\", without warranties of any kind.
+<br><br>
+WWF Global Arctic Programme disclaims any and all warranties, conditions and other terms either express or implied, statutory or otherwise, including, but not limited to, the implied warranties of merchantability, non-infringement of third parties' rights and fitness for particular purpose. WWF Global Arctic Programme shall not be held liable for any consequences arising from the use of this site and the Geranium tool.
+
+<br><br>
+Reference to any products, services, or other information, by trade name, trademark, manufacturer, supplier, source, or otherwise does not constitute or imply endorsement, sponsorship or recommendation thereof, or any affiliation therewith, by WWF Global Arctic Programme.
+
+<br><br>
+The information displayed on this site is intended solely for illustrative purposes. WWF Global Arctic Programme does not warrant that the site, the site materials or the services are accurate, complete, reliable, current or error-free. WWF Global Arctic Programme disclaims any responsibility for inaccuracies, errors, or omissions, including the depictions of administrative boundaries and locations of commercial activities and conservation features. WWF Global Arctic Programme reserves the right to update the information displayed on this site as new information becomes available and methodologies evolve.
+
+<br><br>
+As we have your attention:
+<br><br>
+While every effort has been made to ensure the accuracy and reliability of the data, and consistency of the conservation concern assessments, we recognise the inherent challenges linked to the Geranium approach and tool in a dynamic and rapidly changing environment such as the Arctic. Given the scarcity of data, the continuous development of new industries and practices, and ongoing research on the impact of human activities on biodiversity, you are advised to exercise your own judgement and discretion when interpreting the data and assessment presented on this site, are encouraged to cross-reference the information provided with authoritative sources, and when unsure seek professional advice.
+<br><br>
+
+If you identify inaccuracies in the data or assessment and wish to contribute to Geranium’s improvement, you are encouraged to reach out to the developers at ArcNetinfo@arcticwwf.org. Your feedback is valuable and assists us in refining and enhancing the tool for the benefit of all users.
+"),
+        easyClose = TRUE,
+        size = "xl",
+        footer = tagList(
+                  modalButton("Dismiss"),
+                )
+      ))
+})
+```
+:::
+
+```{r}
+htmltools::includeMarkdown('getStarted3.Rmd')
+```
+
+```{css, eval=TRUE}
+   #getstarted, #section-getstarted {
+      margin: 1em auto 1em auto;
+      max-width: 790px;
+      background-color: white;
+      padding: 1em;
+      height: unset !important;
+   }
+   #getstarted img, #section-getstarted img {
+      max-height: auto;
+      width: 90%;
+   }
+```
+
+```{r eval=exists("staffOnly")&&(isTRUE(staffOnly)),results='asis'}
+# cat("<meta http-equiv=\"Refresh\" content=\"1; url=",sQuote("#section-map"),"\" />\n")
+```

@@ -1,0 +1,25 @@
+---
+mathjax: true
+output:
+   flexdashboard::flex_dashboard:
+      orientation: columns
+---
+
+# &shy; {#assessment data-icon="fa-info" .hidden data-orientation="columns"}
+
+```{r}
+# htmltools::includeHTML('Howtheassessmentwasmade.html')
+# htmltools::includeMarkdown('assessment1.md')
+htmltools::includeMarkdown('assessment2.md')
+# htmltools::includeMarkdown('assessment3.md')
+```
+
+```{css}
+   #assessment, #section-assessment {
+      margin: 1em auto 1em auto;
+      max-width: 790px;
+      background-color: white;
+      padding: 1em;
+      height: unset !important;
+   }
+```
