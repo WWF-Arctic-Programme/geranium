@@ -1,6 +1,7 @@
 proxyRegion <- leafletProxy("regionLeaflet")
 exchange <- reactiveValues(editor=NULL,domain=NULL,selection=NULL
                           ,prev=integer(),curr=integer() ## need for removing forgiven clean
+                          ,clear=data.frame(),history=data.frame()
                           ,cd=character(),overlay=NULL ## need for removing forgiven clean
                           ,CF=NULL,industry=NULL,conflict=NULL#,initEPA=FALSE
                           ,rebuildNAO=TRUE,subset=NULL,config=config
@@ -17,8 +18,8 @@ clicked <- reactiveValues(crossCF=Sys.time(),crossIndustry=Sys.time()
                          )
 if (F) ## patch for shiny 2022-12-17
    spatial_crs(PAs) <- 4326
-if (T) observe({ ## update 'input$sheet'
-   sleeping()
+if (F) observe({ ## update 'input$sheet'  ## DEPRECATED input$sheet
+   verbosing()
    cat("observe: update input$sheet:\n")
    req(!is.null(input$sheet))
    if (isFALSE(input$sheet %in% activity)) {
@@ -31,8 +32,8 @@ if (T) observe({ ## update 'input$sheet'
                        )
    }
 })
-if (T) observe({ ## update 'input$column'
-   sleeping()
+if (F) observe({ ## update 'input$column' ## DEPRECATED input$column
+   verbosing()
    cat("observe: `req` input$sheet and input$sheet in activity\n")
    req(!is.null(input$sheet))
    req(input$sheet %in% activity)
@@ -65,7 +66,7 @@ if (F) observe({ ## update input$method
    updateSelectInput(session,"coloring",choices=ch)
 })
 if (T) observe({ ## update input$region
-   sleeping()
+   verbosing()
    cat("req(input$region):\n")
   # req(input$sheet %in% activity)
    req(input$region)
@@ -96,14 +97,16 @@ if (T) observe({ ## update input$region
    print("this observe was passed successful")
 })
 if (T) observe({ ## update 'exchange$selection'
-   sleeping()
+# if (T) observeEvent(list(rvCustomer(),exchange),{ ## update 'exchange$selection'
+   verbosing()
    cat("observe 'exchange$selection'\n")
    selection <- rvCustomer()
    cl <- class(selection)
    if ("character" %in% cl) {
       cat("   PAC\n")
+      print(exchange$curr)
      # if (!is.null(selection))
-     #    saveRDS(selection,"c:/tmp/selection.rds")
+     # saveRDS(selection,"c:/tmp/selection.rds")
       exchange$selection <- zoomToAOI(selection)
       exchange$overlay <- NULL
       exchange$prev <- exchange$curr
@@ -118,9 +121,10 @@ if (T) observe({ ## update 'exchange$selection'
       options(opW)
       ##~ cat("----------\n")
       ##~ str(selection)
-      ##~ cat("----------\n")
-      ##~ str(gs)
-      ##~ cat("----------\n")
+      cat("----------\n")
+      str(gs)
+      str(exchange$curr)
+      cat("----------\n")
       if (input$region %in% nameEditor) {
          if (is.null(gs$finished)) {
             s <- NULL
@@ -141,20 +145,26 @@ if (T) observe({ ## update 'exchange$selection'
          }
       }
       else if (input$predefined %in% nameClick) {
+         if (nrow(gs)>0)
+            gs$region <- input$region
          ind <- as.numeric(gs[which(gs$selected==TRUE),"id"])
-         if (FALSE) {
+         if (isTRUE(exchange$prev==(-60))) {
+            ind <- integer()
+           # exchange$curr <- integer()
+         }
+         if (TRUE) {
             cat("         selected:\n")
-            cat("str(exchange$selection):\n")
-            cat("============================+++++++++++++++++++\n")
+            cat("str(exchange$selection): ============+++++++++++++++++++\n")
             str(exchange$selection)
-            cat("str(gs):\n")
-            cat("============================+++++++++++++++++++\n")
-            str(exchange$prev)
+            cat("str(gs): ============================+++++++++++++++++++\n")
+           # str(exchange$prev)
            # str(exchange$curr)
             str(gs)
-            cat("============================+++++++++++++++++++\n")
-            cat("str(ind):\n")
+            cat("str(ind) ============================+++++++++++++++++++\n")
             str(ind)
+            cat("str(exchange$history) ===============+++++++++++++++++++\n")
+            str(exchange$history)
+            cat("=====================================+++++++++++++++++++\n")
          }
          if (length(ind)) {
             if (FALSE) { # {&&(exchange$prev==(-20))&&(all(exchange$curr>0))) {
@@ -191,17 +201,18 @@ if (T) observe({ ## update 'exchange$selection'
                   print(da)
                }
                if (length(ind2)) {
-                 # print(c('ind2.'=ind2))
+                  print(c('ind2.'=ind2))
                   s <- rvRegionSF()[[input$region]][ind[ind2],] ## class 'st_sf'
                   spatial_data(s) <- da[ind2,]
                  # exchange$curr <- rbind(exchange$curr,spatial_data(s))
                }
                else if (length(ind3)) {
-                 # print(c('ind3.'=ind3))
+                  print(c('ind3.'=ind3))
                   s <- rvRegionSF()[[input$region]][ind[ind3],] ## class 'st_sf'
                   spatial_data(s) <- da[ind3,]
                }
                else if (length(ind)<0){
+                  print(c('neg ind.'))
                   s <- rvRegionSF()[[input$region]][ind,] ## class 'st_sf'
                   spatial_data(s) <- da
                }
@@ -220,7 +231,8 @@ if (T) observe({ ## update 'exchange$selection'
          }
          else {
            # exchange$curr <- -10L
-            exchange$prev <- -50L
+            if (isTRUE(exchange$prev!=-60))
+               exchange$prev <- -50L
             s <- NULL
          }
       }
@@ -252,8 +264,32 @@ if (T) observe({ ## update 'exchange$selection'
       }
       else {
         # exchange$prev <- -10L
-        # print("just an 's'")
-        # s <- NULL
+         print("just a 's'")
+         da2 <- exchange$clear
+         cat("--------- clear ---------- \n")
+         str(da2)
+         cat("--------- clear ---------- \n")
+         if ((is.data.frame(da2))&&(nrow(da2)>0)) {
+            da1 <- spatial_data(s)
+            str(da1)
+            str(da2)
+            ind <- apply(da1[,1,drop=FALSE],1,paste,collapse="-") %in% apply(da2[,1,drop=FALSE],1,paste,collapse="-")
+            if (!any(ind))
+               exchange$clear <- data.frame()
+            else if (all(ind))
+               s <- NULL
+            else
+               s <- s[!ind,]
+            if (FALSE) {
+               da3 <- rbind(da1,da2)
+               if (any(duplicated(da3))) {
+                  print("trying to clear previous selection")
+                  s <- NULL
+                 # exchange$clear <- data.frame()
+               }
+            }
+         }
+        # saveRDS(s,"C:/tmp/selectionS.rds")
          exchange$selection <- s
       }   
    }
@@ -265,16 +301,62 @@ if (T) observe({ ## update 'exchange$selection'
       if (is_ursa(exchange$selection))
          print(as.table(exchange$selection))
    }
-   if (!is.null(exchange$selection))
-      updateSelectInput(session,"region",choice=input$region
-                       ,label="Freeze until active selection")
-   else
+   if (!is.null(exchange$selection)) {
+      updateSelectInput(session,"region"
+                       ,choice={
+                           ch <- input$region
+                           if (input$economy!="none")
+                              ch <- c(ch,'Reset selection'='clear')
+                           ch
+                       }
+                      # ,choice=c('Selected fegion is frozen'='frozen','Reset selection'='clear')
+                      # ,label="Frozen until selection is cleared"
+                       )
+      val <- epsg[match(as.integer(input$epsg),epsg)]
+      updateSelectInput(session,"epsg",choice=val # input$epsg
+                       ,label="Projection (frozen)")
+   }
+   else {
+      if (isPause <- input$region %in% c("clear")) {
+         if (!is.null(exchange$clear))
+            rs <- exchange$clear$region
+         else
+            rs <- nameEditor # exchange$clear
+        # exchange$curr <- integer()
+      }
+      else
+         rs <- input$region
       updateSelectInput(session,"region",choice=c(names(rvRegionSF()),nameEditor)
-                       ,selected=input$region,label="Spatial query")
+                       ,selected=rs,label="Spatial query")
+      updateSelectInput(session,"epsg",selected=input$epsg,choice=epsg
+                       ,label="Projection")
+   }
   # ind <- input$tbl_rows_selected
   # if (is.integer(ind))
   #    exchange$cf <- rvCrossTable()[ind,]
   # exchange$selection
+})
+observeEvent(rvCustomer(),{
+   cat('observe rvCustomer() to update selection history\n"')
+   selection <- rvCustomer()
+   req(selection)
+   if ("character" %in% class(selection)) {
+   }
+   else {
+      gs <- selection()
+      if (input$region %in% nameEditor) {
+         if (!is.null(gs$finished)) {
+           # str(gs$finished)
+         }
+      }
+      else if (input$predefined %in% nameClick) {
+         if (nrow(gs)>0) {
+            gs$region <- input$region
+            exchange$history <- exchange$history[!duplicated(exchange$history),]
+            str(exchange$history)
+         }
+      }
+   }
 })
 if (F) observe({ ## update 'session$cfcode'
    ind <- input$tbl_rows_selected
@@ -293,12 +375,16 @@ if (F) observe({ ## setView for Selector
    }
 })
 'rvAOI' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvAOI():\n")
+  # if (isTRUE(exchange$curr<0)) {
+  #    return(NULL)
+  # }
+  # str(exchange$clear)
    exchange$selection
 })
 'rvActivityMap' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvActivityMap():\n")
    if (T) {
       conflict <- exchange$conflict
@@ -320,7 +406,7 @@ if (F) observe({ ## setView for Selector
                       )
    }
    economy <- conflict$economy
-   if (any(c(nameInit,"none","skip") %in% economy))
+   if (any(c(nameInit,"none","skip","reset") %in% economy))
       return(NULL)
    industry <- conflict$subset |> industryName()
    print("0124g")
@@ -367,17 +453,17 @@ if (F) observe({ ## setView for Selector
    }
    str(list(industry=industry,season=season,group=group,economy=economy))
    print("next to 'conditionMap'")
-   a <- conditionMap(industry=industry,season=season,group=group,economy=economy)
+   a <- conditionMap(industry=industry,season=season,group=group,economy=economy,epoch=input$epoch)
    a
 })
 'rvConflictMap' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvConflictMap():\n")
   # plutil::timeHint(as.character(input$customize))
    a <- if (T) rvActivityMap() else NULL
    if (is.null(a)) {
-      print("next to \"conflictBasemap\"")
-      return(conflictBasemap())
+      print("next to 'conflictBasemap'")
+      return(conflictBasemap(epsg=input$epsg))
    }
    coloring <- names(methodList[match(input$coloring,methodList)])
    print("1226a")
@@ -389,16 +475,18 @@ if (F) observe({ ## setView for Selector
       d6 <- map3_1d(a,kind=coloring,source=input$sheet)
    else {
       if (band_blank(a[1]))
-         return(conflictBasemap())
+         return(conflictBasemap(epsg=input$epsg))
       d6 <- map1_1d(a[1],kind="devel",ncolor=input$ncolor)
    }
    print("1226c")
-   m <- conflictMap(d6)
+   print(d6)
    print("1226d")
+   m <- conflictMap(d6,aoi=rvAOI(),epsg=input$epsg)
+   print("1226e")
    m
 })
-observeEvent(input$drawIndustry,{ ## eventReactive actionlink
-   sleeping()
+observeEvent(if (F) input$drawIndustry else input$economy,{ ## eventReactive actionlink
+   verbosing()
    cat("observeEvent input$drawIndustry:\n")
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
    exchange$conflict <- list(industry=rvSubsetIndustry() # input$industry
@@ -406,15 +494,23 @@ observeEvent(input$drawIndustry,{ ## eventReactive actionlink
                            # ,group=input$group3
                             ,season=input$season,economy=input$economy)
 })
+if (F) observeEvent(input$economy,{ ## update 'input$economy'
+   verbosing()
+   cat("observeEvent input$economy:\n")
+   exchange$conflict <- list(industry=rvSubsetIndustry() # input$industry
+                            ,group=rvSubsetCF()
+                           # ,group=input$group3
+                            ,season=input$season,economy=input$economy)
+})
 if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
-   sleeping()
+   verbosing()
    cat("observeEvent input$drawEconomy:\n")
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
    exchange$conflict <- list(industry=input$industry,group=input$group3
                             ,season=input$season,economy=input$economy)
 })
 'rvSubsetIndustry' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvSubsetIndustry:\n")
    ref <- unname(industryName(industries))
    if ("all" %in% input$industry) { # low, level1
@@ -449,7 +545,10 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    sort(ret)
 })
 'rvCrossTable' <- reactive({
-   sleeping()
+   verbosing()
+   showModal(modalDialog(title="Creating Conservation Concern table…","Please wait"
+                        ,size="s",easyClose=T,footer=NULL))
+   on.exit(removeModal())
    if ((FALSE)&&(isTRUE(switchDomain()))) {
       cat("   domain is TRUE:\n")
      # switchDomain(FALSE) ## FALSE is bad idea
@@ -500,8 +599,11 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
   # interim(activity,group=group,aoi=aoi,season=input$season,simplify="stat")
    ##~ exchange$domain <- FALSE
    ##~ plutil::timeHint(paste("domain is",exchange$domain))
-   count <<- count+1L
-   showNotification(paste("call 'crossTable' right now:",count),duration=5)
+   if (staffOnly) {
+      count <<- count+1L
+      if (staffOnly)
+         showNotification(paste("call `crossTable` right now:",count),duration=5)
+   }
    ret <- crossTable(aoi=aoi
                     ,group=group
                     ,activity=industryCode(industry)
@@ -514,7 +616,7 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    ret
 })
 'rvCustomer' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvCustomer:\n")
    print(c('region'=input$region,'predefined'=input$predefined))
    if (is.null(input$region)) {
@@ -524,11 +626,13 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
        (input$predefined!=nameClick)) {
       ret <- input$predefined
       names(ret) <- input$region
+      print(paste0(" --> ",ret))
       return(ret)
    }
    ret <- NULL
    m <- rvConflictMap()
    if (input$region %in% nameEditor) {
+      print(paste0(" --> ","editor"))
       shp <- drawShapeOptions(color="#092",fillColor="#092")
      # opW <- options(warn=-10)
       ret <- callModule(editMod,"editor"
@@ -555,21 +659,45 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
      # options(opW)
    }
    else if (input$predefined %in% nameClick) {
-      m <- addFeatures(m,rvRegionSF()[[input$region]]
-                      ,label=rvRegionSF()[[input$region]][[1]]
-                      ,color="#092B"
-                      ,layerId=~seq(spatial_count(rvRegionSF()[[input$region]]))
-                      ,group="Region overlay"
-                      )
-      m <- addLayersControl(m
-                          # ,baseGroups=c(NULL
-                          #              )
-                           ,overlayGroups=c(NULL
-                                           ,"Arctic SDI"
-                                           ,"Region overlay"
-                                           )
-                           ,options=layersControlOptions(collapsed=FALSE)
-                           )
+      print(paste0(" --> ","clicker"))
+      if (!input$region %in% "clear") {
+         reg <- rvRegionSF()[[input$region]]
+        # cat("0401a ------------ \n")
+        # str(reg)
+        # cat("0401b ------------ \n")
+         m <- addFeatures(m,reg
+                         ,label=reg[[1]]
+                         ,color="#092B"
+                         ,layerId=~seq(spatial_count(reg))
+                         ,group="AOI overlay"
+                         )
+         m <- addLayersControl(m
+                             # ,baseGroups=c(NULL
+                             #              )
+                              ,overlayGroups=c(NULL
+                                              ,"Arctic SDI"
+                                              ,"AOI overlay"
+                                              )
+                              ,options=layersControlOptions(collapsed=FALSE)
+                              )
+      }
+      else {
+         cat("NEED TO CLEAR SELECTION -------------------\n")
+         exchange$clear <- spatial_data(rvAOI()) |> tail(1)
+         str(exchange$clear)
+        # exchange$selection <- NULL
+         cat("----------------------- -------------------\n")
+         return(NULL)
+         if (!is.null(exchange$selection)) {
+           # exchange$clear <- exchange$selection$region
+           # exchange$curr <- -60L
+           # print(exchange$clear)
+            exchange$prev <- -60L
+            exchange$selection <- NULL
+         }
+         return(NULL)
+      }
+      print("callModule 'SelectMod: selector'")
       ret <- callModule(selectMod,"selector"
                        ,leafmap=m
                        )
@@ -593,7 +721,7 @@ if (T) {
    observeEvent(input$industrydata_row_last_clicked,clicked$dataCF <- Sys.time())
 }
 'rvSelectCF_deprecated' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvSelectCF():\n")
    if (useExchange)
       return(exchange$CF)
@@ -633,7 +761,7 @@ if (T) {
    NULL
 })
 'rvSelectCF' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvSelectCF():\n")
    if (useExchange)
       return(exchange$CF)
@@ -821,7 +949,7 @@ if (T) observe({
    }
 })
 'rvSelectIndustry' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvSelectIndustry():\n")
    if (T & !is.null(r <- input$allComments_rows_selected)) {
       da <- rvAllComments()[r,]
@@ -1013,7 +1141,7 @@ if (T) observe({
    NULL
 })
 'rvHumanUseIndustry' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvHumanUseIndustry():\n")
    industry <- rvSelectIndustry()
    str(industry)
@@ -1035,7 +1163,7 @@ if (T) observe({
    da
 })
 'rvHumanUseCF' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvHumanUseCF():\n")
    cf <- rvSelectCF()
    str(cf)
@@ -1044,10 +1172,13 @@ if (T) observe({
   # plutil::timeHint(paste("human use:",cf," --- ",exchange$cf))
    req(cf %in% spec$cf)
    da <- human_use(cf)
+   str(input$season)
+   str(tail(seasonList,-1))
    if (any(input$season %in% tail(seasonList,-1))) {
       ind <- which(substr(colnames(da),1,3) %in% substr(input$season,1,3))
-      if (length(ind))
+      if (length(ind)) {
          da <- da[,c(1,ind)]
+      }
    }
    if (T) {
       st <- rvCrossTable()
@@ -1101,38 +1232,48 @@ if (F) observeEvent(input$regionAction,{
    if (isShiny)
       removeNotification(id="regionMap")
 })
-'rvRegionStats' <- reactive({
-   sleeping()
-   cat("rvRegionStats:\n")
+'rvRegionConcern' <- reactive({
+   verbosing()
+   cat("rvRegionConcern:\n")
    rvRegionMetrics()$result
 })
 'rvRegionMetrics' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvRegionMetrics:\n")
    result <- regionStats(aoi=rvAOI(),ctable=rvCrossTable(),isPA=input$actionEPA
                         ,raw=TRUE)
    result
 })
+'rvRegionActivity' <- reactive({
+   verbosing()
+   cat("rvRegionActivity:\n")
+   result <- regionActivityIndices(aoi=rvAOI(),ctable=rvCrossTable()
+                                 # ,isPA=input$actionEPA,raw=TRUE
+                                  ,epoch=input$epoch
+                                 # ,type="raw"
+                                  )
+   result
+})
 if (T) observe({ ## update 'input$industry'
-   sleeping()
+   verbosing()
    cat("observe 'input$activity' + update 'input$industry'\n")
   # print(input$activity)
   # req(!is.null(choice <- input$activity))
    choice <- input$activity
    print(choice)
    if ((length(choice)==1)&&(choice==nameAllHuman)) {
-      choice2 <- c('All activities'="all",'Do not show'="none",industryCodeName(industries))[-2]
+      choice2 <- c('All industrial activities'="all",'Do not show'="none",industryCodeName(industries))[-2]
       select2 <- choice2[1]
    }
    else if ((F & staffOnly)&&(all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
       activitySubset <- c("Infrastructure","Mining","Shipping")
       industrySubset <- industryName(c("ICI","MOP","ST"))
-      choice2 <- c('All activities'="all",'Do not show'="none",industrySubset)[-2]
+      choice2 <- c('All industrial activities'="all",'Do not show'="none",industrySubset)[-2]
       select2 <- industryName("ST")
    }
    else {
       choice2 <- choice[choice %in% names(industries)]
-      choice2 <- c('All activities'="all",'Do not show'="none",industries[choice2])[-2]
+      choice2 <- c('All industrial activities'="all",'Do not show'="none",industries[choice2])[-2]
       choice2 <- industryCodeName(choice2)
       select2 <- choice2[1]
    }
@@ -1147,7 +1288,7 @@ if (T) observe({ ## update 'input$industry'
    updateCheckboxInput(session,"actionCAP",value=FALSE)
 })
 if (F) observe({ ## update 'input$conserve'
-   sleeping()
+   verbosing()
    cat("observe 'input$group3' + update 'input$conserve'\n")
    choice <- input$group3
    print(choice)
@@ -1166,7 +1307,7 @@ if (F) observe({ ## update 'input$conserve'
    updateSelectInput(session,"industry",choices=choice2,selected=select2)
 })
 if (T) observeEvent(input$industry, { ## update 'input$actionNAC'
-   sleeping()
+   verbosing()
    cat("observe input$industry + update 'input$actionNAC'\n")
   # updateRadioButtons(session,"actionNAC",selected=character())
    updateCheckboxInput(session,"actionNAC",value=FALSE)
@@ -1175,14 +1316,14 @@ if (T) observeEvent(input$industry, { ## update 'input$actionNAC'
    updateCheckboxInput(session,"actionCAP",value=FALSE)
 })
 if (T) observe({ ## update 'input$economy'
-   sleeping()
+   verbosing()
    cat("observe 'input$economy'\n")
    industry <- input$industry
    req(industry)
   # print(c(industry=industry))
   # print(isTRUE(industry %in% industryAbbr$industry))
   # print(c(selection=!is.null(exchange$selection)))
-   if (!is.null(exchange$selection)) {
+   if (F & !is.null(exchange$selection)) {
       if (input$economy=="skip") {
          return(NULL)
         # choice <- c('Unsupported with selection'="skip")
@@ -1195,6 +1336,7 @@ if (T) observe({ ## update 'input$economy'
       return(NULL)
    }
    choice <- choiceMap
+   print(choice)
    if ("all" %in% industry) {
       if (allActivity %in% input$activity)
          industry2 <- industryName(industries)
@@ -1206,6 +1348,7 @@ if (T) observe({ ## update 'input$economy'
   # print(c(industry2=industry2))
    industry2 <- industryCode(industry2)
    exchange$subset <- industry2
+   rHU <- rvHumanUseRaster()
    if (!any(industry2 %in% names(rHU))) {
       choice <- grep("(capr|humanuse)",choice,invert=TRUE,value=TRUE)
    }
@@ -1268,10 +1411,42 @@ if (T) observe({ ## update 'input$economy'
    }
   # exchange$conflict <- list(industry=input$industry,group=input$group3
   #                          ,season=input$season,economy=input$economy)
+  # if (input$economy==nameInit)
    updateSelectInput(session,"economy",choices=choice,selected=choice[1])
 })
+if (T) observeEvent(input$economy,{
+   choice <- tail(choiceMap,-1)
+   if (T & input$economy %in% tail(choiceMap,-1)) {
+      ind <- match(input$economy,choiceMap)
+      choice <- c('Reset map'="none",choiceMap[ind])
+     # updateSelectInput(session,"region",choices=nameInit)
+      updateSelectInput(session,"economy",label="Reset shown index map for further steps"
+                       ,choices=choice,selected=tail(choice,1))
+   }
+   else if (input$economy %in% choiceMap[1]) {
+      industry <- input$industry
+      req(industry)
+      choice <- choiceMap
+      if ("all" %in% industry) {
+         if (allActivity %in% input$activity)
+            industry2 <- industryName(industries)
+         else
+            industry2 <- industryName(industries[input$activity])
+      }
+      else
+         industry2 <- industry
+      industry2 <- industryCode(industry2)
+      exchange$subset <- industry2
+      rHU <- rvHumanUseRaster()
+      if (!any(industry2 %in% names(rHU))) {
+         choice <- grep("(capr|humanuse)",choice,invert=TRUE,value=TRUE)
+      }
+      choice <- choiceMap
+      updateSelectInput(session,"economy",label="Indexes maps",choices=choice,selected=choice[1])
+   }
+})
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$industry':\n")
    event <- input$industry
    choice <- NULL
@@ -1302,7 +1477,7 @@ if (T) observeEvent(input$industry,{ ## update 'input$industry'
    }
 })
 if (F) observeEvent(input$economy,{ ## update 'input$economy'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$economy':\n")
    event <- input$economy
    choice <- NULL
@@ -1326,7 +1501,7 @@ if (F) observeEvent(input$economy,{ ## update 'input$economy'
    }
 })
 if (T) observeEvent(input$activity,{ ## update 'input$activity'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$activity':\n")
    choice <- NULL
    if (is.null(input$activity))
@@ -1348,14 +1523,14 @@ if (T) observeEvent(input$activity,{ ## update 'input$activity'
    }
 })
 if (F) observe({ ## update 'input$group3'
-   sleeping()
+   verbosing()
    cat("observe 'input$group3':\n")
    grList <- c(nameAllCF['3']
               ,unique(taxonCF$group3[taxonCF$CF_code %in% unique(concern$CF_code)]))
    updateSelectInput(session,"group3",selected=input$group3,choices=grList)
 })
 if (T) observeEvent(input$group3,{ ## update 'input$group3'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$group3':\n")
    grList3 <- c(nameAllCF['3']
                ,unique(taxonCF$group3[taxonCF$CF_code %in% unique(concern$CF_code)]))
@@ -1399,7 +1574,7 @@ if (T) observeEvent(input$group3,{ ## update 'input$group3'
       updateSelectInput(session,"group0",selected=nameAllCF['0'],choices=gr0list)
 })
 if (T) observeEvent(input$group2,{ ## update 'input$group2'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$group2':\n")
    grList2 <- c(unname(nameAllCF['2'])
               ,unique(taxonCF$group2[taxonCF$CF_code %in% unique(concern$CF_code)]))
@@ -1437,7 +1612,7 @@ if (T) observeEvent(input$group2,{ ## update 'input$group2'
       updateSelectInput(session,"group0",selected=nameAllCF['0'],choices=gr0list)
 })
 if (T) observeEvent(input$group1,{ ## update 'input$group1'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$group1':\n")
    grList1 <- c(nameAllCF['1']
               ,unique(taxonCF$group1[taxonCF$CF_code %in% unique(concern$CF_code)]))
@@ -1469,7 +1644,7 @@ if (T) observeEvent(input$group1,{ ## update 'input$group1'
       updateSelectInput(session,"group0",selected=nameAllCF['0'],choices=gr0list)
 })
 if (T) observeEvent(input$group0,{ ## update 'input$group0'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$group0':\n")
    grList0 <- c(nameAllCF['0']
               ,unique(taxonCF$group0[taxonCF$CF_code %in% unique(concern$CF_code)]))
@@ -1494,7 +1669,7 @@ if (T) observeEvent(input$group0,{ ## update 'input$group0'
    }
 })
 if (T) observeEvent(input$season,{ ## update 'input$season'
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$season':\n")
    exchange$conflict <- NULL
    if (is.null(input$season)) {
@@ -1514,7 +1689,7 @@ if (T) observeEvent(input$season,{ ## update 'input$season'
    }
 })
 'rvInitEPA' <- reactive({
-   sleeping()
+   verbosing()
    ret <- (length(input$initEPA)>0)&&(input$initEPA>0)
    cat("rvInitEPA:",ret,"\n")
    ret
@@ -1527,7 +1702,7 @@ if (F) observe({ ## exchange$initEPA
 })
 # if (T) observeEvent(rvAOI(),{ ## -- this ignored when all deselected
 if (T) observe({ ## regionAddAOI() and fitBounds()
-   sleeping()
+   verbosing()
    isAOI <- !is.null(aoi <- rvAOI())
   # isEPA <- rvInitEPA()
    cat("regionAddAOI():\n")
@@ -1629,7 +1804,7 @@ if (T) observe({ ## regionAddAOI() and fitBounds()
                      )
 })
 if (F) observe({ ## fitBounds()
-   sleeping()
+   verbosing()
    cat("observe for fitBounds():\n")
 # observeEvent(input$regionLeaflet_shape_click,{
 # observeEvent(rvAOI(),{
@@ -1696,13 +1871,13 @@ if (F) observe({ ## fitBounds()
                      )
 })
 'rvMetricsMap' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvMetricsMap:\n")
    ctable <- rvCrossTable()
    metricsMap(ctable)
 })
 'rvConcern' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvConcern:\n")
    d <- concernSubset(concern
                      ,group=input$group3
@@ -1712,11 +1887,12 @@ if (F) observe({ ## fitBounds()
    d
 })
 'rvIceConcCover' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvIceConcCover:\n")
   # req(isTRUE(input$iceConcDetails))
    showNotification(id="iceConcCover",closeButton=FALSE,duration=120
-                   ,"Preparing data for ice concentration stats. Pleas wait for rendering."
+                   ,if (!staffOnly) "Processing and rendering..." else
+                    "Preparing data for ice concentration stats. Pleas wait for rendering."
                    ,type="warning")
    ret <- iceConcCover(CF=rvSelectCF(),industry=rvSelectIndustry())
    removeNotification(id="iceConcCover")
@@ -1732,7 +1908,7 @@ if (T) observeEvent(input$initEPA,{
 #observeEvent(rvInitEPA(),{
 # observe({
   # req(isTRUE(exchange$initEPA))
-   sleeping()
+   verbosing()
    cat("'input$initEPA' / 'exhchange$initEPA' -- before:\n")
    isEPA <- isTRUE(input$initEPA>0)
   # proxyRegion <- leafletProxy("regionLeaflet")
@@ -1747,30 +1923,30 @@ if (T) observeEvent(input$initEPA,{
    cat("'input$initEPA' / 'exhchange$initEPA' -- after:\n")
 })
 if (T) observeEvent(input$actionNAC,{
-   sleeping()
+   verbosing()
   # req(isTRUE(input$actionNAC))
   # req(nchar(input$actionNAC)>0)
    cat("initialize NACR map...\n")
    indexMap(proxyRegion,"NACR") ## ,add=isTRUE(input$actionNAC)
 })
 if (T) observeEvent(input$actionNAO,{
-   sleeping()
+   verbosing()
    cat("initialize NAOR map...\n")
    indexMap(proxyRegion,"NAOR")
   # updateActionLink(input$actionNAC)
 })
 if (T) observeEvent(input$actionCAP,{
-   sleeping()
+   verbosing()
    cat("initialize CAPR map...\n")
    indexMap(proxyRegion,"CAPR")
 })
 if (T) observeEvent(input$actionHU,{
-   sleeping()
+   verbosing()
    cat("initialize HU map...\n")
    indexMap(proxyRegion,"humanuse")
 })
 if (F) observe({ ## addLayersControl(proxyRegion)
-   sleeping()
+   verbosing()
    cat("observe for addLayersControl():\n")
   # showNotification("update controls",duration=3)
    proxyRegion <- leafletProxy("regionLeaflet")
@@ -1785,11 +1961,11 @@ if (F) observe({ ## addLayersControl(proxyRegion)
    if (showPAs)
       grPAs <- as.list(args(regionAddEPA))$group
    if (showNAO)
-      grNAO <- "SR index"
+      grNAO <- c("SR index","SC-P")[2]
    if (showNAC)
-      grNAC <- "MNSR index"
+      grNAC <- c("MNSR index","OP-P")[2]
    if (showCAP)
-      grCAP <- "CAPR index"
+      grCAP <- c("CAPR index","OIP-P")[2]
    if (showHU)
       grHU <- "Industrial Activities"
    proxyRegion <- addLayersControl(proxyRegion
@@ -1806,35 +1982,35 @@ if (F) observe({ ## addLayersControl(proxyRegion)
                         )
 })
 observeEvent(input$comment,{
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$comment'\n")
   # config <- config_read()
    exchange$config$comment <- input$comment
    config_write(exchange$config)
 })
 observeEvent(input$relative,{
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$relative'\n")
   # config <- config_read()
    exchange$config$relative <- input$relative
    config_write(exchange$config)
 })
 if (F) observeEvent(input$sleepVerbose,{
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$sleepVerbose'\n")
   # config <- config_read()
    exchange$config$sleepVerbose <- input$sleepVerbose
    config_write(exchange$config)
 })
 observeEvent(input$sleepValue,{
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$sleepValue'\n")
   # config <- config_read()
    exchange$config$sleepValue <- input$sleepValue
    config_write(exchange$config)
 }) 
 'rvCommentTable' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvCommentTable\n")
    if (comment_exists()) {
       da <- comment_read()
@@ -1869,7 +2045,7 @@ observeEvent(input$sleepValue,{
    da
 })
 'rvAllComments' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvAllComments:\n")
    req(comment_exists())
    da <- comment_read()
@@ -1877,13 +2053,13 @@ observeEvent(input$sleepValue,{
    da
 })
 if (T) observeEvent(input$submit,{
-   sleeping()
+   verbosing()
    cat("observe 'input$submit'\n")
    req(!is.null(opinion <- input$opinion))
    updateTextAreaInput(session,"opinion",value="")
 })
 if (T) observeEvent(input$rebuildNAC,{ ## eventReactive actionlink
-   sleeping()
+   verbosing()
    cat("observe 'input$rebuildNAC'\n")
    concern <- c(input$mulNAR,input$mulNAY,input$mulNAG)
    if (!identical(as.numeric(concern),as.numeric(exchange$config$concern))) {
@@ -2034,7 +2210,7 @@ observeEvent(input$userLevel,{
    config_write(exchange$config)
 })
 observeEvent(input$ncolor,{
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$ncolor'\n")
   # config <- config_read()
    if (isTRUE((ind <- rvAuthorized())>0)) {
@@ -2048,7 +2224,7 @@ observeEvent(input$ncolor,{
    config_write(exchange$config)
 })
 observeEvent(input$levelNAC,{
-   sleeping()
+   verbosing()
    cat("observeEvent 'input$levelNAC (quantile)'\n")
   # config <- config_read()
    if (isTRUE((ind <- rvAuthorized())>0)) {
@@ -2144,6 +2320,141 @@ if (T) observe({ ## # observeEvent(rvAuthorized,{
    }
    regionU
 })
-'rvReviewComments' <- function() {
+'rvReviewComments' <- reactive({
    isTRUE(!is.null(input$allComments_rows_selected))
-}
+})
+'rvSeason' <- reactive({
+   season <- match(input$season,seasonList)-1L
+   if (0L %in% season)
+      season <- seq(12)
+   season
+})
+'rvHumanUseRaster' <- reactive({
+   huAmount(epoch=input$epoch,season=rvSeason(),subset=rvSubsetIndustry())
+})
+observeEvent(input$'thClickRSC-PU',{ ## 'SR'
+   showModal(modalDialog(title="RSC-PU – Relative Significant Concern Level for a given Area of Interest by Planning Units"
+            ,HTML("RSC-PU the index showing the significant cumulative concern level for an AOI for all CFs and all IAs within the AOI and then averaged by PU and relative to the average significant concern level for a PU in the ArcNet domain. These indexes are helpful because they are independent of the size of an AOI, which enables the comparison of different AOI (such as PACs). The closer index RSC-PU to 100% the closer cumulative significant concern level for a selected AOI to the average concern level for the entire ArcNet domain. If it is higher than 100% than it means that the significant concern level for a given AOI is higher compared to the average for the ArcNet domain.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROC-PU',{ ## 'MNSR'
+   showModal(modalDialog(title="ROC-PU – Relative Overall Concern Level for a given Area of Interest by Planning Units"
+            ,HTML("ROC-PU the index showing the overall cumulative concern level for an AOI where Overall Concern levels (Significant, Notable, and Minor) are summed for all CFs and all IAs within the AOI and then averaged by PU and relative to the average concern level for a PU in the ArcNet domain. These indexes are helpful because they are independent of the size of an AOI, which enables the comparison of different AOI (such as PACs). The closer index ROC-PU to 100% the closer overall concern level for a selected AOI to the average concern level for the entire ArcNet domain. If it is higher than 100% than it means that the overall concern level for a given AOI is higher compared to the average for the ArcNet domain.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickRSC-AOI',{ ## 'SA'
+   showModal(modalDialog(title="RSC-AOI - Relative Significant Concern Level for a given Area of Interest "
+            ,HTML("RSC-AOI is the index showing the significant cumulative concern level for an AOI where only Significant Concern levels are considered and summed for all CFs and all IAs within the AOI and then compared to a baseline representing the maximum possible concern for all CFs within the given area and allow for comparison of different AOI.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROC-AOI',{ ## 'MNSA'
+   showModal(modalDialog(title="ROC-AOI - Relative Overall Concern Level for a given Area of Interest"
+            ,HTML("ROC-AOI is the index showing the overall cumulative concern level for an AOI where Overall Concern levels (Significant, Notable, and Minor) are summed for all CFs and all IAs within the AOI and then compared to a baseline representing the maximum possible concern for all CFs within the given area and allow for comparison of different AOI. The closer ROC-AOI to 100% the higher overall concern for a given AOI is.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickOIP-P',{ ## 'CAPR'
+   showModal(modalDialog(title="OIP-P - Overall Industrial Pressure Level calculated for each Planning Unit"
+            ,HTML("OIP-P is an index calculated for mapping overall industrial pressure and is calculated for each PU independently by multiplying amount of each activity present in a given PU with amount of each CF in a given PU by the level of concern caused by the industrial activity and then summing the results for each IA-CF pair.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROIP-AOI',{ ## 'CAP'
+   showModal(modalDialog(title="ROIP-AOI - Relative Overall Industrial Pressure for a given Area of Interest"
+            ,HTML("ROIP-AOI index is calculated as a percentage of a maximum potential pressure for AOI. It compares level of industrial pressure for AOI to its highest possible theoretical values and highlights areas where the pressure is the highest due to both – amount of industrial activities and susceptibility of conservation features to concerns arising from these activities.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickAA-PU',{ ## 'AAR'
+   showModal(modalDialog(title="AA-PU – Relative Industrial Activity amount for a given Area of Interest by Planning Units"
+            ,HTML("AA-PU is a measure of the cumulative amount or occurrence of industrial activities per PU, normalised and averaged for each PU. It is indicative of the overall industrial presence that exists for each AOI compared to the average presence across the ArcNet domain.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROIP-CF',{ ## 'CAPCF'
+   showModal(modalDialog(title="ROIP-CF – Relative Overall Industrial Pressure for a given Conservation Feature"
+            ,HTML("ROIP-CF index is calculated as a proportion of the maximum possible industrial pressure (baseline scenario) defined as if the amount of industrial activities stays as it is and the concern level for a given CF within given AOI is the highest possible (significant concern).")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickRSC-CF',{ ## 'MNS/B for CF'
+   showModal(modalDialog(title="Relative Significant Concern Level for a given Conservation Feature"
+            ,HTML(readLines("RSC-CF is the index showing the significant cumulative concern level for a CF where only Significant Concern are summed for all IAs which occur within the CF area and then compared to a baseline that represents the maximum possible concern level for that CF. It is used to identify CFs whose conservation goals are at the greatest risk. The closer RSC-CF to 100% the higher significant concern for a given CF is."))
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROC-CF',{ ## 'S/B for CF'
+   showModal(modalDialog(title="ROC-CF - Relative Overall Concern Level for a given Conservation Feature"
+            ,HTML("ROC-CF is the index showing the overall cumulative concern level for a CF where Overall Concern levels (Significant, Notable, and Minor) are summed for all IAs which occur within the CF area and then compared to a baseline that represents the maximum possible concern level for that CF. It is used to identify CFs whose conservation goals are at the greatest risk. The closer ROC-CF to 100% the higher overall concern for a given CF is.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROC-IA',{
+   showModal(modalDialog(title="ROC-IA - Relative Overall Concern Level for a given Industrial Activity"
+            ,HTML("ROC-IA is the index showing the overall cumulative concern level for an IA where Overall Concern levels (Significant, Notable, and Minor) are summed for all CFs which occur within the area where IA can theoretically occur and then compared to a baseline that represents the maximum possible concern level for that IA. CF coverage is applied to scale the concern levels of a CF by the proportion of that CF that occurs in the AOI. It is used to identify IAs that are sources of the greatest risk and IAs that cause only minor risk for CFs within selected AOI. The closer ROC-IA to 100% the higher overall concern the IA causes.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROIP-IA',{
+   showModal(modalDialog(title="ROIP-IA - Relative Overall Industrial Pressure from a given Industrial Activity"
+            ,HTML("ROIP-IA index is calculated as a proportion of the maximum possible industrial pressure (baseline scenario) defined as if the amount of a given IA stays as it is and the concern level for all CFs within the IA distribution within given AOI is the highest possible (significant concern).")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROC-M',{
+   showModal(modalDialog(title="ROC-M - Relative Overall Concern Level for a given month"
+            ,HTML("ROC-M is the index showing the overall cumulative concern level for a month where Overall Concern levels (Significant, Notable, and Minor) are summed for all CFs and all IAs which within an and then compared to a baseline that represents the maximum possible concern level for that month. The closer ROC-M to 100% the higher overall concern for a given month is.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROIP-M',{
+   showModal(modalDialog(title="ROIP-M - Relative Overall Industrial Pressure for a given month"
+            ,HTML("ROIP-M index is calculated as a proportion of the maximum possible industrial pressure (baseline scenario) defined as if the amount of all IAs within a given AOI stays as it is and the concern level for all CFs within the AOI is the highest possible (significant concern) for a selected month.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickOC-P',{
+   showModal(modalDialog(title="OC-P – Overall Concern level calculated for each Planning Unit"
+            ,HTML("OC-P is an index calculated for mapping overall concern and is calculated for each PU independently. It is calculated as the overall cumulative concern level for a PU where Overall Concern levels (Significant, Notable, and Minor) are summed for all CFs and all IAs within the PU and then compared to a baseline representing the maximum possible concern for all CFs within the given PU and multiplied by amount of the CFs within the PU.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickSC-P',{
+   showModal(modalDialog(title="SC-P - Significant Concern level calculated for each Planning Unit"
+            ,HTML("SC-P is an index calculated for mapping significant concern and is calculated for each PU independently. It is calculated as the significant cumulative concern level for a PU where Significant Concern levels are summed for all CFs and all IAs within the PU and then compared to a baseline representing the maximum possible concern for all CFs within the given PU and multiplied by amount of the CFs within the PU.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickOIP-P',{
+   showModal(modalDialog(title="OIP-P - Overall Industrial Pressure Level calculated for each Planning Unit"
+            ,HTML("OIP-P is an index calculated for mapping overall industrial pressure and is calculated for each PU independently by multiplying amount of each activity present in a given PU with amount of each CF in a given PU by the level of concern caused by the industrial activity and then summing the results for each IA-CF pair.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickFoo',{
+   showModal(modalDialog(title="Lorem Ipsum"
+            ,HTML(readLines("https://loripsum.net/api/3/decorate/ul"))
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})

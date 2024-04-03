@@ -129,6 +129,10 @@
 .height0 {
    height: 0;
 }
+.rotate90 {
+   writing-mode: tb-rl;
+   transform: rotate(180deg);
+}
 @media print {
    .zzzpulling {
       page-break-inside: avoid;

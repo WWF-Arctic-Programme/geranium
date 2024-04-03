@@ -32,6 +32,8 @@ if (isShiny <- ursa:::.isShiny()) {
    require(plotly)
   # require(shinycssloaders)
    ursa:::.elapsedTime("require packages -- end")
+} else {
+   print(packageVersion("ursa"))
 }
 #md <- rmarkdown::metadata
 #isShiny <- isTRUE(md$runtime=="shiny")

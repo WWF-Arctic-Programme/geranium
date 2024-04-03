@@ -1,22 +1,42 @@
 ---
 output:
    flexdashboard::flex_dashboard:
-      orientation: columns
+      orientation: rows
+      vertical_layout: fill
 ---
 
-# &shy; {#welcome data-icon="fa-info" .hidden data-orientation="rows"}
+# &shy; {#welcome data-icon="fa-info" .hidden data-orientation="columns"}
 
-##
+## {data-width=300}
 
-### About {data-width=300}
+### About {data-height="auto"}
 
 Short explanation of what is Geranium and how to use it, how it is related to ArcNet (2-3 paragraphs)
 
+This is non-scrollable panel of layout
+
 ```{r, results='asis'}
-# cat(readLines("https://loripsum.net/api/plaintext/medium/3"),sep="\n\n")
+cat(readLines("https://loripsum.net/api/plaintext/medium/2"),sep="\n\n")
 ```
 
-### How to use {data-width=300}
+### {data-height=300}
+
+```{r}
+knitr::include_graphics("https://apiwwfarcticse.cdn.triggerfish.cloud/uploads/2022/05/05094914/arcnetfoodweb.jpeg")
+```
+
+### {data-height=300}
+
+This is scrollable panel of layout with fixed height, which is equal of height of panel above.
+
+
+```{r, results='asis'}
+cat(readLines("https://loripsum.net/api/plaintext/medium/6"),sep="\n\n")
+```
+
+## {data-width=300}
+
+### How to use
 
 Left sidebar is for inputs.
    
@@ -30,5 +50,13 @@ Currently, you have to deselect yourself any AOI in query modes 'Editor' and 'Se
 [Cross-overview](#crosstable) tab is for tabular output and for report genaration.
 
 Designed for use on at least 1366*768 display size or slightly less.
+
+
+:::{.bottom}
+```{r, eval=exists("navButton")}
+navButton("Get started","#map",col="map")
+```
+:::
+
 
 > Invented by Boris Solovyev.<br><br>Developed by Nikita Platonov.<br><br>Content under CC-BY-ND. Design under CC-BY-SA.<br><br>Updated: `r format(file.mtime("../soiga.Rmd"),"%Y-%m-%d %H:%M")`<!--<br><br>[Details](#devel).-->

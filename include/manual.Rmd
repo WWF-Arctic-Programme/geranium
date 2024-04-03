@@ -9,7 +9,7 @@ output:
 ```{r}
 # htmltools::includeHTML('UserManual.html')
 htmltools::includeMarkdown('manual2.Rmd')
-# htmltools::HTML(markdown::markdownToHTML('manual2.Tmd',fragment.only=!TRUE))
+# htmltools::HTML(markdown::markdownToHTML('manual2.Rmd',fragment.only=!TRUE))
 # htmltools::HTML(readLines('UserManual.html'))
 ```
 

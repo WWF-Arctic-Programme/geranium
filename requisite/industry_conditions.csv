@@ -1,34 +1,34 @@
 "activity","industry","abbr","manual","minCoast","maxCoast","minDepth","maxDepth","iceFree"
-"Aquaculture","Fish Farms (salmon, cod or other fish species)","AC",,0,1.5,0,1000,12
-"Aquaculture","Shellfish Farms (Mussels, Oysters, scallops etc)","AM",,0,1.5,0,1000,12
-"Aquaculture","Seaweed Farming","AS",,0,1.5,0,20,99
-"Fishery","Bottom Dredging","FBD",,0,999,0,200,99
-"Fishery","Bottom Gillnets","FBG",,0,5,0,50,99
-"Fishery","Bottom Trawling","FBT",,0,999,0,500,99
-"Fishery","Crab Traps","FCT",,0,999,0,1000,
-"Fishery","Drift Nets","FDN",,0,999,0,6000,99
-"Fishery","Fishing Rods","FFR",,0,5,0,5000,99
-"Fishery","Invertebrates Collection by Divers","FIC",,0,1.5,0,20,99
-"Fishery","Longline Fishing","FLF",,0,999,0,1000,
-"Fishery","Purse Seiner","FPS",,0,999,0,5000,99
-"Fishery","Pelagic Trawling","FPT",,0,999,0,600,
-"Fishery","Seine and Stationary Seine","FSE",,0,1.5,0,20,99
-"Fishery","Seaweed Mowing","FSM",,0,999,0,50,99
-"Fishery","Snurrevad","FSN",,0,999,0,150,99
-"Infrastructure","Coastal Infrastructure (except oil & gas infrastructure)","ICI",,-2,1.5,-50,500,
-"Infrastructure","Dredging","ID",,0,3,0,20,
-"Infrastructure","Underwater Oil & Gas Pipelines","IOP",,0,999,0,7000,
-"Infrastructure","Coastal Oil Terminals (including other petrochemical storing facilities)","IOT",,-1.5,2,-50,5000,
-"Infrastructure","Submarine Communication and Power Cables","IUC",,0,999,0,7000,
-"Infrastructure","Offshore Wind Farms","IW",,0,999,0,500,
-"Mining","Coastal On-Shore Mining","MCM",,-3,1.5,-50,20,
-"Mining","Gas Production (Offshore)","MGP",,0,999,0,2000,
-"Mining","Mining Other (Offshore)","MOM",,0,999,0,7000,
-"Mining","Oil Production (off-shore)","MOP",,0,999,0,2000,
-"Shipping","Cargo/Passenger Vessels using HFO","SHF",,0,999,0,7000,
-"Shipping","Cargo/Passenger Vessels using LFO","SLF",,0,999,0,7000,
-"Shipping","Cargo/Passenger LNG-powered Vessels","SLN",,0,999,0,7000,
-"Shipping","Nuclear-powered Vessels","SN",,0,999,0,7000,
-"Shipping","Tankers carrying oil and other petrochemicals","ST",,0,999,0,7000,
-"Tourism","Ecotourism","TET",,-3,999,-50,7000,
-"Tourism","Mass tourism","TMT",,-3,999,-50,7000,
+"Aquaculture","Finfish Farms","AC","Fish Farms (salmon, cod or other fish species)",0,1.5,0,1000,12
+"Aquaculture","Shellfish Farms","AM","Shellfish Farms (Mussels, Oysters, scallops etc)",0,1.5,0,1000,12
+"Aquaculture","Seaweed Farms","AS","Seaweed Farming",0,1.5,0,20,99
+"Fisheries","Dredge Fishing","FBD","Bottom Dredging",0,999,0,200,99
+"Fisheries","Bottom Gillnets Fishing","FBG","Bottom Gillnets",0,5,0,50,99
+"Fisheries","Bottom Trawling","FBT","Bottom Trawling",0,999,0,500,99
+"Fisheries","Pot and Trap Fishing","FCT","Crab Traps",0,999,0,1000,
+"Fisheries","Drift Net Fishing","FDN","Drift Nets",0,999,0,6000,99
+"Fisheries","Pole and Line Fishing","FFR","Fishing Rods",0,5,0,5000,99
+"Fisheries","Invertebrates Collection by Divers","FIC","Invertebrates Collection by Divers",0,1.5,0,20,99
+"Fisheries","Longline Fishing","FLF","Longline Fishing",0,999,0,1000,
+"Fisheries","Purse Seine Fishing","FPS","Purse Seiner",0,999,0,5000,99
+"Fisheries","Pelagic Trawling","FPT","Pelagic Trawling",0,999,0,600,
+"Fisheries","Seine and Stationary Seine Fishing","FSE","Seine and Stationary Seine",0,1.5,0,20,99
+"Fisheries","Seaweed Mowing","FSM","Seaweed Mowing",0,999,0,50,99
+"Fisheries","Snurrevad Fishing","FSN","Snurrevad",0,999,0,150,99
+"Infrastructure","Coastal Infrastructure","ICI","Coastal Infrastructure (except oil & gas infrastructure)",-2,1.5,-50,500,
+"Infrastructure","Dredging","ID","Dredging",0,3,0,20,
+"Infrastructure","Underwater Oil & Gas Pipelines","IOP","Underwater Oil & Gas Pipelines",0,999,0,7000,
+"Infrastructure","Coastal Oil Terminals","IOT","Coastal Oil Terminals (including other petrochemical storing facilities)",-1.5,2,-50,5000,
+"Infrastructure","Submarine Communication Cables","IUC","Submarine Communication and Power Cables",0,999,0,7000,
+"Infrastructure","Offshore Wind Farms","IW","Offshore Wind Farms",0,999,0,500,
+"Mining","Coastal Onshore Mining","MCM","Coastal On-Shore Mining",-3,1.5,-50,20,
+"Mining","Offshore Gas Production","MGP","Gas Production (Offshore)",0,999,0,2000,
+"Mining","Other Offshore Mining","MOM","Mining Other (Offshore)",0,999,0,7000,
+"Mining","Offshore Oil & Gas-condensate Production","MOP","Oil Production (off-shore)",0,999,0,2000,
+"Shipping","Cargo Vessels - Heavy Fuel Oil","SHF","Cargo/Passenger Vessels using HFO",0,999,0,7000,
+"Shipping","Cargo Vessels – Light Fuel Oil","SLF","Cargo/Passenger Vessels using LFO",0,999,0,7000,
+"Shipping","Cargo LNG-powered Vessels","SLN","Cargo/Passenger LNG-powered Vessels",0,999,0,7000,
+"Shipping","Nuclear-powered Vessels","SN","Nuclear-powered Vessels",0,999,0,7000,
+"Shipping","Tankers carrying oil and other petrochemicals","ST","Tankers carrying oil and other petrochemicals",0,999,0,7000,
+"Tourism","Ecotourism","TET","Ecotourism",-3,999,-50,7000,
+"Tourism","Mass tourism","TMT","Mass tourism",-3,999,-50,7000,

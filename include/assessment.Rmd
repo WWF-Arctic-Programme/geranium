@@ -1,4 +1,5 @@
 ---
+mathjax: true
 output:
    flexdashboard::flex_dashboard:
       orientation: columns
@@ -8,7 +9,9 @@ output:
 
 ```{r}
 # htmltools::includeHTML('Howtheassessmentwasmade.html')
-htmltools::includeMarkdown('assessment2.Rmd')
+# htmltools::includeMarkdown('assessment1.md')
+htmltools::includeMarkdown('assessment2.md')
+# htmltools::includeMarkdown('assessment3.md')
 ```
 
 ```{css}

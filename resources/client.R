@@ -1,11 +1,17 @@
 'verbose' <- function() 'cat(as.character(match.call())[1],":\n")'
-'sleeping' <- function() {
-   req(input$sleepValue)
-  # if (isTRUE(input$sleepVerbose))
-   if (input$sleepValue>0)
-      cat("                                                               (paused)\n")
-  # if (isTRUE(())
-   Sys.sleep(input$sleepValue/1000)
+'verbosing' <- function() {
+   if (F) {
+      req(input$sleepValue)
+     # if (isTRUE(input$sleepVerbose))
+      if (input$sleepValue>0) {
+         cat("                                                              (pausing)\n")
+        # print(gc())
+      }
+      Sys.sleep(input$sleepValue/1000)
+   }
+   else if (F & staffOnly) {
+      memoryUsage()
+   }
    NULL
 }
 'selectionTables' <- function() {
@@ -30,7 +36,7 @@
             ,subsetCF=length(rvSubsetCF())
             ,subsetI=length(rvSubsetIndustry())
             ,domain=switchDomain()
-           # ,eDomain=exchange$domain
+            ,eDomain=exchange$domain
            # ,exchange_CF=exchange$CF
            # ,exchange_industry=industryCode(exchange$industry)
             )[-1]
@@ -60,9 +66,14 @@
    else if (is_spatial(s2)) {
       ret <- spatial_data(s2)
       ret$area <- spatial_area(s2)*1e-6
+     # ret$crs <- sf::st_crs(s2)$Name
    }
    else
       ret <- s2
+   print(ret)
+   str(exchange$prev)
+   str(exchange$curr)
+   str(spatial_data(exchange$selection))
    if (is.character(ret))
       return(invisible(NULL))
    ret
@@ -81,7 +92,7 @@
       }
       cmt <- by(pair,list(value=pair$value,comment=pair$comment),\(x) {
          ret <- data.frame(value=x$value[1]
-                          ,Limitations=bymonth(x$month,name=TRUE)
+                          ,Months=bymonth(x$month,name=TRUE)
                           ,Comment=x$comment[1]
                           )[,-1]
          ret
@@ -95,6 +106,7 @@
       cmt <- comments[comments$industry %in% patt & comments$CF_code %in% cf
                      ,c("Limitations","Comment")]
       rownames(cmt) <- NULL
+      colnames(cmt)[grep("Limit",colnames(cmt))] <- "Months"
       if (!isShiny)
          cmt$Comment <- paste0(substr(cmt$Comment,1,44),"...")
    }
@@ -110,14 +122,14 @@
    else
       b1 <- NULL
    if (isTRUE(eDomain)) {
-      b6 <- navButton("All Activities","#list","list",span=T)
+      b6 <- navButton("All Insustrial Activities","#list","list",span=T)
       b7 <- navButton("All Conservation Features","#list","list",span=T)
       b9 <- NULL
    }
    else {
       b6 <- NULL
       b7 <- NULL
-      b9 <- navButton("Lists...","#list","list",span=T)
+      b9 <- NULL # navButton("Lists...","#list","list",span=T)
    }
    ref2 <- "#annualIndustry"
    cf <- rvSelectCF()
@@ -140,7 +152,7 @@
       b5 <- NULL
    }
    if ((rvIsComment())&&(!is.null(industry))&&(!is.null(cf)))
-      b8 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
+      b8 <- navButton(paste(paste0(industry,"/",cf),"Discussion")
                      ,"#comment","comment",span=T)
    else
       b8 <- NULL
@@ -150,16 +162,18 @@
    }
    else
       b10 <- NULL
+   b11 <- navButton("Bibliography","#bibliography","refs",span=T)
    list('crosstale'=b1,'general_list'=b9,'industry_list'=b6,'cf_list'=b7
        ,'cf_details'=b2,'cf_overview'=b3
        ,'industry_details'=b4,'industry_overview'=b5
-       ,'comment'=b8,'admin'=b10
+       ,'comment'=b8,'admin'=b10,'biblio'=b11
        )
 }
 'buttonsCF' <- function() {
    cat(as.character(match.call())[1],":\n")
    b <- buttonsTemplate()
    b$cf_details <- NULL
+   b$biblio <- NULL
   # b$industry_list <- NULL
    navButton(b)
 }
@@ -167,6 +181,7 @@
    cat(as.character(match.call())[1],":\n")
    b <- buttonsTemplate()
    b$industry_details <- NULL
+   b$biblio <- NULL
   # b$cf_list <- NULL
    navButton(b)
 }
@@ -176,6 +191,7 @@
   # b$industry_details <- NULL
   # b$cf_details <- NULL
    b$comment <- NULL
+   b$biblio <- NULL
    navButton(b)
 }
 'tableCFdata' <- function() {
@@ -203,6 +219,7 @@
   # return(DT::datatable(iris))
   # saveRDS(da,"C:/tmp/interim.rds")
    m <- format(as.Date(paste0("2021-",seq(12),"-15")),"%b")
+   m <- m[m %in% colnames(da)]
    da0 <- unname(unlist(da[,m]))
    patt <- "(\\S+)<sup>(\\S+)</sup>"
    da1 <- gsub(patt,"\\1",da0)
@@ -211,7 +228,7 @@
    # da0 <- gsub("<(/)*sup>","",da0)
    da0 <- paste0(da1,da3)
    da[,m] <-  da0
-   ct <- c(clrLUT,'N/A'="grey90")
+   ct <- c(clrLUT,'n/a'="grey90")
    ct <- data.frame(value=da0,color=ct[da2]) |> unique()
    ct <- DT::styleEqual(ct$value,ct$color)
    ct <- gsub("&gt;",">",ct)
@@ -258,6 +275,7 @@
   # useJS <- TRUE
   # colW <- ifelse(useJS,68,999)
    m <- format(as.Date(paste0("2021-",seq(12),"-15")),"%b")
+   m <- m[m %in% colnames(da)]
    da0 <- unname(unlist(da[,m]))
    patt <- "(\\S+)<sup>(\\S+)</sup>"
    da1 <- gsub(patt,"\\1",da0)
@@ -266,25 +284,30 @@
    # da0 <- gsub("<(/)*sup>","",da0)
    da0 <- paste0(da1,da3)
    da[,m] <-  da0
-   ct <- c(clrLUT,'N/A'="grey90")
+   ct <- c(clrLUT,'n/a'="grey90")
    ct <- data.frame(value=da0,color=ct[da2]) |> unique()
    ct <- DT::styleEqual(ct$value,ct$color)
    ct <- gsub("&gt;",">",ct)
    ct <- gsub("&lt;","<",ct)
+   cname <- gsub("<(/)*em>","",da[[2]])
+   if (length(ind <- which(nchar(da[[2]])>69))) {
+      da[[2]][ind] <- paste0("<span title=\"",cname[ind],"\">",substr(da[[2]][ind],1,67),"...</span>")
+   }
    b <- DT::datatable(da
                        ,rownames=""
                        ,escape=FALSE
                        ,selection="single"
-                       ,extensions="Scroller"
+                       ,extensions=c("Scroller","FixedColumns","ColReorder")
                        ,options=list(NULL
                                     ,ordering=FALSE
                                     ,scroller=TRUE
                                     ,scrollY="calc(100vh - 280px)"
                                     ,scrollX=TRUE
+                                    ,fixedColumns=if (F) F else list(leftColumns=2)
                                     ,pageLength=nrow(da)
                                     ,dom="ift"
                                     ,columnDefs=list(list(targets=2
-                                       ,render = if (T) JS(
+                                       ,render = if (F) JS(
                                         "function(data, type, row, meta) {",
                                         "return type === 'display' && data.length > 69 ?",
                                         "'<span title=\"' + data + '\">' + data.substr(0, 69) + '...</span>' : data;",
@@ -380,6 +403,16 @@
       b <- DT::datatable(res,selection="none",rownames=FALSE,options=list(dom="t"))
       return(b)
    }
+   if (all(res$'CAP' %in% c("n/a","N/A"))) {
+      actionPriority <- regionActivityIndices(aoi=rvAOI()
+                         ,ctable=res # res[,-grep("CAPR",colnames(res))]
+                         ,epoch=input$epoch)
+      metrics <- 100*actionPriority$CAA$capCF/actionPriority$CAB$capCF
+      metrics[is.na(metrics)] <- 0
+      ind <- match(rownames(res),names(metrics))
+      res$'CAP' <- NA_real_
+      res$'CAP'[!is.na(ind)] <- metrics[na.omit(ind)]
+   }
    lab <- rvRegionSF()[[input$region]]$region[rvAOI()$id]
    isChicory <- ((length(lab)==1)&&(grepl("^PAC",lab)))
   # rname - colnames(res)
@@ -393,13 +426,35 @@
       res$'NAO' <- as.numeric(res$'NAO')/100
       indNAC <- grep("^NAC",colnames(res))
       indNAO <- grep("^NAO",colnames(res))
-      colnames(res)[indNAC] <- "<em><abbr title=\"Minor Notable Significant for CF index achievement\">MNSCF</abbr></em>"
-      colnames(res)[indNAO] <- "<em><abbr title=\"Significant for CF index achievement\">SCF</abbr></em>"
-     # colnames(res)[indNAI] <- paste0("<abbr title='",colnames(res)[indNAI]
-     #                                ," index achievement'>",colnames(res)[indNAI],"</abbr>")
+      indCAPR <- grep("^CAP",colnames(res))
+      if (length(unique(res[[indCAPR]]))>1)
+      res[[indCAPR]] <- round(res[[indCAPR]],1)
+      if (T) {
+         lut <- c('ROC-CF'="Relative Overall Concern Level for a given Conservation Feature" ## 'MNS/B'
+                 ,'RSC-CF'="Relative Significant Concern Level for a given Conservation Feature" ## 'S/B'
+                 ,'ROIP-CF'="Relative Overall Industrial Pressure for a given Conservation Feature" ## 'CAPR'
+                 )
+         lname <- names(lut)
+         cname <- sapply(seq_along(lname)
+            ,\(i) as.character(actionLink(inputId=paste0("click",lname[i])
+                              ,label=lname[i]
+                              ,onClick=sprintf("Shiny.setInputValue(id='thClick%s',value=%d,{priority: \"event\"});"
+                                              ,lname[i],sample(seq(1000,9999),1))
+                              )))
+         cname <- sapply(seq_along(lut)
+                        ,\(i) paste0("<em><abbr title='",lut[i],"'>",cname[i],"</abbr></em>"))
+         colnames(res)[c(indNAC,indNAO,indCAPR)] <- cname
+      }
+      else {
+         colnames(res)[indNAC] <- "<em><abbr title=\"Minor Notable Significant for CF index achievement\">ROP</abbr></em>" ## 'MNS/B'
+         colnames(res)[indNAO] <- "<em><abbr title=\"Significant for CF index achievement\">RSC</abbr></em>" ## 'S/B'
+         colnames(res)[indCAPR] <- "<em><abbr title=\"Conservation Action Priority\">OIP</abbr></em>" ## 'CAPR'
+        # colnames(res)[indNAI] <- paste0("<abbr title='",colnames(res)[indNAI]
+        #                                ," index achievement'>",colnames(res)[indNAI],"</abbr>")
+     }
    }
    indCover <- grep("^Cover",colnames(res))
-   colnames(res)[indCover] <- "<em>Cover</em>"
+   colnames(res)[indCover] <- "<em>Coverage</em>"
    colnames(res)[ind2] <- paste0("<abbr title='"
                                               ,industryAbbr$industry[na.omit(ind)],"'>"
                                               ,industryAbbr$abbr[na.omit(ind)],"</abbr>")
@@ -407,6 +462,10 @@
   # res <- input$industry
   # req(res %in% unlist(industries))
   # rownames(res) <- paste0("<a href=\"ya.ru\" target=\"_blank\"",rownames(res),"</a>")
+   cname <- gsub("<(/)*em>","",res[[1]])
+   if (length(ind <- which(nchar(res[[1]])>69))) {
+      res[[1]][ind] <- paste0("<span title=\"",cname[ind],"\">",substr(res[[1]][ind],1,67),"...</span>")
+   }
    if (isChicory) {
       res[[1]] <- paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/cf/"
                         ,paste0("s",sapply(paste0("cf",rownames(res)),digest::digest,"crc32"),".html")
@@ -418,6 +477,7 @@
                 ,extension=c("Scroller","FixedColumns","FixedHeader","Responsive"
                             ,"ColReorder")
                 ,selection=list(mode="single",target=c("cell","row+column")[2])
+               ## check option 'selectable' 
                 ,options=list(NULL
                              ##~ ,columnDefs=list(list(className='dt-right',targets=seq(1,ncol(res))))
                              ,scrollY="calc(100vh - 280px)"
@@ -450,21 +510,23 @@
                 )
   # b <- DT::formatStyle(b,ind2
   #                     ,'background-image'="linear-gradient(to right,red,blue)")
-   if (!staffOnly) {
+   if (T | !staffOnly) {
       grG <- trafficValue('1')
       grY <- trafficValue('2')
       grR <- trafficValue('3')
       grRG <- paste0(grR,"/",grG)
       grRY <- paste0(grR,"/",grY)
       grYG <- paste0(grY,"/",grG)
+      grRYG <- paste0(grR,"/",grY,"/",grG)
       b <- DT::formatStyle(b,ind2
-                     ,backgroundImage=DT::styleEqual(c(grG,grY,grR,grRG,grRY,grYG)
+                     ,backgroundImage=DT::styleEqual(c(grG,grY,grR,grRG,grRY,grYG,grRYG)
                            ,c(paste0("linear-gradient(to right,",clrLUT[grG],",",clrLUT[grG],")")
                              ,paste0("linear-gradient(to right,",clrLUT[grY],",",clrLUT[grY],")")
                              ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grR],")")
                              ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grG],")")
                              ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grY],")")
                              ,paste0("linear-gradient(to right,",clrLUT[grY],",",clrLUT[grG],")")
+                             ,paste0("linear-gradient(to right,",clrLUT[grR],",",clrLUT[grY],",",clrLUT[grG],")")
                              ))
                     # ,backgroundSize='95% 18pt'
                     # ,backgroundRepeat='no-repeat'
@@ -551,26 +613,26 @@
    }
    if (isNone) {
       b9 <- navButton("Selected Area Details","#crosstable","cross",span=T)
-      b7 <- navButton("Overview for ArcNet Area","#descRegion","desc",span=T)
+      b7 <- navButton("Overview for ArcNet domain","#descRegion","desc",span=T)
    }
    else if (isMultiple) {
       b9 <- navButton("Selected Area Details","#crosstable","grey",span=T)
-      b7 <- navButton("Overview for ArcNet Area","#descRegion","grey",span=T)
+      b7 <- navButton("Overview for ArcNet domain","#descRegion","grey",span=T)
    }
    else {
      # b9 <- NULL
      # b7 <- NULL
       b9 <- navButton("Selected Area Details","#crosstable","cross",span=T)
-      b7 <- navButton("Overview for ArcNet Area","#descRegion","desc",span=T)
+      b7 <- navButton("Overview for ArcNet domain","#descRegion","desc",span=T)
    }
   # exchange$domain <- !is.null(b9)
   # b2 <- navButton("Conservation Features","#list","list",span=T)
    if ((!isMultiple)&&(nchar(lab1))&&(nchar(lab2)))
-      b8 <- navButton(paste(dQuote(gsub("\"","",paste0(lab1,"/",lab2))),"Comments")
+      b8 <- navButton(paste(gsub("\"","",paste0(lab1,"/",lab2)),"Discussion")
                      ,"#comment","comment",span=T)
    else
       b8 <- NULL
-   b3 <- navButton("Spatial query","#map",col="map",span=T)
+   b3 <- navButton("Home","#map",col="map",span=T)
    if (rvReviewComments()) {
       b3 <- b9 <- b7 <- b2 <- b1 <- b8 <- NULL
       b10 <- navButton("Admin","#admin",span=T)
@@ -641,7 +703,7 @@
    lab0 <- "Overview"
    aoi <- rvAOI()
    if (is.null(aoi))
-      lab3 <- "Overview for ArcNet Area"
+      lab3 <- "Overview for ArcNet domain"
    else {
       if (length(regname <- rvRegionSF()[[input$region]]$region[aoi$id])>1)
          lab3 <- paste(lab0,"for selected regions")
@@ -656,12 +718,12 @@
    }
    else {
       b1 <- NULL
-      b2 <- navButton("Lists...","#list","list",span=T)
-      b8 <- navButton("Spatial","#map","map",span=T)
+      b2 <- NULL # navButton("Lists...","#list","list",span=T)
+      b8 <- navButton("Home","#map","map",span=T)
    }
    if ((rvIsComment())&&(!is.null(industry))&&(!is.null(cf))&&
       (length(industry)==1)&&(length(cf)==1))
-      b9 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
+      b9 <- navButton(paste(paste0(industry,"/",cf),"Discussion")
                      ,"#comment","comment",span=T)
    else
       b9 <- NULL
@@ -690,7 +752,7 @@
    else
       b1 <- navButton(lab1,"#annualIndustry","annual",span=T)
    b2 <- navButton("Conservation Features","#list","list",span=T)
-   b3 <- navButton("Spatial query","#map",col="map",span=T)
+   b3 <- navButton("Home","#map",col="map",span=T)
 
   # HTML(paste("<p/><p>",b1,"</p>",collapse=" "))
    navButton(list(b3,b2,b1))
@@ -712,7 +774,7 @@
    else
       b1 <- navButton(lab1,"#annualCF","annual",span=T)
    b2 <- navButton("Human Activities in the Arctic","#list","list",span=T)
-   b3 <- navButton("Spatial query","#map",col="map",span=T)
+   b3 <- navButton("Home","#map",col="map",span=T)
    navButton(list(b3,b2,b1))
 }
 'industryDescription' <- function(simple=FALSE) {
@@ -720,12 +782,55 @@
    req(industry <- rvSelectIndustry())
   # activity <- names(industries)[sapply(industries,function(a) input$industry %in% a)]
    activity <- rvIndustryGroup()
-   print(c(activity=activity,industry=industry))
+   print(data.frame(activity=activity,industry=industry,simple=simple))
   # str(activity)
   # str(industry)
   # abbr <- industryCode(industry)
   # activity <- names(industries)[input$cfdata_rows_selected]
-   if (F) {
+   if (T) {
+      fileout <- "res1.html" # "res1.html" ## tempfile()
+      fname <- file.path(root,"include/industries.md")
+      a <- readLines(fname)
+      ind <- grep("^(##|###)\\s",a)
+      md <- data.frame(ind=ind,level=0,name=a[ind],from=NA,to=NA)
+      md$level[grep("^##\\s",md$name)] <- 2L
+      md$level[grep("^###\\s",md$name)] <- 3L
+      md$name <- gsub("^(##|###)\\s","",md$name)
+      md$from <- md$ind
+      md$to <- tail(c(md$ind-1L,length(a)),-1)
+      ind3 <- grep(paste0("^",industry),md$name)
+      if (simple)
+         a <- a[seq(md$from[ind3],md$to[ind3])]
+      else {
+         ind2 <- grep(paste0("^",activity),md$name)
+         a <- a[c(seq(md$from[ind2],md$to[ind2]),seq(md$from[ind3],md$to[ind3]))]
+      }
+      filebib <- file.path(root,"include/industries.bib")
+      filecsl <- file.path(root,"include/industries.csl")
+      a <- c("---"
+            ,"output: html_fragment"
+            ,paste("bibliography:",filebib)
+            ,paste("csl:",filecsl)
+            ,"---"
+            ,""
+            ,a
+            ,""
+            ,"#### References:")
+     # print(lapply(a,substr,1,64) |> do.call(c,args=_))
+      filein <- tempfile(fileext=".Rmd") # "res1.Rmd" # "res1.html" ## tempfile()
+      fileout <- tempfile(fileext=".html") # "res1.html" # "res1.html" ## tempfile()
+      writeLines(a,filein)
+      rmarkdown::render(filein
+                       ,output_format=rmarkdown::html_fragment()
+                      # ,output_format=rmarkdown::html_vignette(css=NULL)
+                       ,output_file=fileout,quiet=TRUE
+                      # ,params=list(prm=analysis(),kind=1L)
+                       )
+      ret <- scan(fileout,what=character(),encoding="UTF-8",quiet=TRUE)
+      ret <- HTML(ret)
+      file.remove(fileout)
+   }
+   else if (F) {
       fname <- paste0("include/industry-",activity,".Rmd")
       print(file.exists(fname))
       print(fname)
@@ -764,14 +869,17 @@
    }
    else {
       fileout <- "res1.html" # "res1.html" ## tempfile()
-      lut <- read.csv("./requisite/industry_conditions.csv")
+      lut <- read.csv(file.path(root,"requisite/industry_conditions.csv"))
+      iname <- "foo"
       if (length(ind <- match(industry,lut$abbr))) {
-         if (is.character(lut$manual))
-            if (nchar(lut$manual[ind]))
-               industry <- lut$manual[ind]
+         if (is.character(lut$manual)) {
+            if (nchar(lut$manual[ind])) {
+               iname <- lut$manual[ind]
+            }
+         }
       }
       opW <- options(warn=1)
-      a0 <- read_xml("./include/industries.html",encoding="UTF-8",as_html=TRUE)
+      a0 <- read_xml(file.path(root,"include/industries.html"),encoding="UTF-8",as_html=TRUE)
       options(opW)
       a1 <- as_list(a0)[[1]][[1]]
       a1 <- lapply(a1,function(a2) {
@@ -789,8 +897,9 @@
             if (is.null(a3$h3))
                return(if (simple) NULL else a3)
             h3 <- a3$h3[[1]][[1]]
-            if (h3!=industryName(industry))
-               return(NULL)
+            if (!grepl(paste0("^",industry),h3))
+               if (T | h3!=iname)
+                  return(NULL)
             a3
          })
          ind2 <- sapply(a2,function(x) !is.null(x))
@@ -814,14 +923,21 @@
    }
    ret
 }
-'mapViewer' <- function() {
+'mapViewer_deprecated' <- function() {
+   return(rvConflictMap())
    cat(as.character(match.call())[1],":\n")
-   a <- rvActivity()$map
-   req(!is.null(a))
+   aoi <- rvAOI()
+   a <- rvActivityMap()
+   if (is.null(a)) {
+      m <- conflictMap(aoi=aoi)
+      return(m)
+   }
+   str(a)
+   print(a)
+  # a <- rvActivity()$map
    coloring <- names(methodList[match(input$coloring,methodList)])
    d6 <- map3_1d(a,kind=coloring,source=input$sheet)
   # write_envi(d6,"c:/tmp/tmp_d6")
-   aoi <- rvAOI()
   # if (!is.null(aoi))
   #    saveRDS(aoi,"c:/tmp/tmp_d6.rds")
    m <- conflictMap(d6,aoi=aoi)
@@ -848,8 +964,8 @@
   # ind <- input$cross_rows_selected
   # req(is.integer(ind))
    req(cf <- rvSelectCF())
-   ind <- match(cf,scenarioCF$CF_code)
-   cfname <- scenarioCF$CF_name[ind]
+   ind <- match(cf,scenarioCF[[indCFcode]])
+   cfname <- scenarioCF[[indCFname]][ind]
   # b <- rvCrossTable()
   # ind <- match(cf,rownames(b))
   # tbl <- b[cf,,drop=TRUE]
@@ -860,7 +976,7 @@
    cat(as.character(match.call())[1],":\n")
    cond <- (length(rvSelectCF())>1)||(length(rvSelectIndustry())>1)
    if (cond)
-      showNotification(paste("Is ArcNet Area?",cond),duration=1)
+      showNotification(paste("Is ArcNet domain?",cond),duration=1)
    return(cond)
    ret <- exchange$domain ## NULL
    if (isTRUE(action)) {
@@ -878,7 +994,7 @@
    }
    cat("   action is:",action,"\n")
    exchange$domain <- action
-   showNotification(paste("ArcNet Area is",exchange$domain),duration=1)
+   showNotification(paste("ArcNet domain is",exchange$domain),duration=1)
   # plutil::timeHint(paste("domain is",exchange$domain))
    NULL
 }
@@ -912,7 +1028,7 @@
    print("1111n")
    g1 <- session_grid()
    sp <- puvspr[puvspr$species %in% cf,]
-   am <- pu[pu$ID %in% sp$pu,]
+   am <- pu[pu$ID %in% sp$pu,] |> spatial_transform(as.integer(input$epsg))
    spatial_data(am) <- sp["amount"]
    g2 <- regrid(spatial_grid(am),expand=1.5)
    session_grid(consistent_grid(g2,ref=c(520,520)))
@@ -935,7 +1051,7 @@
   # str(ind)
   # b <- rvHumanUseCF()
   # cf <- b[[1]][ind]
-   m <- CFMap(cf)
+   m <- CFMap(cf,epsg=as.integer(input$epsg))
    m
 }
 'leafletRegion_deprecated' <- function(aoi) {
@@ -945,15 +1061,23 @@
    m <- regionMap_deprecated(aoi,showPAs=input$regionDesc)
    m
 }
-'displayIndustry' <- function() { ## renderLEaflet
+'displayIndustryConcern' <- function() { ## renderLeaflet
    cat(as.character(match.call())[1],":\n")
    req(industry <- rvSelectIndustry())
    a <- conditionMap(industry=industry,group=NULL)
   # saveRDS(a,"c:/tmp/industry-a.rds")
    coloring <- names(methodList[match(input$coloring,methodList)])
    d6 <- map3_1d(a,kind=coloring,source=input$sheet)
-   m <- conflictMap(d6)
+   m <- conflictMap(d6,epsg=input$epsg)
   # saveRDS(a,"c:/tmp/industry-m.rds")
+   m
+}
+'displayIndustryAmount' <- function() { ## renderLeaflet
+   cat(as.character(match.call())[1],":\n")
+   req(industry <- rvSelectIndustry())
+   a <- indexHumanUse(activity=industry,epoch=input$epoch)
+   d6 <- map1_1d(a) ## higher level than 'd6 <- mapper(a)'
+   m <- conflictMap(d6,epsg=input$epsg)
    m
 }
 'metadataCF' <- function() {
@@ -974,13 +1098,20 @@
       }
    }
    req(cf <- rvSelectCF())
-   md <- scenarioCF[scenarioCF$CF_code %in% cf,]
-   md <- md[md$CF_code %in% cf,grep("(^$|^File_name|groupcode)"
+   md <- scenarioCF[scenarioCF[[indCFcode]] %in% cf,]
+   md <- md[md[[indCFcode]] %in% cf,grep("(^$|^File_name|groupcode)"
                                    ,colnames(md),invert=TRUE)]
    if (T & hlink)
-      md$CF_code <- paste0("[",md$CF_code,"](#annualCF)")
+      md[[indCFcode]] <- paste0("[",md[[indCFcode]],"](#annualCF)")
   # da <- t(as.data.frame(md,check.names=FALSE))
    da <- data.frame(t(md))
+   if (FALSE) {
+      rname <- rownames(da)
+      ind <- grep("source",rname,ignore.case=TRUE)
+      rname[ind] <- paste0("<a href=#section-bibliography>",rname[ind],"</a>")
+     # rname[ind] <- navButton(rname[ind],"#bibliography")
+      rownames(da) <- rname
+   }
   # saveRDS(da,"C:/tmp/interim.rds")
    if (T) {
       ret <- DT::datatable(da
@@ -1054,11 +1185,11 @@
    if (missing(map)) {
       if (showAOI) {
          ursa:::.elapsedTime("0904i1")
-         map <- conflictBasemap(aoi)
+         map <- conflictBasemap(aoi,epsg=input$epsg)
       }
       else {
          ursa:::.elapsedTime("0904i2")
-         map <- conflictBasemap()
+         map <- conflictBasemap(epsg=input$epsg)
       }
       ursa:::.elapsedTime("0904j")
    }
@@ -1153,11 +1284,11 @@
          ursa:::.elapsedTime("mapG -- MISSING MAP")
          if (showAOI) {
             ursa:::.elapsedTime("0904i1")
-            map <- conflictBasemap(aoi)
+            map <- conflictBasemap(aoi,epsg=input$epsg)
          }
          else {
             ursa:::.elapsedTime("0904i2")
-            map <- conflictBasemap()
+            map <- conflictBasemap(epsg=input$epsg)
          }
          ursa:::.elapsedTime("0904j")
       }
@@ -1173,9 +1304,9 @@
    }
    grAOI <- "Selected Region(s)" # as.list(args(regionAddAOI))$group
    grEPA <- "Existing Protected Areas" # as.list(args(regionAddEPA))$group
-   grNAO <- "SR index"
-   grNAC <- "MNSR index"
-   grCAP <- "CAPR index"
+   grNAO <- "SC-P" ##"SR index"
+   grNAC <- "OC-P" # "MNSR index"
+   grCAP <- "OIP-P" # "CAPR index"
    grHU <- "Industrial Activities"
    if (grepl("AOI",index)) {
       gr <- grAOI
@@ -1265,7 +1396,8 @@
    }
    if (isShiny) {
       showNotification(id=layerId,closeButton=FALSE,duration=120
-                      ,paste("Preparing map for",dQuote(gr)),type="warning")
+                      ,if (staffOnly) paste("Preparing map for",dQuote(gr)) else "Preparing map..."
+                      ,type="warning")
       on.exit(removeNotification(id=layerId))
    }
    if (T & index %in% "AOI") { ## implemented to 'regionAddAOI()'
@@ -1327,14 +1459,16 @@
    session_grid(dist2land)
   # a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
    if (index %in% c("NAOR","NACR")) {
-      rebrend <- switch(index,NAOR="SR",NACR="MNSR",index)
+      rebrend <- switch(index,NAOR=c("SR","SC-P")[1],NACR=c("MNSR","OC-P")[1],index)
       a <- rvMetricsMap()[rebrend]
+      rebrend <- switch(index,NAOR=c("SR","SC-P")[2],NACR=c("MNSR","OC-P")[2],index)
+      names(a) <- rebrend
    }
    else if (index %in% "CAPR") {
-      a <- indexCAPR(ctable=rvCrossTable())
+      a <- indexCAPR(ctable=rvCrossTable(),epoch=input$epoch)
    }
    else if (index %in% "humanuse") {
-      a <- indexHumanUse(ctable=rvCrossTable())
+      a <- indexHumanUse(ctable=rvCrossTable(),epoch=input$epoch)
    }
    a <- c(name=mapper(a))
    ct <- ursa_colortable(a)
@@ -1409,11 +1543,19 @@
    rule$unique <- NULL
    if (length(ind <- grep("industry",colnames(rule),ignore.case=TRUE))>0)
       colnames(rule)[ind] <- "Activity"
-   colnames(rule)[grep("min.*coast",colnames(rule),ignore.case=TRUE)] <- "Min coast"
-   colnames(rule)[grep("max.*coast",colnames(rule),ignore.case=TRUE)] <- "Max coast"
-   colnames(rule)[grep("min.*depth",colnames(rule),ignore.case=TRUE)] <- "Min depth"
-   colnames(rule)[grep("max.*depth",colnames(rule),ignore.case=TRUE)] <- "Max depth"
-   colnames(rule)[grep("ice.*free",colnames(rule),ignore.case=TRUE)] <- "Ice free"
+   colnames(rule)[indC1 <- grep("min.*coast",colnames(rule),ignore.case=TRUE)] <- "Min coast, km"
+   colnames(rule)[indC2 <- grep("max.*coast",colnames(rule),ignore.case=TRUE)] <- "Max coast, km"
+   colnames(rule)[indD1 <- grep("min.*depth",colnames(rule),ignore.case=TRUE)] <- "Min depth, m"
+   colnames(rule)[indD2 <- grep("max.*depth",colnames(rule),ignore.case=TRUE)] <- "Max depth, m"
+   colnames(rule)[indI <- grep("ice.*free",colnames(rule),ignore.case=TRUE)] <- "Ice free"
+   cell <- ursa(blank,"cellsize")*1e-3
+   rule[[indC1]] <- round(rule[[indC1]]*cell)
+   rule[[indC2]] <- round(rule[[indC2]]*cell)
+   ice <- as.character(rule[[indI]])
+   ice[!rule[[indI]] %in% c(12,99)] <- "not required"
+   ice[rule[[indI]] %in% c(99)] <- "required"
+   ice[rule[[indI]] %in% c(12)] <- "required whole year"
+   rule[[indI]] <- ice
    rule
 }
 'iceConcHuman' <- function() {
@@ -1451,11 +1593,12 @@
       ursa:::.gc(TRUE)
    }
    else {
-      a <- spatial_centroid(assess[,"industry"]) |> allocate(resetGrid=TRUE) |>
+      session_grid(blank)
+      a <- spatial_centroid(assess[,"industry"]) |> allocate() |>
          ursa_crop(border=2)
       rm(assess)
       ursa:::.gc(TRUE)
-      ret <- display(a,blank="white",fileout=ursa:::.maketmp(ext=".png"),retina=1)
+      ret <- display_homo(a,blank="white",fileout=ursa:::.maketmp(ext=".png"),retina=1)
    }
    session_grid(g0)
    list(src=ret
@@ -1526,7 +1669,7 @@
    # da0 <- gsub("<(/)*sup>","",da0)
    da0 <- paste0(da1,da3)
    da[,m] <-  da0
-   ct <- c(clrLUT,'N/A'="grey90")
+   ct <- c(clrLUT,'n/a'="grey90")
    ct <- data.frame(value=da0,color=ct[da2]) |> unique()
    ct <- DT::styleEqual(ct$value,ct$color)
    ct <- gsub("&gt;",">",ct)
@@ -1561,7 +1704,7 @@
       da <- rvAllComments()[r,]
       industry <- da$Industry
       cf <- da$CF
-      b8 <- navButton(paste(dQuote(paste0(industry,"/",cf)),"Comments")
+      b8 <- navButton(paste(paste0(industry,"/",cf),"Discussion")
                      ,"#comment","comment",span=F)
    }
    b8

@@ -6,6 +6,8 @@ if (length(to_update$Package)) {
    print(to_update$Package)
    install.packages(to_update$Package,repos=repos,type=type)
 }
+#install.packages()
+
 #remotes::update_packages(repos=repos
 #                        ,type=if (.Platform$OS.type=="windows") "binary" else getOption("pkgType")
 #                       # ,upgrade="default"

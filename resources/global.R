@@ -9,11 +9,16 @@ vulnerFile <- paste0("quickload/vulner",seq(4),".rds")
 rdstoken <- file.path(root,"quickload/dropbox-token.rds")
 iceCover <- if (file.exists(iceCoverFile <- file.path(root 
                            ,"quickload/iceCover.rds"))) readRDS(iceCoverFile) else NULL
+if (file.exists(verbfname <- file.path(root,"requests/verb-geranium.log")))
+   file.remove(verbfname)
+if (F & length(list1 <- dir(path=file.path(root,"requests"),pattern="^p.+\\.rds$"
+                       ,full.names=TRUE))>0)
+   file.remove(list1)
 useNACR <- FALSE
-ignoreMissing <- TRUE
+ignoreMissing <- TRUE | !staffOnly ## TRUE for Boris
 quickStart <- FALSE
 count <- 0L
-showHist <- T | !staffOnly
+showHist <- T
 showComment <- TRUE
 if ((!staffOnly)&&((!file.exists(sessionFile))||(file.size(sessionFile)<1024))) {
    isRemote <- TRUE ## only for 'sessionFile' download 
@@ -110,9 +115,11 @@ pYl <- paste0(pYlBase,format(as.hexmode(round(seq(15,255,length=length(pYlBase))
 p2YlRd <- pGrYlRd[c(5,8)]
 height <- 600
 retina <- 2
-kwdRed <- "Incompatible"
-kwdYellow <- c("Concessional","Conditional","Compatible under certain conditions")[2]
-kwdGreen <- c("Compatible","Compatible/not applicable")[2]
+kwdRed <- c("Significant concern (number of CFs)","Significant")[2]
+kwdYellow <- c("Concessional","Notable Concern (number of CFs)"
+              ,"Compatible under certain conditions"
+              ,"Notable")[4]
+kwdGreen <- c("Compatible","Compatible/not applicable","Minor")[3]
 kwdGray <- "Not applicable"
 allActivity <- "All groups"
 noneActivity <- "No human use"
@@ -121,7 +128,7 @@ nameAllCF <- c('3'="All conservation groups"
               ,'1'="All conservation parameters"
               ,'0'="All conservation features"
               )
-nameAllSeason <- c("Annual","Annual maximum")[1]
+nameAllSeason <- c("Whole year","Annual","Annual maximum")[1]
 ##~ kwdRed <- "'2'"
 ##~ kwdYellow <- "'1'"
 ##~ kwdGreen <- "'0'"
@@ -188,10 +195,10 @@ nameSelector <- "Selector"
 nameEditor <- "Editor"
 nameClick <- "Click region(s) on map"
 choiceMap <- c('Do not show'="none"
-              ,'CAPR'="capr"
-              ,'MNSR'="nacr"
-              ,'SR'="naor"
-              ,'Industrial activities acceptability'="trafficlight"
+              ,'OIP-P'="capr" ## 'CAPR'
+              ,'OC-P'="nacr" ## 'MNSR'
+              ,'SC-P'="naor" ## 'SR'
+              ,'Concern level overlay'="trafficlight"
               ,'Industrial activities amount'="humanuse"
               )
 
@@ -261,7 +268,7 @@ if (T)
 iname <- names(industries)
 attributes(industries) <- NULL
 names(industries) <- iname
-patt <- "(^\\w+)\\s*-\\s*(\\w+$)"
+pattMonthSeq <- "(^\\w+)\\s*-\\s*(\\w+$)"
 if (F & !quickStart) { ## vulner is deprecated
    vulner <- vector("list",nrow(rules))
    names(vulner) <- rules$unique
@@ -325,18 +332,25 @@ scenarioCF <- readxl::read_excel(dir(path=file.path(root,"requisite")
                                     ,pattern="Table.*ArcNet.*CFs.*\\.xlsx$"
                                     ,ignore.case=TRUE,full.names=TRUE)
                                 ,.name_repair="minimal")
+cname <- colnames(scenarioCF)
+indCFcode <- grep("(CF.*number|CF.*code)",colnames(scenarioCF),ignore.case=TRUE)
+indCFname <- grep("(CF.*name|CF.*desc)",colnames(scenarioCF),ignore.case=TRUE)
 rownames(scenarioCF) <- NULL
-scenarioCF <- scenarioCF[!is.na(scenarioCF$CF_code),nchar(colnames(scenarioCF))>0]
+scenarioCF <- scenarioCF[!is.na(scenarioCF[[indCFcode]]),nchar(colnames(scenarioCF))>0]
 #scenarioCF <- scenarioCF[,nchar(colnames(scenarioCF))>0]
 #scenarioCF$CF_name <- gsub("\\s\\("," (<em>",scenarioCF$CF_name)
 #scenarioCF$CF_name <- gsub("\\)","</em>)",scenarioCF$CF_name)
-scenarioCF$CF_name <- taxonCF$CF_name[match(scenarioCF$CF_code,taxonCF$CF_code)]
+scenarioCF[[indCFname]] <- taxonCF$CF_name[match(scenarioCF[[indCFcode]],taxonCF$CF_code)]
 colnames(taxonCF) <- gsub("(^group\\d).*","\\1",colnames(taxonCF))
 if ("group0" %in% colnames(taxonCF))
    taxonCF$group0 <- paste0(taxonCF$CF_code," ",taxonCF$group0)
 sname <- unique(substr(industryAbbr$abbr,1,1))
-ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
-names(ctIndustry) <- sname
+if (F) {
+   ctIndustry <- ursa::cubehelix(length(sname),bright=167,weak=100,hue=1,rotate=270)
+   names(ctIndustry) <- sname
+} else {
+   ctIndustry <- c(A="#3D85C6",F="#1C4577",I="#BF9000",M="#000000",S="#A64D79",T="#9900FF")
+}
 economyList <- spatial_dir(path="humanuse",recursive=TRUE)
 hu <- readxl::read_excel("requisite/Gaps in Human Use data from WWF SIGHT.xlsx"
                         ,skip=2)
@@ -346,6 +360,10 @@ colnames(hu)[grep("sight.*dataset",colnames(hu),ignore.case=TRUE)] <- "economy"
 sight <- strsplit(hu$economy,split="\\s*,\\s*")
 names(sight) <- hu$abbr
 adminPWD <- "73fe3177"
+epsg <- 3571:3576
+a <- sapply(epsg,\(x) sf::st_crs(x)$Name)
+a <- gsub(".*laea\\s+(.+$)","\\1",a,ignore.case=TRUE)
+names(epsg) <- a
 if (F & !quickStart) { ## vulner is deprecated
    ursa:::.elapsedTime("concern prepare -- start")
    stop("HERE")
@@ -358,7 +376,7 @@ if (F & !quickStart) { ## vulner is deprecated
    concern$value[concern$value==0] <- NA
    concern$industry <- factor(industryCode(concern$industry))
    ursa:::.elapsedTime("concern prepare -- finish")
-   rHU <- huAmount()
+  # rHU <- huAmount()
 }
 if (T & !quickStart) {
    ursa:::.elapsedTime("concern prepare -- start")
@@ -411,7 +429,7 @@ if (T & !quickStart) {
    ursa:::.elapsedTime("concern prepare -- finish")
   # saveRDS(concern,"C:/tmp/concern.rds")
    rm(a4)
-   rHU <- huAmount()
+  # rHU <- huAmount()
    vulner <- NULL
    if (T) {
       verbose <- T
@@ -520,7 +538,7 @@ if (F) {
                  ,'9'="Polar bears"
                  )
 } else {
-   ind <- scenarioCF$CF_code %in% CFCode()
+   ind <- scenarioCF[[indCFcode]] %in% CFCode()
    groupList <- c(unname(nameAllCF['3']),unique(taxonCF$group3[ind]))
 }
 if (!quickStart) {
@@ -529,8 +547,9 @@ if (!quickStart) {
    save(regionSF,regionU,dist2land,blank,cfmeta,rules,puvspr,pu,spec
        ,PAs,half
       # ,vulner
-     # ,comments ## deprecated
-       ,concern,rHU
+      # ,comments ## deprecated
+       ,concern
+      # ,rHU ## try to deprecate
       # ,concernNAO,concernNAC
        ,file=sessionFile)
    if ((isRemote)&&(T | !staffOnly))
@@ -539,7 +558,7 @@ if (!quickStart) {
 if (isShiny) {
   # removeModal()
 }
-options(warn=2)
+options(warn=ifelse(staffOnly,2,1))
 ##~ if (F)
    ##~ save(pu,puvspr,concern,concernNAO,concernNAC,industryAbbr,industries
        ##~ ,file="C:/tmp/session-soiga.Rdata")

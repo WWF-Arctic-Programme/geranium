@@ -5,8 +5,9 @@ pkglist <- c("rmarkdown","shiny","remotes","sf","ursa" ## 1:5
                   ,"plotly","bookdown","rsconnect","pinp","rticles" ## 14:18
                   ,"tint","tufte","akima","xlsx","quarto", "rdrop2" ## 19:24
                   ,"here","shinyjs","rjson","shinycssloaders" ## 25:28
-                  ,"DT","flexdashboard" ## 29:30
-                  )[29] ## [1:26]
+                  ,"DT","flexdashboard","lobstr","lorem" ## 29:32
+                  ,"markdown" ## 33:33
+                  )[24] ## [1:26]
 ret <- sapply(pkglist,\(pkg) {
    if (!requireNamespace(pkg))
       return(pkg)
@@ -18,6 +19,8 @@ install.packages(ret
                 ,repos=repos)
 if ((!requireNamespace("flexdashboard"))||(packageVersion("flexdashboard")>="0.6.0"))
    remotes::install_version("flexdashboard",version="0.5.2",upgrade="never",repos=repos)
+# if ((!requireNamespace("DBI"))||(packageVersion("DBI")>"1.1.3"))
+#    remotes::install_version("DBI",version="1.1.3",upgrade="never",repos=repos)
 #if ((!requireNamespace("DT"))||(packageVersion("DT")>"0.28"))
 #   remotes::install_version("DT",version="0.28",upgrade="never",repos=repos)
 #if ((!requireNamespace("leaflet"))||(packageVersion("leaflet")>="2.1.1"))

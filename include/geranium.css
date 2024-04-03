@@ -150,14 +150,24 @@ table.overcontent tbody td {
 .linkbutton.grey, .linkbutton.hide {
    background-color: #ddd;
 }
+.linkbutton.refs, .linkbutton.gainsboro {
+   background-color: gainsboro;
+}
 .linkbutton a {
    color: white;
 }
 #buttonsCross {
    overflow-y: hidden;
 }
+.bottom .linebuttom {
+   position: absolute;
+   bottom: 10em;
+}
 img[data-width^=ursa] {
    opacity: 0.1
+}
+#section-fillImage .image-container img {
+   border: 3px solid red;
 }
 @font-face {
   font-family: 'Roboto Condensed';
@@ -243,13 +253,42 @@ label:hover::after {
    bottom: 0px;
    right: 0px;
 }
-.latent .selectize-dropdown, .latent .control-label, .latent .selectize-input {
-   opacity: 0.2;
+.latent .selectize-zzzdropdown, .latent .control-label, .latent .selectize-input {
+   opacity: 0.3;
 }
-
-@media screen and ((max-width: 1269px) or (max-height: 600px)) {
+.latent .selectize-dropdown {
+   opacity: 1.0;
+}
+.selectize-dropdown .selected {
+   background-color: #eee;
+   color: #222;
+}
+.change {
+   border: solid red 1px;
+   border-left-width: 5px;
+   border-radius: 5px;
+   padding: 5px;
+   margin: 5px;
+}
+.example {
+   border-left: solid #7AF 5px;
+   padding-left: 13px;
+   overflow: hidden;
+   white-space: wrap;
+}
+blockquote .math.display, blockquote .MathJax_Display {
+   color: #37a !important;           
+   font-size: 120% !important;
+}
+blockquote .math.inline, blockquote .MathJax .math[id^=MathJax-Span] {
+   font-size: 69% !important;
+}
+.navbar-nav > :not(.active) > a > .ion-compass {
+   opacity: 0;
+}
+@media screen and ((max-width: 1269px) or (max-height: 599px)) {
    .navbar::before {
-      content: 'WARNING: This application has very limited support for current width of your browser, less than 1270 pixels by width or 600 pixels by height. You can try to either maximize window or reduce zoom (Ctlr-minus once or twice) in your browser.';
+      content: 'WARNING: This application is not compatible with the width of your browser, which is less than 1270 x 600 pixels.  Either maximize the window or zoom out using ctlr-minus';
       display: block;
       position: relative;
       padding-top: 0px;
@@ -271,5 +310,10 @@ label:hover::after {
       display: contents;
       position: relative;
       top: 6px;
+   }
+}
+@media screen and ((max-width: 1279px) or (max-height: 609px)) {
+   .verbose {
+      display: none;
    }
 }

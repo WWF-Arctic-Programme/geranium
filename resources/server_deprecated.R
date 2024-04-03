@@ -1,5 +1,5 @@
 'rvSelectCF_skip' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvSelectCF():\n")
    if (useExchange)
       return(exchange$CF)
@@ -31,7 +31,7 @@
    NULL
 })
 'rvSelectIndustry_skip' <- reactive({
-   sleeping()
+   verbosing()
    cat("rvSelectIndustry():\n")
    if (useExchange)
       return(exchange$industry)
@@ -92,7 +92,7 @@
 })
 if (F) { ## CFSelection
    observeEvent(input$onlyCF_row_last_clicked,{
-      sleeping()
+      verbosing()
       cat("synchro CF selection -- from 'onlyCF' to 'industrydata'\n")
       ind3c <- input$onlyCF_row_last_clicked
       ind3s <- input$onlyCF_rows_selected
@@ -167,7 +167,7 @@ if (F) { ## CFSelection
       }
    })
    observeEvent(input$industrydata_row_last_clicked,{
-      sleeping()
+      verbosing()
      # prev <- exchange$CF
       cat(paste0(as.character(Sys.time())
                 ," synchro CF selection -- from 'industrydata' to '"
@@ -210,7 +210,7 @@ if (F) { ## CFSelection
 }
 if (T) { ## industrySelection
    observeEvent(input$onlyIndustry_row_last_clicked,{
-      sleeping()
+      verbosing()
       cat(as.character(Sys.time())
          ,"synchro industry selection -- from 'onlyIndustry' to 'cfdata'\n")
       ind3c <- input$onlyIndustry_row_last_clicked
@@ -242,7 +242,7 @@ if (T) { ## industrySelection
    })
    observe({
       if (isFALSE(exchange$domain)) {
-         sleeping()
+         verbosing()
          cat(as.character(Sys.time())
             ,"synchro industry selection -- from 'cross' to 'cfdata'\n")
          ind1s <- input$cross_columns_selected
@@ -285,7 +285,7 @@ if (T) { ## industrySelection
       }
    })
    observeEvent(input$cfdata_row_last_clicked,{
-      sleeping()
+      verbosing()
       cat(paste0(as.character(Sys.time())
                 ," synchro industry selection -- from 'cfdata' to '"
                 ,ifelse(isFALSE(exchange$domain),"cross","onlyIndustry"),"'\n"))

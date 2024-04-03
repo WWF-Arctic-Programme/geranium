@@ -4,7 +4,7 @@ proxyOnlyCF <- DT::dataTableProxy("onlyCF")
 proxyIndustrydata <- DT::dataTableProxy("industrydata")
 proxyCFdata <- DT::dataTableProxy("cfdata")
 if (F) observeEvent(input$onlyCF_row_last_clicked,{ ## CFSelection
-   sleeping()
+   verbosing()
    cat("synchro CF selection -- from 'onlyCF' to 'industrydata'\n")
   # ind3c <- input$onlyCF_row_last_clicked 
    ind3s <- input$onlyCF_rows_selected
@@ -33,7 +33,7 @@ if (F) observeEvent(input$onlyCF_row_last_clicked,{ ## CFSelection
    }
 })
 if (F) observeEvent(input$industrydata_row_last_clicked,{
-   sleeping()
+   verbosing()
   # prev <- exchange$CF
    cat(paste0(as.character(Sys.time())
              ," synchro CF selection -- from 'industrydata' to '"
@@ -76,7 +76,7 @@ if (F) observeEvent(input$industrydata_row_last_clicked,{
    }
 })
 if (F) observeEvent(input$onlyIndustry_row_last_clicked,{ ## industrySelection
-   sleeping()
+   verbosing()
    cat(as.character(Sys.time())
       ,"synchro industry selection -- from 'onlyIndustry' to 'cfdata'\n")
   # ind3c <- input$onlyIndustry_row_last_clicked
@@ -117,7 +117,7 @@ if (F) observeEvent(input$onlyIndustry_row_last_clicked,{ ## industrySelection
    }
 })
 if (F) observeEvent(input$cfdata_row_last_clicked,{
-   sleeping()
+   verbosing()
    cat(paste0(as.character(Sys.time())
              ," synchro industry selection -- from 'cfdata' to '"
              ,ifelse(!switchDomain(),"cross","onlyIndustry"),"'\n"))
@@ -184,7 +184,7 @@ if (F) observeEvent(input$cfdata_row_last_clicked,{
 })
 if (F) observe({ ## selection from 'cross' to 'cfdata'
    if (!switchDomain()) {
-      sleeping()
+      verbosing()
       cat(as.character(Sys.time())
          ,"synchro industry selection -- from 'cross' to 'cfdata'\n")
       ind1s <- input$cross_columns_selected
@@ -226,7 +226,7 @@ if (F) observe({ ## selection from 'cross' to 'cfdata'
    }
 })
 if (T) observe({ ## reset selection with change of AOI
-   print("reset selection with change of AOI")
+   print("reset table selection after change of AOI")
    aoi <- rvAOI()
    DT::selectColumns(proxyCross,NULL)
    DT::selectRows(proxyCross,NULL)

@@ -1,0 +1,10 @@
+---
+mathjax: true
+---
+
+
+$$MNS_{ij} = \sum_{k}^{\text{by seasons}}MNSC_{ijk}:MNSC_{ijk} \neq N/A$$
+
+$$MNSCF_{j} = \frac{\sum_{i}^{\text{by IAs}}\left( F_{j} \cdot MNS_{ij} \right)}{\sum_{i}^{\text{by IAs}}\left( F_{j} \cdot B_{ij} \right)} = \frac{\sum_{i}^{\text{by IAs}}MNS_{ij}}{\sum_{i}^{\text{by IAs}}B_{ij}}.$$
+
+$$MNSIA_{i} = \frac{\sum_{j}^{\text{by CFs}}F_{j} \cdot MNS_{ij}}{\sum_{j}^{\text{by CFs}}F_{j} \cdot B_{ij}}$$

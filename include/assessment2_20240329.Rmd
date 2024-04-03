@@ -1,0 +1,699 @@
+---
+mathjax: true
+css: geranium.css
+toc: true
+toc_depth: 3
+---
+
+# How the conservation prioritisation assessment was made
+
+## Context:
+
+ArcNet is a network of Priority Areas for Conservation (PACs). These areas were identified based on biological data and selected because of their biological and ecological value. It is assumed that by implementing ArcNet i.e., by conserving these areas the resilience of the Arctic Ocean's biodiversity will be strengthened. To achieve this the following steps are needed:
+
+-   Conservation needs for each PAC should be identified.
+
+-   Appropriate conservation measures and management regimes based on these needs should be evaluated and selected.
+
+-   Areas where conservation needs are the most urgent, should be prioritised.
+
+-   Management regimes for the areas beyond and between PACs should be proposed.
+
+Biodiversity conservation needs in a particular area generally depend on a set of factors which can be divided in two groups: ex situ (climate change and its cascading effects, long-distance transportation of pollution with oceanic or air currents and rivers, ocean acidification) and in situ - human uses including commercial industries, military and scientific activities, traditional nature use by indigenous people and coastal communities.
+
+Ex situ factors, if possible, are best manageable on the global scale or a scale of the entire Arctic region (=Pan-Arctic), i.e., international treaties and regulation regimes.
+
+Human uses are of smaller scale and vary throughout the Arctic, therefore they can be and should be evaluated and assessed at the regional scale by looking into the impacts they may have on each of the conservation features in each area (e.g., PAC).
+
+As evaluation of the military-related activities and activities conducted by indigenous and coastal communities requires specific methodology and involvement of relevant stakeholders for assessment of their impact on PACs, and scientific field activities are currently very limited at the scale of the Arctic, present assessment is focused on industrial human uses (commercial activities) and their potential impacts on the Arctic marine biota and its habitats.
+
+## Goal of the assessment:
+
+To identify conservation needs for each ArcNet PAC or any other area of interest within ArcNet based on the assessment of impact industrial activities have or can potentially have on marine biodiversity in the Arctic seas to inform choices for their management regimes.
+
+## Tasks:
+
+1.  Compile list of existing and potential economic activities in the Arctic seas and classify them by their impacts.
+
+2.  Compile a list of conservation features representing marine biodiversity of the Arctic.
+
+3.  Assess a level of impact each industrial activity has or can have on each of the conservation features and identify risks and the level of conservation concern an activity can cause in relation to each conservation feature.
+
+4.  Identify specific conservation requirements to ensure that an activity will not interfere with the conservation tasks for a feature.
+
+5.  Overlay the outputs of the assessment to see a composition of requirements for commercial activities needed for each PAC or any other areas of interest.
+
+6.  Based on a composition of requirements for industrial activities to identify a level of a conservation need (conservation concern) for each area.
+
+7.  Select and propose appropriate conservation measures and management regimes based on these needs and existing or needed legislation for each PAC or any other chosen area of interest.
+
+8.  Overlay geographic distributions of a composition of requirements for industrial activities and existing and planned activities in the Arctic seas to identify where they are threatening marine life the most and prioritise these areas for urgent action.
+
+## How the assessment was made:
+
+### List of economic activities
+
+A list of existing and potential commercial activities in the Arctic seas was compiled. It includes the following major activities: fishery, aquaculture, infrastructure construction and maintenance, mining, shipping, and tourism.
+
+Then each of the activities was classified by their impacts and divided into several specific activities. A brief description of each activity including such characteristics as seasonality, spatial distribution limitations, i.e., depths or coast proximity, associated activities and impacts was prepared.
+
+Aquaculture was divided into the following categories:
+
+-   Finfish production in cages (salmon, cod etc.),
+
+-   Shellfish production (oysters, mussels, scallops),
+
+-   Seaweed production
+
+Fishery was divided into 13 different categories by type of fishing gear given they may have different impacts on the conservation features:
+
+-   Bottom trawling
+
+-   Snurrevad
+
+-   Pelagic trawling
+
+-   Bottom dredging
+
+-   Seaweed moving
+
+-   Invertebrates collection by divers
+
+-   Longline fishing
+
+-   Crab traps
+
+-   Fishing rods/trolling
+
+-   Purse seine
+
+-   Bottom gillnets
+
+-   Drifters
+
+-   Seine/stationary seine
+
+Infrastructure construction and maintenance was divided into following categories:
+
+-   Underwater communication cables
+
+-   Underwater oil & gas pipelines
+
+-   Offshore wind parks
+
+-   Coastal infrastructure (ports)
+
+-   Coastal infrastructure (oil terminals)
+
+-   Dredging
+
+Mining was divided into the following categories:
+
+-   Offshore oil production
+
+-   Offshore gas production
+
+-   Other offshore mineral production including deep seabed mining
+
+-   Coastal mining
+
+Shipping (transport shipping as other uses of ships were included in other economic activities, e.g., tourist vessels in tourism, fishing vessels in fishery etc) was divided into categories by type of fuel as it is a major factor differentiating potential impacts from different ships and tankers were set as a separate category:
+
+-   Oil and petrochemicals tankers
+
+-   Ships with engines on heavy fuel oil (HFO)
+
+-   Ships with engines on light fuel oil (LFO)
+
+-   Ships with engines on liquified natural gas (LNG)
+
+-   Ships with engines on nuclear fuel
+
+Tourism was divided into two categories:
+
+-   Mass tourism involving construction of permanent coastal infrastructure
+
+-   Ecotourism
+
+Detailed description of each activity is provided in the "Activity Overview" section of the tool.
+
+### A list of conservation features representing marine biodiversity of the Arctic
+
+A list of conservation features compiled for the ArcNet analysis was used as it systematically represents marine biodiversity of the Arctic and makes the assessment consistent with the priority areas for conservation identification and the entire ArcNet analysis.
+
+### Economic activities assessment
+
+Once the lists of economic activities and conservation features were compiled the assessment was made using a simple traffic light approach.
+
+Conservation concern in a CF area (habitat/biotope) caused by an activity is:
+
+-   1 (yellow) - Minor (and transitory). Related risks, if any, are mitigatable through comprehensively adhering to existing environmental standards and best practices.
+
+-   2 (brown) - Notable. Related risks require mitigation through activity-specific and/or habitat/ biotope-specific considerations if the activity takes place.
+
+-   3 (red) -- Significant. Related risks are assessed as non-mitigatable through activity-specific and/or habitat / biotope-specific considerations.
+
+-   N/A - Not applicable. An activity can not be realised / does not spatially or seasonally overlap with a conservation feature area (habitat / biotope).
+
+#### Full cycle considered
+
+When assessing whether an activity can cause conservation concern in a conservation feature area experts evaluate the entire life cycle of an activity with all the associated impacts. For example, shipping of cargo in the areas where ringed seals are whelping in the Chukchi Sea in March - June will inevitably involve breaking the ice cover - by icebreakers or a ship with the high ice class. Construction of ports on shallow water coasts will often be followed by dredging to maintain navigation channels, thus its impacts were considered in the assessment of a port construction accordingly. Offshore oil mining involves various surveys including seismic surveys, ship traffic consisting of supply and tanker vessels, construction of infrastructure - platforms and terminals etc - the entire industrial life cycle had to be considered during the assessment.
+
+#### The worst-case scenario approach
+
+As each activity is associated with various impacts of different scales (frequency, timing, longevity, magnitude) and, therefore different potential danger, the final score for the conservation concern for a given conservation feature was selected given the worst scenario implemented, i.e., with the strongest possible impact. For example, there are effects like water turbidity, underwater noise, physical disturbance etc associated with an oil pipeline construction and exploitation, but it's a risk of an accidental major oil spill which defines the level of conservation concern for this activity.
+
+#### The question is about conservation
+
+During the assessment experts answered the question: what level of concern an activity causes for an objective of conservation for a given conservation feature? Can this activity be compatible with a task of conservation of a feature in an area? If so, under what conditions? Therefore, the experts did not assess a theoretical chance of a species or a biological community to survive in disturbed or altered environment. Rather they looked at a feature vulnerability to the impacts associated with activities and aimed to identify a level of concern each activity causes if it happens in a conservation feature area.
+
+#### Existing environmental standards and best practices
+
+Prior to the assessment it was assumed that all economic activities considered for the assessment meet general existing environmental standards, requirements, and best conservation practices. Therefore, the assessment considered inherent and specific impacts associated with an activity. For example, the experts did not need to list requirements for a fishery to be sustainable, for fishing vessels to follow MARPOL requirements and so on, by focusing solely on two factors: to what extent a conservation feature is vulnerable to the inherent impacts of the fishery - ship noise, risks of fuel leaks, light pollution, physical disturbance and to what extent a feature is sensitive to specific impacts of this fishery e.g. for the bottom trawling - destruction of benthic communities, risks of entanglement etc.
+
+#### Existing environmental standards and best practices
+
+There is a limited number of benthic distinctive features considered for analysis in ArcNet: kelps, seagrasses, seeps, seamounts, cold water corals, shelf banks. The assessment was done primarily for them as their biology and ecology is known and understanded in principle. Majority of benthic features are representative units derived from geomorphic regionalisation -- such as slopes, shelfs, gullies, canyons, abyssal plains etc. There is an understanding that each of these units represents certain types of benthic communities but there is too little known of their biological and ecological characteristics to assess potential impacts of various human uses on them. The following approach was taken for these representative communities -- they are listed among conservation features, and the minimal level of impact is assigned to each activity having any at least theoretical impact on them. It doesn't mean that authors believe that this level of impact is minor, it means that these conservation features should be counted even the real scale of impact on them is not known.
+
+#### Seasonality
+
+Seasonality in the Arctic Ocean is a major factor affecting both biodiversity and industry life cycles. Thus, the seasonality factor for both a conservation feature and potential impact was considered. For example, if a conservation feature is seasonal (i.e. ice whelping area are used by the harp seals only during pupping season) and an activity takes place during a certain period of a year only (i.e. shipping requires icebreaking during ice seasons only) the assessment was made separately for the season and the off season months based on conservation feature (harp seal) life cycle: shipping can cause significant or notable conservation concern during whelping season and minor or transitory level of concern in the same areas off the whelping season.
+
+#### NA - Not applicable
+
+Not applicable status (NA) was assigned in those cases where an activity is not technically possible in a conservation feature area (habitat, biotope), e.g., long-line fishery in the saltmarshes. In case an activity is not happening in an area at the moment, never happened there and there are no known plans for it to happen but there is a technical possibility for it to happen, the area was assessed. A general principle was that in case of doubts the assessment should be done following the precautionary approach.
+
+Not applicable status was assigned by setting limitations for each activity, i.e., depths, distance to the shoreline and seasons and superimposed on the assessment tables as a filter mask. Parameters of depth, distance to the shoreline and dependence on the presence of the ice cover is presented on a page "Comments CF/Activity" where "coverage" -- is presented for each month for overlap between each CF/Activity pair.
+
+#### Scale
+
+As the ArcNet project operates at the Pan-Arctic scale, it is the scale that was an issue in many cases. Given the data for the ArcNet was collected to represent the Pan-Arctic distribution of conservation features, a scale mismatch between a potential activity's impact distribution and a conservation feature habitat area. Another scale-dependent issue is insufficient state of knowledge to map in detail the distribution of a conservation feature. For example, some important seal or seabird habitats used in the analysis stretch for hundreds of kilometres, and distribution of animals within these habitats is patchy and / or dynamic throughout the year or inter-annually with some parts of the habitats being used by animals more often and/or regularly.
+
+The outputs of the assessment should be different then for these "core" areas and for the rest of the habitat. Since these "core" areas are often either not well mapped yet either not used in the ArcNet analysis, experts would assign the "brown" status to these habitats - "Related risks require mitigation through activity-specific and/or habitat/ biotope-specific considerations if the activity was to take place". Meaning that the "core" areas are to be identified and assigned with "red" status - and the rest of the habitat may have "yellow" status then.
+
+Another wide-spread issue is the coastal areas, where both the high concentration of conservation features occurs, and most industrial activities are concentrated. Fine distribution patterns of coastal habitat distribution do not fit to the Pan-Arctic scale of the ArcNet project database. Likely, distribution of coastal industrial activities is assumed at a coarse scale, i.e., covering a bigger area than in reality. Further analysis requires downscaling of the assessment.
+
+The scale factor turned out to be a significant one since many specific and final decisions regarding conservation/planning can and should be done at a finer scale, than the Pan-Arctic scale of the ArcNet project.
+
+#### Cumulative impacts
+
+Each assessment was conducted separately for each feature and for each activity without taking into account possible cumulative or combine impacts at this step, i.e., tourism, fishery and infrastructure activities were assessed independently without counting how they simultaneously may create cumulative, emergent impact. This assessment should be done at a finer scale at the next level of planning and often requires more detailed scientific data.
+
+#### Assessment as an invitation to engage and not the final verdict
+
+The assessment had to encompass 705 conservation features, 12 months of a year and 33 commercial activities, meaning that the assessors had 279 180 decisions to make. No need to explain that to make all these decisions right is an impossible task, especially in the area where sometimes there is no single right answer or enough scientific data to make a decision. As the Arctic is changing very fast and there are more and more industries coming into the region, there are more and more results of research on the impact these activities cause on Arctic biodiversity becoming available. The assessment is designed to help stakeholders and conservation planners to shape the discussion and deeper investigation, to engage rather than to provide a final verdict. There is a dedicated section "Comments" where everyone interested can question existing assessment outputs for each CF and provide their view and rationale.
+
+#### Who made the assessment
+
+The assessment was conducted independently for each taxa thematic group primarily by the taxa experts who were a part of the ArcNet thematic groups and participated in the inputs setting, conservation features identification and data collection for the ArcNet.
+
+After the primary assessment, the experts met to discuss their approaches and to make sure they are uniform. Once their work was done, the assessment sheets were merged and checked for consistency again.
+
+These tables were used as a primary source of information for the Geranium tool.
+
+### Overlay of the outputs of the assessment
+
+Once the assessment was done for each of 700+ conservation features and for each of 33 industrial activities, cartographic tools were used to map the results of the assessment and to assess risks and levels of conservation concern for any chosen geographic area: PAC, MEOW (Marine Ecosystems of the World), LME (Large Marine Ecosystems), EEZ (Exclusive Economic Zones) or any other selected by a user.
+
+Results of the assessment will help conservation and marine spatial planners to figure out what industries/industrial activities may cause a concern in each particular area of interest and what conservation requirements should be applied for these industries, as well as what data/information is missing in each area.
+
+### Conservation concern and conservation action priority levels for each area
+
+Based on a number of requirements for industrial activities a level of conservation concern can be identified for each area of interest.
+
+This means that the assessment allows not just industrial activity regulation and related decisions but also the most suitable conservation or management regime for each area (particularly for PACs) based on the level of conservation concern in each area and existing or needed legislation in a region where a particular area is located.
+
+Several metrics / indexes were developed to help conservation planners identify level of conservation concern and conservation action priority level:
+Expert weights for concern levels:
+
+$$W = \{ W_{s},W_{n},W_{m}\}\text{,}$$
+
+where $W_{s}$ is a weight for "Significant concern" status, $W_{n}$ is a weight for "Notable concern" status, $W_{m}$ is a weight for "Minor concern" status,
+
+$W_{s} = 100$, $W_{n} = 10$, $W_{m} = 1$.
+
+<div class="change">
+
+Number of months (seasonality factor):
+
+$$G_{SM}$$
+
+E. g. $G_{SM} = 12$ for whole year
+
+Number of CFs in selected group
+
+$$G_{CF}$$
+
+Number of IAs in selected group:
+
+$$G_{IA}$$
+
+</div>
+
+Number of planning units (PUs) in selected area:
+
+$$U$$
+
+<div class="change">
+
+Number of PUs in ArcNet domain:
+
+$$U^{0}$$
+
+Spatial [coverage]{.change} (a share of a total area/amount) of a selected $CF_{j}$ in selected area (ROI) (PAC, *etc*) is:
+
+$$F_{j}$$
+
+For ArcNet domain all $F^{0}_{j}=1$.
+</div>
+
+Therefore conservation concern level in the CF area (habitat/biotope) caused by the activity is:
+
+$$
+MNSC_{ijk} =
+\begin{cases}
+W_s, & \text{for "Significant" status}, \\
+W_n, & \text{for "Notable" status}, \\
+W_m, & \text{for "Minor" status}, \\
+N/A, & \text{for "Not Applicable" status}.
+\end{cases}
+$$
+
+$$
+SC_{ijk} =
+\begin{cases}
+W_s, & \text{for "Significant" status}, \\
+0, & \text{for "Notable" status}, \\
+0, & \text{for "Minor" status}, \\
+N/A, & \text{for "Not Applicable" status}.
+\end{cases}
+$$
+
+where $i$ is IA, $j$ is CF, $k$ is season.
+
+
+<div class="change">
+
+Maximum possible status / risk for a given assessment - Base Significant Units (B).
+
+$$
+B^{CF/IA}_{ij} = 
+\begin{cases}
+\infty, & \forall k:MNSC_{ijk} = N/A \\
+G_{SM} \cdot \max(W), & \text{otherwise}. \\
+\end{cases}
+$$
+
+$$
+B^{CF/SM}_{jk} = 
+\begin{cases}
+\infty, & \forall i:MNSC_{ijk} = N/A \\
+G_{IA} \cdot \max(W), & \text{otherwise}. \\
+\end{cases}
+$$
+
+$$
+B^{IA/SM}_{ik} = 
+\begin{cases}
+\infty, & \forall j:MNSC_{ijk} = N/A \\
+G_{CF} \cdot \max(W), & \text{otherwise}. \\
+\end{cases}
+$$
+
+where $i$ is IAs, $j$ is CFs, $k$ is season.
+</div>
+
+**SC (Significant concern)** - a metric showing how big is the significant level of conservation concern for a selected area. It is a sum of months when the level of concern is "significant" for each CF multiplied by a cover of each CF accordingly.
+
+<!--
+
+**SC** = SUMM CF1... N (Cover\*Nmonths), where:
+
+-   CF1... N - all CFs in a selected area for which at least for one month one activity received status "significant conservation concern",
+
+-   Cover - a share of the CF's amount within a selected area (0 - 1.0),
+
+-   Nmonths - a number of months when a particular industrial activity has the "significant conservation concern" status for a particular CF.
+
+-->
+
+$$S^{CF/IA}_{ij} = \sum_{k}^{\text{by SMs}}SC_{ijk}:SC_{ijk} \neq N/A$$
+
+**MNSC (Minor Notable Significant Concern)** -- a metric similar to SC considering all levels of concern including "minor" and "notable"
+
+$$MNS^{CF/IA}_{ij} = \sum_{k}^{\text{by SMs}}MNSC_{ijk}:MNSC_{ijk} \neq N/A$$
+
+<div class="change">
+
+$$MNS^{CF/SM}_{jk} = \sum_{i}^{\text{by IAs}}MNSC_{ijk}:MNSC_{ijk} \neq N/A$$
+
+$$MNS^{IA/SM}_{ik} = \sum_{j}^{\text{by CFs}}MNSC_{ijk}:MNSC_{ijk} \neq N/A$$
+
+</div>
+
+<div class="change">
+
+Projected metrics with coverage (CANDIDATE TO RETIRE):
+
+$$FMNS^{CF/IA}_{ij} = F_{j} \cdot MNS^{CF/IA}_{ij}$$
+
+$$FB^{CF/IA}_{ij} = F_{j} \cdot B^{CF/IA}_{ij}$$
+
+$$FMNS^{CF/SM}_{jk} = F_{j} \cdot MNS^{CF/SM}_{jk}$$
+
+$$FB^{CF/SM}_{jk} = F_{j} \cdot B^{CF/SM}_{jk}$$
+
+But $F_{j}$ cannot be used with with $MNS^{IA/SM}_{ik}$ and $B^{IA/SM}_{ik}$.
+
+</div>
+
+For regional metrics:
+
+<div class="change">
+
+$$S = \sum_{i}^{\text{by IAs}}\sum_{j}^{\text{by CFs}}(F_{j} \cdot S^{CF/IA}_{ij})$$
+
+$$MNS = \sum_{i}^{\text{by IAs}}\sum_{j}^{\text{by CFs}}(F_{j} \cdot MNS^{CF/IA}_{ij})$$
+
+$$B = \sum_{i}^{\text{by IAs}}\sum_{j}^{\text{by CFs}}(F_{j} \cdot B^{CF/IA}_{ij})$$
+
+</div>
+
+**SA (Significant Concern for Area)** - derivative of composition of Conservation Features (with importance of the selected area for each CF taken into account) in a selected area multiplied by a number of industrial activities causing significant conservation concern (with "red" status) in this area for each CF multiplied by a number of months when these activities assigned with "red" status for each CF in the area. Overall the metric shows a level of conservation concern, the intolerance of a regional conservation features composition to all possible industrial activities.
+
+<!--
+SA = (SUMM (SCa... z) / MAX (SUMM (SCa...z))) \*100% ,
+
+Where:
+
+-   a... z are industrial activities for which at least for one CF for one month the assessment assigned "red" status, "significant conservation concern";
+
+-   MAX (SUMM (SCa...z)) - maximum possible conservation concern level for the selected area if every month, every CF for every activity has the highest possible conservation concern ("red" status).
+
+--> 
+
+<div class="change">
+
+$$SA = \frac{S}{B} \cdot 100\%$$
+
+</div>
+
+**MNSA (Minor Notable Significant for Area)** **-** a metric similar to SA with a difference that it considers "brown" and "yellow" statuses as well as "red" one. The formula sums "significant" assessments with "notable" and "minor conservation concern" assessments with the first having a coefficient/weight of 100, "notable" - 10, and "minor" - 1.
+
+<!--
+$$MNSA = \frac{\sum_{i}^{\text{by IAs}}\sum_{j}^{\text{by CFs}}(F_{j} \cdot MNS_{ij})}{\sum_{i}^{\text{by IAs}}{\sum_{j}^{\text{by CFs}}(F_{j} \cdot B_{ij})}} \cdot 100\%$$
+-->
+
+<div class="change">
+
+$$MNSA = \frac{MNS}{B} \cdot 100\%$$
+
+</div>
+
+Metrics used to identify levels of conservation concern for conservation features, activities and months in Geranium are similar to the ones for the area with a difference that MNSCF (MNSCF*~j~*) and SCF used to identify conservation concern for a CF are not counting cover.
+
+**MNSCF** **(Minor Notable Significant for CF)**
+
+<div class="change">
+
+<div class="change">
+
+<div class="change">
+
+<div class="change">
+
+Here and after MNSA__ (as $\frac{MNS\_\_}{B\_\_}$) is used instead of MNS__.
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="change">
+
+Used for crosstable column
+
+</div>
+
+<!--
+$$MNSA^{CF}_{j} = \frac{\sum_{i}^{\text{by IAs}}\left( \color{silver}{F_{j}} \cdot MNS^{CF/IA}_{ij} \right)}{\sum_{i}^{\text{by IAs}}\left( \color{silver}{F_{j}} \cdot B^{CF/IA}_{ij} \right)} = \frac{\sum_{i}^{\text{by IAs}}MNS^{CF/SM}_{ij}}{\sum_{i}^{\text{by IAs}}B^{CF/SM}_{ij}}  = \frac{\sum_{k}^{\text{by SMs}}\left( \color{silver}{F_{j}} \cdot MNS^{CF/SM}_{jk} \right)}{\sum_{k}^{\text{by SMs}}\left( \color{silver}{F_{j}} \cdot B^{CF/SM}_{jk} \right)}.$$
+-->
+
+$$MNSA^{CF}_{j} = \frac{\sum_{i}^{\text{by IAs}}\left( \color{silver}{F_{j}} \cdot MNS^{CF/IA}_{ij} \right)}{\sum_{i}^{\text{by IAs}}\left( \color{silver}{F_{j}} \cdot B^{CF/IA}_{ij} \right)} = \frac{\sum_{k}^{\text{by SMs}}\left( \color{silver}{F_{j}} \cdot MNS^{CF/SM}_{jk} \right)}{\sum_{k}^{\text{by SMs}}\left( \color{silver}{F_{j}} \cdot B^{CF/SM}_{jk} \right)}.$$
+
+<div class="change">
+
+<div class="change">
+
+But, for example: $MNS^{CF}_{j} = \sum_{i}^{\text{by IAs}}\left( F_{j} \cdot MNS^{CF/IA}_{ij} \right)$. Note, that this value is not used, and will be retired from document.
+
+</div>
+
+</div>
+
+<!--
+$$MNS^{CF}_{j} = \frac{\sum_{k}^{\text{by SMs}}\left( F_{j} \cdot MNS^{CF/SM}_{jk} \right)}{\sum_{k}^{\text{by SMs}}\left( F_{j} \cdot B^{CF/SM}_{jk} \right)}.$$
+-->
+
+**MNSIA (Minor Notable Significant for Industrial Activity)**
+
+<div class="change">
+
+Used for industrial bar plots:
+
+</div>
+
+$$MNSA^{IA}_{i} = \frac{\sum_{j}^{\text{by CFs}}(F_{j} \cdot MNS^{CF/IA}_{ij})}{\sum_{j}^{\text{by CFs}}(F_{j} \cdot B_{ij})} \color{silver}{\neq \frac{\sum_{k}^{\text{by SMs}}MNS^{IA/SM}_{ik}}{\sum_{k}^{\text{by SMs}}B^{IA/SM}_{ik}} }$$
+
+<div class="change">
+
+Used for industrial bar plots:
+
+$$MNSA^{SM}_{k} = \frac{\sum_{j}^{\text{by CFs}}(F_{j} \cdot MNS^{CF/SM}_{jk})}{\sum_{j}^{\text{by CFs}}(F_{j} \cdot B^{CF/SM}_{jk})} \color{silver}{\neq \frac{\sum_{i}^{\text{by IAs}}MNS^{IA/SM}_{ik}}{\sum_{i}^{\text{by IAs}}B^{IA/SM}_{ik}} }$$
+
+</div>
+
+**SR** **(Significant Relative)** - a SC-based metric showing how big is the average SC for a planning unit in a selected area (SCR) compared to an average SC for a planning unit in ArcNet area (SCR ArcNet). It is used to show a relative overall level of concern for a selected area and allows users to compare various areas regardless of their size.
+
+SR = SCR Selected Area / SCR ArcNet
+
+$$SR = \frac{SA/U}{SA^{0}/U^{0}} \cdot 100\%$$
+
+Where $SA^{0}$ is SA *for ArcNet domain* over the set of all ArcNet CFs ($CF^{0}$s). 
+Remember, All $F^{0}_{j}=1$.
+
+$$SA^{0} = \frac{\sum_{i}^{\text{by IAs}}\sum_{j}^{\text{by }CF^{0}\text{s}}(1 \cdot S_{ij})}{\sum_{i}^{\text{by IAs}}{\sum_{j}^{\text{by }CF^{0}\text{s}}(1 \cdot B_{ij})}} \cdot 100\%$$
+
+
+
+**MNSR** **(Minor Notable Significant Relative)** - a metric similar to SR, based on MNSC instead of SC, i.e. it includes "notable" and "minor" concerns using the same scale as for MNSA ("significant" - 100, "notable" - 10, "minor" - 1).
+
+MNSR = MNSCR Selected Area / MNSCR ArcNet
+
+$$MNSR = \frac{MNSA/U}{MNSA^{0}/U^{0}} \cdot 100\%$$
+
+where $MNSA^{0}$ is $MNSA$ for ArcNet domain over the set of all ArcNet CFs ($CF^{0}$s). All $F_{j}=1$.
+
+$$MNSA^{0} = \frac{\sum_{i}^{\text{by IAs}}\sum_{j}^{\text{by }CF^{0}\text{s}}(1 \cdot MNS_{ij})}{\sum_{i}^{\text{by IAs}}{\sum_{j}^{\text{by }CF^{0}\text{s}}(1 \cdot B_{ij})}} \cdot 100\%$$
+
+Based on conservation concern metrics and information on industrial activities distribution conservation action priority metrics were developed to prioritise areas where potential risks (conservation concern) encounter existing industrial activities.
+
+<div class="change">
+
+Mapping:
+
+<!--
+
+For mapping, we need MNS and S values per PU. Currently, the same names SR and MNSR as for regional metrics $\frac{foo}{foo^{0}}$. Proposed suffix is "P", or something imagined by seeding to cells.
+
+-->
+
+Let's define $A^{CF}_{uj}$ as amount of conservation feature $CF_{j}$ in cell $u$ which is normalized to total $CF_{j}$ amount.
+
+Currently used: $$MNSP^{CF}_{j} = \sum_{i}^{\text{by IAs}} \frac{MNS^{CF/IA}_{ij}}{B^{CF/IA}_{ij}}$$
+
+
+Instead of $MNSP^{\star{CF}}_{j} = MNSA^{CF}_{j}$ (used on 2024-03-20 ±1 day only).
+
+For each map cell:
+
+$$MNSP_{u} = \sum_{j}^{\text{by CFs}} MNSP^{CF}_{j} \cdot A^{CF}_{uj},$$
+
+</div>
+
+*Activity Indexes*:
+
+
+<div class="change">
+
+Activity amounts:
+
+$A^{IA/SM}_{uik}$ is industrial amount *as is* in cell $u$ for $j$-industrial actiivity and $k$-month of season.
+
+Activity amount by season:
+
+$$A^{IA}_{ui} = \sum_{k}^{\text{by SMs}} w_{i} \cdot A^{IA/SM}_{uik} ,$$
+
+<!--
+where $\forall i~\exists! w_{i}: \sum_{u}^{\text{by PUs}^{0}} A^{IA}_{ui}=100$ for ArcNet domain.
+-->
+
+where $w_{i}$:
+
+$$\max_{u}A^{IA}_{ui}=100~~\text{by PUs}^0$$
+
+for ArcNet domain.
+
+Seasonal activity amount:
+
+$$A^{SM}_{uk} = \sum_{i}^{\text{by IAs}} w_{i} \cdot A^{IA/SM}_{uik}.$$
+
+</div>
+
+All values are per single Planning Unit
+
+**AAR** (**Amount of Activities Relative)** - amount of industrial activities per planning unit. Amount of each activity is normalised (0 - 1.0) and averaged for each planning unit. Shows an overall anthropogenic pressure existing in each area compared to the average for ArcNet.
+
+**AAR** = AAR Selected Area / AAR ArcNet
+
+AAR Selected Area = SUMM AAR 1-33, where
+
+AAR 1-33 - normalised amount of each of 33 industrial activities.
+
+<div class="change">
+
+$$AA_{u} = \sum_{i}^{\text{by IAs}}A^{IA}_{ui}$$
+
+<!--
+$$AA = \sum_{u}^{\text{by PUs}}A_{u}$$
+
+$$AA^{0} = \sum_{i}^{\text{by IAs}}\sum_{u}^{\text{by PUs}^{0}}A^{IA}_{ui},$$
+-->
+
+<!--
+where $A^{IA}_{i}$ - $IA_{j}$ amount in cell (IA amount standardisation is outside of metrics calculation).
+-->
+
+$$AAR = \frac{\left(\sum_{u}^{\text{by PUs}}AA_{u}\right)/U}{\left(\sum_{u}^{\text{by PUs}^{0}}AA_{u}\right)/U^{0}},$$
+
+<!--
+$$AAR = \frac{\widehat{AA_{selection}}}{\widehat{AA_{domain}}},$$
+-->
+
+where $\left(\sum_{u}^{\text{by PUs}}A_{u}\right)/U$ is mean $AA$-value per ROI, *i. e.*, mean value of all PUs inside selected area, and $\left(\sum_{u}^{\text{by PUs}^{0}}A_{u}\right)/U^{0}$ is mean value of all PUs for ArcNet domain.
+
+</div>
+
+**CAP** - **Conservation Action Priority** for an area as a whole. It is a sum of MNSR for each planning unit within the area divided by a sum of MNSR maximum possible for all units within the area (in case all CFs have "significant" level of conservation concern and all the activities amount is max in each unit).
+
+CAP = CAP Selected Area / CAP maximum possible for selected area
+
+<!--
+$$CAB = \sum_{j}^{\text{by CFs}}Amount\left( CF_{j} \right)\sum_{i}^{\text{by IAs}}Amount\left( IA_{i} \right) \cdot B_{ij}$$
+
+$$CAP = \frac{CAA}{CAB} \cdot 100\%.$$
+-->
+
+
+<div class="change">
+
+Conservation action priority metrics in cells:
+
+$$CA^{IA}_{ui} = A^{IA}_{ui} \sum_{j}^{\text{by CFs}} A^{CF}_{j} \cdot MNS^{CF/IA}_{ij}$$
+
+$$CB^{IA}_{ui} = A^{IA}_{ui} \sum_{j}^{\text{by CFs}} A^{CF}_{j} \cdot B^{CF/IA}_{ij}$$
+
+$$CA^{SM}_{uk} = A^{SM}_{uk} \sum_{j}^{\text{by CFs}} A^{CF}_{j} \cdot MNS^{CF/SM}_{jk}$$
+
+$$CB^{SM}_{uk} = A^{SM}_{uk} \sum_{j}^{\text{by CFs}} A^{CF}_{j} \cdot B^{CF/SM}_{jk}$$
+
+$$CA^{CF}_{uj} = A^{CF}_{j} \sum_{i}^{\text{by IAs}} A^{IA}_{ui} \cdot MNS^{CF/IA}_{ij}$$
+
+$$CB^{CF}_{uj} = A^{CF}_{j} \sum_{i}^{\text{by IAs}} A^{IA}_{ui} \cdot B^{CF/IA}_{ij}$$
+
+
+Conservation action priority metrics for CF:
+
+$$CAA^{CF}_{j} = \sum_{u}^{\text{by PUs}}CA^{CF}_{uj}$$
+
+$$CAB^{CF}_{j} = \sum_{u}^{\text{by PUs}}CB^{CF}_{uj}$$
+
+Conservation action priority metrics for activity:
+
+$$CAA^{IA}_{i} = \sum_{u}^{\text{by PUs}}CA^{IA}_{ui}$$
+
+$$CAB^{IA}_{i} = \sum_{u}^{\text{by PUs}}CB^{IA}_{ui}$$
+
+Conservation action priority metrics for season:
+
+$$CAA^{SM}_{k} = \sum_{u}^{\text{by PUs}}CA^{SM}_{uk}$$
+
+$$CAB^{SM}_{k} = \sum_{u}^{\text{by PUs}}CB^{SM}_{uk}$$
+
+For conservation feature action priority :
+
+$$CAP^{CF}_{j} = \frac{CAA^{CF}_{j}}{CAB^{CF}_{j}} \cdot 100\%$$
+
+For industrial action priority bar plots:
+
+$$CAP^{IA}_{i} = \frac{CAA^{IA}_{i}}{CAB^{IA}_{i}} \cdot 100\%$$
+
+For seasonal action priority bar plots:
+
+$$CAP^{SM}_{k} = \frac{CAA^{SM}_{k}}{CAB^{SM}_{k}} \cdot 100\%$$
+
+For conservation action priority map:
+
+$$
+CAP_{u} = \sum_{i}^{\text{by IAs}} CA^{IA}_{ui}  = \sum_{j}^{\text{by CFs}} CA^{CF}_{uj}
+\color{silver}{ \neq \frac{\sum_{i}^{\text{by IAs}} CA^{IA}_{ui} }{\sum_{i}^{\text{by IAs}} CB^{IA}_{ui} }}
+\color{silver}{\neq \sum_{i}^{\text{by IAs}} \frac{CA^{IA}_{ui}}{CB^{IA}_{ui}}}
+$$ 
+
+<!--
+Bot currently not: $\color{silver}{CAP^{\bullet}_{u}=\frac{\sum_{i}^{\text{by IAs}} CA^{IA}_{ui} }{\sum_{i}^{\text{by IAs}} CB^{IA}_{ui} } \cdot 100\%}$
+
+But currently not: $\color{silver}{CAP^{\star}_{u} = \sum_{i}^{\text{by IAs}} \frac{CA^{IA}_{ui}}{CB^{IA}_{ui}}}$.
+
+-->
+
+For ROI:
+
+$$CAP = \sum_{u}^{\text{by PUs}}\frac{\sum_{i}^{\text{by IAs}} CA^{IA}_{ui} }{\sum_{i}^{\text{by IAs}} CB^{IA}_{ui} } \cdot 100\% \color{silver}{\neq \sum_{u}^{\text{by PUs}}CAP_{u}}$$
+
+<!--
+$$CAP = \sum_{u}^{\text{by PUs}}CAP_{u}$$
+-->
+
+</div>
+
+**CAPR** - **Conservation Action Priority Level Relative**
+
+CAPR = CAPR Selected Area / CAPR ArcNet
+
+CAPR Selected Area = SUMM (MNSR Selected Area 1-33 / AAR 1-33),
+
+MNSR Selected Area 1-33 is MNSR for each planning unit for each of 33 activities in an area,
+
+AAR 1-33 - normalised amount of each of 33 activities.
+
+CAPR shows relative conservation action priority level for a selected area compared to the average level for the ArcNet area.
+
+Absolute:
+
+<!--
+$$CAA^{IA} = \sum_{j}^{\text{by CFs}}A^{CF}\sum_{i}^{\text{by IAs}}Amount\left( IA_{i} \right) \cdot MNS^{CF/IA}_{ij}$$
+-->
+
+$$CAA = \sum_{i}^{\text{by IAs}} CAA^{IA}_{i} = \sum_{i}^{\text{by IAs}} \sum_{u}^{\text{by PUs}}CA^{IA}_{ui}$$
+
+$$CAA^{0} = \sum_{i}^{\text{by IAs}} \sum_{u}^{\text{by PUs}^{0}}CA^{IA}_{ui} $$
+
+Relative:
+
+$$CAPR = \frac{CAA}{CAA^{0}} \cdot 100\%,$$
+
+where $CAA^{0}$ is $CAA$ for ArcNet domain.
