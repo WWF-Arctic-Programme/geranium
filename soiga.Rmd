@@ -51,7 +51,7 @@ output:
          - { icon: "ion-calculator", href: "#section-assessment", align: left}
          - { icon: "ion-help", href: "#section-manual", align: left}
          - { icon: "ion-clipboard", href: "#section-bibliography", align: left}
-        # - { icon: "ion-social-github", href: "https://github.com/", align: right, target: _blank}
+         - { icon: "ion-social-github", href: "https://github.com/WWF-Arctic-Programme/geranium", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
 output3:
    html_vignette: 
@@ -91,8 +91,10 @@ item[0].appendChild(item2[0]);
 ```{r server, evel=T, code=readLines("resources/server.R")}
 ```
 
-```{r deprecated, eval=F, code=readLines("resources/server_deprecated.R")}
+<!--
+```{r deprecated, eval=F, code=if (F) readLines("resources/server_deprecated.R")}
 ```
+-->
 
 ```{r tables, eval=T, code=readLines("resources/tables.R")}
 ```
