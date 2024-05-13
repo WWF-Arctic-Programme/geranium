@@ -3,14 +3,14 @@ runtime: shiny
 pagetitle1: Compatibility with AOIs
 pagetitle2: Compatibility with AOIs - WWF ArcNet
 pagetitle3: Decision Support and Engagement Prioritisation
-pagetitle4: Soiga
+pagetitleF: Soiga
 pagetitle5: <a class="home" href="#">Geranium NG</a>
 pagetitle: Geranium
 author: Decision support and visualisation tool for the Arctic Seas conservation planners
 author5: "<abbr title=\"Tab panel with subtitle have to fill one line. Subtitle: 'Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners'\">De...</abbr>"
 author4: Decision support and engagement prioritisation
 author3: Decision support and engagement prioritisation and visualisation tool for the Arctic Seas conservation planners
-author2: 🏭🚢🎣🛢 Human use ⚔ Conservation 🐳🐻🐟🐚
+authorF: 🏭🚢🎣🛢 Human use ⚔ Conservation 🐳🐻🐟🐚
 author1: "[WWF ArcNet](https://arcticwwf.org/work/ocean/arcnet/)"
 zzzpagetitle: Compatibility with AOIs
 link-citations: yes
@@ -24,10 +24,10 @@ output:
       logo1: https://wwf.ru/assets/img/logo.jpg
       logo2: https://www.arcticwwf.org/favicons/favicon-32x32.png
       logo3: https://www.worldwildlife.org/assets/structure/unique/logo-c562409bb6158bf64e5f8b1be066dbd5983d75f5ce7c9935a5afffbcc03f8e5d.png
-      logoM: https://s2.googleusercontent.com/s2/favicons?domain_url=sev-in.ru
+      logoF: https://s2.googleusercontent.com/s2/favicons?domain_url=sev-in.ru
       logo: ./include/panda.svg
       favicon: ./include/panda.svg
-      faviconM: https://s2.googleusercontent.com/s2/favicons?domain_url=sev-in.ru
+      faviconF: https://s2.googleusercontent.com/s2/favicons?domain_url=sev-in.ru
       favicon3: https://www.worldwildlife.org/assets/structure/unique/logo-c562409bb6158bf64e5f8b1be066dbd5983d75f5ce7c9935a5afffbcc03f8e5d.png
       favicon1: https://www.arcticwwf.org/favicons/favicon-32x32.png
       favicon2: https://i.stack.imgur.com/FzlQy.jpg
@@ -49,7 +49,7 @@ output:
         # - { title: "&nbsp;", href: "#section-admin", align: right}
          - { icon: "ion-home", href: "#section-map", align: left}
          - { icon: "ion-calculator", href: "#section-assessment", align: left}
-         - { icon: "ion-help", href: "#section-manual", align: left}
+        # - { icon: "ion-help", href: "#section-manual", align: left}
          - { icon: "ion-clipboard", href: "#section-bibliography", align: left}
          - { icon: "ion-social-github", href: "https://github.com/WWF-Arctic-Programme/geranium", align: right, target: _blank}
          - { title: "WWF<sup>®</sup> ArcNet", zzzicon: "fa-info-circle", href: "https://arcticwwf.org/work/ocean/arcnet/", align: right, target: _blank}
@@ -164,27 +164,28 @@ output$uiMap <- renderUI({ ## editor-editModUI / selector-selectModUI / viewer-l
    cat("renderUI -- begin:\n")
   ## selector should be earlier editor
    noAOI <- F # is.null(rvAOI())
-   vname <- digest::digest(Sys.time()) ## assign(vname,3.14);get(vname)
+  # vname <- digest::digest(Sys.time()) ## assign(vname,3.14);get(vname)
    if (F)
       NULL
-   else if ((input$predefined %in% nameClick)&&((F & noAOI)||(input$economy %in% "none"))) { 
+   else if ((input$predefined %in% nameClick)&&((!is0407)||((is0407)&&(input$economy %in% "none")))) { 
       cat("   selector:\n")
       ret <- selectModUI("selector")
    }
-   else if (!input$region %in% nameEditor) { ## selected from list: "PAC "
+   else if (input$region %in% nameEditor) {
+      cat("   editor:\n")
+      ret <- editModUI("editor")
+   }
+   else { ## selected from list: "PAC "
       cat("   viewer:\n")
       ret <- leafletOutput("viewer")
      # ret <- textOutput("note")
-   }
-   else {
-      cat("   editor:\n")
-      ret <- editModUI("editor")
    }
    cat("renderUI -- end:\n")
    ret
 })
 ```
-```{r eval=T & isShiny}
+
+```{r eval=is0407 & isShiny}
 output$viewer <- renderLeaflet({
    mapViewer_deprecated()
 })
@@ -211,6 +212,9 @@ renderPrint({
 
 ### {data-height="auto"}
 
+:::largescreen
+Select Area of Interest (AOI)
+:::
 
 ```{r inputs, eval=isShiny}
 width <- c("100%","620px")[2]
@@ -221,6 +225,16 @@ if (F)
 if (F)
    shiny::selectInput("column","Industry",nameInit,width=width)
 fillRow(flex=NA
+   ,if (T) {
+      fillRow(flex=NA
+         ,selectInput("epsg","Map Projection",epsg
+                 ,selected=epsg["Europe"]
+                 ,width="110px")
+         ,HTML("&nbsp;&nbsp")
+      )
+   } else {
+      HTML("<span style=\"display: block; width: 106px;\">&nbsp;&nbsp;</span>")
+   }
    ,selectInput("region","Spatial query",c(names(regionSF),nameEditor)
               ,selected="PACs" # sample(names(regionSF),1)
               ,width="272px")
@@ -234,16 +248,6 @@ fillRow(flex=NA
          ,HTML("&nbsp;&nbsp;")
       )
    )
-   ,if (T) {
-      fillRow(flex=NA
-         ,selectInput("epsg","Projection",epsg
-                 ,selected=epsg["Europe"]
-                 ,width="110px")
-         ,HTML("&nbsp;&nbsp;&nbsp;")
-      )
-   } else {
-      HTML("<span style=\"display: block; width: 106px;\">&nbsp;&nbsp;</span>")
-   }
    ,sliderInput("omitPercent"
              # ,list(content = "My Label", position = "left")
               ,label="Omit small CF coverage, %"
@@ -254,7 +258,7 @@ fillRow(flex=NA
       ,fillRow(flex=NA
          ,HTML("&nbsp;&nbsp;")
          ,conditionalPanel(condition="!output.pinEntered"
-            ,passwordInput("pwd","User PIN",width="86px")
+            ,passwordInput("pwd","User PIN",width="91px")
          )
          ,conditionalPanel(condition="!!output.pinEntered"
             ,fillCol(flex=NA
@@ -282,16 +286,25 @@ fillRow(flex=NA
 )
 ```
 
+:::largescreen
+Select Industrial Activities (IA)
+:::
+
 :::dropdown
 ```{r, eval=isShiny}
 fillRow(flex=NA
-   ,div(class="nonlatent"
-      ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
-                 # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
-                  ,selected= if (F & staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
-                 # ,selected=nameAllHuman
-                  ,multiple=T
-                  ,width="121px")
+   ,conditionalPanel(condition="2==2" ## "!output.frozen"
+      ,div(class="nonlatent"
+         ,selectInput("activity","Activity group",c(nameAllHuman,names(industries))
+                    # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
+                     ,selected= if (F & staffOnly) c("Infrastructure","Mining","Shipping") else nameAllHuman
+                    # ,selected=nameAllHuman
+                     ,multiple=T
+                     ,width="121px")
+      )
+   )
+   ,conditionalPanel(condition="2==3" ## "output.frozen"
+      ,renderText(HTML(paste("<b>Activity group</b>:<br>",paste(input$activity,collapse="<br>"))))
    )
    ,HTML("&nbsp;&nbsp")
    ,shiny::selectInput("industry","Industrial activities"
@@ -304,6 +317,13 @@ fillRow(flex=NA
 )
 ```
 :::
+
+:::largescreen
+<br>
+Select Conservation Features (CF)
+:::
+
+
 ::: {.dropdown .nonlatent}
 ```{r, eval=isShiny}
 conditionalPanel(condition="2==2" # "!!output.debug"
@@ -344,6 +364,8 @@ fillRow(flex=NA
                             ,width="430px")
          )
       )
+      ,div(class="largescreen","Select analysis parameter"
+          ,style="margin-top: 1em; margin-bottom: 0.5em;")
       ,fillRow(flex=NA,height="50%"
          ,selectInput("season","Time of year",seasonList
                    # ,selected=ifelse(devel,sample(seasonList,1L),seasonList[1L])
@@ -358,39 +380,38 @@ fillRow(flex=NA
                            ,width="94px")
          )
          ,HTML("&nbsp;&nbsp;")
-         ,fillCol(flex=NA
-           # ,br()
-            ,conditionalPanel(condition="2*2==5" # "input.economy!='skip'"
-                            # ,actionLink("drawIndustry","Update map")
-                             ,actionButton("drawIndustry","",icon=icon("refresh"))
-                             )
-         )
-      )
-      ,fillRow(flex=NA,height="50%"
          ,shiny::selectInput("scope","Analysis type"
                            ,c('Conservation Concern'="concern"
                              ,'Overall Industrial Pressure'="action")
                            ,selected=c("concern","action")[1]
                            ,multiple=F
                            ,width="212px")
-         ,HTML("&nbsp;&nbsp")
+      )
+      ,div(class="largescreen","Quick review result in map (left)"
+          ,style="margin-top: 1em; margin-bottom: 0.5em;")
+      ,fillRow(flex=NA,height="50%"
          ,conditionalPanel(condition="input.economy!='zzzskip'"
             ,shiny::selectInput("economy","Indexes maps"
                            ,"---"
                            ,multiple=F
-                           ,width="212px")
+                           ,width="210px")
          )
-      )
+          ,HTML("&nbsp;&nbsp")
+         ,fillCol(flex=NA
+           # ,br()
+            ,conditionalPanel(condition="2*2==4" # "input.economy!='skip'"
+                            # ,actionLink("drawIndustry","Update map")
+                             ,if (F & !is0407) br()
+                             ,if (F & !is0407) actionButton("drawIndustry","",icon=icon("refresh"))
+                             )
+         )
+     )
    )
    ,if (T) renderImage({
       aoi <- rvAOI()
       req(!is.null(aoi))
-      print("P1")
       aoi <- spatial_geometry(aoi)
-      str(aoi)
-      print("P2")
       aoi <- ursa:::spatialize(aoi,resetProj=TRUE,resetGrid=TRUE,style="laea",verbose=FALSE)
-      print("P3")
       g0 <- consistent_grid(spatial_grid(aoi),ref=c(154,169))
       session_grid(g0)
       compose_open(scale=1,legend=NULL,device="cairo-png",retina=1
@@ -431,17 +452,33 @@ conditionalPanel(condition="input.economy!='none'"
 
 :::
 
+:::largescreen
+<br>
+View Analysis Results
+:::
+
+
 ```{r, eval=T}
 renderUI({
    if (F & file.exists(sessionFile))
       showNotification(paste("session:",format(file.mtime(sessionFile))),duration=2)
    aoi <- rvAOI()
    lab <- lab0 <- rvRegionSF()[[input$region]]$region[aoi$id]
+  # if (is.null(lab)) # after editor
+  #    lab <- ""
    isPAC <- (length(lab)==1)&&(grepl("^PAC",lab))
    if (length(lab)>1)
-      lab <- "Overview for selected regions"
-   else
-      lab <- substr(paste("Overview for",dQuote(lab),"region"),1,49)
+      lab <- "Selected Area Overview"
+   else if (!is.character(lab)) {
+      lab <- "Selected Area Overview"
+   }
+   else if (!length(lab))
+      lab <- "Overview for ..."
+   else {
+      if (nchar(lab)>54)
+         lab <- paste0(substr(lab,1,51),"...")
+      lab <- paste("Overview for",dQuote(lab),"Area")
+   }
    if (is.null(aoi))
       b2 <- navButton("Overview for ArcNet domain","#descRegion","desc",span=T)
    else
@@ -470,10 +507,14 @@ renderUI({
       b6 <- b7 <- NULL
    }
   # navButton(list(b1,b2,b3),border=T)
-   b <- if (is.null(aoi)) list(b3,b2,b6,b7,b8)[1:2] else list(b1,b2,b4,b6,b7,b8)[1:3]
+   b <- if (is.null(aoi)) list(b2,b3,b6,b7,b8)[1:2] else list(b2,b1,b4,b6,b7,b8)[1:3]
    navButton(b,border=T)
 })
 ```
+
+:::largescreen
+More Information
+:::
 
 ```{r, eval=T}
 renderUI({
@@ -887,39 +928,44 @@ fillCol(flex=c(1,NA,NA,NA)
         # )
    )
    ,fixedRow(NULL
-      ,column(2
+      ,column(5
          ,conditionalPanel(condition="2==2"
            # ,actionLink("actionEPA","Show Existing Protected Areas")
             ,checkboxInput("actionEPA",HTML("Stats for <abbr title=\"Existing Protected Areas\">EPA</abbr>"))
          )
       )
-      ,column(2
+      ,column(1
          ,conditionalPanel(condition=paste0("input.initEPA",condJS) ## ==false
            # ,actionLink("initEPA","Show Existing Protected Areas")
             ,checkboxInput("initEPA",HTML("<abbr title=\"Existing Protected Areas\">EPA</abbr>"))
          )
       )
-      ,column(2
+      ,column(1
+         ,conditionalPanel(condition=paste0("input.initPAC",condJS) ## ==false
+            ,checkboxInput("initPAC",HTML("<abbr title=\"Priority Areas for Conservations\">PACs</abbr>"))
+         )
+      )
+      ,column(1
          ,conditionalPanel(condition=paste0("input.actionNAO",condJS) ## ==false
            # ,actionLink("actionNAO","Show SR")
            # ,checkboxInput("actionNAO",label="Show SC-P",value=FALSE)
-            ,checkboxInput("actionNAO",label=actionLink(inputId="thClickSC-P",label="SC-P",onClick ="location.href('#')"),value=FALSE)
+            ,checkboxInput("actionNAO",label=actionLink(inputId="thClickSC-P",label="SC‑P",onClick ="location.href('#')"),value=FALSE)
          )
       )
-      ,column(2
+      ,column(1
         # ,checkboxInput("actionNAC",label="Show MNSR",value=FALSE)
         # ,radioButtons("actionNAC",label=NULL,choices="Show MNSR",selected=character())
          ,conditionalPanel(condition=paste0("input.actionNAC",condJS) # =='0' ==null ==false
            # ,actionLink("actionNAC","Show MNSR")
            # ,radioButtons("actionNAC",label=NULL,choices="Show MNSR",selected=character())
-            ,checkboxInput("actionNAC",label=actionLink(inputId="thClickOC-P",label="OC-P",onClick ="location.href('#')"),value=FALSE)
+            ,checkboxInput("actionNAC",label=actionLink(inputId="thClickOC-P",label="OC‑P",onClick ="location.href('#')"),value=FALSE)
          )
       )
-      ,column(2
+      ,column(1
          ,conditionalPanel(condition=paste0("input.actionCAP",condJS) ## ==false
            # ,actionLink("actionCAP","Show CAPR")
            # ,checkboxInput("actionCAP",label="Show OIP-P",value=FALSE)
-            ,checkboxInput("actionCAP",label=actionLink(inputId="thClickOIP-P",label="OIP-P",onClick ="location.href('#')"),value=FALSE)
+            ,checkboxInput("actionCAP",label=actionLink(inputId="thClickOIP-P",label="OIP‑P",onClick ="location.href('#')"),value=FALSE)
          )
       )
       ,column(2
@@ -942,11 +988,12 @@ output$uiRegionLeaflet <- renderUI({
    ret
 })
 output$regionLeaflet <- renderLeaflet({
-   if (count>1) {
+   if ((staffOnly)&&(count>1)) {
       showNotification(paste("Unexpected behaviour. Count is",count),duration=3)
      # Sys.sleep(10)
    }
-   aoi <- isolate(rvAOI())
+  # aoi <- isolate(rvAOI())
+   aoi <- rvAOI()
    map <- regionAddAOI(aoi=aoi,addOverlay=TRUE)
   # map <- indexMap(aoi=aoi)
   # map <- conflictBasemap()
@@ -1026,7 +1073,7 @@ fillRow(flex=c(10,NA,14)
    ,fillCol(flex=c(1,NA,1)
       ,fillCol(flex=NA
          ,renderText(ifelse(input$scope=="concern"
-                                ,"Concern Indexes","Action Priority Indexes"))
+                                ,"Concern Indexes","Overall Industrial Pressure Indexes"))
          ,DT::renderDT({
             showModal(modalDialog(title="Calculating indexes…","Please wait"
                                  ,size="s",easyClose=T,footer=NULL))
@@ -1275,7 +1322,7 @@ fillCol(flex=c(NA)
          ctable <- rvCrossTable()
          str(ctable)
          req(nrow(ctable)>0)
-         if (all(ctable$'CAP' %in% c("n/a","N/A"))) {
+         if (all(ctable$'CAP' %in% c("n/a","n/o","N/A"))) {
             metrics <- rvRegionActivity()
             cap <- 100*metrics$CAA$capCF/metrics$CAB$capCF
             cap[is.na(cap)] <- 0
@@ -1547,7 +1594,7 @@ output$onlyIndustry <- DT::renderDT({
 })
 ```
 
-```{r eval=F & staffOnly, results='asis'}
+```{r eval=T & staffOnly, results='asis'}
 cat("### staff only lists {data-width=300 .verbose}\n\n")
 renderPrint(selectionTables())
 ```
@@ -1657,7 +1704,7 @@ conditionalPanel(condition="!output.admin"
 ```{r assessment, eval=T, child="include/assessment.Rmd"}
 ```
 
-```{r manual, eval=T, child="include/manual.Rmd"}
+```{r manual, eval=F, child="include/manual.Rmd"}
 ```
 
 # `r renderText(rvUserInitials())` &shy; {#admin .nothidden .failured}

@@ -1,5 +1,5 @@
 
-Geranium is an extensive database on the distribution of 704 Conservation Features (CFs) that systematically represent marine biodiversity in the Arctic: from benthos to marine mammals.
+Geranium is based on the extensive [ArcNet](https://www.arcticwwf.org/our-priorities/nature/arcnet/) database of 705 Conservation Features (CFs), which systematically represent marine biodiversity and their distribution across the Arctic: from benthos to marine mammals
 
 ![C:\\Users\\Admin\\Downloads\\ArcNet_DataDensity_wLegendV1 (1).jpg](./getStarted/image1.jpeg)
 
@@ -14,6 +14,11 @@ Geranium provides insights into 33 Industrial Activities with information on the
 ## What does Geranium assess?
 
 Geranium assesses the level of *conservation concern* caused by each existing or potential an industrial activity for each of the CFs using a simple three-level approach where:
+
+Geranium assesses the level of conservation concern associated with individual existing or potential industrial activities for each of the CFs. The assessment was conducted by the taxonomic experts who selected the [ArcNet](https://www.arcticwwf.org/our-priorities/nature/arcnet/) CFs and led data collection and conservation target setting (James et al, 2024).
+
+Geranium uses a simple three-level approach where:
+
 
 -   *Minor concern* (yellow) - Related risks, if any, are mitigatable through comprehensively adhering to existing environmental standards and best practices.
 

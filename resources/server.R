@@ -11,6 +11,7 @@ exchange <- reactiveValues(editor=NULL,domain=NULL,selection=NULL
                                     ##~ ,onlyCF=Sys.time(),onlyIndustry=Sys.time()
                                     ##~ )
                           ,selectedIndustry=FALSE
+                          ,freeze=list(action="none",activity="",industry="")
                           )
 clicked <- reactiveValues(crossCF=Sys.time(),crossIndustry=Sys.time()
                          ,dataCF=Sys.time(),dataIndustry=Sys.time()
@@ -97,9 +98,9 @@ if (T) observe({ ## update input$region
    print("this observe was passed successful")
 })
 if (T) observe({ ## update 'exchange$selection'
-# if (T) observeEvent(list(rvCustomer(),exchange),{ ## update 'exchange$selection'
+# if (T) observeEvent(list(rvAOI(),rvCustomer(),exchange),{ ## update 'exchange$selection'
    verbosing()
-   cat("observe 'exchange$selection'\n")
+   cat("observe 'exchange$selection' -- begin\n")
    selection <- rvCustomer()
    cl <- class(selection)
    if ("character" %in% cl) {
@@ -145,10 +146,10 @@ if (T) observe({ ## update 'exchange$selection'
          }
       }
       else if (input$predefined %in% nameClick) {
-         if (nrow(gs)>0)
+         if (is0407 & nrow(gs)>0)
             gs$region <- input$region
          ind <- as.numeric(gs[which(gs$selected==TRUE),"id"])
-         if (isTRUE(exchange$prev==(-60))) {
+         if (is0407 & isTRUE(exchange$prev==(-60))) {
             ind <- integer()
            # exchange$curr <- integer()
          }
@@ -231,7 +232,7 @@ if (T) observe({ ## update 'exchange$selection'
          }
          else {
            # exchange$curr <- -10L
-            if (isTRUE(exchange$prev!=-60))
+            if ((!is0407)||((is0407)&&(isTRUE(exchange$prev!=-60))))
                exchange$prev <- -50L
             s <- NULL
          }
@@ -265,27 +266,30 @@ if (T) observe({ ## update 'exchange$selection'
       else {
         # exchange$prev <- -10L
          print("just a 's'")
-         da2 <- exchange$clear
-         cat("--------- clear ---------- \n")
-         str(da2)
-         cat("--------- clear ---------- \n")
-         if ((is.data.frame(da2))&&(nrow(da2)>0)) {
-            da1 <- spatial_data(s)
-            str(da1)
+        # s <- NULL 
+         if (is0407) {
+            da2 <- exchange$clear
+            cat("--------- clear ---------- \n")
             str(da2)
-            ind <- apply(da1[,1,drop=FALSE],1,paste,collapse="-") %in% apply(da2[,1,drop=FALSE],1,paste,collapse="-")
-            if (!any(ind))
-               exchange$clear <- data.frame()
-            else if (all(ind))
-               s <- NULL
-            else
-               s <- s[!ind,]
-            if (FALSE) {
-               da3 <- rbind(da1,da2)
-               if (any(duplicated(da3))) {
-                  print("trying to clear previous selection")
+            cat("--------- clear ---------- \n")
+            if ((is.data.frame(da2))&&(nrow(da2)>0)) {
+               da1 <- spatial_data(s)
+               str(da1)
+               str(da2)
+               ind <- apply(da1[,1,drop=FALSE],1,paste,collapse="-") %in% apply(da2[,1,drop=FALSE],1,paste,collapse="-")
+               if (!any(ind))
+                  exchange$clear <- data.frame()
+               else if (all(ind))
                   s <- NULL
-                 # exchange$clear <- data.frame()
+               else
+                  s <- s[!ind,]
+               if (FALSE) {
+                  da3 <- rbind(da1,da2)
+                  if (any(duplicated(da3))) {
+                     print("trying to clear previous selection")
+                     s <- NULL
+                    # exchange$clear <- data.frame()
+                  }
                }
             }
          }
@@ -297,7 +301,7 @@ if (T) observe({ ## update 'exchange$selection'
       cat("exchange$selection -- before:\n")
       str(list(prev=exchange$prev,curr=exchange$curr))
       print(c('exchange$selection'=exchange$selection))
-      cat("exchange$selection -- after:\n")
+      cat("exchange$selection -- after:",as.character(Sys.time()),"\n")
       if (is_ursa(exchange$selection))
          print(as.table(exchange$selection))
    }
@@ -305,7 +309,7 @@ if (T) observe({ ## update 'exchange$selection'
       updateSelectInput(session,"region"
                        ,choice={
                            ch <- input$region
-                           if (input$economy!="none")
+                           if ((is0407)&&(input$economy!="none"))
                               ch <- c(ch,'Reset selection'='clear')
                            ch
                        }
@@ -314,10 +318,11 @@ if (T) observe({ ## update 'exchange$selection'
                        )
       val <- epsg[match(as.integer(input$epsg),epsg)]
       updateSelectInput(session,"epsg",choice=val # input$epsg
-                       ,label="Projection (frozen)")
+                      # ,label="Projection (frozen)"
+                       )
    }
    else {
-      if (isPause <- input$region %in% c("clear")) {
+      if ((is0407)&&(input$region %in% c("clear"))) {
          if (!is.null(exchange$clear))
             rs <- exchange$clear$region
          else
@@ -331,12 +336,16 @@ if (T) observe({ ## update 'exchange$selection'
       updateSelectInput(session,"epsg",selected=input$epsg,choice=epsg
                        ,label="Projection")
    }
+  # if (!is.null(exchange$selection))
+  #    switchDomain(FALSE)
   # ind <- input$tbl_rows_selected
   # if (is.integer(ind))
   #    exchange$cf <- rvCrossTable()[ind,]
   # exchange$selection
+   cat("observe 'exchange$selection' -- end\n")
 })
-observeEvent(rvCustomer(),{
+if (is0407) observeEvent(rvCustomer(),{
+   verbosing()
    cat('observe rvCustomer() to update selection history\n"')
    selection <- rvCustomer()
    req(selection)
@@ -420,7 +429,7 @@ if (F) observe({ ## setView for Selector
   #    return(NULL)
   # if ("none" %in% input$industry)
   #    return(NULL)
-   if (T | !length(economy)) {
+   if (T | !length(economy)) { 
       season <- conflict$season
      # if (!length(season))
      #    season <- "max"
@@ -434,13 +443,22 @@ if (F) observe({ ## setView for Selector
          }
          group <- names(group)
       }
-      else
+      else if (F) {
+         print("0124i")
+         str(conflict$group)
+         print("0124j")
+         str(rvSelectCF())
+         print("0124k")
          group <- rvSubsetCF()
+         print("0124l")
+      }
+      else
+         group <- conflict$group
      # a <- rvActivity()$map
      # print(industry)
      # iname <- unname(industry)
    }
-   else if (F) {
+   else if (T) {
      # season <- "max HERE"
      # group <- "\\d HERE"
       season <- conflict$season
@@ -452,7 +470,7 @@ if (F) observe({ ## setView for Selector
       group <- names(group)
    }
    str(list(industry=industry,season=season,group=group,economy=economy))
-   print("next to 'conditionMap'")
+   print("'rvActivityMap' ---> next to 'conditionMap'")
    a <- conditionMap(industry=industry,season=season,group=group,economy=economy,epoch=input$epoch)
    a
 })
@@ -480,19 +498,30 @@ if (F) observe({ ## setView for Selector
    }
    print("1226c")
    print(d6)
-   print("1226d")
-   m <- conflictMap(d6,aoi=rvAOI(),epsg=input$epsg)
+   print("1226d -- AOI-independent (2024-04-23)")
+   m <- conflictMap(d6,aoi=if (T) NULL else rvAOI(),epsg=input$epsg)
    print("1226e")
    m
 })
-observeEvent(if (F) input$drawIndustry else input$economy,{ ## eventReactive actionlink
+if (F) observeEvent(if (F & !is0407) input$drawIndustry else input$economy,{ ## eventReactive actionlink
    verbosing()
-   cat("observeEvent input$drawIndustry:\n")
+   cat(paste("observeEvent",ifelse(is0407,"input$economy:","input$drawIndustry:"),"\n"))
   # showNotification(paste("'drawIndustry' is clicked:",input$drawIndustry),duration=3)
    exchange$conflict <- list(industry=rvSubsetIndustry() # input$industry
                             ,group=rvSubsetCF()
                            # ,group=input$group3
                             ,season=input$season,economy=input$economy)
+})
+# if (F) observe({ ## assing 'exchange$conflict'
+if (T) observeEvent(input$economy,{ ## assing 'exchange$conflict'
+   verbosing()
+   cat("observe to assign 'exchange$conflict'\n")
+   exchange$conflict <- list(industry=rvSubsetIndustry() # input$industry
+                            ,group=rvSubsetCF()
+                           # ,group=input$group3
+                            ,season=input$season
+                            ,economy=input$economy
+)
 })
 if (F) observeEvent(input$economy,{ ## update 'input$economy'
    verbosing()
@@ -513,12 +542,15 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    verbosing()
    cat("rvSubsetIndustry:\n")
    ref <- unname(industryName(industries))
+   activity <- input$activity
+   if (is.null(activity))
+      activity <- allActivity
    if ("all" %in% input$industry) { # low, level1
-      if (allActivity %in% input$activity) { ## up, level2
+      if (allActivity %in% activity) { ## up, level2
          industry <- ref
       }
       else {
-         industry <- unname(industryName(industries[input$activity]))
+         industry <- unname(industryName(industries[activity]))
       }
    }
    else {
@@ -530,6 +562,8 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    ret
 })
 'rvGroupCF' <- reactive({
+   verbosing()
+   cat("rvGroupCF:\n")
    ret <- groupCF(c(input$group3,input$group2,input$group1,input$group0))
    as.character(ret) ## character needs for 'CFMap'
 })
@@ -546,6 +580,9 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
 })
 'rvCrossTable' <- reactive({
    verbosing()
+   cat("rvCrossTable:\n")
+   print(c(domain=switchDomain()))
+   overlap <- !isTRUE(switchDomain())
    showModal(modalDialog(title="Creating Conservation Concern table…","Please wait"
                         ,size="s",easyClose=T,footer=NULL))
    on.exit(removeModal())
@@ -563,6 +600,7 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
                        ,activity=industryCode(industry)
                        ,season=input$season
                        ,minCover=input$omitPercent
+                       ,overlap=overlap
                        )
      # proxyOnlyCF %>% selectRows(NULL)
      # proxyCross %>% selectRows(NULL)
@@ -611,6 +649,7 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
                    # ,activity=unlist(exchange$subset)
                     ,season=input$season
                     ,minCover=input$omitPercent ## +++
+                    ,overlap=overlap
                     )
   # ret <- ret[ret$'Cover'>=input$omitPercent,] ## ---
    ret
@@ -660,7 +699,7 @@ if (F) observeEvent(input$drawEconomy,{ ## eventReactive actionlink
    }
    else if (input$predefined %in% nameClick) {
       print(paste0(" --> ","clicker"))
-      if (!input$region %in% "clear") {
+      if ((!is0407)||((is0407)&&(!input$region %in% "clear"))) {
          reg <- rvRegionSF()[[input$region]]
         # cat("0401a ------------ \n")
         # str(reg)
@@ -932,6 +971,8 @@ if (T) {
    NULL
 })
 if (T) observe({
+   verbosing()
+   cat("clicked Sys.time:\n")
    selected <- length(input$cross_columns_selected)>0
    if (selected) {
       if (!exchange$selectedIndustry) {
@@ -952,6 +993,7 @@ if (T) observe({
    verbosing()
    cat("rvSelectIndustry():\n")
    if (T & !is.null(r <- input$allComments_rows_selected)) {
+      cat("   returned from comment list\n")
       da <- rvAllComments()[r,]
       return(da$Industry)
      # return(da$CF)
@@ -1188,6 +1230,7 @@ if (T) observe({
    da
 })
 'rvIndustryGroup' <- reactive({
+   verbosing()
    cat("rvIndustryGroup:\n")
    req(industry <- rvSelectIndustry())
    industry <- industryCode(industry)
@@ -1260,20 +1303,25 @@ if (T) observe({ ## update 'input$industry'
   # print(input$activity)
   # req(!is.null(choice <- input$activity))
    choice <- input$activity
+   isAOI <- !is.null(rvAOI())
    print(choice)
+   all <- "all"
+   names(all) <- allIndustries
+   none <- "none"
+   names(none) <- "Do not show"
    if ((length(choice)==1)&&(choice==nameAllHuman)) {
-      choice2 <- c('All industrial activities'="all",'Do not show'="none",industryCodeName(industries))[-2]
+      choice2 <- c(all,none,industryCodeName(industries))[-2]
       select2 <- choice2[1]
    }
    else if ((F & staffOnly)&&(all(activitySubset %in% choice))&&(all(choice %in% activitySubset))) {
       activitySubset <- c("Infrastructure","Mining","Shipping")
       industrySubset <- industryName(c("ICI","MOP","ST"))
-      choice2 <- c('All industrial activities'="all",'Do not show'="none",industrySubset)[-2]
+      choice2 <- c(all,none,industrySubset)[-2]
       select2 <- industryName("ST")
    }
    else {
       choice2 <- choice[choice %in% names(industries)]
-      choice2 <- c('All industrial activities'="all",'Do not show'="none",industries[choice2])[-2]
+      choice2 <- c(all,none,industries[choice2])[-2]
       choice2 <- industryCodeName(choice2)
       select2 <- choice2[1]
    }
@@ -1317,20 +1365,24 @@ if (T) observeEvent(input$industry, { ## update 'input$actionNAC'
 })
 if (T) observe({ ## update 'input$economy'
    verbosing()
-   cat("observe 'input$economy'\n")
+   cat("update 'input$economy'\n")
    industry <- input$industry
+   activity <- input$activity
+   if (is.null(activity))
+      activity <- allActivity
    req(industry)
   # print(c(industry=industry))
   # print(isTRUE(industry %in% industryAbbr$industry))
   # print(c(selection=!is.null(exchange$selection)))
-   if (F & !is.null(exchange$selection)) {
+   if (!is.null(exchange$selection)) {
       if (input$economy=="skip") {
          return(NULL)
         # choice <- c('Unsupported with selection'="skip")
       }
       else {
-         choice <- "skip"
-         names(choice) <- names(choiceMap[match(input$economy,choiceMap)])
+         choice <- c("skip",choiceMap[match(input$economy,choiceMap)])[2]
+         if (F & (!is0407 | is0407))
+            names(choice) <- names(choiceMap[match(input$economy,choiceMap)])
       }
       updateSelectInput(session,"economy",choices=choice,selected=choice[1])
       return(NULL)
@@ -1338,13 +1390,14 @@ if (T) observe({ ## update 'input$economy'
    choice <- choiceMap
    print(choice)
    if ("all" %in% industry) {
-      if (allActivity %in% input$activity)
+      if (allActivity %in% activity)
          industry2 <- industryName(industries)
       else
-         industry2 <- industryName(industries[input$activity])
+         industry2 <- industryName(industries[activity])
    }
-   else
+   else {
       industry2 <- industry
+   }
   # print(c(industry2=industry2))
    industry2 <- industryCode(industry2)
    exchange$subset <- industry2
@@ -1412,9 +1465,15 @@ if (T) observe({ ## update 'input$economy'
   # exchange$conflict <- list(industry=input$industry,group=input$group3
   #                          ,season=input$season,economy=input$economy)
   # if (input$economy==nameInit)
-   updateSelectInput(session,"economy",choices=choice,selected=choice[1])
+   print("0423c")
+   selected <- if (!input$economy %in% choice) choice[1] else input$economy
+   str(selected)
+   updateSelectInput(session,"economy",choices=choice,selected=selected)
+   print("0423d")
 })
-if (T) observeEvent(input$economy,{
+if (is0407) observeEvent(input$economy,{
+   verbosing()
+   cat("observe input$economy for map resetting\n")
    choice <- tail(choiceMap,-1)
    if (T & input$economy %in% tail(choiceMap,-1)) {
       ind <- match(input$economy,choiceMap)
@@ -1445,35 +1504,47 @@ if (T) observeEvent(input$economy,{
       updateSelectInput(session,"economy",label="Indexes maps",choices=choice,selected=choice[1])
    }
 })
+if (!is0407) observeEvent(input$economy,{ ## freeze all inputs
+  # if (!input$economy %in% "none") {
+  #    updateSelectInput(session,"activiy",choices=input$activity,selected=input$activity)
+  # }
+})
 if (T) observeEvent(input$industry,{ ## update 'input$industry'
    verbosing()
+  # req(is.null(exchange$freeze))
    cat("observeEvent 'input$industry':\n")
-   event <- input$industry
-   choice <- NULL
-   if (is.null(event))
-      choice <- "none"
+  # if (exchange$freeze$action=="region") { ## &&(exchange$freeze$freeze)) 
+   if (!is.null(exchange$freeze)) {
+      updateSelectInput(session,"industry",selected=exchange$freeze$industry)
+   }
    else {
-      if ((length(event)>1)&&(tail(event,1)=="none"))
+      event <- input$industry
+      choice <- NULL
+      if (is.null(event))
          choice <- "none"
-      else if ((length(event)>1)&&(tail(event,1)=="all"))
-         choice <- "all"
       else {
-         if (anyNA(ind <- match(event,unlist(industries)))) {
-            if (length(ind2 <- which(!is.na(ind)))) {
-               choice <- industryCodeName(event[ind2])
+         if ((length(event)>1)&&(tail(event,1)=="none"))
+            choice <- "none"
+         else if ((length(event)>1)&&(tail(event,1)=="all"))
+            choice <- "all"
+         else {
+            if (anyNA(ind <- match(event,unlist(industries)))) {
+               if (length(ind2 <- which(!is.na(ind)))) {
+                  choice <- industryCodeName(event[ind2])
+               }
             }
          }
       }
-   }
-   if (length(choice)) {
-      exchange$conflict <- NULL
-      updateSelectInput(session,"industry",selected=choice)
-   }
-   if (F & isTRUE(choice=="none"))
-      showNotification("Remove layer from map",duration=3)
-   if ((FALSE)&&(length(choice)==1)&&(choice!="none")) {
-      economy <- choice
-      updateSelectInput(session,"economy",choice=economy,selected=economy[1])
+      if (length(choice)) {
+         exchange$conflict <- NULL
+         updateSelectInput(session,"industry",selected=choice)
+      }
+      if (F & isTRUE(choice=="none"))
+         showNotification("Remove layer from map",duration=3)
+      if ((FALSE)&&(length(choice)==1)&&(choice!="none")) {
+         economy <- choice
+         updateSelectInput(session,"economy",choice=economy,selected=economy[1])
+      }
    }
 })
 if (F) observeEvent(input$economy,{ ## update 'input$economy'
@@ -1502,24 +1573,161 @@ if (F) observeEvent(input$economy,{ ## update 'input$economy'
 })
 if (T) observeEvent(input$activity,{ ## update 'input$activity'
    verbosing()
+  # req(is.null(exchange$freeze))
    cat("observeEvent 'input$activity':\n")
-   choice <- NULL
-   if (is.null(input$activity))
-      choice <- nameAllHuman
+  # if (exchange$freeze$action=="region") { # &&(exchange$freeze$freeze)) {
+   if (!is.null(exchange$freeze)) { # &&(exchange$freeze$freeze)) {
+      updateSelectInput(session,"activity"
+                       ,selected=exchange$freeze$activity
+                      # ,choice=exchange$freeze$activity
+                       )
+   }
    else {
-      if ((length(input$activity)>1)&&(tail(input$activity,1)==nameAllHuman))
+      choice <- NULL
+      if (is.null(input$activity))
          choice <- nameAllHuman
       else {
-         if (anyNA(ind <- match(input$activity,names(industries)))) {
-            if (length(ind2 <- which(!is.na(ind)))) {
-               choice <- input$activity[ind2]
+         if ((length(input$activity)>1)&&(tail(input$activity,1)==nameAllHuman))
+            choice <- nameAllHuman
+         else {
+            if (anyNA(ind <- match(input$activity,names(industries)))) {
+               if (length(ind2 <- which(!is.na(ind)))) {
+                  choice <- input$activity[ind2]
+               }
             }
          }
       }
+      if (T) {
+         str(list(choice=choice,economy=input$economy))
+         if ((!is.null(input$economy))&&(!"none" %in% input$economy))
+            if (!is.null(input$activity))
+               choice <- input$activity
+         str(list(choice=choice,economy=input$economy))
+      }
+      choiceList <- c(nameAllHuman,names(industries))
+      if (length(choice)) {
+        # print(choiceList)
+        # if (!isTRUE(input$economy  %in% c("none",nameInit)))
+        #    choiceList <- choice
+         updateSelectInput(session,"activity",selected=choice,choice=choiceList)
+         exchange$conflict <- NULL
+      }
    }
-   if (length(choice)) {
-      updateSelectInput(session,"activity",selected=choice)
-      exchange$conflict <- NULL
+})
+if (F) observe({
+   cat("observe for 'exchange$freeze'\n")
+   exchange$freeze$activity <- input$activity
+   exchange$freeze$industry <- input$industry
+})
+if (T) observeEvent(list(is.null(exchange$selection),input$economy),{
+   verbosing()
+   cat("observeEvent 'exchange$selection'\n")
+   all <- "all"
+   names(all) <- allIndustries
+   none <- "none"
+   names(none) <- "Do not show"
+  # saveRDS(input$economy,"C:/tmp/interim.rds")
+   freeze <- !is.null(exchange$selection) | isTRUE(!input$economy %in% "none")
+  # freeze <- isTRUE(!input$economy %in% "none") ## pre
+   if (!freeze) {
+     # exchange$freeze$action <- "free"
+      choiceList <- c(nameAllHuman,names(industries))
+      choice <- input$activity
+      updateSelectInput(session,"activity",selected=choice,choice=choiceList)
+      if ((length(choice)==1)&&(choice==nameAllHuman)) {
+         choice2 <- c(all,none,industryCodeName(industries))[-2]
+      }
+      else {
+         choice2 <- choice[choice %in% names(industries)]
+         choice2 <- c(all,none,industries[choice2])[-2]
+         choice2 <- industryCodeName(choice2)
+      }
+      updateSelectInput(session,"industry",selected=input$industry
+                       ,choice=choice2
+                       )
+      updateSelectInput(session,"group3",selected=input$group3,choice=unname(groupList))
+      gr2list <- c(unname(nameAllCF['2'])
+                  ,unique(taxonCF$group2[taxonCF$CF_code %in% groupCF(input$group3)]))
+      updateSelectInput(session,"group2",selected=input$group2,choices=gr2list)
+      gr1list <- c(unname(nameAllCF['1'])
+                  ,unique(taxonCF$group1[taxonCF$CF_code %in% groupCF(input$group2)]))
+      updateSelectInput(session,"group1",selected=input$group1,choices=gr1list)
+      gr0list <- c(unname(nameAllCF['0'])
+                  ,unique(taxonCF$group0[taxonCF$CF_code %in% groupCF(input$group1)]))
+      updateSelectInput(session,"group0",selected=input$group0,choices=gr0list)
+      updateSelectInput(session,"season",selected=input$season,choices=seasonList)
+      exchange$freeze <- NULL
+   }
+   else {
+      exchange$freeze <- list(activity=input$activity
+                             ,industry=input$industry
+                             ,group3=input$group3
+                             ,group2=input$group2
+                             ,group1=input$group1
+                             ,group0=input$group0
+                             ,season=input$season
+                             )
+     # exchange$freeze$action <- "region"
+      updateSelectInput(session,"activity",selected=input$activity,choice=input$activity)
+      choice2 <- if (all %in% input$industry) all else input$industry
+      updateSelectInput(session,"industry",selected=choice2,choice=choice2)
+      updateSelectInput(session,"group3",selected=input$group3,choice=input$group3)
+      updateSelectInput(session,"group2",selected=input$group2,choice=input$group2)
+      updateSelectInput(session,"group1",selected=input$group1,choice=input$group1)
+      updateSelectInput(session,"group0",selected=input$group0,choice=input$group0)
+      updateSelectInput(session,"season",selected=input$season,choice=input$season)
+   }
+})
+if (T) observe ({ ## handle missing input values
+   verbosing()
+   cat("handle missing input values\n")
+   if (!length(input$activity)) {
+      if (is.null(exchange$freeze))
+         updateSelectInput(session,"activity",selected=nameAllHuman)
+      else
+         updateSelectInput(session,"activity",selected=exchange$freeze$activity)
+   }
+   if (!length(input$industry)) {
+      if (is.null(exchange$freeze))
+         updateSelectInput(session,"industry",selected="all")
+      else
+         updateSelectInput(session,"industry",selected=exchange$freeze$industry)
+   }
+   if (!is.null(exchange$freeze)) {
+      if (length(input$season)!=length(exchange$freeze$season))
+         updateSelectInput(session,"season",selected=exchange$freeze$season)
+   }
+   else {
+      if (!length(input$season))
+         updateSelectInput(session,"season",selected=nameAllSeason)
+   }
+   if (!is.null(exchange$freeze)) {
+      if (length(input$group0)!=length(exchange$freeze$group0))
+         updateSelectInput(session,"group0",selected=exchange$freeze$group0)
+   }
+   else if (!length(input$group0)) {
+      updateSelectInput(session,"group0",selected=nameAllCF['0'])
+   }
+   if (!is.null(exchange$freeze)) {
+      if (length(input$group1)!=length(exchange$freeze$group1))
+         updateSelectInput(session,"group1",selected=exchange$freeze$group1)
+   }
+   else if (!length(input$group1)) {
+      updateSelectInput(session,"group1",selected=nameAllCF['1'])
+   }
+   if (!is.null(exchange$freeze)) {
+      if (length(input$group2)!=length(exchange$freeze$group2))
+         updateSelectInput(session,"group2",selected=exchange$freeze$group2)
+   }
+   else if (!length(input$group2)) {
+      updateSelectInput(session,"group2",selected=nameAllCF['2'])
+   }
+   if (!is.null(exchange$freeze)) {
+      if (length(input$group3)!=length(exchange$freeze$group3))
+         updateSelectInput(session,"group3",selected=exchange$freeze$group3)
+   }
+   else if (!length(input$group3)) {
+      updateSelectInput(session,"group3",selected=nameAllCF['3'])
    }
 })
 if (F) observe({ ## update 'input$group3'
@@ -1695,13 +1903,20 @@ if (T) observeEvent(input$season,{ ## update 'input$season'
    ret
    
 })
+'rvInitPAC' <- reactive({
+   verbosing()
+   ret <- (length(input$initPAC)>0)&&(input$initPAC>0)
+   cat("rvInitPAC:",ret,"\n")
+   ret
+   
+})
 if (F) observe({ ## exchange$initEPA
   # req(length(input$actionEPA))
    if ((!exchange$initEPA)&&(isTRUE(input$actionEPA)))
       exchange$initEPA <- TRUE
 })
 # if (T) observeEvent(rvAOI(),{ ## -- this ignored when all deselected
-if (T) observe({ ## regionAddAOI() and fitBounds()
+if (F) observe({ ## regionAddAOI() and fitBounds()
    verbosing()
    isAOI <- !is.null(aoi <- rvAOI())
   # isEPA <- rvInitEPA()
@@ -1922,6 +2137,13 @@ if (T) observeEvent(input$initEPA,{
    indexMap(proxyRegion,"EPA")
    cat("'input$initEPA' / 'exhchange$initEPA' -- after:\n")
 })
+if (T) observeEvent(input$initPAC,{
+   verbosing()
+   cat("'input$initPAC' / 'exhchange$initPAC' -- before:\n")
+   isPAC <- isTRUE(input$initPAC>0)
+   indexMap(proxyRegion,"PAC")
+   cat("'input$initPAC' / 'exhchange$initPAC' -- after:\n")
+})
 if (T) observeEvent(input$actionNAC,{
    verbosing()
   # req(isTRUE(input$actionNAC))
@@ -2076,9 +2298,13 @@ if (F) observeEvent(input$actionNAC,{
    showNotification(paste("showNAC is",input$actionNAC),duration=2)
 })
 'rvRegion' <- reactive({
+   verbosing()
+   cat("rvRegion():\n")
    exchange$region
 })
 observeEvent(input$reset,{
+   verbosing()
+   cat("reset password:\n")
    updateTextInput(session,"pwd",value="")
   # ind <- match(names(re))
   # updateTextInput(session,"customAOI",value=NULL) ## HOW TO update file input?
@@ -2087,6 +2313,7 @@ observeEvent(input$reset,{
 'rvAdmin' <- reactive(T & rvPassword()==adminPWD)
 'rvUser' <- reactive(exchange$config$user)
 'rvPinEntered' <- reactive({
+   verbosing()
    cat("rvPinEntered:\n")
    if (rvAdmin())
       return(0L)
@@ -2113,6 +2340,7 @@ observeEvent(input$reset,{
    ind
 })
 'rvAuthorized' <- reactive({
+   verbosing()
    cat("rvAuthorized:\n")
    req(ind <- rvPinEntered())
    req(ind>=0)
@@ -2134,6 +2362,8 @@ observeEvent(input$reset,{
    ret
 })
 'rvUserInd' <- reactive({
+   verbosing()
+   cat("rvUserInd()\n")
    req(user <- rvUser())
    ind <- match(input$userName,sapply(user,\(u) u$name))
    req(!is.na(ind))
@@ -2144,6 +2374,7 @@ observeEvent(input$userForgot,{
    showNotification(getPIN(input$userName),duration=3)
 })
 observeEvent(input$userRemove,{
+   verbosing()
    cat("observeEvent 'input$userRemove'\n")
    req(nchar(input$userName)>0)
    user <- exchange$config$user
@@ -2157,6 +2388,7 @@ observeEvent(input$userRemove,{
    updateSelectInput(session,"userName",selected="")
 })
 observeEvent(input$userAdd,{
+   verbosing()
    req(nchar(input$userAdd)>0)
    cat("observeEvent 'input$userAdd'\n")
    newUser <- list(name=input$userNew
@@ -2177,6 +2409,7 @@ observeEvent(input$userAdd,{
    updateTextInput(session,"userNew",value="")
 })
 observe({ ## update 'session$userName'
+   verbosing()
    cat("observeEvent 'rvUserName'\n")
    req(rvAdmin())
    userName <- rvUser()
@@ -2188,6 +2421,7 @@ observe({ ## update 'session$userName'
    updateSelectInput(session,"userName",choices=userName,selected=input$userName)
 })
 observeEvent(input$userName,{
+   verbosing()
    cat("observeEvent 'input$userName' --> update user$level\n")
    req(nchar(input$userName)>0)
    user <- exchange$config$user
@@ -2196,6 +2430,7 @@ observeEvent(input$userName,{
    updateSelectInput(session,"userLevel",selected=user[[ind]]$level)
 })
 observeEvent(input$userLevel,{
+   verbosing()
    cat("observeEvent 'input$userLevel'\n")
   # req(nchar(input$userName)>0)
   # user <- exchange$config$user
@@ -2238,6 +2473,7 @@ observeEvent(input$levelNAC,{
    config_write(exchange$config)
 })
 if (T) observe({ ## # observeEvent(rvAuthorized,{
+   verbosing()
    cat("update user settings:\n")
    req(ind <- rvAuthorized())
    user <- rvUser()
@@ -2256,10 +2492,38 @@ if (T) observe({ ## # observeEvent(rvAuthorized,{
       }
    }
 })
+if (F) observe({ ## freezing
+   verbosing()
+   req(input$economy %in% choiceMap)
+   cat("Freeze activity?\n")
+   isAOI <- F # isTRUE(!is.null(rvAOI()))
+   isIndex <- isTRUE(!input$economy %in% "none")
+   cond <- !isAOI & isIndex
+   if (cond) {
+      print(paste("   freeze ON *** economy is:",input$economy))
+      updateSelectInput(session,"activity",choice=input$activity,select=input$activity)
+   }
+   else {
+      print(paste("   freeze OFF *** economy is:",input$economy))
+      if (F) {
+         str(input$activity)
+         str(c(nameAllHuman,names(industries)))
+         if ((!is.null(input$activity))&&(length(input$activity)>=1))
+            updateSelectInput(session,"activity",choice=c(nameAllHuman,names(industries))
+                             ,select=input$activity
+                             )
+      }
+     # if (!is.null(input$activity))
+     #    updateSelectInput(session,"activity",select="reset",choice="reset")
+   }
+   cat("Leave 'freezing' block\n")
+})
 'rvIsComment' <- reactive({
    exchange$config$comment
 })
 'rvUserInitials' <- reactive({
+   verbosing()
+   cat("rvUserInitials()\n")
    ind <- rvAuthorized()
    if (!length(ind))
       ret <- ""
@@ -2272,6 +2536,7 @@ if (T) observe({ ## # observeEvent(rvAuthorized,{
    ret
 })
 'rvRegionSF' <- reactive({
+   verbosing()
    cat("rvRegionSF:\n")
    if (is.null(input$customAOI))
       return(regionSF)
@@ -2308,6 +2573,7 @@ if (T) observe({ ## # observeEvent(rvAuthorized,{
    regionSF
 })
 'rvRegionU' <- reactive({
+   verbosing()
    cat("rvRegionU:")
    regionSF <- rvRegionSF()
    if (!length(ind <- which(is.na(match(names(regionSF),names(regionU))))))
@@ -2324,12 +2590,16 @@ if (T) observe({ ## # observeEvent(rvAuthorized,{
    isTRUE(!is.null(input$allComments_rows_selected))
 })
 'rvSeason' <- reactive({
+   verbosing()
+   cat("rvSeason()\n")
    season <- match(input$season,seasonList)-1L
    if (0L %in% season)
       season <- seq(12)
    season
 })
 'rvHumanUseRaster' <- reactive({
+   verbosing()
+   cat("rvHumanUseRaster()\n")
    huAmount(epoch=input$epoch,season=rvSeason(),subset=rvSubsetIndustry())
 })
 observeEvent(input$'thClickRSC-PU',{ ## 'SR'
@@ -2381,21 +2651,21 @@ observeEvent(input$'thClickAA-PU',{ ## 'AAR'
             ,footer = NULL
             ))
 })
-observeEvent(input$'thClickROIP-CF',{ ## 'CAPCF'
+observeEvent(input$'thClickROIP‑CF',{ ## 'CAPCF'
    showModal(modalDialog(title="ROIP-CF – Relative Overall Industrial Pressure for a given Conservation Feature"
             ,HTML("ROIP-CF index is calculated as a proportion of the maximum possible industrial pressure (baseline scenario) defined as if the amount of industrial activities stays as it is and the concern level for a given CF within given AOI is the highest possible (significant concern).")
             ,easyClose=TRUE
             ,footer = NULL
             ))
 })
-observeEvent(input$'thClickRSC-CF',{ ## 'MNS/B for CF'
+observeEvent(input$'thClickRSC‑CF',{ ## 'MNS/B for CF'
    showModal(modalDialog(title="Relative Significant Concern Level for a given Conservation Feature"
-            ,HTML(readLines("RSC-CF is the index showing the significant cumulative concern level for a CF where only Significant Concern are summed for all IAs which occur within the CF area and then compared to a baseline that represents the maximum possible concern level for that CF. It is used to identify CFs whose conservation goals are at the greatest risk. The closer RSC-CF to 100% the higher significant concern for a given CF is."))
+            ,HTML("RSC-CF is the index showing the significant cumulative concern level for a CF where only Significant Concern are summed for all IAs which occur within the CF area and then compared to a baseline that represents the maximum possible concern level for that CF. It is used to identify CFs whose conservation goals are at the greatest risk. The closer RSC-CF to 100% the higher significant concern for a given CF is.")
             ,easyClose=TRUE
             ,footer = NULL
             ))
 })
-observeEvent(input$'thClickROC-CF',{ ## 'S/B for CF'
+observeEvent(input$'thClickROC‑CF',{ ## 'S/B for CF'
    showModal(modalDialog(title="ROC-CF - Relative Overall Concern Level for a given Conservation Feature"
             ,HTML("ROC-CF is the index showing the overall cumulative concern level for a CF where Overall Concern levels (Significant, Notable, and Minor) are summed for all IAs which occur within the CF area and then compared to a baseline that represents the maximum possible concern level for that CF. It is used to identify CFs whose conservation goals are at the greatest risk. The closer ROC-CF to 100% the higher overall concern for a given CF is.")
             ,easyClose=TRUE
@@ -2447,6 +2717,13 @@ observeEvent(input$'thClickSC-P',{
 observeEvent(input$'thClickOIP-P',{
    showModal(modalDialog(title="OIP-P - Overall Industrial Pressure Level calculated for each Planning Unit"
             ,HTML("OIP-P is an index calculated for mapping overall industrial pressure and is calculated for each PU independently by multiplying amount of each activity present in a given PU with amount of each CF in a given PU by the level of concern caused by the industrial activity and then summing the results for each IA-CF pair.")
+            ,easyClose=TRUE
+            ,footer = NULL
+            ))
+})
+observeEvent(input$'thClickROIP-PU',{
+   showModal(modalDialog(title="ROIP-PU - Relative Overall Industrial Pressure for a given Area of Interest by Planning Units"
+            ,HTML("ROIP-PU is an index showing the relative overall industrial pressure level for an AOI compared to the average level for the ArcNet domain and is based on the overall concern (OC) throughout the year for every CF and IA in a given AOI relative to that of the ArcNet domain. The OIP-PU allows for the comparison of differing industrial pressures within given AOIs and with those of the ArcNet domain.")
             ,easyClose=TRUE
             ,footer = NULL
             ))

@@ -29,7 +29,8 @@ table {
 }
 .navbar-brand {
   /* line-height: 15px;*/
-   margin-top: -8px;
+  /* margin-top: -8px;*/
+   padding-top: 10px;
 }
 .navbar-inverse .navbar-toggle .icon-bar { /* menu compact burger */
    background-color: #AAA;

@@ -73,7 +73,7 @@
    print(ret)
    str(exchange$prev)
    str(exchange$curr)
-   str(spatial_data(exchange$selection))
+   str(spatial_data(exchange$selection)[,grep("id",spatial_fields(exchange$selection))])
    if (is.character(ret))
       return(invisible(NULL))
    ret
@@ -90,6 +90,7 @@
          ind <- nchar(pair$comment)>44
          pair$comment[ind] <- paste0(substr(pair$comment[ind],1,44),"...")
       }
+      pair$value[is.na(pair$value)] <- 0L
       cmt <- by(pair,list(value=pair$value,comment=pair$comment),\(x) {
          ret <- data.frame(value=x$value[1]
                           ,Months=bymonth(x$month,name=TRUE)
@@ -228,7 +229,7 @@
    # da0 <- gsub("<(/)*sup>","",da0)
    da0 <- paste0(da1,da3)
    da[,m] <-  da0
-   ct <- c(clrLUT,'n/a'="grey90")
+   ct <- c(clrLUT,'n/a'="grey90",'n/o'="grey80")
    ct <- data.frame(value=da0,color=ct[da2]) |> unique()
    ct <- DT::styleEqual(ct$value,ct$color)
    ct <- gsub("&gt;",">",ct)
@@ -284,7 +285,7 @@
    # da0 <- gsub("<(/)*sup>","",da0)
    da0 <- paste0(da1,da3)
    da[,m] <-  da0
-   ct <- c(clrLUT,'n/a'="grey90")
+   ct <- c(clrLUT,'n/a'="grey90",'n/o'="grey80")
    ct <- data.frame(value=da0,color=ct[da2]) |> unique()
    ct <- DT::styleEqual(ct$value,ct$color)
    ct <- gsub("&gt;",">",ct)
@@ -340,7 +341,7 @@
 }
 'tableOnlyIndustry' <- function() {
    cat(as.character(match.call())[1],":\n")
-  # switchDomain(TRUE)
+   switchDomain(TRUE)
   # req(res <- rvCrossTable())
   # listI <- rvSubsetIndustry()
    res <- industryAbbr[,c(3,1,2)] # read.csv("requisite/industry_conditions.csv")
@@ -366,7 +367,7 @@
 }
 'tableOnlyCF' <- function() {
    cat(as.character(match.call())[1],":\n")
-  # switchDomain(TRUE)
+   switchDomain(TRUE)
    if (F) { # (!is.null(rvAOI())) {
       req(res <- rvCrossTable())
      # res <- data.frame('CF code'=as.integer(rownames(res)),'CF name'=res[[1]])
@@ -396,18 +397,21 @@
 }
 'tableCross' <- function() {
    cat(as.character(match.call())[1],": (crosstable -> datatable)\n")
-  # switchDomain(FALSE)
+   switchDomain(FALSE)
    res <- rvCrossTable()
    if (!prod(dim(res))) {
       res <- data.frame('Missed CFs'="No data available in table",check.names=FALSE)
       b <- DT::datatable(res,selection="none",rownames=FALSE,options=list(dom="t"))
       return(b)
    }
+   if (T) {
+      res <- cbind('CF&nbsp;ID'=rownames(res),res)
+   }
    if (all(res$'CAP' %in% c("n/a","N/A"))) {
       actionPriority <- regionActivityIndices(aoi=rvAOI()
                          ,ctable=res # res[,-grep("CAPR",colnames(res))]
                          ,epoch=input$epoch)
-      metrics <- 100*actionPriority$CAA$capCF/actionPriority$CAB$capCF
+      metrics <- 1*actionPriority$CAA$capCF/actionPriority$CAB$capCF
       metrics[is.na(metrics)] <- 0
       ind <- match(rownames(res),names(metrics))
       res$'CAP' <- NA_real_
@@ -420,7 +424,7 @@
    ind2 <- which(!is.na(ind))
   # res <- cbind('CF Code'=rownames(res),res)
    res$'Cover' <- as.numeric(res$'Cover')/100
-   hasNAI <- length(indNAI <- grep('^NA[CO]',colnames(res)))==2
+   hasNAI <- length(indNAI <- grep('^(NAC|NAO|CAP)',colnames(res)))==3
    if (hasNAI) {
       res$'NAC' <- as.numeric(res$'NAC')/100
       res$'NAO' <- as.numeric(res$'NAO')/100
@@ -430,9 +434,9 @@
       if (length(unique(res[[indCAPR]]))>1)
       res[[indCAPR]] <- round(res[[indCAPR]],1)
       if (T) {
-         lut <- c('ROC-CF'="Relative Overall Concern Level for a given Conservation Feature" ## 'MNS/B'
-                 ,'RSC-CF'="Relative Significant Concern Level for a given Conservation Feature" ## 'S/B'
-                 ,'ROIP-CF'="Relative Overall Industrial Pressure for a given Conservation Feature" ## 'CAPR'
+         lut <- c('ROC‑CF'="Relative Overall Concern Level for a given Conservation Feature" ## 'MNS/B'
+                 ,'RSC‑CF'="Relative Significant Concern Level for a given Conservation Feature" ## 'S/B'
+                 ,'ROIP‑CF'="Relative Overall Industrial Pressure for a given Conservation Feature" ## 'CAPR'
                  )
          lname <- names(lut)
          cname <- sapply(seq_along(lname)
@@ -454,6 +458,7 @@
      }
    }
    indCover <- grep("^Cover",colnames(res))
+   indName <- grep("^CF.*name",colnames(res))
    colnames(res)[indCover] <- "<em>Coverage</em>"
    colnames(res)[ind2] <- paste0("<abbr title='"
                                               ,industryAbbr$industry[na.omit(ind)],"'>"
@@ -462,17 +467,19 @@
   # res <- input$industry
   # req(res %in% unlist(industries))
   # rownames(res) <- paste0("<a href=\"ya.ru\" target=\"_blank\"",rownames(res),"</a>")
-   cname <- gsub("<(/)*em>","",res[[1]])
-   if (length(ind <- which(nchar(res[[1]])>69))) {
-      res[[1]][ind] <- paste0("<span title=\"",cname[ind],"\">",substr(res[[1]][ind],1,67),"...</span>")
+   if (TRUE) {
+      cname <- gsub("<(/)*em>","",res[[indName]])
+      if (length(ind <- which(nchar(res[[indName]])>69))) {
+         res[[indName]][ind] <- paste0("<span title=\"",cname[ind],"\">",substr(res[[indName]][ind],1,67),"...</span>")
+      }
+      if (isChicory) {
+         res[[indName]] <- paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/cf/"
+                           ,paste0("s",sapply(paste0("cf",rownames(res)),digest::digest,"crc32"),".html")
+                           ,"\" target=\"_blank\">",res[[indName]],"</a>")
+      }
+     # colnames(res)[indName] <- ""
    }
-   if (isChicory) {
-      res[[1]] <- paste0("<a href=\"","https://wwf-arctic-programme.github.io/chicory/cf/"
-                        ,paste0("s",sapply(paste0("cf",rownames(res)),digest::digest,"crc32"),".html")
-                        ,"\" target=\"_blank\">",res[[1]],"</a>")
-   }
-  # colnames(res)[1] <- ""
-   b <- DT::datatable(res,rownames=TRUE,escape=FALSE
+   b <- DT::datatable(res,rownames=FALSE,escape=FALSE
                 ##~ ,class="display overcontent"
                 ,extension=c("Scroller","FixedColumns","FixedHeader","Responsive"
                             ,"ColReorder")
@@ -852,7 +859,7 @@
          fileout <- file.path(dirname(fname),fileout)
          a0 <- read_xml(fileout)
          a1 <- as_list(a0)
-         id <- paste0("i",digest::digest(unname(industry),"crc32"))
+         id <- paste0("k",digest::digest(unname(industry),"crc32"))
          ind <- which(!sapply(a1[[1]],function(b1) isTRUE(id==attr(b1,"id"))))
          for (i in rev(tail(ind,-1))) {
             xml_remove(xml_child(a0,search=i))
@@ -974,10 +981,12 @@
 }
 'switchDomain' <- function(action=NA) {
    cat(as.character(match.call())[1],":\n")
-   cond <- (length(rvSelectCF())>1)||(length(rvSelectIndustry())>1)
-   if (cond)
-      showNotification(paste("Is ArcNet domain?",cond),duration=1)
-   return(cond)
+   if (F) { ## 'T' in release
+      cond <- (length(rvSelectCF())>1)||(length(rvSelectIndustry())>1)
+      if (cond & staffOnly)
+         showNotification(paste("Is ArcNet domain?",cond),duration=1)
+      return(cond)
+   }
    ret <- exchange$domain ## NULL
    if (isTRUE(action)) {
       cond <- !isTRUE(exchange$domain)
@@ -993,8 +1002,10 @@
       return(ret)
    }
    cat("   action is:",action,"\n")
-   exchange$domain <- action
-   showNotification(paste("ArcNet domain is",exchange$domain),duration=1)
+   if (!is.na(action))
+      exchange$domain <- action
+   if (staffOnly)
+      showNotification(paste("ArcNet domain is",exchange$domain),duration=1)
   # plutil::timeHint(paste("domain is",exchange$domain))
    NULL
 }
@@ -1272,6 +1283,7 @@
    else
       showAOI <- !is.null(aoi <- rvAOI())
    showEPA <- isTRUE(input$initEPA>0)
+   showPAC <- isTRUE(input$initPAC>0)
    showNAO <- isTRUE(input$actionNAO>0)
    showNAC <- isTRUE(input$actionNAC>0)
    showCAP <- isTRUE(input$actionCAP>0)
@@ -1304,6 +1316,7 @@
    }
    grAOI <- "Selected Region(s)" # as.list(args(regionAddAOI))$group
    grEPA <- "Existing Protected Areas" # as.list(args(regionAddEPA))$group
+   grPAC <- "PACs"
    grNAO <- "SC-P" ##"SR index"
    grNAC <- "OC-P" # "MNSR index"
    grCAP <- "OIP-P" # "CAPR index"
@@ -1332,6 +1345,10 @@
       gr <- grEPA
       toAdd <- showEPA
    }
+   else if (grepl("PAC",index)) {
+      gr <- grPAC
+      toAdd <- showPAC
+   }
    else {
       gr <- "undefined"
       toAdd <- TRUE
@@ -1344,7 +1361,7 @@
                       ,index=index
                      # ,gr=dQuote(gr)
                       ,layerId=dQuote(layerId)
-                      ,AOI=showAOI,EPA=showEPA,NAC=showNAC,NAO=showNAO
+                      ,AOI=showAOI,EPA=showEPA,PAC=showPAC,NAC=showNAC,NAO=showNAO
                       ,add=toAdd))
       print("========================================================\n")
       if (!toAdd) {
@@ -1364,6 +1381,7 @@
                                            ,"Arctic SDI"
                                            ,if (showAOI) grAOI
                                            ,if (showEPA) grEPA
+                                           ,if (showPAC) grPAC
                                            ,if (showNAO) grNAO
                                            ,if (showNAC) grNAC
                                            ,if (showCAP) grCAP
@@ -1455,13 +1473,47 @@
       ursa:::.elapsedTime("mapF")
       return(map)
    }
+   else if (index %in% "PAC") {
+      colPAC <- "#9338"
+      PAC <- regionSF[[which(sapply(regionSF,\(v) any(grepl("^PAC",v$region))))]]
+      PAC <- spatial_union(PAC)
+      PAC <- spatial_transform(PAC,4326)
+      map <- leaflet::addPolygons(map
+                      ,data=PAC
+                      ,label=gr
+                      ,color=colPAC
+                      ,fillOpacity=0.2
+                      ,highlightOptions=leaflet::highlightOptions(fillOpacity=0.3
+                                                                 )
+                      ,group=gr
+                      ,layerId=layerId
+                      )
+      map <- leaflet::addLegend(map
+                    ,position="bottomleft"
+                    ,colors=colPAC
+                    ,opacity=0.2
+                    ,labels=gr
+                    ,group=gr
+                    ,layerId=layerId
+                    )
+      return(map)
+   }
    g0 <- session_grid()
    session_grid(dist2land)
   # a <- spatial_centroid(rvMetricsMap()[index]) |> allocate()
-   if (index %in% c("NAOR","NACR")) {
+   if (index %in% c("NACR","NAOR")) {
+      ctable <- rvCrossTable()
+      md <- attributes(ctable)
+      a <- conditionMap(industry=md$industry
+                       ,group=if (FALSE) md$group else as.integer(md$row.names)
+                       ,season=md$season
+                       ,epoch=input$epoch
+                       ,economy=switch(index,NACR="nacr",NAOR="naor")
+                       )
+   }
+   else if (index %in% c("NAOR","retiredNACR")) {
       rebrend <- switch(index,NAOR=c("SR","SC-P")[1],NACR=c("MNSR","OC-P")[1],index)
       a <- rvMetricsMap()[rebrend]
-      rebrend <- switch(index,NAOR=c("SR","SC-P")[2],NACR=c("MNSR","OC-P")[2],index)
       names(a) <- rebrend
    }
    else if (index %in% "CAPR") {
@@ -1562,8 +1614,10 @@
    cat(as.character(match.call())[1],":\n")
    icCover <- rvIceConcCover()
   # human <- icCover$assess["industry"]
-   human <- icCover$human
-   if (length(ind <- grep("industry",spatial_colnames(human),ignore.case=TRUE))>0)
+   human <- if (T) icCover$onlyhuman else icCover$human
+   if (length(spatial_colnames(human))==1)
+      spatial_colnames(human) <- "Activity"
+   else if (length(ind <- grep("industry",spatial_colnames(human),ignore.case=TRUE))>0)
       spatial_colnames(human)[ind] <- "Activity"
    ret <- glance(human,fileout=ursa:::.maketmp(ext=".png")
                 ,resetGrid=TRUE,retina=1,blank="white",coast.fill="#00000010"
@@ -1649,10 +1703,20 @@
    str(cf)
    str(industry)
    da <- rvHumanUseCF()
+   print("0512a")
+   print(nrow(da))
+   str(da[[1]])
+   str(industryCode(da[[1]]))
+   str(industry)
+   print("0512b")
    da <- da[industryCode(da[[1]]) %in% industry,]
+   print("0512c")
+   print(nrow(da))
    da <- cbind(CF=paste0("<abbr title='",CFName(cf),"'>",cf,"</abbr>")
               ,Activity=paste0("<abbr title='",industry,"'>",rownames(da),"</abbr>")
               ,da[,-1])
+   print("0512d")
+   print(nrow(da))
    if (is.null(iceCover)) {
       da2 <- sprintf("%.2f",iceConcTable()$available)
       dim(da2) <- c(1,length(da2))
@@ -1669,7 +1733,7 @@
    # da0 <- gsub("<(/)*sup>","",da0)
    da0 <- paste0(da1,da3)
    da[,m] <-  da0
-   ct <- c(clrLUT,'n/a'="grey90")
+   ct <- c(clrLUT,'n/a'="grey90",'n/o'="grey80")
    ct <- data.frame(value=da0,color=ct[da2]) |> unique()
    ct <- DT::styleEqual(ct$value,ct$color)
    ct <- gsub("&gt;",">",ct)

@@ -1,3 +1,6 @@
+.navbar-brand {
+   padding-top: 4px;
+}
 .leaflet-container {
     background-color: #fff;
 }
@@ -314,6 +317,11 @@ blockquote .math.inline, blockquote .MathJax .math[id^=MathJax-Span] {
 }
 @media screen and ((max-width: 1279px) or (max-height: 609px)) {
    .verbose {
+      display: none;
+   }
+}
+@media screen and (max-height: 845px) {
+   .largescreen {
       display: none;
    }
 }

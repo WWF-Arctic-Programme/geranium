@@ -18,8 +18,10 @@ useNACR <- FALSE
 ignoreMissing <- TRUE | !staffOnly ## TRUE for Boris
 quickStart <- FALSE
 count <- 0L
-showHist <- T
+showHist <- TRUE
 showComment <- TRUE
+is0407 <- FALSE # if 'FALSE' then old behaviour
+options(warn=0)
 if ((!staffOnly)&&((!file.exists(sessionFile))||(file.size(sessionFile)<1024))) {
    isRemote <- TRUE ## only for 'sessionFile' download 
    prm_download(sessionFile)
@@ -122,10 +124,11 @@ kwdYellow <- c("Concessional","Notable Concern (number of CFs)"
 kwdGreen <- c("Compatible","Compatible/not applicable","Minor")[3]
 kwdGray <- "Not applicable"
 allActivity <- "All groups"
+allIndustries <- "All industrial activities"
 noneActivity <- "No human use"
 nameAllCF <- c('3'="All conservation groups"
               ,'2'="All conservation species"
-              ,'1'="All conservation parameters"
+              ,'1'="All habitats and biotopes"
               ,'0'="All conservation features"
               )
 nameAllSeason <- c("Whole year","Annual","Annual maximum")[1]
@@ -192,7 +195,7 @@ pattRules <- paste0("^(.+\\S)",gsub("\\s","\\\\s",sepRules),"(\\S.+)$")
 activity <- c(noneActivity,allActivity,rules$activity)
 options(spinner.color="#ECF0F5")
 nameSelector <- "Selector"
-nameEditor <- "Editor"
+nameEditor <- "(Editor)"
 nameClick <- "Click region(s) on map"
 choiceMap <- c('Do not show'="none"
               ,'OIP-P'="capr" ## 'CAPR'
@@ -201,7 +204,6 @@ choiceMap <- c('Do not show'="none"
               ,'Concern level overlay'="trafficlight"
               ,'Industrial activities amount'="humanuse"
               )
-
 cell <- ursa(dist2land["dist"],"cell")*1e-3
 if (F)
    clf <- compose_coastline(spatial_transform(spatial_read("crop-coast.geojson"),6931)
@@ -426,6 +428,15 @@ if (T & !quickStart) {
       print(table(a4$value))
    }
    concern <- a4
+   if (F & !is.null(iceCover)) { ## release
+      colnames(iceCover)[grep("CF",colnames(iceCover))] <- "CF_code"
+      a <- reshape(iceCover,varying=list(3:ncol(iceCover)),direction="long"
+                  ,v.names="icecover",idvar="foo",timevar="month")
+      a$foo <- NULL
+      concern <- merge(concern,a)
+      concern$comment[concern$icecover<0.05] <- "Concern level is not applicable due to ice conditions"
+      concern$icecover <- NULL
+   }
    ursa:::.elapsedTime("concern prepare -- finish")
   # saveRDS(concern,"C:/tmp/concern.rds")
    rm(a4)
@@ -540,6 +551,46 @@ if (F) {
 } else {
    ind <- scenarioCF[[indCFcode]] %in% CFCode()
    groupList <- c(unname(nameAllCF['3']),unique(taxonCF$group3[ind]))
+}
+if (F & !is.null(iceCover)) { ## devel
+   ursa:::.elapsedTime("reset concern by ice conditions -- start")
+   cname <- colnames(concern)
+   id1 <- with(concern,paste(CF_code,industry,month,sep="-"))
+   colnames(iceCover)[grep("CF",colnames(iceCover))] <- "CF_code"
+   a <- reshape(iceCover,varying=list(3:ncol(iceCover)),direction="long"
+               ,v.names="icecover",idvar="foo",timevar="month")
+   a$foo <- NULL
+   concern <- merge(concern,a)
+   if (T & length(ind <- which(concern$icecover<0.05))>0) {
+      if (T & length(ind2 <- ind[which(!is.na(concern$value[ind]))])) {
+         if (!isShiny) {
+            str(length(ind2))
+            str(length(ind2)/length(concern$value))
+         }
+         lut <- c('M'=1L,'N'=2L,'S'=3L)
+         lev <- names(lut)[match(concern$value[ind2],lut)]
+         concern$comment[ind2] <- paste0("Concern level not applicable. "
+            ,"Identified area where the activity "
+            ,ifelse(staffOnly,paste0("(",lev,") "),"")
+            ,"can occur is less than 5% of CF area")
+         if (F)
+            concern$comment[ind2] <- sprintf("%s (%.2f)"
+                                        ,concern$comment[ind2],concern$icecover[ind2])
+         concern$value[ind2] <- NA
+      }
+   }
+   id2 <- with(concern,paste(CF_code,industry,month,sep="-"))
+   concern <- concern[match(id1,id2),]
+   if (F) {
+      str(concern)
+      cB <- concern[concern$industry %in% c("AM","AC"),]
+      str(cB)
+      write.csv(cB,"C:/tmp/concern-AM-CM.csv",row.names=FALSE)
+      q()
+   }
+  # concern$icecover <- NULL
+   concern <- concern[,cname]
+   ursa:::.elapsedTime("reset concern by ice conditions -- finish")
 }
 if (!quickStart) {
    if (!dir.exists(dirname(sessionFile)))

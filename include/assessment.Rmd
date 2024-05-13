@@ -9,9 +9,9 @@ output:
 
 ```{r}
 # htmltools::includeHTML('Howtheassessmentwasmade.html')
-# htmltools::includeMarkdown('assessment1.md')
+htmltools::includeMarkdown('assessment1.md')
 htmltools::includeMarkdown('assessment2.md')
-# htmltools::includeMarkdown('assessment3.md')
+htmltools::includeMarkdown('assessment3.md')
 ```
 
 ```{css}

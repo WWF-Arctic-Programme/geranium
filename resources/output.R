@@ -13,3 +13,5 @@ if (staffOnly) { ## output.rebuildNAO
    })
    outputOptions(output,"rebuildNAO",suspendWhenHidden=FALSE)
 }
+output$frozen <- reactive(!is.null(rvAOI()))
+outputOptions(output,"frozen",suspendWhenHidden=FALSE)
